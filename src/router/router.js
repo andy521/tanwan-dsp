@@ -45,8 +45,8 @@ export const appRouter = [
         access: 0,
         component: Main,
         children: [
-            { path: 'plan', title: '实时投放计划', name: 'time_plan', access: 0, component: () => import('@/views/time/plan.vue') },
-            { path: 'ad', title: '实时投放广告', name: 'time_ad', access: 0, component: () => import('@/views/time/ad.vue') },
+            { path: 'plan', title: '实时投放计划', name: 'time_plan', icon: 'android-radio-button-off', component: () => import('@/views/time/plan.vue') },
+            { path: 'ad', title: '实时投放广告', name: 'time_ad', icon: 'android-radio-button-off', component: () => import('@/views/time/ad.vue') },
         ]
     },
     {
@@ -57,11 +57,11 @@ export const appRouter = [
         access: 0,
         component: Main,
         children: [
-            { path: 'product', title: '产品总览', name: 'channel_product', access: 0, component: () => import('@/views/channel/product.vue') },
-            { path: 'media', title: '媒体总览', name: 'channel_media', access: 0, component: () => import('@/views/channel/media.vue') },
-            { path: 'account', title: '账户总览', name: 'channel_account', access: 0, component: () => import('@/views/channel/account.vue') },
-            { path: 'plan', title: '计划总览', name: 'channel_plan', access: 0, component: () => import('@/views/channel/plan.vue') },
-            { path: 'ad', title: '广告位总览', name: 'channel_ad', access: 0, component: () => import('@/views/channel/ad.vue') }
+            { path: 'product', title: '产品总览', name: 'channel_product',  icon: 'android-radio-button-off', component: () => import('@/views/channel/product.vue') },
+            { path: 'media', title: '媒体总览', name: 'channel_media',  icon: 'android-radio-button-off', component: () => import('@/views/channel/media.vue') },
+            { path: 'account', title: '账户总览', name: 'channel_account',  icon: 'android-radio-button-off', component: () => import('@/views/channel/account.vue') },
+            { path: 'plan', title: '计划总览', name: 'channel_plan',  icon: 'android-radio-button-off', component: () => import('@/views/channel/plan.vue') },
+            { path: 'ad', title: '广告位总览', name: 'channel_ad',  icon: 'android-radio-button-off', component: () => import('@/views/channel/ad.vue') }
         ]
     },
     {
@@ -83,7 +83,7 @@ export const appRouter = [
         children: [
             { path: 'setid', title: '账号管理', name: 'setid_index', component: () => import('@/views/setid/setid.vue')}
         ]
-    }    
+    }
 ];
 // 所有上面定义的路由都要写在下面的routers里
 export const routers = [

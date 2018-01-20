@@ -153,11 +153,11 @@ export const table2excelData = [
 
 export const excelColumns = [
     {
-        'title': '名称',
+        'title': '名称A',
         'key': 'name'
     },
     {
-        'title': '展示',
+        'title': '展示A',
         'key': 'show',
         'sortable': true,
         filters: [
