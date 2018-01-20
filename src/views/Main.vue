@@ -1,5 +1,5 @@
 <style lang="less">
-@import "./main.less";
+    @import "./main.less";
 </style>
 <template>
 
@@ -36,36 +36,20 @@
                 </div>
 
                 <!-- 头部RIght -->
-                <div class="header-avator-con">
-                    <!-- 全屏 -->
-                    <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
+                <div class="header-avator-con">                    
                     <!-- 主题颜色 -->
-                    <theme-switch></theme-switch>
+                    <!-- <theme-switch></theme-switch> -->
 
                     <!-- 用户信息 -->
-                    <div class="user-dropdown-menu-con">
-                        <Row type="flex" justify="end" align="middle" class="user-dropdown-innercon">
-                            <Dropdown transfer trigger="click" @on-click="handleClickUserDropdown">
-                                <a href="javascript:void(0)">
-                                    <span class="main-user-name">{{ userName }}</span>
-                                    <Icon type="arrow-down-b"></Icon>
-                                </a>
-                                <DropdownMenu slot="list">
-                                    <DropdownItem name="ownSpace">个人中心</DropdownItem>
-                                    <DropdownItem name="loginout" divided>退出登录</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                            <!-- <Avatar :src="avatorPath" style="background: #619fe7;margin-left: 10px;"></Avatar> -->
-                        </Row>
+                    <div class="user-dropdown-menu-con"> 
+                        <Button type="ghost" @click="quitLogin">退出登录</Button>
+                        <!-- 全屏 -->
+                        <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>                      
                     </div>
                 </div>
 
             </div>
-            <!-- 历史标签 -->
-            <div class="tags-con">
-                备注
-                <!-- <tags-page-opened :pageTagsList="pageTagsList"></tags-page-opened> -->
-            </div>
+           
         </div>
         <!-- 头部 -->
 
@@ -105,22 +89,22 @@
         },
         computed :{
             //缓存页面
-            cachePage () {
+            cachePage () {                
                 return this.$store.state.app.cachePage;
             },
             menuList () {
-                console.log(this.$store.state.app)
+                //console.log(this.$store.state.app)
                 return this.$store.state.app.menuList;
             },
             menuTheme () {
-                //返回导航样式
+                //返回导航样式                
                 return this.$store.state.app.menuTheme;
             }
         },
 
         methods : {
             init () {
-                console.log('进来了')
+                //console.log('进来了')
                 // let pathArr = util.setCurrentPath(this, this.$route.name);
                 // console.log(pathArr)
                 this.$store.commit('updateMenulist');
@@ -134,31 +118,24 @@
                 // this.$store.commit('setMessageCount', 3);
 
             },
-            handleClickUserDropdown (name) {
-                if (name === 'ownSpace') {
-                    console.log('个人中心')
-                    util.openNewPage(this, 'ownspace_index');
-                    this.$router.push({
-                        name: 'ownspace_index'
-                    });
-                } else if (name === 'loginout') {
-                    console.log('退出登录')
-                    this.$store.commit('logout', this);
-                    this.$store.commit('clearOpenedSubmenu');
-                    this.$router.push({
-                        name: 'login'
-                    });
-                }
+            quitLogin () { 
+                console.log('退出登录')
+                this.$store.commit('logout', this);
+                this.$store.commit('clearOpenedSubmenu');
+                this.$router.push({
+                    name: 'login'
+                });              
             },
             fullscreenChange (isFullScreen) {
                 //全屏
                 console.log(isFullScreen);
             },
             handleSubmenuChange (val) {
-                // console.log(val)
+                //console.log(val)
             },
             beforePush (name) {
-                // if (name === 'accesstest_index') {
+                //根据name值禁止点击
+                // if (name === 'home_index') {
                 //     return false;
                 // } else {
                 //     return true;
@@ -168,7 +145,12 @@
         },
         mounted () {
             this.init();
-		    console.log('初始进入--框架外层框架')
+		    //console.log('初始进入--框架外层框架')
 	    }
     };
 </script>
+
+<style>
+.main-header-con{box-shadow:none;height: 60px;}
+.main .single-page-con{top: 60px;}
+</style>

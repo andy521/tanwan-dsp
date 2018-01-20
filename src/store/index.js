@@ -15,8 +15,8 @@ const store = new Vuex.Store({
 
     },
     modules: {
-        app,   //框架自己的store
-        //user //用户状态 store
+        app, 
+        user
     }
 });
 

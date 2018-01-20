@@ -22,7 +22,6 @@ router.beforeEach((to, from, next) => {
     iView.LoadingBar.start();
     Util.title(to.meta.title); 
 
-
     if (!Cookies.get('user') && to.name !== 'login') { // 判断是否已经登录且前往的页面不是登录页
         next({
             name: 'login'
@@ -47,7 +46,7 @@ router.beforeEach((to, from, next) => {
             Util.toDefaultPage([...routers], to.name, router, next);
         }
     }
-  
+      
     //console.log(Cookies.get('user'))
 })
 

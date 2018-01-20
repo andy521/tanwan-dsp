@@ -3,8 +3,6 @@ import Util from '@/utils/index.js';
 import Cookies from 'js-cookie';
 import Vue from 'vue';
 
-
-
 //框架公共stor
 const app = {
     state: {
@@ -38,10 +36,11 @@ const app = {
     },
 
     mutations : {
-
+        //设置tagList
         setTagsList (state, list) {
             state.tagsList.push(...list);
         },
+        //更新菜单
         updateMenulist (state) {
             let accessCode = parseInt(Cookies.get('access'));
             let menuList = [];
@@ -94,8 +93,19 @@ const app = {
             })
             state.menuList = menuList;
             //console.log(menuList)
-        }
-
+        },
+        setOpenedList (state) {
+            console.log(state)
+            state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [otherRouter.children[0]];
+        },
+        initCachepage (state) {
+            if (localStorage.cachePage) {
+                state.cachePage = JSON.parse(localStorage.cachePage);
+            }
+        },
+        clearOpenedSubmenu (state) {
+            state.openedSubmenuArr.length = 0;
+        },
     }
 };
 
