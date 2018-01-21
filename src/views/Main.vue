@@ -5,20 +5,20 @@
 
 
     <div class="main" :class="{'main-hide-text': shrink}">
-        
+
         <!-- 左侧导航 -->
-        <div class="sidebar-menu-con" :style="{width: shrink?'60px':'200px', overflow: shrink ? 'visible' : 'auto'}">            
+        <div class="sidebar-menu-con" :style="{width: shrink?'60px':'200px', overflow: shrink ? 'visible' : 'auto'}">
             <shrinkable-menu
                 :shrink="shrink"
                 @on-change="handleSubmenuChange"
-                :theme="menuTheme" 
+                :theme="menuTheme"
                 :before-push="beforePush"
                 :open-names="openedSubmenuArr"
                 :menu-list="menuList"
             >
             <div slot="top" class="logo-con">
                 <img  src="../images/logo.png" key="max-logo" />
-            </div>         
+            </div>
             </shrinkable-menu>
         </div>
         <!-- 左侧导航END -->
@@ -28,7 +28,7 @@
             <div class="main-header">
 
                 <!-- 头部LEFT -->
-                <div class="header-middle-con">                    
+                <div class="header-middle-con">
                     <div class="main-breadcrumb">
                         优化师：****账号
                         <!-- <breadcrumb-nav :currentPath="currentPath"></breadcrumb-nav> -->
@@ -36,20 +36,20 @@
                 </div>
 
                 <!-- 头部RIght -->
-                <div class="header-avator-con">                    
+                <div class="header-avator-con">
                     <!-- 主题颜色 -->
                     <!-- <theme-switch></theme-switch> -->
 
                     <!-- 用户信息 -->
-                    <div class="user-dropdown-menu-con"> 
+                    <div class="user-dropdown-menu-con">
                         <Button type="ghost" @click="quitLogin">退出登录</Button>
                         <!-- 全屏 -->
-                        <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>                      
+                        <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
                     </div>
                 </div>
 
             </div>
-           
+
         </div>
         <!-- 头部 -->
 
@@ -81,15 +81,15 @@
         },
         data () {
             return {
-                shrink: false, 
-                userName: '周运龙',  
+                shrink: false,
+                userName: '周运龙',
                 isFullScreen: false,  //是否全屏
-                openedSubmenuArr: this.$store.state.app.openedSubmenuArr                
+                openedSubmenuArr: this.$store.state.app.openedSubmenuArr
             };
         },
         computed :{
             //缓存页面
-            cachePage () {                
+            cachePage () {
                 return this.$store.state.app.cachePage;
             },
             menuList () {
@@ -97,7 +97,7 @@
                 return this.$store.state.app.menuList;
             },
             menuTheme () {
-                //返回导航样式                
+                //返回导航样式
                 return this.$store.state.app.menuTheme;
             }
         },
@@ -118,13 +118,13 @@
                 // this.$store.commit('setMessageCount', 3);
 
             },
-            quitLogin () { 
+            quitLogin () {
                 console.log('退出登录')
                 this.$store.commit('logout', this);
                 this.$store.commit('clearOpenedSubmenu');
                 this.$router.push({
                     name: 'login'
-                });              
+                });
             },
             fullscreenChange (isFullScreen) {
                 //全屏
@@ -153,4 +153,5 @@
 <style>
 .main-header-con{box-shadow:none;height: 60px;}
 .main .single-page-con{top: 60px;}
+.main-header .header-middle-con{left:-10px;font-size:14px;font-weight:bold}
 </style>

@@ -1,87 +1,53 @@
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const cleanWebpackPlugin = require('clean-webpack-plugin');
-const UglifyJsParallelPlugin = require('webpack-uglify-parallel');
-const merge = require('webpack-merge');
-const webpackBaseConfig = require('./webpack.base.config.js');
+'use strict'
+var path = require('path');
+var webpack = require('webpack');
 const os = require('os');
 const fs = require('fs');
-const path = require('path');
-const package = require('../package.json');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin'); //html模板
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const cleanWebpackPlugin = require('clean-webpack-plugin');
 
-fs.open('./build/env.js', 'w', function(err, fd) {
-    const buf = 'export default "production";';
-    fs.write(fd, buf, 0, buf.length, 0, function(err, written, buffer) {});
-});
+const merge = require('webpack-merge');
+const webpackBaseConfig = require('./webpack.base.config.js');
+ 
+//const UglifyJsParallelPlugin = require('webpack-uglify-parallel');
 
+//https://github.com/fouber/blog/issues/6
 module.exports = merge(webpackBaseConfig, {
+	
     output: {
-        publicPath: '#',  // 修改 https://iv...admin 这部分为你的服务器域名 
-        filename: '[name].[hash].js',
-        chunkFilename: '[name].[hash].chunk.js'
+		publicPath: 'dist/',
+        filename: '[name].js',
+        chunkFilename: '[name].chunk.js'
     },
-    plugins: [
-        new cleanWebpackPlugin(['dist/*'], {
+	
+	plugins: [
+	
+		new cleanWebpackPlugin(['dist/*'], {
             root: path.resolve(__dirname, '../')
         }),
-        new ExtractTextPlugin({
-            filename: '[name].[hash].css',
-            allChunks: true
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-            // name: 'vendors',
-            // filename: 'vendors.[hash].js'
-            name: ['vender-exten', 'vender-base'],
-            minChunks: Infinity
-        }),
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
+		
+		//代码压缩
+		new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
             }
         }),
-        // new UglifyJsParallelPlugin({
-        //     workers: os.cpus().length,
-        //     mangle: true,
-        //     compressor: {
-        //       warnings: false,
-        //       drop_console: true,
-        //       drop_debugger: true
-        //      }
-        // }),
-		/*
-        new CopyWebpackPlugin([
-            {
-                from: 'icon.ico'
-            },
-            {
-                from: 'src/styles/fonts',
-                to: 'fonts'
-            },
-            {
-                from: 'src/views/main-components/theme-switch/theme'
-            },
-            {
-                from: 'src/views/my-components/text-editor/tinymce'
-            }
-        ], {
-            ignore: [
-                'text-editor.vue'
-            ]
+		
+		new ExtractTextPlugin({
+            filename: '[name].[hash].css',
+            allChunks: true
         }),
-		*/
-        new HtmlWebpackPlugin({
-            title: '贪玩游戏',
-            favicon: './icon.ico',
-            filename: '../index.html',
-            template: '!!ejs-loader!./src/template/index.ejs',
-            inject: false
-        })
-    ]
+		
+		new HtmlWebpackPlugin({
+			filename: '../index.html',
+			template: path.resolve(__dirname, '../src/template/index.html'),
+			chunks: ['vender-base','vender-exten','main'],
+			inject: 'body',
+			title:'贪玩游戏'
+		}),	 //http://www.bubuko.com/infodetail-1847157.html
+		
+		//new webpack.optimize.CommonsChunkPlugin('vendor',  'vendor.js')
+	]	
 });

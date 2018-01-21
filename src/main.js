@@ -7,6 +7,8 @@ import App from './app.vue';
 import 'iview/dist/styles/iview.css';
 import util from './utils/index';
 
+
+
 Vue.use(iView);
 new Vue({
     el: '#app',
