@@ -2,8 +2,7 @@
     @import "../../styles/common.less";
     @import '../../styles/table.less';
     .ivu-card-body{padding: 10px;}
-    .ivu-card-head-inner, .ivu-card-head p{height: auto}
-    .line-chart-con{height: 300px;}
+    .ivu-card-head-inner, .ivu-card-head p{height: auto}    
 </style>
 <style scoped>
     
@@ -12,66 +11,65 @@
     <div id="home">
 
         <Row class-name="home-page-row1" class="margin-top-10">
-            <Card>
+            <Card dis-hover shadow>
                 <p slot="title" class="card-title">
                     <Icon type="ios-paper"></Icon>
                     所选账户在所选时段数据汇总
-
                     <ButtonGroup size="small" :style="{ float: 'right'}">
-                        <Button type="primary">新增绑定账户</Button>
-                        <Button type="primary">查看账户报告</Button>
+                        <Button type="primary" @click="addBindId = true">新增绑定账户</Button>
+                        <Button type="primary">下载报表</Button>
                     </ButtonGroup>
                 </p>
                 <div class="map-con">
-                    <Row :gutter="5">
+                    <Row :gutter="10">
 
-                        <Col :xs="12" :sm="6" :md="4" :style="{marginBottom: '10px'}">
+                        <Col :xs="24" :sm="12" :md="4" :style="{marginBottom: '10px'}">
                             <infor-card
                                 id-name="user_created_count"
-                                :end-val="2"
+                                :end-val="total.impression"
                                 iconType="ios-eye"
                                 color="#2d8cf0"
                                 intro-text="展示"
                             ></infor-card>
                         </Col>
 
-                        <Col :xs="12" :sm="6" :md="5" :style="{marginBottom: '10px'}">
+                        <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
                             <infor-card
                                 id-name="user_created_count"
-                                :end-val="2"
+                                :end-val="total.click"
                                 iconType="mouse"
                                 color="#64d572"
                                 intro-text="点击"
                             ></infor-card>
                         </Col>
 
-                        <Col :xs="12" :sm="6" :md="5" :style="{marginBottom: '10px'}">
+                        <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
                             <infor-card
                                 id-name="user_created_count"
-                                :end-val="1500"
-                                iconType="volume-high"
-                                color="#f90"
-                                intro-text="推广奖金余额"
-                            ></infor-card>
-                        </Col>
-
-                        <Col :xs="12" :sm="6" :md="5" :style="{marginBottom: '10px'}">
-                            <infor-card
-                                id-name="user_created_count"
-                                :end-val="1500"
-                                iconType="ios-pie"
-                                color="#f25e43"
-                                intro-text="广告奖金池余额"
-                            ></infor-card>
-                        </Col>
-
-                        <Col :xs="12" :sm="6" :md="5" :style="{marginBottom: '10px'}">
-                            <infor-card
-                                id-name="user_created_count"
-                                :end-val="1500"
+                                :end-val="total.balance_1"
                                 iconType="social-yen"
+                                color="#f90"
+                                intro-text="现金账户"
+                            ></infor-card>
+                        </Col>
+
+                        <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
+                            <infor-card
+                                id-name="user_created_count"
+                                :end-val="total.balance_2"
+                                iconType="social-buffer-outline"
+                                color="#f25e43"
+                                intro-text="虚拟账户"
+                            ></infor-card>
+                        </Col>
+
+                        <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
+                            <infor-card
+                                id-name="user_created_count"
+                                :end-val="total.balance_4"
+                                iconType="card"
                                 color="#19be6b"
-                                intro-text="原生奖金池余额"
+                                intro-text="信用账户"
                             ></infor-card>
                         </Col>
                         
@@ -81,111 +79,112 @@
             </Card>
         </Row>
 
-        <Row class-name="home-page-row1" class="margin-top-10">
-            <Card>              
-                <p slot="title" class="card-title">                   
-                    <Select v-model="chakang" style="width:200px">
-                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
-                </p>
-                
-                <Table :columns="excelColumns" height="390px" :data="table2excelData" size="small" ref="tableExcel"></Table>
-                
+        <!-- 按账户查看 - 按产品查看 -->
+        <view-tab :table-data="table.list" :total="table.total" :page ="table.page" :page-size="table.page_size"></view-tab>      
 
-                <!-- <div class="map-con">                    
-                    <Table :columns="columnsCsv" :data="csvData" size="small" ref="tableCsv"></Table>
-                </div> -->
-
-            </Card>
-        </Row>
+        <!-- 线性表格 -->
+        <linear-tabel :data-echart="echart" ></linear-tabel>
 
 
-        <Row class-name="home-page-row1" class="margin-top-10">
-            <Card :padding="0">              
-                <p slot="title" class="card-title">                   
-                    <Select v-model="baoguan" style="width:200px">
-                        <Option v-for="item in cityList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
-                    <Select v-model="diangji" style="width:200px;float:right;">
-                        <Option v-for="item in cityList2" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
-                </p>
-                <div class="line-chart-con">
-                    <service-requests></service-requests>
-                </div>
-            </Card>
-        </Row>
+        <Modal
+            v-model="addBindId"
+            title="新增绑定账号"
+            @on-ok="addBindOk"
+            :mask-closable="false"
+            :closable="false"
+            :loading="loading"
+            >
+            <div class="padding-10">
+                <Form :model="formItem" label-position="right" :label-width="80" >                    
+                    <Row :gutter="10">
+                        <Col span="12">
+                            <FormItem label="账号平台">
+                                <Select v-model="formItem.select">
+                                    <Option value="baidu">baidu</Option>
+                                    <Option value="google">google</Option>
+                                    <Option value="sogou">sogou</Option>
+                                </Select>
+                            </FormItem>
+                        </Col>
+                        <Col span="12">
+                            <FormItem label="推广方式">
+                                <Select v-model="formItem.select">
+                                    <Option value="1">竞价推广</Option>
+                                </Select>
+                            </FormItem>
+                        </Col>
+                    </Row>                    
+                    <FormItem label="账号名字">
+                        <Input v-model="formItem.input1"></Input>
+                    </FormItem>
+                    <FormItem label="账户密码">
+                        <Input v-model="formItem.input2"></Input>
+                    </FormItem>
+                    <FormItem label="账号口令">
+                        <Input v-model="formItem.input3"></Input>
+                    </FormItem>
+                </Form>
+            </div>           
+        </Modal>
 
-    </div>
+    </div>    
 </template>
 
 
 <script>
 import inforCard from './components/inforCard.vue';
-import serviceRequests from './components/serviceRequests.vue';
+import linearTabel from './components/linearTabel.vue';
+import viewTab from './components/viewTab.vue';
 
-import {table2csvData, csvColumns} from './data/table2csv.js';
-import {table2excelData, excelColumns} from './data/table2excel.js';
-import table2excel from '@/utils/table2excel.js';
+
+// import {table2csvData, csvColumns} from './data/table2csv.js';
+// import {table2excelData, excelColumns} from './data/table2excel.js';
+// import table2excel from '@/utils/table2excel.js';
 
 
 export default {
-    name: 'exportable-table',
+    name: 'overview',
     components :{
         inforCard,
-        serviceRequests
+        linearTabel,
+        viewTab
     },
     data () {
         return {
-            columnsCsv: csvColumns,
-            csvData: table2csvData,
-            table2excelData: table2excelData,
-            excelColumns: excelColumns,
-            rowNum: table2csvData.length,
-            colNum: csvColumns.length,
-            selectMinRow: 1,
-            selectMaxRow: table2csvData.length,
-            selectMinCol: 1,
-            selectMaxCol: csvColumns.length,
-            maxRow: 0,
-            minRow: 1,
-            maxCol: 0,
-            minCol: 1,
-            csvFileName: '',
-            excelFileName: '',
-            tableExcel: {},
-            fontSize: 16,
-            
-            chakang :'按账户查看',
-            baoguan :'暴光量',
-            diangji :'点击量',
-            cityList : [{value: '按产品查看',label: '按产品查看'}],
-            cityList1 : [{value: '暴光量',label: '暴光量'}],
-            cityList2 : [{value: '点击量',label: '点击量'}]
+            addBindId :false,
+            loading: true,
+            formItem: {                
+                input1: '',
+                input2: '',
+                input3: '',
+                select : ''
+            }
         };
     },
-    methods: {
-        exportData (type) {
-            if (type === 1) {
-                this.$refs.tableCsv.exportCsv({
-                    filename: '原始数据'
-                });
-            } else if (type === 2) {
-                this.$refs.tableCsv.exportCsv({
-                    filename: '排序和过滤后的数据',
-                    original: false
-                });
-            } else if (type === 3) {
-                this.$refs.tableCsv.exportCsv({
-                    filename: this.csvFileName,
-                    columns: this.columnsCsv.filter((col, index) => index >= this.selectMinCol - 1 && index <= this.selectMaxCol - 1),
-                    data: this.csvData.filter((data, index) => index >= this.selectMinRow - 1 && index <= this.selectMaxRow - 1)
-                });
-            }
+    computed :{
+        total () {
+            return this.$store.state.home.total;
         },
-        exportExcel () {
-            table2excel.transform(this.$refs.tableExcel, 'hrefToExportTable', this.excelFileName);
+        echart(){
+            return this.$store.state.home.echart;
+        },
+        table(){
+            return this.$store.state.home.table;
         }
+    },
+    methods: {
+        getData(){
+            //获取home总数据      
+            this.$store.dispatch('getMenuList');
+        },
+        addBindOk(){            
+            setTimeout(() => {
+                this.addBindId = false;
+            }, 2000);
+        }
+    },
+    mounted(){
+        this.getData()
     }
 };
 </script>

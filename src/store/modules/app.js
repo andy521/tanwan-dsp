@@ -95,7 +95,7 @@ const app = {
             }
         },
         clearOpenedSubmenu (state) {
-            //console.log(state)
+            console.log(state)
             state.openedSubmenuArr.length = 0;
         },
     }

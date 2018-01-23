@@ -1,14 +1,12 @@
 <style lang="less">
     @import './login.less';
 </style>
-
 <template>
     <div class="login" @keydown.enter="handleSubmit">
         <div class="login-con">
             <Card :bordered="false">
                 <p slot="title">
-                    <Icon type="log-in"></Icon>
-                    欢迎登录
+                    <Icon type="log-in"></Icon>欢迎登录
                 </p>
                 <div class="form-con">
                     <Form ref="loginForm" :model="form" :rules="rules">
@@ -38,12 +36,13 @@
 </template>
 
 <script>
+import  Axios  from "@/api/index"
 import Cookies from 'js-cookie';
 export default {
     data () {
         return {
             form: {
-                userName: '请输入用记肿',
+                userName: '',
                 password: ''
             },
             rules: {
@@ -58,20 +57,21 @@ export default {
     },
     methods: {
         handleSubmit () {
-            this.$refs.loginForm.validate((valid) => {
-                if (valid) {
-
-                    Cookies.set('user', this.form.userName);
-                    Cookies.set('password', this.form.password);
-                    //this.$store.commit('setAvator', 'http://image.tanwan.com/h5/pc/img/bg.jpg');
-                    if (this.form.userName === 'admin') {
-                        Cookies.set('access', 0);
-                    } else {
-                        Cookies.set('access', 1);
-                    }
-                    this.$router.push({
-                        name: 'home_index'
-                    });
+            this.$refs.loginForm.validate( (valid) => {
+                if (valid) {                    
+                    let userinfo = { 'user' : this.form.userName,'password' : this.form.password}
+                    Axios.post('api.php',{
+                        'action' : 'sys',
+                        'opt' : 'login',
+                        'uName' : userinfo.user,
+                        'uPass' : userinfo.password,
+                    })
+                    .then((res)=>{
+                        //路径index.js要判断的
+                        Cookies.set('user', userinfo.user);                                    
+                        this.$store.dispatch('UserLogin', userinfo);  
+                        this.$router.push({ name: 'home_index' });
+                    }).catch((err)=>{console.log(err)});
 
                 }
             });

@@ -1,19 +1,32 @@
 import Cookies from 'js-cookie';
+import  Axios  from "@/api/index"
+
+//import axios from 'axios'
 
 const user = {
-    state: {},
-    mutations: {
-        logout (state, vm) {            
-            console.log(state);
+    state: {
+        username : '',
+        isLogin : 0,
+    },
+    mutations: {        
+        USER_LOGINOUT ( state ){
+            state.username = ''
+            state.isLogin = 0 
+        },
+        USER_LOGIN( state , user){
+            state.username = user
+            state.isLogin = 1 
+            console.log('用户登录 -----' + user)
+        },
+    },
+    actions : {
+        UserLogin({ commit }, u){           
+            commit('USER_LOGIN', u.user)
+        },
+        LoginOut({ commit }){
             Cookies.remove('user');
-            Cookies.remove('password');
-            Cookies.remove('access');
-
-            // 恢复默认样式
-            let themeLink = document.querySelector('link[name="theme"]');
-            themeLink.setAttribute('href', '');
-            
-            // 清空打开的页面等数据，但是保存主题数据
+            // Cookies.remove('password');
+            // Cookies.remove('access');
             let theme = '';
             if (localStorage.theme) {
                 theme = localStorage.theme;
@@ -22,7 +35,8 @@ const user = {
             if (theme) {
                 localStorage.theme = theme;
             }
-        }
+            commit('USER_LOGINOUT')
+        },
     }
 };
 

@@ -8,10 +8,9 @@ const Axios = axios.create({
     baseURL: "http://ads.tanwan.com",
     timeout: 10000,
     responseType: "json",
-    withCredentials: true, // 是否允许带cookie这些
+   //withCredentials: true, // 是否允许带cookie这些
     headers: {"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"}
 });
-
 //axios不支持jsonp，所以你需要把服务端改为 header("Access-Control-Allow-Origin: *"); 
 
 //POST传参序列化(添加请求拦截器)
@@ -38,21 +37,19 @@ Axios.interceptors.request.use(
 //返回状态判断(添加响应拦截器)
 Axios.interceptors.response.use(
     res => {
-        //对响应数据做些事
-        if (res.data && !res.data.success) {
-            //console.log('提示加载');
-            return Promise.reject(res.data.error.message);
+        //对响应数据做些事  
+        if (res.data && res.data.ret !=1) {
+            Message.info(res.data.msg);
+            //return Promise.reject(res.data);
         }
-        return res;
+        return res.data;
     },
     error => {
         // 返回 response 里的错误信息
-        Message.info('这里错误要提示222');
-        let errorInfo =  error.data.error ? error.data.error.message : error.data;
-        return Promise.reject(errorInfo);
+        Message.info(res.data.ret);        
+        return Promise.reject(error);
     }
 );
-
 
 export default {
     //get请求
