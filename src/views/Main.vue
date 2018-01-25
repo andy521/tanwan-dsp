@@ -104,21 +104,13 @@
 
         methods : {
             init () {
-                //更新菜单       
+                //更新菜单
                 this.$store.commit('updateMenulist');
                 this.userName = Cookies.get('user');
-                //console.log( this.$store.state )
-                // let pathArr = util.setCurrentPath(this, this.$route.name);
-                // console.log(pathArr)
-                
-                // if (pathArr.length >= 2) {
-                //     this.$store.commit('addOpenSubmenu', pathArr[1].name);
-                // }
-                // let messageCount = 3;
-                // this.messageCount = messageCount.toString();
-                // this.checkTag(this.$route.name);
-                // this.$store.commit('setMessageCount', 3);
-
+                let pathArr = util.setCurrentPath(this, this.$route.name);                             
+                if (pathArr.length >= 2) {
+                    this.$store.commit('addOpenSubmenu', pathArr[1].name);
+                }
             },
             quitLogin () {
                 console.log('退出登录');                
@@ -145,7 +137,6 @@
         },
         mounted () {
             this.init();
-		    //console.log('初始进入--框架外层框架')
 	    }
     };
 </script>

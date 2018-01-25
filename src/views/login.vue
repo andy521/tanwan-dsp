@@ -59,16 +59,14 @@ export default {
         handleSubmit () {
             this.$refs.loginForm.validate( (valid) => {
                 if (valid) {                    
-                    let userinfo = { 'user' : this.form.userName,'password' : this.form.password}
+                    let userinfo = { 'user' : this.form.userName,'password' : this.form.password }
                     Axios.post('api.php',{
-                        'action' : 'sys',
-                        'opt' : 'login',
-                        'uName' : userinfo.user,
-                        'uPass' : userinfo.password,
+                        'user_name' : userinfo.user,
+                        'pas' : userinfo.password,
                     })
                     .then((res)=>{
                         //路径index.js要判断的
-                        Cookies.set('user', userinfo.user);                                    
+                        Cookies.set('user', userinfo.user);                                                            
                         this.$store.dispatch('UserLogin', userinfo);  
                         this.$router.push({ name: 'home_index' });
                     }).catch((err)=>{console.log(err)});
@@ -78,8 +76,5 @@ export default {
         }
     }
 };
+//https://github.com/q275957304/holichat/blob/master/src/reducers/modules/user/action.js
 </script>
-
-<style>
-
-</style>

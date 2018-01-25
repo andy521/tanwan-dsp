@@ -29,7 +29,7 @@ Axios.interceptors.request.use(
     },
     error => {
         Message.info(error);
-        console.log(error);
+        console.log('拦截器' + error);
         return Promise.reject(error.data.error.message);
     }
 );
@@ -46,7 +46,8 @@ Axios.interceptors.response.use(
     },
     error => {
         // 返回 response 里的错误信息
-        Message.info(res.data.ret);        
+        Message.info(res.data.ret);  
+        console.log('拦截器' + error);      
         return Promise.reject(error);
     }
 );

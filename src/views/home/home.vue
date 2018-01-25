@@ -3,21 +3,19 @@
     @import '../../styles/table.less';
     .ivu-card-body{padding: 10px;}
     .ivu-card-head-inner, .ivu-card-head p{height: auto}    
-</style>
-<style scoped>
-    
+    .card-title-small .ivu-card-head{padding: 9px 16px 7px;}
+    .card-title-small .ivu-card-head .card-title{line-height:32px;}
 </style>
 <template>
     <div id="home">
 
         <Row class-name="home-page-row1" class="margin-top-10">
-            <Card dis-hover shadow>
+            <Card dis-hover shadow class="card-title-small">
                 <p slot="title" class="card-title">
                     <Icon type="ios-paper"></Icon>
                     所选账户在所选时段数据汇总
-                    <ButtonGroup size="small" :style="{ float: 'right'}">
+                    <ButtonGroup :style="{ float: 'right'}">
                         <Button type="primary" @click="addBindId = true">新增绑定账户</Button>
-                        <Button type="primary">下载报表</Button>
                     </ButtonGroup>
                 </p>
                 <div class="map-con">
@@ -25,7 +23,7 @@
 
                         <Col :xs="24" :sm="12" :md="4" :style="{marginBottom: '10px'}">
                             <infor-card
-                                id-name="user_created_count"
+                                id-name="impression"
                                 :end-val="total.impression"
                                 iconType="ios-eye"
                                 color="#2d8cf0"
@@ -35,7 +33,7 @@
 
                         <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
                             <infor-card
-                                id-name="user_created_count"
+                                id-name="click"
                                 :end-val="total.click"
                                 iconType="mouse"
                                 color="#64d572"
@@ -45,7 +43,7 @@
 
                         <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
                             <infor-card
-                                id-name="user_created_count"
+                                id-name="balance_1"
                                 :end-val="total.balance_1"
                                 iconType="social-yen"
                                 color="#f90"
@@ -55,7 +53,7 @@
 
                         <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
                             <infor-card
-                                id-name="user_created_count"
+                                id-name="balance_2"
                                 :end-val="total.balance_2"
                                 iconType="social-buffer-outline"
                                 color="#f25e43"
@@ -65,7 +63,7 @@
 
                         <Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
                             <infor-card
-                                id-name="user_created_count"
+                                id-name="balance_4"
                                 :end-val="total.balance_4"
                                 iconType="card"
                                 color="#19be6b"
@@ -80,11 +78,10 @@
         </Row>
 
         <!-- 按账户查看 - 按产品查看 -->
-        <view-tab :table-data="table.list" :total="table.total" :page ="table.page" :page-size="table.page_size"></view-tab>      
+        <view-tab :account="account" :principal="principal" :media="media"></view-tab>      
 
         <!-- 线性表格 -->
         <linear-tabel :data-echart="echart" ></linear-tabel>
-
 
         <Modal
             v-model="addBindId"
@@ -99,7 +96,7 @@
                     <Row :gutter="10">
                         <Col span="12">
                             <FormItem label="账号平台">
-                                <Select v-model="formItem.select">
+                                <Select v-model="formItem.platform">
                                     <Option value="baidu">baidu</Option>
                                     <Option value="google">google</Option>
                                     <Option value="sogou">sogou</Option>
@@ -108,20 +105,20 @@
                         </Col>
                         <Col span="12">
                             <FormItem label="推广方式">
-                                <Select v-model="formItem.select">
+                                <Select v-model="formItem.mode">
                                     <Option value="1">竞价推广</Option>
                                 </Select>
                             </FormItem>
                         </Col>
                     </Row>                    
                     <FormItem label="账号名字">
-                        <Input v-model="formItem.input1"></Input>
+                        <Input v-model="formItem.name"></Input>
                     </FormItem>
                     <FormItem label="账户密码">
-                        <Input v-model="formItem.input2"></Input>
+                        <Input v-model="formItem.password"></Input>
                     </FormItem>
                     <FormItem label="账号口令">
-                        <Input v-model="formItem.input3"></Input>
+                        <Input v-model="formItem.token"></Input>
                     </FormItem>
                 </Form>
             </div>           
@@ -136,12 +133,6 @@ import inforCard from './components/inforCard.vue';
 import linearTabel from './components/linearTabel.vue';
 import viewTab from './components/viewTab.vue';
 
-
-// import {table2csvData, csvColumns} from './data/table2csv.js';
-// import {table2excelData, excelColumns} from './data/table2excel.js';
-// import table2excel from '@/utils/table2excel.js';
-
-
 export default {
     name: 'overview',
     components :{
@@ -153,34 +144,43 @@ export default {
         return {
             addBindId :false,
             loading: true,
-            formItem: {                
-                input1: '',
-                input2: '',
-                input3: '',
-                select : ''
+            formItem: {   
+                platform: '',             
+                mode: '',
+                name: '',
+                password: '',
+                token : ''
             }
         };
     },
-    computed :{
+    computed :{ // 计算属性的 getter
         total () {
             return this.$store.state.home.total;
         },
         echart(){
             return this.$store.state.home.echart;
         },
-        table(){
-            return this.$store.state.home.table;
+        account(){
+            return this.$store.state.home.account;
+        },
+        principal(){
+            return this.$store.state.home.principal;
+        },
+        media(){
+            return this.$store.state.home.media;
         }
     },
-    methods: {
-        getData(){
-            //获取home总数据      
-            this.$store.dispatch('getMenuList');
+    methods: {   
+        //获取账户总览总数据
+        getData(){            
+            this.$store.dispatch('getOverview');
         },
-        addBindOk(){            
+        //新增绑定账户
+        addBindOk(){
+            //console.log(this.formItem)   
             setTimeout(() => {
                 this.addBindId = false;
-            }, 2000);
+            }, 20000);
         }
     },
     mounted(){

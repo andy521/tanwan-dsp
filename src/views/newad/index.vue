@@ -1,6 +1,6 @@
 <template>
     <div class="ad">
-        新建广告位
+        新建广告位  -- 正在开发中
     </div>
 </template>
 

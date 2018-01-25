@@ -84,8 +84,7 @@ const app = {
             // })
             // .catch(function(err){
             //     console.log(err);
-            // });             
-             
+            // });
 
             state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [otherRouter.children[0]];
         },
@@ -97,6 +96,47 @@ const app = {
         clearOpenedSubmenu (state) {
             console.log(state)
             state.openedSubmenuArr.length = 0;
+        },
+        setCurrentPath (state, pathArr) {
+            state.currentPath = pathArr;
+        },
+        addOpenSubmenu (state, name) {
+            let hasThisName = false;
+            let isEmpty = false;
+            if (name.length === 0) {
+                isEmpty = true;
+            }
+            if (state.openedSubmenuArr.indexOf(name) > -1) {
+                hasThisName = true;
+            }
+            if (!hasThisName && !isEmpty) {
+                state.openedSubmenuArr.push(name);
+            }
+        },
+
+
+
+        pageOpenedList (state, get) {
+            let openedPage = state.pageOpenedList[get.index];
+            if (get.argu) {
+                openedPage.argu = get.argu;
+            }
+            if (get.query) {
+                openedPage.query = get.query;
+            }
+            state.pageOpenedList.splice(get.index, 1, openedPage);
+            localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
+        },
+        increateTag (state, tagObj) {
+            if (!Util.oneOf(tagObj.name, state.dontCache)) {
+                state.cachePage.push(tagObj.name);
+                localStorage.cachePage = JSON.stringify(state.cachePage);
+            }
+            state.pageOpenedList.push(tagObj);
+            localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
+        },
+        setCurrentPageName (state, name) {
+            state.currentPageName = name;
         },
     }
 };

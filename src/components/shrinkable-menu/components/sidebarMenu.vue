@@ -46,8 +46,7 @@ export default {
         }
     },
     methods: {
-
-        changeMenu (active) {
+        changeMenu (active) {      
             this.$emit('on-change', active);
         },
 

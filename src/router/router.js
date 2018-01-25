@@ -13,7 +13,7 @@ export const loginRouter = {
 };
 
 
-// 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在 otherRouter 里
+
 export const otherRouter = {
     path: '/',
     name: 'otherRouter',
@@ -28,7 +28,7 @@ export const otherRouter = {
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
     {
-        path: '/',
+        path: '/index',
         icon: 'ios-home',
         name: 'overview',
         title: '账户总览',
@@ -65,13 +65,13 @@ export const appRouter = [
         ]
     },
     {
-        path: '/newsad',
+        path: '/newad',
         icon: 'ios-copy',
-        name: 'newsad',
+        name: 'newad',
         title: '新建广告',
         component: Main,
         children: [
-            { path: 'newsad', title: '新建广告', name: 'newsad_index', component: () => import('@/views/newsad/newsad.vue')}
+            { path: 'newad', title: '新建广告', name: 'newad_index', component: () => import('@/views/newad/index.vue')}
         ]
     },
     {

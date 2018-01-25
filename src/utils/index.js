@@ -238,4 +238,12 @@ util.fullscreenEvent = function (vm) {
     // 全屏相关
 };
 
+util.mediaSelect = function (data){
+    let m = [{'value':0,'label':'全部'}];
+    for(let i in data){
+        m.push({ 'value': data[i].MeidaType, 'label' : data[i].name })
+    }
+    return m
+};
+
 export default util;
