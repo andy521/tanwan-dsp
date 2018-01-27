@@ -1,0 +1,153 @@
+blockquote, body, code, dd, div, dl, dt, fieldset, figure, form, h1, h2, h3, h4, h5, h6, input, legend, li, ol, p, pre, td, textarea, th, ul {
+    margin: 0;
+    padding: 0;
+}
+.clearfix:after,.clearfix:before{
+	content: " ";
+	display: table
+}
+
+.clearfix:after{
+	clear: both
+}
+
+.duration-area{
+    width: 100%;
+    padding: 20px;
+}
+.duration {
+    width: 707px;
+    border: 1px solid #eee;
+    cursor: default;
+    border-right: 0;
+    line-height: 1;
+    font-size: 15px;
+    border-bottom: 0;
+    position: relative;
+}
+.duration .content {
+    clear: both;
+    height: 245px;
+    overflow: hidden;
+    position: relative;
+}
+.duration .header {
+    height: 71px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+.pull-left {
+    float: left!important;
+}
+.ad-process *, .ad-process:active, .ad-process:focus {
+    box-shadow: 0;
+    outline: 0;
+}
+.duration .info, .duration .week .day {
+    background: #fafafa;
+}
+.duration .header .info {
+    width: 82px;
+    height: 70px;
+    line-height: 70px;
+    border-right: 1px solid #eee;
+}
+
+.duration .header .time {
+    background: #fafafa;
+    border-right: 1px solid #eee;
+    width: 312px;
+}
+.duration .header .num {
+    height: 35px;
+    line-height: 34px;
+    width: 312px;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    font-weight: 700;
+}
+.duration .header .time .detail {
+    width: 313px;
+}
+.duration .header .digital {
+    width: 26px;
+    height: 35px;
+    line-height: 35px;
+    border-right: 1px solid #eee;
+}
+
+.duration-tipline {
+    line-height: 40px;
+    width: 707px;
+}
+.duration-tipline span {
+    display: inline-block;
+    vertical-align: middle;
+}
+.duration-tipline .color-box {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    border: 1px solid rgba(57,73,103,.2);
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.duration-tipline .color-box+span {
+    margin-right: 15px;
+}
+.duration-tipline .color-box.color-blue {
+    height: 15px;
+    width: 15px;
+    border-color: #1ba3f4;
+    background: #1ba3f4;
+}
+.duration-tipline .color-box+span {
+    margin-right: 15px;
+}
+.duration-tipline .weektip {
+    color: #888;
+    padding-left: 5px;
+}
+.duration-tipline .emptied {
+    float: right;
+}
+
+/* 中间 */
+
+.duration .content .week {
+    width: 82px;
+    border-right: 1px solid #eee;
+    height: 100%;
+}
+.duration .content .week .day {
+    border-bottom: 1px solid #eee;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+}
+.duration .info, .duration .week .day {
+    background: #fafafa;
+}
+.duration .boxzone {
+    float: left;
+    width: 624px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.duration .boxzone .box {
+    width: 13px;
+    height: 35px;
+    float: left;
+    background: #fff;
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.duration .boxzone .box.active, .duration .boxzone .box.choosed {
+    background-color: #1ba3f4;
+}

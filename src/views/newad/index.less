@@ -1,0 +1,103 @@
+.ad{
+    .ivu-layout{
+        background: #fff;
+    }
+    .ivu-menu-light{
+        height: 100%;
+    }
+    .ivu-menu-light.ivu-menu-vertical .ivu-menu-item{
+        padding: 14px 30px 14px 50px;
+    }
+    .ivu-menu-item>i{
+        float: right;
+        margin-top: 3px;
+        display: none;
+    }
+    .ivu-menu-item-active>i{
+        display: block;
+    }
+    .pendant {
+        position: fixed;
+        z-index: 90;
+        right: 40px;
+        top: 90px;
+        width: 240px;
+        background: #f5f6f8;
+        max-height: 99%;
+        overflow: auto;
+        z-index: 9999;
+        padding:30px;
+    }
+    &-tit{
+        font-size: 34px;
+        font-weight: 900;
+        padding-top: 37px;
+        color: #404246;
+    }
+    .ivu-tabs{
+        display: inline-block;
+    }
+    .ivu-tabs-bar{
+        border: none
+    }
+    &-desc{
+        margin-top: 40px; 
+        font-size: 20px;
+        font-weight: 900;
+        line-height: 1;
+        color: #404246;
+        margin-bottom: 10px;
+    }
+    &-up{
+        margin-bottom: 30px;      
+        &-size{
+            font-weight: 900;
+            display: block;
+            font-size: 22px;
+        }
+        &-file{            
+            display: block;
+            color: #666;
+            position: relative;
+            .ivu-upload-drag{
+                background: #f8f9fa;
+                border-style: solid;
+                border-radius: 0;
+            }
+            .controlbtn{
+                min-height: 53px;
+                font-weight: 400;
+                font-size: 14px;
+                position: absolute;
+                z-index: 9999;
+                left: 0;
+                top: 100%;
+                // width: calc(100% +  2px);
+                width: 100%;
+                border: 1px solid #dbdee4;
+                text-align: center;
+                background: #fff;
+                box-shadow: 0 1px 5px rgba(0,0,0,.15);
+                display: none;
+                .ivu-btn{
+                    font-size: 16px;
+                    padding:0 30px;
+                    line-height: 53px;
+                    border-radius: 0;
+                    .ivu-icon{
+                        margin-top: 12px;
+                        margin-right: 10px;
+                        float: left;
+                    }
+                }
+                .ivu-btn-text:hover{
+                    background-color: #f5f6f8;
+                    color: #666;
+                }
+            }
+        }
+    }
+    .select-ts{
+        padding: 5px 16px;
+    }
+}

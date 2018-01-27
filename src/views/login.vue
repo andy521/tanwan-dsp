@@ -4,31 +4,30 @@
 <template>
     <div class="login" @keydown.enter="handleSubmit">
         <div class="login-con">
-            <Card :bordered="false">
-                <p slot="title">
-                    <Icon type="log-in"></Icon>欢迎登录
-                </p>
+            <Card :bordered="false" >
+                <div slot="title">
+                    <div class="avatar"><img src="../images/avatar.jpg" alt=""></div>
+                    <div class="ts">登录贪玩DSP后台</div>
+                </div>
                 <div class="form-con">
                     <Form ref="loginForm" :model="form" :rules="rules">
                         <FormItem prop="userName">
-                            <Input v-model="form.userName" placeholder="请输入用户名">
-                                <span slot="prepend">
-                                    <Icon :size="16" type="person"></Icon>
-                                </span>
-                            </Input>
+                            <div class="icon"><img src="../images/person.png" alt=""></div>
+                            <Input v-model="form.userName" placeholder="请输入用户名"></Input>
                         </FormItem>
                         <FormItem prop="password">
-                            <Input type="password" v-model="form.password" placeholder="请输入密码">
-                                <span slot="prepend">
-                                    <Icon :size="14" type="locked"></Icon>
-                                </span>
-                            </Input>
+                            <div class="icon"><img src="../images/locked.png" alt=""></div>
+                            <Input type="password" v-model="form.password" placeholder="请输入密码"></Input>
                         </FormItem>
                         <FormItem>
                             <Button @click="handleSubmit" type="primary" long>登录</Button>
                         </FormItem>
+                        <FormItem class="login-tip">
+                            <Checkbox v-model="form.check">记住登录状态</Checkbox>
+                            <a href="javascript:void(0)" class="zf">找回密码</a>
+                        </FormItem>
                     </Form>
-                    <p class="login-tip">输入任意用户名和密码即可</p>
+                    
                 </div>
             </Card>
         </div>
@@ -43,14 +42,15 @@ export default {
         return {
             form: {
                 userName: '',
-                password: ''
+                password: '',
+                check:true
             },
             rules: {
                 userName: [
-                    { required: true, message: '账号不能为空', trigger: 'blur' }
+                    { required: true, message: ' ', trigger: 'blur' }
                 ],
                 password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' }
+                    { required: true, message: ' ', trigger: 'blur' }
                 ]
             }
         };
@@ -59,7 +59,8 @@ export default {
         handleSubmit () {
             this.$refs.loginForm.validate( (valid) => {
                 if (valid) {                    
-                    let userinfo = { 'user' : this.form.userName,'password' : this.form.password }
+                    let userinfo = { 'user' : this.form.userName,'password' : this.form.password, 'remember' : this.form.check}
+                    console.log(userinfo)
                     Axios.post('api.php',{
                         'user_name' : userinfo.user,
                         'pas' : userinfo.password,
