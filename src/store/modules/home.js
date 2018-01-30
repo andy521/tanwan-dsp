@@ -61,6 +61,7 @@ const home = {
                 err=>{ console.log('账户总览' + err) }
             );           
         },
+        //按账户查看 - 按负责人查看
         getPrincipal({ commit },param){
             let opt = param ||{};
                 opt.group_by = 'author';

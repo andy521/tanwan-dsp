@@ -9,7 +9,7 @@ const channel = {
         total_page:0,
         game:[],
         media:{},
-    },
+    },    
     mutations: {        
         GETPRODUCT (state , data){
             //console.log(data);
@@ -26,8 +26,9 @@ const channel = {
             let media = util.mediaSelect(data);
             state.media = media
         }
-    },
+    },    
     actions : {
+        //获取渠道信息 - 总览数据
         getProduct({ commit }, param){
             let opt = param;
                 opt.action = 'api';
@@ -38,9 +39,9 @@ const channel = {
             ).catch( 
                 err=>{ console.log( err) }
             );
-        },        
-        getGame({ commit }){
-            //获取全部游戏            
+        },
+        //获取全部游戏     
+        getGame({ commit }){                      
             Axios.get('api.php',{'action':'api','opt':'getGameLists'})
             .then( 
                 res=>{ commit('GAMELIST',res.data) }
@@ -48,6 +49,7 @@ const channel = {
                 err=>{ console.log(err) }
             );
         },
+        //获取全部媒体
         getMedia({ commit }){
             Axios.get('api.php',{'action':'api','opt':'getMedia'})
             .then( 
@@ -56,6 +58,7 @@ const channel = {
                 err=>{ console.log('获取媒体失败' + err) }
             ); 
         },
+        //根据条件获取产品总览数据
         getFilterProduct({commit},param){
             let opt = param;
                 opt.action = 'api';
