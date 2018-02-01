@@ -12,14 +12,14 @@ const channel = {
     },    
     mutations: {        
         GETPRODUCT (state , data){
-            //console.log(data);
+            console.log(data);
             state.list = data.list;
             state.page = data.page;
             state.page_size = data.page_size;
             state.total_number = data.total_number;
             state.total_page = data.total_page;
         },
-        GAMELIST(state,data){
+        GAMELIST(state,data){            
             state.game = data
         },
         MEDIALIST(state,data){
@@ -41,7 +41,7 @@ const channel = {
             );
         },
         //获取全部游戏     
-        getGame({ commit }){                      
+        getGame({ commit }){
             Axios.get('api.php',{'action':'api','opt':'getGameLists'})
             .then( 
                 res=>{ commit('GAMELIST',res.data) }

@@ -5,7 +5,9 @@ const newad = {
 		authorlist: [],
 		campaign_type: {},
 		product_type: {},
-		configured_status: {}
+        configured_status: {},
+
+        adcreative_template:[],
 	},
 	mutations: {
 		GET_AUTHOR(state, data) {
@@ -19,7 +21,13 @@ const newad = {
 		},
 		GET_CONFIGURED_TYPE(state, data) {
 			state.configured_status = data;
-		},
+        },
+        
+        //广告版位
+        GET_AD_SPACE(state,data){
+            //console.log(data)        
+            state.adcreative_template = data;
+        }
 	},
 	actions: {
 		//获取负责人
@@ -109,7 +117,19 @@ const newad = {
 					console.log('新建广告计划' + err)
 				}
 			)
-		},
+        },
+        
+
+        //获取广告版位
+        getAdSpace( {commit}, data ){
+            Axios.get('api.php', {
+				action: 'gdtAdPut',
+				opt: 'ret_ads_config'
+			}).then(res => {
+                //console.log( res.data.adcreative_template )
+                commit('GET_AD_SPACE', res.data.adcreative_template )
+            }).catch( err => console.log('获取广告版位' + err ))
+        }
 
 	}
 };

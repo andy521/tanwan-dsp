@@ -27,6 +27,7 @@
         },
         methods: {
             mockTableData2 () {
+                //创建数据页以
                 let data = [];
                 function getNum() {
                     return Math.floor(Math.random () * 10000 + 1);

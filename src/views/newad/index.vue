@@ -14,11 +14,15 @@
 		<side-bar></side-bar>
 		<Content :style="{padding: '40px', minHeight: '280px', background: '#fff'}">
 			<!--步骤1-->
-			<step-one></step-one>
+			<!-- <step-one></step-one> -->
 			<!--步骤2-->
-			<step-two></step-two>
+			<!-- <step-two></step-two> -->
+            
             <!-- 步骤3 -->
-            <step-three></step-three>
+            <!-- <step-three></step-three> -->
+
+            <!-- 上传创意  这个要根据上一步的数据来生成 -->
+            <up-creative :data="creative"></up-creative>
 		</Content>
 
 	</div>
@@ -29,17 +33,22 @@
 	import stepOne from './components/stepOne.vue';
     import stepTwo from './components/stepTwo.vue';
     import stepThree from './components/stepThree.vue';
+    import upCreative from './components/upCreative.vue';
 
 	export default {
 		components: {
 			sideBar,
 			stepOne,
             stepTwo,
-            stepThree
+            stepThree,
+            upCreative
 		},
 		data() {
 			return {
-				account_id: this.$route.params.account_id,
+                account_id: this.$route.params.account_id,
+
+                //广告创建数据
+                creative:["title","description","image","image2","deep_link_url"],
 			}
 		},
 		mounted() {

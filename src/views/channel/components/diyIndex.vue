@@ -26,57 +26,30 @@
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
 				</div>
-				<div class="checklist">
-					媒体列
-				</div>
+				<div class="checklist">媒体列</div>
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="game_name">广告开关</Checkbox>
+					<Checkbox label="media_type">媒体类型</Checkbox>
 					<Checkbox label="account_name">广告状态，花费</Checkbox>
 					<Checkbox label="campaign_id">点击均价（cpc）</Checkbox>
-					<Checkbox label="configured_status">点击量</Checkbox>
+					<Checkbox label="click_cost">点击量</Checkbox>
 					<Checkbox label="site_id">点击率(CTR)</Checkbox>
 				</CheckboxGroup>
-				<div class="checklist">
-					落地页
-				</div>
-				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+                <div class="checklist">落地页</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
 					<Checkbox label="impression">到达数</Checkbox>
 					<Checkbox label="click">到达率</Checkbox>
-					<Checkbox label="click">下载率</Checkbox>
-					<Checkbox label="click">下载数</Checkbox>
+					<Checkbox label="download">下载数</Checkbox>
 				</CheckboxGroup>
-				<div class="checklist">
+                <div class="checklist">
 					激活注册
 				</div>
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
 					<Checkbox label="cost">激活总量</Checkbox>
-					<Checkbox label="click_cost">点击激活率</Checkbox>
+					<Checkbox label="reg_imei_cost">点击激活率</Checkbox>
 					<Checkbox label="active">注册设备数</Checkbox>
 					<Checkbox label="reg_total">注册数</Checkbox>
 					<Checkbox label="reg_per">点击注册率</Checkbox>
 					<Checkbox label="reg_cost">注册成本</Checkbox>
-					<Checkbox label="active">注册设备成本</Checkbox>
-				</CheckboxGroup>
-				<div class="checklist">
-					活跃付费
-				</div>
-				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="active">活跃数</Checkbox>
-					<Checkbox label="reg_total">活跃率</Checkbox>
-					<Checkbox label="reg_per">付费人数</Checkbox>
-					<Checkbox label="reg_cost">付费金额</Checkbox>
-					<Checkbox label="reg_imei_cost">付费率</Checkbox>
-					<Checkbox label="login_cost">付费ARPU</Checkbox>
-					<Checkbox label="pay_num">回本率</Checkbox>
-				</CheckboxGroup>
-				<div class="checklist">
-					其他
-				</div>
-				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="pay_total">展示PV</Checkbox>
-					<Checkbox label="pay_per">展示IP</Checkbox>
-					<Checkbox label="reg_arpu">下载IP</Checkbox>
-					<Checkbox label="income_per">激活安装率</Checkbox>
 				</CheckboxGroup>
 			</div>
 		</Poptip>
@@ -89,7 +62,7 @@
 			return {
                 indeterminate: true,
                 checkAll: false,
-                checkAllGroup: [],
+                checkAllGroup: ['media_type','account_name','campaign_id','click_cost','site_id','impression','click',],
 			}
 		},
 		methods: {
@@ -102,28 +75,42 @@
 					this.checkAll = !this.checkAll;
 				}
                 this.indeterminate = false;
-                
+
 				if(this.checkAll) {
 					this.checkAllGroup = [ 
-                        'game_name', 
-                        'account_name', 
-                        'campaign_id', 
-                        'configured_status', 
-                        'site_id', 'impression', 
-                        'click', 
-                        'cost', 
-                        'click_cost', 
-                        'active', 
+                        'media_type',
+                        'account_id',
+                        'account_name',
+                        'author',
+                        'game_id',
+                        'product_refs_id',
+                        'agent_id',
+                        'site_id',
+                        'campaign_id',
+                        'adgroup_id',
+                        'impression',
+                        'click',
+                        'cost',
+                        'download',
+                        'conversion',
+                        'activation',
+                        'campaign_name',
+                        'adgroup_name',
+                        'daily_budget',
+                        'media_name',
+                        'click_cost',
+                        'active',
                         'reg_total', 
-                        'reg_per', 
-                        'reg_cost', 
-                        'reg_imei_cost', 
-                        'login_cost', 
-                        'pay_num', 
-                        'pay_total', 
-                        'pay_per', 
-                        'reg_arpu', 
-                        'income_per'
+                        'reg_per',                       
+                        'reg_cost',
+                        'reg_imei_cost',
+                        'login',
+                        'alogin_cost',
+                        'pay_num',
+                        'pay_total',
+                        'pay_per',
+                        'reg_arpu',
+                        'income_per',
                     ];
                     this.$emit('on-change', this.checkAllGroup);
 				} else {
@@ -134,7 +121,7 @@
 			//自定义指标
 			checkAllGroupChange(data) {
                 this.$emit('on-change', this.checkAllGroup);
-				if(data.length === 27) {
+				if(data.length === 33) {
 					this.indeterminate = false;
 					this.checkAll = true;
 				} else if(data.length > 0) {

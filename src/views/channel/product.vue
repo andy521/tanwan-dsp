@@ -66,23 +66,9 @@ export default {
                 {value: 'ios', label:'iOS'},
                 {value: 'andrio', label:'安卓'},
             ],
-            tableColumns: [
-                {title: '日期', key: 'date', "fixed": "left", "width": 120 },
-                {title: '广告位', key: 'site_id', "width": 100 },
-                {title: '计划', key: 'campaign_id', "width": 100 },
-                {title: '账号', key: 'account_name', "width": 140 },
-                {title: '花费', key: 'cost', "width": 140 },
-                {title: '点击IP', key: 'click', "width": 140 },
-                {title: '点击率', key: 'click_cost', "width": 80 },
-                {title: '激活安装', key: 'active', "width": 120 },
-                {title: '注册', key: 'reg_total', "width": 120 },
-                {title: '注册率', key: 'reg_per', "width": 120 },
-                {title: '注册成本', key: 'reg_cost', "width": 120 },
-                {title: '次日活跃', key: 'login', "width": 120 },
-                {title: '活跃成本', key: 'login_cost', "width": 120 },
-                {title: '付费人数', key: 'pay_num', "width": 120 },
-            ],
-            checkAllGroup:[]
+            tableColumns: [],
+            //默认选项目
+            checkAllGroup:['media_type','account_name','campaign_id','click_cost','site_id','impression','click',]
         }
     },
     computed :{ 
@@ -155,15 +141,93 @@ export default {
             console.log(data)
         },
         //获取 自定义指标
-        getIndex(index){
-            console.log(index)
-        }
+        getIndex(data){
+            this.checkAllGroup = data;           
+            this.tableColumns = this.getTableColumns();
+        },
+        //设置表格头部
+        getTableColumns(){
+            const tableColumnList = {
+                data : {title: '日期', key: 'date', "fixed": "left", "width": 120 },
+                media_type : {title: '媒体类型', key: 'media_type', "width": 100 },
+                account_name : {title: '广告状态', key: 'account_name', "width": 150 },
+                campaign_id : {title: '点击均价（cpc）', key: 'campaign_id', "width": 150 },
+                click_cost : {title: '点击量', key: 'click_cost', "width": 100 },
+                site_id : {title: '点击率(CTR)', key: 'site_id', "width": 150 },
+                impression : {title: '到达数', key: 'impression', "width": 100 },
+                click : {title: '点击率', key: 'click', "width": 100 },
+                download : {title: '下载数', key: 'download', "width": 100 },
+                cost : {title: '激活总量', key: 'cost', "width": 100 },
+                reg_imei_cost : {title: '点击激活率', key: 'reg_imei_cost', "width": 100 },
+                active : {title: '注册设备数', key: 'active', "width": 100 },
+                reg_total : {title: '注册数', key: 'reg_total', "width": 100 },
+                reg_per : {title: '点击注册率', key: 'reg_per', "width": 100 },
+                reg_cost : {title: '注册成本', key: 'reg_cost', "width": 100 },
+            };            
+            //默认先项
+            let data = [
+                tableColumnList.data,
+            ];
+
+            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) )
+            return data;
+        },
+        changeTableColumns(){
+            this.tableColumns = this.getTableColumns();
+        },
     },
     mounted(){
+        this.changeTableColumns();
         this.height = document.body.clientHeight - 225;
         this.init();  
         this.gameItem();
         this.mediaItem();
     }
 }
+
+/*
+
+
+http://ads.tanwan.com/api.php?do=adsOverview&action=api&opt=getGameTotalDay
+
+//参数说明
+
+id":"29",
+"date":"2018-01-23",
+"media_type":null,
+"account_id":"3415636",
+"account_name":"1517466390",
+"author":"张建邦",
+"game_id":"294",
+"product_refs_id":"1303502887",
+"agent_id":"100554",
+"site_id":"147881",
+"campaign_id":"9043944",
+"adgroup_id":"44394835",
+"impression":"50935",
+"click":"136",
+"cost":"960.73",
+"download":"0",
+"conversion":"0",
+"activation":"4",
+"campaign_name":"蓝月争霸-新闻组图-IOS-2",
+"adgroup_name":"腾讯新闻2-230×152多图(文)-20180122",
+"configured_status":"AD_STATUS_NORMAL",
+"daily_budget":"4000000",
+"media_name":"-张建邦",
+"click_cost":0,
+"active":0,
+"reg_total":0,
+"reg_per":"0%",
+"reg_cost":0,
+"reg_imei_cost":0,
+"login":0,
+"login_cost":0,
+"pay_num":0,
+"pay_total":0,
+"pay_per":"0%",
+"reg_arpu":0,
+"income_per":0
+*/
+
 </script>
