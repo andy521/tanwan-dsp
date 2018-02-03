@@ -4,7 +4,7 @@
 </style>
 <template>
 	<Poptip placement="bottom-start" width="400">
-		<Input class="sel" v-model.trim.lazy="search" @on-change="changeSearch" icon="arrow-down-b"  placeholder="全部"></Input>
+		<Input class="sel" v-model.trim.lazy="search" @on-change="changeSearch" icon="arrow-down-b"  placeholder="全部产品"></Input>
 		<div class="api" slot="content">
 			<div class="Treebox">
 				<Tree :data="newlist" show-checkbox @on-check-change="changeTree"></Tree>
@@ -16,7 +16,9 @@
 	export default {
         name: 'searchTree',
         props: {
-            game : Array
+            game : Array,
+            clearable : Boolean,
+
         },
 		data() {
 			return {
@@ -27,10 +29,18 @@
                 gameData:[],
 			}
         },
+
         watch: {
-            game(data){
-                this.gameData = data;
+            game(val){
+                this.gameData = val;
                 this.createTree()
+            },
+            clearable(val){
+                console.log(val)
+                if(!!val){
+                    this.search = '';
+                    this.createTree();
+                }
             }
 		},
 		methods: {

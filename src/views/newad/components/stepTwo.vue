@@ -146,7 +146,7 @@
 
 		<div class="margin-top-20">
 			<Select style="width:200px">
-				<Option value="1">新建定向</Option>
+				<Option :key="1" value="1">新建定向</Option>
 			</Select>
 			<span>下拉选择已有定向包</span>
 		</div>
@@ -170,8 +170,8 @@
 						<Col span="12">
 						<Input class="margin-top-20" icon="ios-search-strong" placeholder="搜索国家、省、市、区、商圈">
 						<Select slot="append" value="1" style="width: 100px">
-							<Option value="1">从列表选择</Option>
-							<Option value="0">从地图选择</Option>
+							<Option :key="1" value="1">从列表选择</Option>
+							<Option :key="2" value="0">从地图选择</Option>
 						</Select>
 						</Input>
 						</Col>
@@ -224,12 +224,12 @@
 					<Row :gutter="15">
 						<Col span="12">
 						<Select>
-							<Option v-for="item in 5" :value="item">{{ item }}</Option>
+							<Option v-for="(item,index) in 5" :value="item" :key="index" >{{ item }}</Option>
 						</Select>
 						</Col>
 						<Col span="12">
 						<Select>
-							<Option v-for="item in 5" :value="item">{{ item }}</Option>
+							<Option v-for="(item,index) in 5" :value="item" :key="index">{{ item }}</Option>
 						</Select>
 						</Col>
 					</Row>

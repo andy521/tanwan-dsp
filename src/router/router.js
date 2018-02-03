@@ -68,7 +68,7 @@ export const appRouter = [
             { path: 'media', title: '媒体总览', name: 'channel_media',  icon: 'android-radio-button-off', component: () => import('@/views/channel/media.vue') },
             { path: 'account', title: '账户总览', name: 'channel_account',  icon: 'android-radio-button-off', component: () => import('@/views/channel/account.vue') },
             { path: 'plan', title: '计划总览', name: 'channel_plan',  icon: 'android-radio-button-off', component: () => import('@/views/channel/plan.vue') },
-            { path: 'ad', title: '广告位总览', name: 'channel_ad',  icon: 'android-radio-button-off', component: () => import('@/views/channel/ad.vue') }
+            { path: 'ad', title: '广告总览', name: 'channel_ad',  icon: 'android-radio-button-off', component: () => import('@/views/channel/ad.vue') }
         ]
     },    
     {

@@ -1,177 +1,212 @@
+<style lang="less">
+    @import "../../styles/common.less";
+    @import '../../styles/table.less';
+    .head{border-bottom: 1px solid #e9eaec; margin-bottom: 10px; padding: 0;}  
+</style>
 <template>
-<div>
-    <Checkbox-group v-model="tableColumnsChecked" @on-change="changeTableColumns">
-        <Checkbox label="show">Show</Checkbox>
-        <Checkbox label="weak">Weak</Checkbox>
-        <Checkbox label="signin">Signin</Checkbox>
-        <Checkbox label="click">Click</Checkbox>
-        <Checkbox label="active">Active</Checkbox>
-        <Checkbox label="day7">7, retained</Checkbox>
-        <Checkbox label="day30">30, retained</Checkbox>
-        <Checkbox label="tomorrow">The next day left</Checkbox>
-        <Checkbox label="day">Day Active</Checkbox>
-        <Checkbox label="week">Week Active</Checkbox>
-        <Checkbox label="month">Month Active</Checkbox>
-    </Checkbox-group>
-    <Table :data="tableData2" :columns="tableColumns2" border></Table>
-    </div>
+    <Card dis-hover shadow>
+        <div class="head">
+            <Row :gutter="10">
+                <Col :xs="12" :md="4">
+                    <!-- 媒体选择: -->
+                    <Select @on-change="setMedia" placeholder="--全部媒体--" style="width:100%"  class="margin-bottom-10">
+                        <Option v-for="item in media" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </Col>
+
+                <Col :xs="12" :md="2">
+                    <!-- 版本: -->
+                    <Select  @on-change="setVersion" placeholder="--全部版本--"  class="margin-bottom-10">
+                        <Option v-for="item in versionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>                                      
+                </Col> 
+
+                <Col :xs="1" :md="2">
+                    <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index> 
+                </Col>               
+
+                <Col :xs="8" :md="3" offset="8">
+                    <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
+                </Col>
+                <Col :xs="12" :md="3">
+                    <Button icon="funnel" long :loading="loading" @click="funnalAd">过滤无数据的广告</Button>
+                </Col>                
+                <Col :xs="12" :md="2">
+                    <Button icon="document-text"  @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
+                </Col>
+
+            </Row>
+        </div>    
+        
+        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" :height="height"></Table>
+        <div style="margin:10px 10px 0;overflow: hidden">
+            <div style="float: right;">
+                <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>
+            </div>
+        </div>       
+    </Card>
 </template>
 <script>
-    export default {
-        data () {
-            return {
-                tableData2: this.mockTableData2(),
-                tableColumns2: [],
-                tableColumnsChecked: ['show', 'weak', 'signin', 'click', 'active', 'day7', 'day30', 'tomorrow', 'day', 'week', 'month']
-            }
-        },
-        methods: {
-            mockTableData2 () {
-                //创建数据页以
-                let data = [];
-                function getNum() {
-                    return Math.floor(Math.random () * 10000 + 1);
-                }
-                for (let i = 0; i < 10; i++) {
-                    data.push({
-                        name: 'Name ' + (i+1),
-                        fav: 0,
-                        show: getNum(),
-                        weak: getNum(),
-                        signin: getNum(),
-                        click: getNum(),
-                        active: getNum(),
-                        day7: getNum(),
-                        day30: getNum(),
-                        tomorrow: getNum(),
-                        day: getNum(),
-                        week: getNum(),
-                        month: getNum()
-                    })
-                }
-                return data;
-            },
-            getTable2Columns () {
-                console.log('aa')
-                const table2ColumnList = {
-                    name: {
-                        title: 'Name',
-                        key: 'name',
-                        fixed: 'left',
-                        width: 200,
-                        render: (h, params) => {
-                            const fav = this.tableData2[params.index].fav;
-                            const style = fav === 0 ? {
-                                cursor: 'pointer'
-                            } : {
-                                cursor: 'pointer',
-                                color: '#f50'
-                            };
+import diyIndex from './components/diyIndex.vue';
 
-                            return h('div', [
-                                h('Icon', {
-                                    style: style,
-                                    props: {
-                                        type: fav === 0 ? 'ios-star-outline' : 'ios-star'
-                                    },
-                                    nativeOn: {
-                                        click: () => {
-                                            this.toggleFav(params.index);
-                                        }
-                                    }
-                                }),
-                                h('span', ' ' + params.row.name)
-                            ]);
-                        }
-                    },
-                    show: {
-                        title: 'Show',
-                        key: 'show',
-                        width: 150,
-                        sortable: true
-                    },
-                    weak: {
-                        title: 'Weak',
-                        key: 'weak',
-                        width: 150,
-                        sortable: true
-                    },
-                    signin: {
-                        title: 'Signin',
-                        key: 'signin',
-                        width: 150,
-                        sortable: true
-                    },
-                    click: {
-                        title: 'Click',
-                        key: 'click',
-                        width: 150,
-                        sortable: true
-                    },
-                    active: {
-                        title: 'Active',
-                        key: 'active',
-                        width: 150,
-                        sortable: true
-                    },
-                    day7: {
-                        title: '7, retained',
-                        key: 'day7',
-                        width: 150,
-                        sortable: true
-                    },
-                    day30: {
-                        title: '30, retained',
-                        key: 'day30',
-                        width: 150,
-                        sortable: true
-                    },
-                    tomorrow: {
-                        title: 'The next day left',
-                        key: 'tomorrow',
-                        width: 150,
-                        sortable: true
-                    },
-                    day: {
-                        title: 'Day Active',
-                        key: 'day',
-                        width: 150,
-                        sortable: true
-                    },
-                    week: {
-                        title: 'Week Active',
-                        key: 'week',
-                        width: 150,
-                        sortable: true
-                    },
-                    month: {
-                        title: 'Month Active',
-                        key: 'month',
-                        width: 150,
-                        sortable: true
-                    }
-                };
-
-                let data = [table2ColumnList.name];
-
-                console.log(table2ColumnList)
-                console.log(data)
-
-                this.tableColumnsChecked.forEach(col => data.push(table2ColumnList[col]));
-
-                return data;
-            },
-            changeTableColumns () {                
-                //console.log(  this.getTable2Columns() )
-
-                this.tableColumns2 = this.getTable2Columns();
-            },
-            toggleFav (index) {
-                this.tableData2[index].fav = this.tableData2[index].fav === 0 ? 1 : 0;
-            }
-        },
-        mounted () {
-            this.changeTableColumns();
+export default {
+    components: {
+        diyIndex
+    },
+    data () {
+        return {
+            height:700,
+            loading : true,
+            //searchTree 组件清除属性
+            sclear:false,
+            versionList:[
+                {value: '', label:'全部'},
+                {value: '2', label:'iOS'},
+                {value: '3', label:'安卓'},
+            ],
+            tableColumns: [],
+            //默认选项目
+            checkAllGroup:['impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
+            current_game:'',
+            current_media:'',
+            current_version:'',
+            current_time:[],
+            current_page:'',
         }
+    },
+    computed :{ 
+        list(){
+            //this.loading = false;
+            return this.$store.state.channel.list;
+        },
+        page(){
+            return this.$store.state.channel.page;
+        },
+        page_size(){
+            return this.$store.state.channel.page_size;
+        },
+        total_number(){
+            return this.$store.state.channel.total_number;
+        },
+        total_page(){
+            return this.$store.state.channel.total_page;
+        },
+        //媒体
+        media(){
+            return this.$store.state.channel.media;
+        }
+    },
+    watch: {
+        list(data){
+            //这里监听list变化了 把表格里loading隐藏  后期要考虑这样做是否妥当
+            if(data.length == 0){
+                this.$Message.info('没有查找到数据');
+            }
+            this.loading = false;
+        }
+    },
+    methods : {
+        //获取所以媒体
+        mediaItem(){            
+            this.$store.dispatch('getMedia');
+        },
+        //导出表单
+        exportData(){
+            this.$refs.tableCsv.exportCsv({
+                filename: '渠道媒体总览'
+            });
+        },
+        //获取产品总览表格数据
+        getTableData(){
+            let param = { 
+                    do : 'mediaOverview',
+                    media_type : this.current_media,
+                    os : this.current_version,
+                    page : this.current_page,
+                };
+            if(this.current_time.length > 0){
+                param.tdate = this.current_time[0];
+                param.tdate2 = this.current_time[1];
+            }
+            this.loading = true;
+            this.$store.dispatch('getChannelData',param);
+        },
+        //下一页
+        changePage(val){
+            this.current_page = val;
+            this.getTableData();        
+        },        
+        //自定义时间
+        changeDate(date){
+            this.current_time = date;
+            this.getTableData();
+        },   
+        //选择媒体
+        setMedia(data){            
+            this.current_media = data;
+            this.getTableData();
+        },
+        //选择版本
+        setVersion(data){
+            this.current_version = data;
+            this.getTableData();
+        },
+        //获取 自定义指标
+        getIndex(data){
+            this.checkAllGroup = data;           
+            this.tableColumns = this.getTableColumns();
+        },
+        //设置表格头部
+        getTableColumns(){
+            const tableColumnList = {
+                data : {title: '日期', key: 'date', "fixed": "left", sortable: true, "width": 120 }, 
+                media_name : {title: '媒体', key: 'media_name', sortable: true,"width": 150 },                               
+                cost : {title: '投入', key: 'cost', sortable: true, "width": 100 },
+                impression : {title: '展示IP', key: 'impression', sortable: true, "width": 100 },
+                click : {title: '点击IP', key: 'click', sortable: true, "width": 150 },
+                click_per : {title: '点击率', key: 'click_per', sortable: true, "width": 100 },
+                install : {title: '激活安装', key: 'install', sortable: true, "width": 120 },
+                install_per : {title: '激活安装率', key: 'install_per', sortable: true, "width": 120 },
+                reg_imei : {title: '注册设备数', key: 'reg_imei', sortable: true, "width": 120 },
+                reg_total : {title: '注册', key: 'reg_total', sortable: true, "width": 100 },
+                reg_per : {title: '注册率', key: 'reg_per', sortable: true, "width": 100 },
+                reg_imei_cost : {title: '注册设备成本', key: 'reg_imei_cost', sortable: true, "width": 130 },
+                reg_cost : {title: '注册成本', key: 'reg_cost', sortable: true, "width": 130 },
+                login : {title: '次日活跃', key: 'login', sortable: true, "width": 120 },
+                act_per : {title: '活跃率', key: 'act_per', sortable: true, "width": 120 },
+                act_cost : {title: '活跃成本', key: 'act_cost', sortable: true, "width": 120 },
+                pay_num : {title: '付费人数', key: 'pay_num', sortable: true, "width": 120 },
+                pay_total : {title: '付费金额', key: 'pay_total', sortable: true, "width": 120 },
+                pay_per : {title: '付费率', key: 'pay_per', sortable: true, "width": 100 },
+                reg_arpu : {title: '注册ARPU', key: 'reg_arpu', sortable: true, "width": 120 },
+                pay_arpu : {title: '付费ARPU', key: 'pay_arpu', sortable: true, "width": 120 },
+                income_per : {title: '回本率', key: 'income_per', sortable: true, "width": 100 },
+                ltv : {title: 'LTV', key: 'ltv', sortable: true, "width": 80 }, 
+            };            
+            //固定选项
+            let data = [
+                 tableColumnList.media_name,
+                tableColumnList.data,               
+                tableColumnList.click_per,
+                tableColumnList.cost,
+            ];
+            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) );            
+            return data;
+        },
+        changeTableColumns(){
+            this.tableColumns = this.getTableColumns();
+        },
+        //过滤无数据广告
+        funnalAd(){
+            console.warn('tag', '过滤无数据广告')
+        }
+    },
+    mounted(){
+        this.changeTableColumns();
+        this.height = document.body.clientHeight - 225;
+        // window.innerHeight - this.$refs.table.$el.offsetTop - 160    this.$refs.table.$el.offsetTop是表格距离浏览器可用高度顶部的距离
+        this.getTableData(); 
+        this.mediaItem();
     }
+}
 </script>

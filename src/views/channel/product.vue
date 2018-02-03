@@ -9,7 +9,7 @@
             <Row :gutter="10">
 
                 <Col :xs="12" :md="5">
-                   <search-tree :game="game" @on-change="getids"></search-tree>
+                   <search-tree :game="game" :clearable="sclear" @on-change="getids"></search-tree>
                 </Col>
 
                 <Col :xs="12" :md="4">
@@ -26,14 +26,18 @@
                     </Select>                                      
                 </Col> 
 
-                <Col :xs="1" :md="2">
-                    <diy-index @on-change="getIndex"  class="margin-bottom-10"></diy-index> 
+                <Col :xs="2" :md="2">
+                    <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index> 
                 </Col>               
 
-                <Col :xs="8" :md="3" offset="6">
-                    <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"  class="margin-bottom-10"></DatePicker>
+                <Col :xs="8" :md="3" offset="4">
+                    <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
                 </Col>
-                
+                <Col :xs="12" :md="2">                    
+                    <Select  @on-change="setPrincipal" placeholder="--负责人--"  class="margin-bottom-10">
+                        <Option v-for="item in principalList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>  
+                </Col>
                 <Col :xs="12" :md="2">
                     <Button icon="document-text"  @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
                 </Col>
@@ -41,10 +45,10 @@
             </Row>
         </div>    
         
-        <Table :columns="tableColumns" :data="list"  ref="tableCsv" size="small" :height="height"></Table>
+        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortFun" :height="height"></Table>
         <div style="margin:10px 10px 0;overflow: hidden">
             <div style="float: right;">
-                <Page size="small" :total="total_page" :page-size="page_size" :current="page" @on-change="changePage"></Page>
+                <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>
             </div>
         </div>       
     </Card>
@@ -61,18 +65,32 @@ export default {
     data () {
         return {
             height:700,
+            loading : true,
+            principalList:[
+                {value: '1', label:'负责1'},
+                {value: '2', label:'负责2'},
+                {value: '3', label:'负责3'},
+            ],
+            //searchTree 组件清除属性
+            sclear:false,
             versionList:[
-                {value: ' ', label:'全部'},
-                {value: 'ios', label:'iOS'},
-                {value: 'andrio', label:'安卓'},
+                {value: '', label:'全部'},
+                {value: '2', label:'iOS'},
+                {value: '3', label:'安卓'},
             ],
             tableColumns: [],
             //默认选项目
-            checkAllGroup:['media_type','account_name','campaign_id','click_cost','site_id','impression','click',]
+            checkAllGroup:['impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
+            current_game:'',
+            current_media:'',
+            current_version:'',
+            current_time:[],
+            current_page:'',
         }
     },
     computed :{ 
         list(){
+            //this.loading = false;
             return this.$store.state.channel.list;
         },
         page(){
@@ -96,48 +114,74 @@ export default {
             return this.$store.state.channel.media;
         }
     },
+    watch: {
+        list(data){
+            //这里监听list变化了 把表格里loading隐藏  后期要考虑这样做是否妥当
+            if(data.length == 0){
+                this.$Message.info('没有查找到数据');
+            }
+            this.loading = false;
+        }
+    },
     methods : {
-        //获取产品总览
-        init(){
-            let param = {'do':'adsOverview'}
-            this.$store.dispatch('getProduct',param);
-        },
         //获取所有游戏
         gameItem(){
             this.$store.dispatch('getGame');
         },
         //获取所以媒体
-        mediaItem(){
+        mediaItem(){            
             this.$store.dispatch('getMedia');
         },
-
         //导出表单
         exportData(){
             this.$refs.tableCsv.exportCsv({
                 filename: '渠道产品总览'
             });
         },
-        //跳转到第N页
-        changePage(val){
-            console.log(val)
+        //获取产品总览表格数据
+        getTableData(){
+            let param = { 
+                    do : 'products',
+                    game_id : this.current_game,
+                    media_type : this.current_media,
+                    os : this.current_version,
+                    page : this.current_page,
+                };
+            if(this.current_time.length > 0){
+                param.tdate = this.current_time[0];
+                param.tdate2 = this.current_time[1];
+            }
+            this.loading = true;
+            this.$store.dispatch('getChannelData',param);
         },
+        //下一页
+        changePage(val){
+            this.current_page = val;
+            this.getTableData();        
+        },        
         //自定义时间
         changeDate(date){
-            let param = {'do':'adsOverview','tdate':date[0],'tdate2':date[2]}
-            this.$store.dispatch('getProduct',param);            
+            this.current_time = date;
+            this.getTableData();
         },
         //获取选中的游戏id
         getids(gid){
-            let id = gid.join(',').split(',');
-            let param = {'game_id':id}
-            this.$store.dispatch('getFilterProduct',param);
+            let id = gid.join(',');
+            this.current_game = id;
+            this.getTableData();
         },        
         //选择媒体
-        setMedia(data){
-            console.log(data)
+        setMedia(data){            
+            this.current_media = data;
+            this.getTableData();
         },
         //选择版本
         setVersion(data){
+            this.current_version = data;
+            this.getTableData();
+        },
+        //选择负责人
+        setPrincipal(data){
             console.log(data)
         },
         //获取 自定义指标
@@ -148,86 +192,54 @@ export default {
         //设置表格头部
         getTableColumns(){
             const tableColumnList = {
-                data : {title: '日期', key: 'date', "fixed": "left", "width": 120 },
-                media_type : {title: '媒体类型', key: 'media_type', "width": 100 },
-                account_name : {title: '广告状态', key: 'account_name', "width": 150 },
-                campaign_id : {title: '点击均价（cpc）', key: 'campaign_id', "width": 150 },
-                click_cost : {title: '点击量', key: 'click_cost', "width": 100 },
-                site_id : {title: '点击率(CTR)', key: 'site_id', "width": 150 },
-                impression : {title: '到达数', key: 'impression', "width": 100 },
-                click : {title: '点击率', key: 'click', "width": 100 },
-                download : {title: '下载数', key: 'download', "width": 100 },
-                cost : {title: '激活总量', key: 'cost', "width": 100 },
-                reg_imei_cost : {title: '点击激活率', key: 'reg_imei_cost', "width": 100 },
-                active : {title: '注册设备数', key: 'active', "width": 100 },
-                reg_total : {title: '注册数', key: 'reg_total', "width": 100 },
-                reg_per : {title: '点击注册率', key: 'reg_per', "width": 100 },
-                reg_cost : {title: '注册成本', key: 'reg_cost', "width": 100 },
+                game_name : {title: '产品名称', key: 'game_name', "fixed": "left", sortable: 'custom', "width": 150 },
+                data : {title: '日期', key: 'date',  sortable: true, "width": 120 },                
+                cost : {title: '投入', key: 'cost', sortable: true, "width": 100 },
+                impression : {title: '展示IP', key: 'impression', sortable: true, "width": 100 },
+                click : {title: '点击IP', key: 'click', sortable: true, "width": 150 },
+                click_per : {title: '点击率', key: 'click_per', sortable: true, "width": 100 },
+                install : {title: '激活安装', key: 'install', sortable: true, "width": 120 },
+                install_per : {title: '激活安装率', key: 'install_per', sortable: true, "width": 120 },
+                reg_imei : {title: '注册设备数', key: 'reg_imei', sortable: true, "width": 120 },
+                reg_total : {title: '注册', key: 'reg_total', sortable: true, "width": 100 },
+                reg_per : {title: '注册率', key: 'reg_per', sortable: true, "width": 100 },
+                reg_imei_cost : {title: '注册设备成本', key: 'reg_imei_cost', sortable: true, "width": 130 },
+                reg_cost : {title: '注册成本', key: 'reg_cost', sortable: true, "width": 130 },
+                login : {title: '次日活跃', key: 'login', sortable: true, "width": 120 },
+                act_per : {title: '活跃率', key: 'act_per', sortable: true, "width": 120 },
+                act_cost : {title: '活跃成本', key: 'act_cost', sortable: true, "width": 120 },
+                pay_num : {title: '付费人数', key: 'pay_num', sortable: true, "width": 120 },
+                pay_total : {title: '付费金额', key: 'pay_total', sortable: true, "width": 120 },
+                pay_per : {title: '付费率', key: 'pay_per', sortable: true, "width": 100 },
+                reg_arpu : {title: '注册ARPU', key: 'reg_arpu', sortable: true, "width": 120 },
+                pay_arpu : {title: '付费ARPU', key: 'pay_arpu', sortable: true, "width": 120 },
+                income_per : {title: '回本率', key: 'income_per', sortable: true, "width": 100 },
+                ltv : {title: 'LTV', key: 'ltv', sortable: true, "width": 80 }, 
             };            
-            //默认先项
+            //固定选项
             let data = [
                 tableColumnList.data,
+                tableColumnList.game_name,
+                tableColumnList.click_per,
+                tableColumnList.cost,
             ];
-
-            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) )
+            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) );            
             return data;
         },
         changeTableColumns(){
             this.tableColumns = this.getTableColumns();
         },
+        sortFun(data){
+            console.log('排序')
+            console.log(data)
+        }
     },
     mounted(){
         this.changeTableColumns();
         this.height = document.body.clientHeight - 225;
-        this.init();  
+        this.getTableData();  
         this.gameItem();
         this.mediaItem();
     }
 }
-
-/*
-
-
-http://ads.tanwan.com/api.php?do=adsOverview&action=api&opt=getGameTotalDay
-
-//参数说明
-
-id":"29",
-"date":"2018-01-23",
-"media_type":null,
-"account_id":"3415636",
-"account_name":"1517466390",
-"author":"张建邦",
-"game_id":"294",
-"product_refs_id":"1303502887",
-"agent_id":"100554",
-"site_id":"147881",
-"campaign_id":"9043944",
-"adgroup_id":"44394835",
-"impression":"50935",
-"click":"136",
-"cost":"960.73",
-"download":"0",
-"conversion":"0",
-"activation":"4",
-"campaign_name":"蓝月争霸-新闻组图-IOS-2",
-"adgroup_name":"腾讯新闻2-230×152多图(文)-20180122",
-"configured_status":"AD_STATUS_NORMAL",
-"daily_budget":"4000000",
-"media_name":"-张建邦",
-"click_cost":0,
-"active":0,
-"reg_total":0,
-"reg_per":"0%",
-"reg_cost":0,
-"reg_imei_cost":0,
-"login":0,
-"login_cost":0,
-"pay_num":0,
-"pay_total":0,
-"pay_per":"0%",
-"reg_arpu":0,
-"income_per":0
-*/
-
 </script>

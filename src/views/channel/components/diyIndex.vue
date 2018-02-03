@@ -9,8 +9,10 @@
 		padding: 20px;
 	}
 	.checklist {
-		padding-bottom: 5px;
-		padding-top: 20px;
+        padding-bottom: 5px;
+        padding-top: 20px;
+        color: #666;
+        font-weight: bold;
 	}
 	
 	.Poptiptap .ivu-poptip-body-content {
@@ -26,31 +28,43 @@
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
 				</div>
-				<div class="checklist">媒体列</div>
-				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="media_type">媒体类型</Checkbox>
-					<Checkbox label="account_name">广告状态，花费</Checkbox>
-					<Checkbox label="campaign_id">点击均价（cpc）</Checkbox>
-					<Checkbox label="click_cost">点击量</Checkbox>
-					<Checkbox label="site_id">点击率(CTR)</Checkbox>
-				</CheckboxGroup>
-                <div class="checklist">落地页</div>
+				<div class="checklist">落地页</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="impression">到达数</Checkbox>
-					<Checkbox label="click">到达率</Checkbox>
-					<Checkbox label="download">下载数</Checkbox>
+					<Checkbox label="impression">展示IP</Checkbox>
+                    <Checkbox label="click">点击IP</Checkbox>
 				</CheckboxGroup>
-                <div class="checklist">
-					激活注册
-				</div>
-				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="cost">激活总量</Checkbox>
-					<Checkbox label="reg_imei_cost">点击激活率</Checkbox>
-					<Checkbox label="active">注册设备数</Checkbox>
-					<Checkbox label="reg_total">注册数</Checkbox>
-					<Checkbox label="reg_per">点击注册率</Checkbox>
-					<Checkbox label="reg_cost">注册成本</Checkbox>
+                <div class="checklist">激活注册</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+					<Checkbox label="install">激活安装</Checkbox>
+                    <Checkbox label="install_per">激活安装率</Checkbox>
+                    <Checkbox label="reg_imei">注册设备数</Checkbox>
+                    <Checkbox label="reg_total">注册</Checkbox>
+                    <Checkbox label="reg_per">注册率</Checkbox>
+                    <Checkbox label="reg_imei_cost">注册设备成本</Checkbox>
+                    <Checkbox label="reg_arpu">注册ARPU</Checkbox>
+                    <Checkbox label="reg_cost">注册成本</Checkbox>
 				</CheckboxGroup>
+                <div class="checklist">活跃</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+                    <Checkbox label="login">次日活跃</Checkbox>
+                    <Checkbox label="act_per">活跃率</Checkbox>
+                    <Checkbox label="act_cost">活跃成本</Checkbox>
+				</CheckboxGroup>
+                <div class="checklist">付费</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+                    <Checkbox label="pay_num">付费人数</Checkbox>
+                    <Checkbox label="pay_total">付费金额</Checkbox>
+                    <Checkbox label="pay_per">付费率</Checkbox>                    
+                    <Checkbox label="pay_arpu">付费ARPU</Checkbox>
+                    <Checkbox label="income_per">回本率</Checkbox>
+                    <Checkbox label="ltv">LTV</Checkbox>
+				</CheckboxGroup>               
+
+				<!-- <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+					<Checkbox label="game_name">产品名称</Checkbox>
+					<Checkbox label="cost">投入</Checkbox>
+					<Checkbox label="click_per">点击率</Checkbox>                    
+				</CheckboxGroup> -->
 			</div>
 		</Poptip>
 	</div>
@@ -58,14 +72,24 @@
 
 <script>
 	export default {
+        props :{
+            check: {
+                type: Array,
+                default: []
+            }
+        },
 		data() {
 			return {
                 indeterminate: true,
                 checkAll: false,
-                checkAllGroup: ['media_type','account_name','campaign_id','click_cost','site_id','impression','click',],
+                checkAllGroup: [],
 			}
-		},
-		methods: {
+        },
+        mounted(){
+            //传过来的默认选项
+            this.checkAllGroup = this.check;
+        },
+		methods: {           
 			//自定义指标全选
 			handleCheckAll() {
                 //console.log(this.checkAllGroup)
@@ -77,46 +101,11 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = [ 
-                        'media_type',
-                        'account_id',
-                        'account_name',
-                        'author',
-                        'game_id',
-                        'product_refs_id',
-                        'agent_id',
-                        'site_id',
-                        'campaign_id',
-                        'adgroup_id',
-                        'impression',
-                        'click',
-                        'cost',
-                        'download',
-                        'conversion',
-                        'activation',
-                        'campaign_name',
-                        'adgroup_name',
-                        'daily_budget',
-                        'media_name',
-                        'click_cost',
-                        'active',
-                        'reg_total', 
-                        'reg_per',                       
-                        'reg_cost',
-                        'reg_imei_cost',
-                        'login',
-                        'alogin_cost',
-                        'pay_num',
-                        'pay_total',
-                        'pay_per',
-                        'reg_arpu',
-                        'income_per',
-                    ];
-                    this.$emit('on-change', this.checkAllGroup);
+					this.checkAllGroup = ['impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'];
 				} else {
 					this.checkAllGroup = [];
 				}
-				
+				this.$emit('on-change', this.checkAllGroup);
 			},
 			//自定义指标
 			checkAllGroupChange(data) {
