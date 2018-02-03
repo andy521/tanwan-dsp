@@ -10,10 +10,11 @@ const channel = {
         game:[],
         media:{},
         account:[],
+        plan:[{value: '1111',label: 'New York'}]
     },    
     mutations: {        
         GETCHANNELDATA (state , data){
-            console.log(data);
+            //console.log(data);
             state.list = data.list;
             //当前页
             state.page = parseInt(data.page) || 1;
@@ -36,7 +37,15 @@ const channel = {
             for(let i in data){
                 a.push({ 'value': data[i].account_id, 'label' : data[i].account_name })
             };
+            console.log(a)
             state.account = a;
+        },
+        CAMPAIGNS(state,data){
+            let c = []
+            for(let i in data){
+                c.push({ 'value': data[i].campaign_id, 'label' : data[i].campaign_name })
+            }
+            state.plan = c;
         }
     },    
     actions : {
@@ -73,12 +82,23 @@ const channel = {
             ); 
         },
 
-        //获取媒体账号        
+        //获取账号        
         getAccount({commit},opt){
             console.log('获取媒体账号');
             Axios.get('api.php',{'action':'api','opt':'getAccount','MeidaType': opt })
             .then( 
                 res=>{ commit('ACCOUNT',res.data) }
+            ).catch( 
+                err=>{ console.log('获取媒体账号' + err) }
+            ); 
+        },
+
+        //获取计划
+        planCampaigns({commit}, opt){
+            let param = Object.assign({'action':'api','opt':'getcampaigns'}, opt);
+            Axios.get('api.php',param)
+            .then( 
+                res=>{ commit('CAMPAIGNS', res.data) }
             ).catch( 
                 err=>{ console.log('获取媒体账号' + err) }
             ); 

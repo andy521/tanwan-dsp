@@ -16,7 +16,7 @@
 
                 <Col :xs="12" :md="3">
                     <!-- 账户选择: -->
-                    <Select @on-change="setAccount"  placeholder="--账户选择--" style="width:100%"  class="margin-bottom-10">
+                    <Select @on-change="setAccount" :disabled="account_disabled" placeholder="--账户选择--" style="width:100%"  class="margin-bottom-10">
                         <Option v-for="(item,index) in account" :value="item.value" :key="index">{{ item.label }}</Option>
                     </Select>
                 </Col>
@@ -43,7 +43,7 @@
             </Row>
         </div>    
         
-        <Table :loading="loading" :columns="tableColumns" @on-row-click="selectTable" :data="list"  ref="tableCsv" size="small" :height="height"></Table>
+        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" :height="height"></Table>
         <div style="margin:10px 10px 0;overflow: hidden">
             <div style="float: right;">
                 <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>
@@ -63,6 +63,7 @@ export default {
             height:700,
             loading : true,
             //searchTree 组件清除属性
+            account_disabled:true,
             sclear:false,
             versionList:[
                 {value: '', label:'全部'},
@@ -101,12 +102,7 @@ export default {
         },
         //账号
         account(){
-            let list = this.$store.state.channel.list,
-                a = [];
-            for (let i = 0; i < list.length; i++) {              
-                a.push({ 'value': list[i].account_id, 'label' : list[i].account_name })
-            }
-            return a;
+            return this.$store.state.channel.account
         }
     },
     watch: {
@@ -116,13 +112,12 @@ export default {
                 this.$Message.info('没有查找到数据');
             }
             this.loading = false;
+        },
+        account(data){
+            
         }
     },
     methods : {
-        //获取所有账户
-        getAccount(){            
-            //this.$store.dispatch('getMedia');
-        },
         //获取所以媒体
         mediaItem(){            
             this.$store.dispatch('getMedia');
@@ -169,7 +164,8 @@ export default {
             this.current_media = data;
             this.getTableData();
             //这里再获取账户
-            //this.$store.dispatch('getAccount',data);
+            this.$store.dispatch('getAccount',data);
+            this.account_disabled = false;
         },
         //选择版本
         setVersion(data){
@@ -187,7 +183,30 @@ export default {
             const tableColumnList = {
                 data : {title: '日期', key: 'date', "fixed": "left", sortable: true, "width": 120 }, 
                 media_name : {title: '媒体', key: 'media_name', sortable: true,"width": 150 ,},   
-                account_name : {title: '账户', key: 'account_name', sortable: true,"width": 150 },                             
+                account_name : {
+                    title: '账户', key: 'account_name', sortable: true,"width": 150 ,
+                    render: (h, params) => {
+                        return h('Button', {
+                            props: {
+                                type: 'text',
+                                size: 'small'
+                            },
+                            style: {
+                                marginRight: '5px'
+                            },
+                            on: {
+                                click: () => {
+                                    let query = {account_id: params.row.account_id};
+                                    //跳转到计划总览
+                                    this.$router.push({
+                                        name: 'channel_plan',
+                                        query: query
+                                    });
+                                }
+                            }
+                        }, params.row.account_name)
+                    }
+                },                             
                 cost : {title: '投入', key: 'cost', sortable: true, "width": 100 },
                 impression : {title: '展示IP', key: 'impression', sortable: true, "width": 100 },
                 click : {title: '点击IP', key: 'click', sortable: true, "width": 150 },
@@ -222,10 +241,6 @@ export default {
         changeTableColumns(){
             this.tableColumns = this.getTableColumns();
         },
-        //点击表格里的条
-        selectTable(data){
-            console.log(data)
-        }
     },
     mounted(){
         this.changeTableColumns();

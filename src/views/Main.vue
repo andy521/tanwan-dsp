@@ -73,7 +73,6 @@
     import fullScreen from '@/components/fullScreen/fullScreen.vue';
     import themeSwitch from '@/components/theme-switch/theme-switch.vue';
     import util from '@/utils/index.js';
-    import Cookies from 'js-cookie';
     export default {
         components: {
             shrinkableMenu,
@@ -106,7 +105,7 @@
             init () {
                 //更新菜单
                 this.$store.commit('updateMenulist');
-                this.userName = Cookies.get('user');
+                this.userName = util.getItem('user');
                 let pathArr = util.setCurrentPath(this, this.$route.name);                             
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);

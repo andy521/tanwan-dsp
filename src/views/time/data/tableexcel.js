@@ -8,16 +8,6 @@ export const tableColumns = {
 		key: 'game_name',
 		width: 200
 	},
-	account_name: {
-		title: '媒体账户',
-		key: 'account_name',
-		width: 150
-	},
-	campaign_id: {
-		title: '计划',
-		key: 'campaign_id',
-		width: 150
-	},
 	configured_status: {
 		title: '广告开关',
 		key: 'configured_status',
@@ -38,15 +28,25 @@ export const tableColumns = {
 			]);
 		}
 	},
-	//	site_id: {
-	//		title: '广告状态',
-	//		key: 'configured_status',
-	//		width: 150
-	//	},
+	configured_status2: {
+		title: '广告状态',
+		key: 'configured_status',
+		width: 150
+	},
+	account_name: {
+		title: '媒体账户',
+		key: 'account_name',
+		width: 150
+	},
+	campaign_id: {
+		title: '计划',
+		key: 'campaign_id',
+		width: 150
+	},
 
-	site_id: {
+	site_name: {
 		title: '广告名称',
-		key: 'site_id',
+		key: 'site_name',
 		width: 200,
 		editable: true,
 		render: (h, params) => {
@@ -125,63 +125,63 @@ export const tableColumns = {
 		width: 150,
 		editable: true
 	},
-	//	click: {
-	//		title: '点击量',
-	//		sortable: true,
-	//		key: 'click',
-	//		width: 150
-	//	},
-	//	click: {
-	//		title: '点击率',
-	//		sortable: true,
-	//		key: 'click',
-	//		width: 150
-	//	},
-	//	click: {
-	//		title: '点击均价',
-	//		sortable: true,
-	//		key: 'click',
-	//		width: 150
-	//	},
-	//	click: {
-	//		title: '出价',
-	//		key: 'click',
-	//		width: 150
-	//	},
+	click: {
+		title: '点击量',
+		sortable: true,
+		key: 'click',
+		width: 150
+	},
+	click_per: {
+		title: '点击率',
+		sortable: true,
+		key: 'click_per',
+		width: 150
+	},
+	click_cost: {
+		title: '点击均价',
+		sortable: true,
+		key: 'click_cost',
+		width: 150
+	},
+	bid_mode: {
+		title: '出价',
+		key: 'bid_mode',
+		width: 150
+	},
 	cost: {
 		title: '花费',
 		sortable: true,
 		key: 'cost',
 		width: 150
 	},
-	//	click_cost: {
-	//		title: '到达数',
-	//		sortable: true,
-	//		key: 'click_cost',
-	//		width: 150
-	//	},
-	//	click_cost: {
-	//		title: '到达率',
-	//		sortable: true,
-	//		key: 'click_cost',
-	//		width: 150
-	//	},
-	//	click_cost: {
-	//		title: '激活总量',
-	//		sortable: true,
-	//		key: 'click_cost',
-	//		width: 150
-	//	},
-	//	click_cost: {
-	//		title: '点击激活率',
-	//		sortable: true,
-	//		key: 'click_cost',
-	//		width: 150
-	//	},
-	active: {
+	fetch: {
+		title: '到达数',
+		sortable: true,
+		key: 'fetch',
+		width: 150
+	},
+	fetch_per: {
+		title: '到达率',
+		sortable: true,
+		key: 'fetch_per',
+		width: 150
+	},
+	install: {
+		title: '激活总量',
+		sortable: true,
+		key: 'install',
+		width: 150
+	},
+	click_install: {
+		title: '点击激活率',
+		sortable: true,
+		key: 'click_install',
+		width: 150
+	},
+	reg_imei: {
 		title: '注册设备数',
 		sortable: true,
-		key: 'active',
+		key: 'reg_imei',
 		width: 150
 	},
 	reg_total: {
@@ -190,30 +190,44 @@ export const tableColumns = {
 		key: 'reg_total',
 		width: 150
 	},
+
 	reg_per: {
 		title: '注册率',
 		sortable: true,
 		key: 'reg_per',
 		width: 150
 	},
-	reg_cost: {
-		title: '注册设备成本',
-		sortable: true,
-		key: 'reg_cost',
-		width: 150
-	},
 	reg_imei_cost: {
-		title: '注册成本',
+		title: '注册设备成本',
 		sortable: true,
 		key: 'reg_imei_cost',
 		width: 150
 	},
-	//	reg_imei_cost: {
-	//		title: '活跃数',
-	//		sortable: true,
-	//		key: 'reg_imei_cost',
-	//		width: 150
-	//	},
+
+	reg_cost: {
+		title: '注册成本',
+		sortable: true,
+		key: 'reg_cost',
+		width: 150
+	},
+	download_per: {
+		title: '激活安装率',
+		sortable: true,
+		key: 'download_per',
+		width: 150
+	},
+	install_per: {
+		title: '激活安装率',
+		sortable: true,
+		key: 'install_per',
+		width: 150
+	},
+	login: {
+		title: '活跃数',
+		sortable: true,
+		key: 'login',
+		width: 150
+	},
 	login_cost: {
 		title: '活跃成本',
 		sortable: true,
@@ -248,6 +262,24 @@ export const tableColumns = {
 		title: '回本率',
 		sortable: true,
 		key: 'income_per',
+		width: 150
+	},
+	show_pv: {
+		title: '展示PV',
+		sortable: true,
+		key: 'show_pv',
+		width: 150
+	},
+	show_ip: {
+		title: '展示IP',
+		sortable: true,
+		key: 'show_ip',
+		width: 150
+	},
+	down_ip: {
+		title: '下载IP',
+		sortable: true,
+		key: 'down_ip',
 		width: 150
 	}
 };

@@ -1,6 +1,5 @@
 
 import Vue from 'vue';
-import Cookies from 'js-cookie';
 import Util from '@/utils/index.js';
 import {otherRouter, appRouter} from '@/router/router';
 import  Axios  from "@/api/index"
@@ -44,7 +43,7 @@ const app = {
         },
         //更新菜单
         updateMenulist (state) {
-            let accessCode = parseInt(Cookies.get('access'));
+            let accessCode = parseInt( Util.getItem('access') );
             let menuList = [];
             appRouter.forEach((item, index) => {              
                 if (item.children.length === 1) {
@@ -113,9 +112,6 @@ const app = {
                 state.openedSubmenuArr.push(name);
             }
         },
-
-
-
         pageOpenedList (state, get) {
             let openedPage = state.pageOpenedList[get.index];
             if (get.argu) {

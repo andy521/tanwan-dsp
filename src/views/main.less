@@ -225,10 +225,31 @@ body{
     transition: transform .3s;
 }
 .logo-con{
-    padding: 8px;
     text-align: center;
-    img{
-        height: 44px;
-        width: auto;
-    }
+    margin-bottom: 20px;
+}
+
+// 自定义右侧菜单
+.app-main .ivu-menu-dark{
+    background: #2d2f38;
+}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened .ivu-menu-submenu-title{
+    background: #2d2f38;
+}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened .ivu-menu-submenu-title .ivu-icon{
+    color: #4768f3;
+}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened .ivu-menu-submenu-title .ivu-icon-ios-arrow-down{
+    color: #fff;
+}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened{
+    background: #22242e;
+}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active:hover{
+    background: #4768f3!important;
+}
+
+.ivu-btn-primary{
+    background: #4768f3;
+    border-color:#4768f3;
 }

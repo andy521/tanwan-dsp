@@ -246,4 +246,41 @@ util.mediaSelect = function (data){
     return m
 };
 
+/*
+设置localStorage
+*/
+util.setItem = (a,b) => {
+	if(window.localStorage){
+		window.localStorage.setItem("tw_"+a,b);
+	}else{
+		let c=new Date;
+		c.setTime(c.getTime()+31536e6),
+		document.cookie="tw_"+a+"="+escape(b)+";expires="+c.toGMTString()
+	}
+};
+
+/*
+获取localStorage
+*/
+util.getItem = (a) => {
+	if(window.localStorage){
+		return window.localStorage.getItem("tw_"+a);
+	}else{
+		var b=document.cookie.match(new RegExp("(^| )tw_"+a+"=([^;]*)(;|$)"));
+		return null!=b?unescape(b[2]):null
+	}
+};
+
+/*
+删除localStorage
+*/
+util.removeItem = (a) => {
+	var b, c;
+	window.localStorage ? window.localStorage.removeItem("tw_" + a) : (b = new Date, b.setTime(b.getTime() - 1), c = H.getItem(a), null != c && (document.cookie = "tw_" + a + "=" + c + ";expires=" + b.toGMTString()))
+};
+
+
+
+
+
 export default util;

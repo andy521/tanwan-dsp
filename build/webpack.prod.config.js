@@ -18,6 +18,7 @@ module.exports = merge(webpackBaseConfig, {
 	
     output: {
 		publicPath: 'dist/',
+		//publicPath: 'http://ads.vue.tanwan.com/dist/',
         filename: '[name].js',
         chunkFilename: '[name].chunk.js'
     },

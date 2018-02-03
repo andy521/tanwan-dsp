@@ -1,7 +1,5 @@
-import Cookies from 'js-cookie';
 import  Axios  from "@/api/index"
-
-//import axios from 'axios'
+import util from '@/utils/index';
 
 const user = {
     state: {
@@ -16,7 +14,7 @@ const user = {
         USER_LOGIN( state , user){
             state.username = user
             state.isLogin = 1 
-            console.log('用户登录 -----' + user)
+            //console.log('用户登录 -----' + user)
         },
     },
     actions : {
@@ -24,9 +22,8 @@ const user = {
             commit('USER_LOGIN', u.user)
         },
         LoginOut({ commit }){
-            Cookies.remove('user');
-            // Cookies.remove('password');
-            // Cookies.remove('access');
+            util.removeItem('user' );
+            util.removeItem('access' );
             let theme = '';
             if (localStorage.theme) {
                 theme = localStorage.theme;

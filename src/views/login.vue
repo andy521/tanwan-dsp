@@ -22,10 +22,10 @@
                         <FormItem>
                             <Button @click="handleSubmit" type="primary" long>登录</Button>
                         </FormItem>
-                        <FormItem class="login-tip">
+                        <!-- <FormItem class="login-tip">
                             <Checkbox v-model="form.check">记住登录状态</Checkbox>
                             <a href="javascript:void(0)" class="zf">找回密码</a>
-                        </FormItem>
+                        </FormItem> -->
                     </Form>
                     
                 </div>
@@ -36,7 +36,7 @@
 
 <script>
 import  Axios  from "@/api/index"
-import Cookies from 'js-cookie';
+import Util from '@/utils/index';
 export default {
     data () {
         return {
@@ -58,21 +58,23 @@ export default {
     methods: {
         handleSubmit () {
             this.$refs.loginForm.validate( (valid) => {
-                if (valid) {                    
-                    let userinfo = { 'user' : this.form.userName,'password' : this.form.password, 'remember' : this.form.check}
-                    console.log(userinfo)
+                if (valid) {                         
+                    let userinfo = { 'user' : this.form.userName, 'password' : this.form.password, 'remember' : this.form.check};
                     Axios.post('api.php',{
                         'user_name' : userinfo.user,
                         'pas' : userinfo.password,
                     })
                     .then((res)=>{
+                        console.log('后台返回成功')
+
                         //路径index.js要判断的
-                        Cookies.set('user', userinfo.user);                                                            
+                        Util.setItem('user', this.form.userName );                                                                                  
                         this.$store.dispatch('UserLogin', userinfo);  
                         this.$router.push({ name: 'home_index' });
+
                     }).catch((err)=>{console.log(err)});
 
-                }
+                }   
             });
         }
     }

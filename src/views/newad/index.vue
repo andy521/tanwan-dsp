@@ -32,7 +32,7 @@
 	import sideBar from './components/sideBar.vue';
 	import stepOne from './components/stepOne.vue';
     import stepTwo from './components/stepTwo.vue';
-    import stepThree from './components/stepThree.vue';
+    //import stepThree from './components/stepThree.vue';
     import upCreative from './components/upCreative.vue';
 
 	export default {

@@ -104,7 +104,8 @@ const plan = {
 				do: 'edit',
 				account_id: data.account_id, //*必传*
 				campaign_id: data.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-				campaign_name: data.campaign_name, //日消耗限额
+				campaign_name: data.campaign_name, //计划名称  
+				daily_budget: data.daily_budget, //日消耗限额
 				configured_status: data.configured_status, //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
 				speed_mode: data.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
 			}).then(
@@ -122,7 +123,7 @@ const plan = {
 		getAdList({
 			commit
 		}, data) {
-			Axios.get('api.php', {
+			Axios.post('api.php', {
 				action: 'gdtAdPut',
 				opt: 'campaigns',
 				tdate: data.tdate, //开始时间
@@ -133,7 +134,7 @@ const plan = {
 				account_id: data.account_id, //媒体账号
 				configured_status: data.configured_status, //过滤无数据的广告
 				campaign_id: data.campaign_id, //广告
-				campaign_name: data.campaign_name, //关键子
+				campaign_name: data.campaign_name, //关键字
 				check_value: data.check_value //状态
 			}).then(
 				res => {
