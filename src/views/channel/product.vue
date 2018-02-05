@@ -35,7 +35,7 @@
                 </Col>
                 <Col :xs="12" :md="2">                    
                     <Select  @on-change="setPrincipal" placeholder="--负责人--"  class="margin-bottom-10">
-                        <Option v-for="item in principalList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>  
                 </Col>
                 <Col :xs="12" :md="2">
@@ -45,7 +45,7 @@
             </Row>
         </div>    
         
-        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortFun" :height="height"></Table>
+        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortChange" :height="height"></Table>
         <div style="margin:10px 10px 0;overflow: hidden">
             <div style="float: right;">
                 <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>
@@ -64,13 +64,8 @@ export default {
     },
     data () {
         return {
-            height:700,
-            loading : true,
-            principalList:[
-                {value: '1', label:'负责1'},
-                {value: '2', label:'负责2'},
-                {value: '3', label:'负责3'},
-            ],
+            height:document.body.clientHeight - 225,
+            loading : true,   
             //searchTree 组件清除属性
             sclear:false,
             versionList:[
@@ -79,6 +74,9 @@ export default {
                 {value: '3', label:'安卓'},
             ],
             tableColumns: [],
+            //排序
+            orderField:'',
+            orderDirection: 'SORT_ASC',
             //默认选项目
             checkAllGroup:['impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
             current_game:'',
@@ -86,6 +84,7 @@ export default {
             current_version:'',
             current_time:[],
             current_page:'',
+            current_author:''
         }
     },
     computed :{ 
@@ -112,6 +111,10 @@ export default {
         //媒体
         media(){
             return this.$store.state.channel.media;
+        },
+        //负责人
+        author(){
+            return this.$store.state.channel.author;
         }
     },
     watch: {
@@ -132,6 +135,10 @@ export default {
         mediaItem(){            
             this.$store.dispatch('getMedia');
         },
+        //获取负责人
+        getAuthor(){
+            this.$store.dispatch('getAuthor');
+        },
         //导出表单
         exportData(){
             this.$refs.tableCsv.exportCsv({
@@ -146,6 +153,9 @@ export default {
                     media_type : this.current_media,
                     os : this.current_version,
                     page : this.current_page,
+                    author : this.current_author,
+                    orderField: this.orderField, 
+					orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 };
             if(this.current_time.length > 0){
                 param.tdate = this.current_time[0];
@@ -154,6 +164,12 @@ export default {
             this.loading = true;
             this.$store.dispatch('getChannelData',param);
         },
+        //排序
+        sortChange(column) {
+            this.orderField = column.key;
+            this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
+            this.getTableData();            
+        },            
         //下一页
         changePage(val){
             this.current_page = val;
@@ -182,7 +198,8 @@ export default {
         },
         //选择负责人
         setPrincipal(data){
-            console.log(data)
+            this.current_author = data;
+            this.getTableData();
         },
         //获取 自定义指标
         getIndex(data){
@@ -228,16 +245,13 @@ export default {
         },
         changeTableColumns(){
             this.tableColumns = this.getTableColumns();
-        },
-        sortFun(data){
-            console.log('排序')
-            console.log(data)
         }
     },
     mounted(){
         this.changeTableColumns();
-        this.height = document.body.clientHeight - 225;
+        //this.height = document.body.clientHeight - 225;
         this.getTableData();  
+        this.getAuthor();
         this.gameItem();
         this.mediaItem();
     }

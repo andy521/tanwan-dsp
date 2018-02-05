@@ -5,7 +5,8 @@ const plan = {
 		gameList: [],
 		mediaList: [],
 		campaignslist: [],
-		adList: []
+		adList: [],
+		Adgroups: []
 	},
 	mutations: {
 		GET_GAMELIST(state, data) {
@@ -19,7 +20,11 @@ const plan = {
 		},
 		GET_ADLIST(state, data) {
 			state.adList = data;
+		},
+		GET_ADGROUPS(state, data) {
+			state.Adgroups = data;
 		}
+
 	},
 	actions: {
 		//游戏列表
@@ -85,7 +90,7 @@ const plan = {
 				configured_status: data.status, //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
 			}).then(
 				res => {
-					console.log('批量修改删除投放计划' + res)
+					commit('CALLBACK_RES', res)
 				}
 			).catch(
 				err => {
@@ -98,23 +103,23 @@ const plan = {
 		amendCampaign({
 			commit
 		}, data) {
-			Axios.get('api.php', {
+			Axios.post('api.php', {
 				action: 'gdtAdPut',
 				opt: 'campaigns_add',
 				do: 'edit',
 				account_id: data.account_id, //*必传*
 				campaign_id: data.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
 				campaign_name: data.campaign_name, //计划名称  
-				daily_budget: data.daily_budget, //日消耗限额
+				daily_budget: data.daily_budget * 100, //日消耗限额
 				configured_status: data.configured_status, //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
 				speed_mode: data.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
 			}).then(
 				res => {
-					console.log('修改删除投放计划' + res)
+
 				}
 			).catch(
 				err => {
-					console.log('修改删除投放计划' + err)
+					console.log('修改删除投放计划失败' + err)
 				}
 			)
 		},
@@ -135,7 +140,9 @@ const plan = {
 				configured_status: data.configured_status, //过滤无数据的广告
 				campaign_id: data.campaign_id, //广告
 				campaign_name: data.campaign_name, //关键字
-				check_value: data.check_value //状态
+				check_value: data.check_value, //状态
+				orderField: data.orderField, //排序的orderField参数名
+				orderDirection: data.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
 			}).then(
 				res => {
 					commit('GET_ADLIST', res.data)
@@ -143,6 +150,34 @@ const plan = {
 			).catch(
 				err => {
 					console.log('获取实时投放计划' + err)
+				}
+			)
+		},
+
+		//获取实时投放广告
+		getAdgroups({
+			commit
+		}, data) {
+			Axios.post('api.php', {
+				action: 'gdtAdPut',
+				opt: 'adgroups',
+				tdate: data.tdate, //开始时间
+				edate: data.edate, //结速时间
+				page: data.page, //页码
+				page_size: data.page_size, //每页数量
+				game_id: data.game_id, //游戏id
+				account_id: data.account_id, //媒体账号
+				configured_status: data.configured_status, //过滤无数据的广告
+				campaign_id: data.campaign_id, //广告
+				campaign_name: data.campaign_name, //关键字
+				check_value: data.check_value //状态
+			}).then(
+				res => {
+					commit('GET_ADGROUPS', res.data)
+				}
+			).catch(
+				err => {
+					console.log('获取实时投放广告' + err)
 				}
 			)
 		},

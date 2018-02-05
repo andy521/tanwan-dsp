@@ -10,11 +10,13 @@ const channel = {
         game:[],
         media:{},
         account:[],
-        plan:[{value: '1111',label: 'New York'}]
+        plan:[],
+        author:[],
+        adgroups:[],
     },    
     mutations: {        
         GETCHANNELDATA (state , data){
-            //console.log(data);
+            console.log(data)
             state.list = data.list;
             //当前页
             state.page = parseInt(data.page) || 1;
@@ -37,7 +39,7 @@ const channel = {
             for(let i in data){
                 a.push({ 'value': data[i].account_id, 'label' : data[i].account_name })
             };
-            console.log(a)
+            //console.log(a)
             state.account = a;
         },
         CAMPAIGNS(state,data){
@@ -46,6 +48,20 @@ const channel = {
                 c.push({ 'value': data[i].campaign_id, 'label' : data[i].campaign_name })
             }
             state.plan = c;
+        },
+        AUTHOR(state,data){
+            let a = [{'value':'','label':'全部'}];
+            for(let i in data){
+                a.push({ 'label': data[i].author, 'value' : encodeURIComponent(data[i].author) })
+            };
+            state.author = a;
+        },
+        ADGROUPS(state,data){
+            let a = [];
+            for(let i in data){
+                a.push({ 'value': data[i].adgroup_id, 'label' : data[i].adgroup_name })
+            };
+            state.adgroups = a;
         }
     },    
     actions : {
@@ -54,6 +70,7 @@ const channel = {
             let opt = param;
                 opt.action = 'api';
                 opt.opt = 'getGameTotalDay';
+            console.log(opt)
             Axios.get('api.php',opt)
             .then( 
                 res=>{ commit('GETCHANNELDATA',res.data) }
@@ -83,8 +100,7 @@ const channel = {
         },
 
         //获取账号        
-        getAccount({commit},opt){
-            console.log('获取媒体账号');
+        getAccount({commit},opt){            
             Axios.get('api.php',{'action':'api','opt':'getAccount','MeidaType': opt })
             .then( 
                 res=>{ commit('ACCOUNT',res.data) }
@@ -102,21 +118,32 @@ const channel = {
             ).catch( 
                 err=>{ console.log('获取媒体账号' + err) }
             ); 
+        },
+
+        //获取负责人
+        getAuthor({commit}){
+            Axios.get('api.php',{'action':'api','opt':'getAuthor'})
+            .then( 
+                res=>{ commit('AUTHOR',res.data) }
+            ).catch( 
+                err=>{ console.log('获取负责人' + err) }
+            ); 
+        },
+
+        //广告选择
+        Adgroups({commit}, opt){
+            console.log('广告选择');
+            // MeidaType
+            // account_id
+            let param = Object.assign({'action':'api','opt':'getAdgroups'}, opt);            
+            Axios.get('api.php',param)
+            .then( 
+                res=>{ commit('ADGROUPS', res.data) }
+            ).catch( 
+                err=>{ console.log('获取负责人' + err) }
+            ); 
         }
     }
 };
-
-
-/*
-do = products //产品总览
-do = mediaOverview//媒体总览
-do = accountOverview//账户总览
-do = planOverview//计划总览
-do = adsOverview//广告位总览
-
-game_id  游戏 
-tdate 开始日期
-tdate2 结束日期
-*/
 
 export default channel;

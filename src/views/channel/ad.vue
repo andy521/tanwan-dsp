@@ -16,15 +16,22 @@
 
                 <Col :xs="12" :md="3">
                     <!-- 账户选择: -->
-                    <Select @on-change="setAccount" placeholder="--账户选择--" style="width:100%"  class="margin-bottom-10">
+                    <Select @on-change="setAccount" :disabled="account_disabled" placeholder="--账户选择--" style="width:100%"  class="margin-bottom-10">
                         <Option v-for="item in account" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </Col>
 
-                <Col :xs="12" :md="5">
+                <Col :xs="12" :md="3">
                     <!-- 计划选择: -->
-                    <Select @on-change="setPlan" placeholder="--计划选择--" style="width:100%"  class="margin-bottom-10">
+                    <Select @on-change="setPlan" :disabled="plan_disabled" placeholder="--计划选择--" style="width:100%"  class="margin-bottom-10">
                         <Option v-for="item in plan" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </Col>
+
+                <Col :xs="12" :md="4">
+                    <!-- 广告选择: -->
+                    <Select @on-change="setAdgroups" :disabled="plan_disabled" placeholder="--广告选择--" style="width:100%"  class="margin-bottom-10">
+                        <Option v-for="item in adgroups" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </Col>
 
@@ -39,10 +46,14 @@
                     <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index> 
                 </Col>               
 
-                <Col :xs="8" :md="3" offset="4">
+                <Col :xs="8" :md="3">
                     <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
                 </Col>
-                              
+                <Col :xs="12" :md="2">                    
+                    <Select  @on-change="setPrincipal" placeholder="--负责人--"  class="margin-bottom-10">
+                        <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>  
+                </Col>                              
                 <Col :xs="12" :md="2">
                     <Button icon="document-text"  @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
                 </Col>
@@ -50,7 +61,7 @@
             </Row>
         </div>    
         
-        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" :height="height"></Table>
+        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortChange" :height="height"></Table>
         <div style="margin:10px 10px 0;overflow: hidden">
             <div style="float: right;">
                 <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>
@@ -71,19 +82,26 @@ export default {
             loading : true,
             //searchTree 组件清除属性
             sclear:false,
+            account_disabled:true,
+            plan_disabled:true,
             versionList:[
                 {value: '', label:'全部'},
                 {value: '2', label:'iOS'},
                 {value: '3', label:'安卓'},
             ],
             tableColumns: [],
+            //排序
+            orderField:'',
+            orderDirection: 'SORT_ASC',
             //默认选项目
             checkAllGroup:['impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
             current_account:'',
             current_version:'',
             current_time:[],
             current_page:'',
-            current_campaigns:''
+            current_campaigns:'',
+            current_author:'',
+            current_adgroup:''
         }
     },
     computed :{ 
@@ -114,6 +132,14 @@ export default {
         //计划
         plan(){
             return this.$store.state.channel.plan
+        },
+        //负责人
+        author(){
+            return this.$store.state.channel.author;
+        },
+        //广告选择
+        adgroups(){
+            return this.$store.state.channel.adgroups;
         }
     },
     watch: {
@@ -133,6 +159,10 @@ export default {
         mediaItem(){            
             this.$store.dispatch('getMedia');
         },
+        //获取负责人
+        getAuthor(){
+            this.$store.dispatch('getAuthor');            
+        },
         //导出表单
         exportData(){
             this.$refs.tableCsv.exportCsv({
@@ -147,7 +177,11 @@ export default {
                     os : this.current_version,
                     page : this.current_page,
                     account_id : this.current_account,
-                    campaigns_id: this.current_campaigns
+                    campaigns_id: this.current_campaigns,
+                    author : this.current_author,
+                    adgroup_id : this.current_adgroup,
+                    orderField: this.orderField, 
+					orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 };
             if(this.current_time.length > 0){
                 param.tdate = this.current_time[0];
@@ -156,6 +190,12 @@ export default {
             this.loading = true;
             this.$store.dispatch('getChannelData',param);
         },
+        //排序
+        sortChange(column) {
+            this.orderField = column.key;
+            this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
+            this.getTableData();            
+        },  
         //下一页
         changePage(val){
             this.current_page = val;
@@ -174,16 +214,18 @@ export default {
             let param = {
                 MeidaType : this.current_media,
                 account_id : data
-            };
-            console.log(' 获取所有计划 ')
+            };            
             this.$store.dispatch('planCampaigns',param);
+            this.$store.dispatch('Adgroups',param);
+            this.plan_disabled=false;
         },
         //选择媒体
         setMedia(data){            
             this.current_media = data;
             this.getTableData();
             //这里再获取账户
-            this.$store.dispatch('getAccount',data);
+            this.$store.dispatch('getAccount',data);            
+            this.account_disabled = false;
         },
         //选择版本
         setVersion(data){
@@ -193,6 +235,16 @@ export default {
         //选择计划
         setPlan(data){
             this.current_campaigns = date;
+            this.getTableData();
+        },
+        //选择负责人
+        setPrincipal(data){
+            this.current_author = data;
+            this.getTableData();
+        },
+        //广告选择
+        setAdgroups(data){
+            this.current_adgroup = data;
             this.getTableData();
         },
         //获取 自定义指标
@@ -251,14 +303,9 @@ export default {
     mounted(){        
         this.changeTableColumns();
         this.height = document.body.clientHeight - 225;
-        //是否点击过来的
-        let query = this.$route.query.account_id;
-        if(!!query){
-            this.current_account = query.toString();
-        }
         this.getTableData();
         this.mediaItem();    
-
+        this.getAuthor();        
     }
 }
 </script>

@@ -32,10 +32,14 @@
                     <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index> 
                 </Col>               
 
-                <Col :xs="8" :md="3" offset="9">
+                <Col :xs="8" :md="3" offset="7">
                     <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
                 </Col>
-                              
+                <Col :xs="12" :md="2">                    
+                    <Select  @on-change="setPrincipal" placeholder="--负责人--"  class="margin-bottom-10">
+                        <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>  
+                </Col>
                 <Col :xs="12" :md="2">
                     <Button icon="document-text"  @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
                 </Col>
@@ -43,7 +47,7 @@
             </Row>
         </div>    
         
-        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" :height="height"></Table>
+        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortChange" :height="height"></Table>
         <div style="margin:10px 10px 0;overflow: hidden">
             <div style="float: right;">
                 <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>
@@ -71,12 +75,17 @@ export default {
                 {value: '3', label:'安卓'},
             ],
             tableColumns: [],
+            //排序
+            orderField:'',
+            orderDirection: 'SORT_ASC',
             //默认选项目
             checkAllGroup:['cost','impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
             current_account:'',
+            current_media:'',
             current_version:'',
             current_time:[],
             current_page:'',
+            current_author:''
         }
     },
     computed :{ 
@@ -103,6 +112,10 @@ export default {
         //账号
         account(){
             return this.$store.state.channel.account
+        },
+        //负责人
+        author(){
+            return this.$store.state.channel.author;
         }
     },
     watch: {
@@ -122,6 +135,10 @@ export default {
         mediaItem(){            
             this.$store.dispatch('getMedia');
         },
+        //获取负责人
+        getAuthor(){
+            this.$store.dispatch('getAuthor');
+        },
         //导出表单
         exportData(){
             this.$refs.tableCsv.exportCsv({
@@ -135,7 +152,10 @@ export default {
                     media_type : this.current_media,
                     os : this.current_version,
                     page : this.current_page,
-                    account_id : this.current_account
+                    account_id : this.current_account,
+                    author : this.current_author,
+                    orderField: this.orderField, 
+					orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 };
             if(this.current_time.length > 0){
                 param.tdate = this.current_time[0];
@@ -144,6 +164,12 @@ export default {
             this.loading = true;
             this.$store.dispatch('getChannelData',param);
         },
+        //排序
+        sortChange(column) {
+            this.orderField = column.key;
+            this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
+            this.getTableData();            
+        }, 
         //下一页
         changePage(val){
             this.current_page = val;
@@ -170,6 +196,11 @@ export default {
         //选择版本
         setVersion(data){
             this.current_version = data;
+            this.getTableData();
+        },
+        //选择负责人
+        setPrincipal(data){
+            this.current_author = data;
             this.getTableData();
         },
         //获取 自定义指标
@@ -247,6 +278,7 @@ export default {
         this.height = document.body.clientHeight - 225;
         this.getTableData(); 
         this.mediaItem();
+        this.getAuthor();
     }
 }
 </script>

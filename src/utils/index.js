@@ -239,7 +239,7 @@ util.fullscreenEvent = function (vm) {
 };
 
 util.mediaSelect = function (data){
-    let m = [{'value':0,'label':'全部'}];
+    let m = [{'value':'','label':'全部'}];
     for(let i in data){
         m.push({ 'value': data[i].MeidaType, 'label' : data[i].name })
     }

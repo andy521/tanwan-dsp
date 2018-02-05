@@ -5,6 +5,10 @@
 		width: 220px;
 	}
 	
+	.time .ivu-poptip {
+		display: inline-block;
+	}
+	
 	.ivu-card-head-inner,
 	.ivu-card-head p {
 		height: 25px;
@@ -180,16 +184,20 @@
 				</Col>
 			</Row>
 			<div>
-				<Table :data="adList" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="table" @on-selection-change="taCheck"></Table>
+				<Table :data="adList" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="table" @on-selection-change="taCheck" @on-sort-change="sortchange" ></Table>
 				<Row class="margin-top-10">
-					<Col span="8"> 表格尺寸
+					<Col span="10"> 表格尺寸
 					<Radio-group v-model="tableSize" type="button">
 						<Radio label="large">大</Radio>
 						<Radio label="default">中</Radio>
 						<Radio label="small">小</Radio>
 					</Radio-group>
+					每页显示
+					<Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
+						<Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+					</Select>
 					</Col>
-					<Col span="16" style="text-align: right;">
+					<Col span="14" style="text-align: right;">
 					<Page :total="total_number" :page-size="page_size" ref="pages" @on-change="getCampaignsList" show-elevator show-total></Page>
 					</Col>
 				</Row>
@@ -311,8 +319,11 @@
 				campaign_name: '', //关键字
 				check_value: false,
 				edit_status: "AD_STATUS_NORMAL", //批量状态
+				orderField: '', //排序参数名
+				orderDirection: 'SORT_ASC', //排序方向
 				tableSize: 'small',
 				copyAdwin: false,
+
 				formItem: {
 					select: '',
 					select2: '',
@@ -324,11 +335,13 @@
 				tableColumns: {
 					checks: {
 						type: 'selection',
+						fixed: "left",
 						width: 60
 					},
 					game_name: {
 						title: '产品名称',
 						key: 'game_name',
+						fixed: "left",
 						width: 200
 					},
 					configured_status: {
@@ -345,6 +358,28 @@
 									on: {
 										'on-change': (value) => {
 											params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
+											Axios.post('api.php', {
+												action: 'gdtAdPut',
+												opt: 'campaigns_add',
+												do: 'edit',
+												account_id: params.row.account_id, //*必传*
+												campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
+												campaign_name: params.row.campaign_name,
+												daily_budget: params.row.daily_budget*100, //日消耗限额
+												configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
+												speed_mode: params.row.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
+											}).then(
+												res => {
+													if(res.ret == 1) {
+														this.$Message.info(res.msg);
+														this.getCampaignsList(this.page);
+													}
+												}
+											).catch(
+												err => {
+													console.log('修改删除投放计划失败' + err)
+												}
+											)
 										}
 									}
 								})
@@ -362,28 +397,44 @@
 					account_name: {
 						title: '媒体账户',
 						key: 'account_name',
-						width: 150
+						width: 150,
+						render: (h, params) => {
+							return [h('Button', {
+								props: {
+									type: 'ghost',
+									size: 'small'
+								},
+								style: {
+									marginRight: '5px'
+								},
+								on: {
+									click: () => {
+										window.location.href = ""
+									}
+								}
+							}, '登陆'), h('span', params.row.account_name)]
+						}
 					},
 					campaign_id: {
 						title: '计划',
 						key: 'campaign_id',
 						width: 150
 					},
-					site_name: {
+					adgroup_name: {
 						title: '广告名称',
-						key: 'site_name',
-						width: 200,
+						key: 'adgroup_name',
+						width: 400,
 
 					},
 					impression: {
 						title: '曝光',
-						sortable: true,
+						sortable: 'custom',
 						key: 'impression',
 						width: 100
 					},
 					campaign_name: {
 						title: '计划名称',
-						sortable: true,
+						sortable: 'custom',
 						key: 'campaign_name',
 						width: 300,
 						render: (h, params) => {
@@ -416,16 +467,28 @@
 													this.$Message.info('请输入修改信息');
 													return;
 												}
-												let data = {
+												Axios.post('api.php', {
+													action: 'gdtAdPut',
+													opt: 'campaigns_add',
+													do: 'edit',
 													account_id: params.row.account_id, //*必传*
 													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
 													campaign_name: value,
-													daily_budget: params.row.daily_budget, //日消耗限额
+													daily_budget: params.row.daily_budget*100, //日消耗限额
 													configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
 													speed_mode: params.row.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
-												}
-												console.log(data)
-												//this.$store.dispatch('amendCampaign', data);
+												}).then(
+													res => {
+														if(res.ret == 1) {
+															this.$Message.info(res.msg);
+															this.getCampaignsList(this.page);
+														}
+													}
+												).catch(
+													err => {
+														console.log('修改删除投放计划失败' + err)
+													}
+												)
 											},
 										})
 									}
@@ -435,30 +498,35 @@
 					},
 					click: {
 						title: '点击量',
-						sortable: true,
+						sortable: 'custom',
 						key: 'click',
 						width: 150
 					},
 					click_per: {
 						title: '点击率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'click_per',
 						width: 150
 					},
 					click_cost: {
 						title: '点击均价',
-						sortable: true,
+						sortable: 'custom',
 						key: 'click_cost',
 						width: 150
 					},
 					daily_budget: {
 						title: '日消耗限额',
-						sortable: true,
+						sortable: 'custom',
 						key: 'daily_budget',
 						width: 150,
 						render: (h, params) => {
 							let value = params.row.daily_budget;
-							return [h('i-button', {
+							return [h('Tooltip', {
+								props: {
+									placement: 'top',
+									content: '最低额度是该推广计划的今日消耗加上50元'
+								}
+							}, [h('i-button', {
 								props: {
 									icon: "edit",
 									type: "text",
@@ -486,22 +554,33 @@
 													this.$Message.info('请输入修改信息');
 													return;
 												}
-												let data = {
+												Axios.post('api.php', {
+													action: 'gdtAdPut',
+													opt: 'campaigns_add',
+													do: 'edit',
 													account_id: params.row.account_id, //*必传*
 													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
 													campaign_name: params.row.campaign_name,
 													daily_budget: value, //日消耗限额
-													configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
+													configured_status: params.row.configured_status*100, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
 													speed_mode: params.row.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
-												}
-												console.log(data)
-												//this.$store.dispatch('amendCampaign', data);
-
+												}).then(
+													res => {
+														if(res.ret == 1) {
+															this.$Message.info(res.msg);
+															this.getCampaignsList(this.page);
+														}
+													}
+												).catch(
+													err => {
+														console.log('修改删除投放计划失败' + err)
+													}
+												)
 											},
 										})
 									}
 								}
-							}), h('span', params.row.daily_budget)]
+							})]), h('span', params.row.daily_budget + '分')]
 						}
 					},
 					bid_mode: {
@@ -512,148 +591,148 @@
 					},
 					cost: {
 						title: '花费',
-						sortable: true,
+						sortable: 'custom',
 						key: 'cost',
 						width: 150
 					},
 					fetch: {
 						title: '到达数',
-						sortable: true,
+						sortable: 'custom',
 						key: 'fetch',
 						width: 150
 					},
 					fetch_per: {
 						title: '到达率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'fetch_per',
 						width: 150
 					},
 
 					down_ins_per: {
 						title: '下载率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'down_ins_per',
 						width: 150
 					},
 					download: {
 						title: '下载数',
-						sortable: true,
+						sortable: 'custom',
 						key: 'download',
 						width: 150
 					},
 					install: {
 						title: '激活总量',
-						sortable: true,
+						sortable: 'custom',
 						key: 'install',
 						width: 150
 					},
 					click_install: {
 						title: '点击激活率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'click_install',
 						width: 150
 					},
 					reg_imei: {
 						title: '注册设备数',
-						sortable: true,
+						sortable: 'custom',
 						key: 'reg_imei',
 						width: 150
 					},
 					reg_total: {
 						title: '注册',
-						sortable: true,
+						sortable: 'custom',
 						key: 'reg_total',
 						width: 150
 					},
 
 					reg_per: {
 						title: '注册率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'reg_per',
 						width: 150
 					},
 					reg_imei_cost: {
 						title: '注册设备成本',
-						sortable: true,
+						sortable: 'custom',
 						key: 'reg_imei_cost',
 						width: 150
 					},
 
 					reg_cost: {
 						title: '注册成本',
-						sortable: true,
+						sortable: 'custom',
 						key: 'reg_cost',
 						width: 150
 					},
 					download_per: {
 						title: '下载激活率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'download_per',
 						width: 150
 					},
 					install_per: {
 						title: '激活安装率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'install_per',
 						width: 150
 					},
 					login: {
 						title: '活跃数',
-						sortable: true,
+						sortable: 'custom',
 						key: 'login',
 						width: 150
 					},
 					act_per: {
 						title: '活跃率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'act_per',
 						width: 150
 					},
 					pay_num: {
 						title: '付费人数',
-						sortable: true,
+						sortable: 'custom',
 						key: 'pay_num',
 						width: 150
 					},
 					pay_total: {
 						title: '付费金额',
-						sortable: true,
+						sortable: 'custom',
 						key: 'pay_total',
 						width: 150
 					},
 					pay_per: {
 						title: '付费率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'pay_per',
 						width: 150
 					},
 					reg_arpu: {
 						title: '注册ARPU',
-						sortable: true,
+						sortable: 'custom',
 						key: 'reg_arpu',
 						width: 150
 					},
 					income_per: {
 						title: '回本率',
-						sortable: true,
+						sortable: 'custom',
 						key: 'income_per',
 						width: 150
 					},
 					show_pv: {
 						title: '展示PV',
-						sortable: true,
+						sortable: 'custom',
 						key: 'show_pv',
 						width: 150
 					},
 					show_ip: {
 						title: '展示IP',
-						sortable: true,
+						sortable: 'custom',
 						key: 'show_ip',
 						width: 150
 					},
 					down_ip: {
 						title: '下载IP',
-						sortable: true,
+						sortable: 'custom',
 						key: 'down_ip',
 						width: 150
 					}
@@ -663,6 +742,7 @@
 		mounted() {
 			this.getMedia();
 			this.getCampaignsList();
+
 		},
 		methods: {
 			//新建广告
@@ -710,10 +790,12 @@
 					configured_status: this.configured_status,
 					campaign_id: this.CampaignsListModel,
 					campaign_name: this.campaign_name,
-					check_value: this.check_value == false ? 0 : 1
+					check_value: this.check_value == false ? 0 : 1,
+					orderField: this.orderField, //排序的orderField参数名
+					orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
 				}
 				console.log(data)
-				this.$store.dispatch('getAdList', data);
+				this.$store.dispatch('getAdgroups', data);
 			},
 
 			//批量修改删除投放计划 
@@ -728,7 +810,6 @@
 					type: type,
 					configured_status: this.edit_status
 				}
-				console.log(data)
 				this.$store.dispatch('amendCampaigns', data);
 			},
 
@@ -739,6 +820,12 @@
 					ids.push(item.id)
 				});
 				this.taCheckids = ids;
+			},
+			//排序
+			sortchange(column) {
+				this.orderField = column.key;
+				this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
+				this.getCampaignsList();
 			},
 
 			//改变日期
@@ -767,11 +854,11 @@
 			},
 			//获取实时投放计划
 			adList() {
-				let adList = this.$store.state.plan.adList;
+				let adList = this.$store.state.plan.Adgroups;
 				console.log(adList)
 				this.total_number = adList.total_number;
 				this.total_page = adList.total_page;
-				let data = [this.tableColumns.checks, this.tableColumns.game_name, this.tableColumns.account_name, this.tableColumns.campaign_id, this.tableColumns.site_name, this.tableColumns.campaign_name, this.tableColumns.daily_budget, this.tableColumns.impression, this.tableColumns.bid_mode, this.tableColumns.cost];
+				let data = [this.tableColumns.checks, this.tableColumns.game_name, this.tableColumns.account_name, this.tableColumns.campaign_id, this.tableColumns.adgroup_name, this.tableColumns.campaign_name, this.tableColumns.daily_budget, this.tableColumns.impression, this.tableColumns.bid_mode, this.tableColumns.cost];
 				this.checkAllGroup.forEach(col => {
 					data.push(this.tableColumns[col])
 				});
