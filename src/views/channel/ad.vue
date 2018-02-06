@@ -94,7 +94,7 @@ export default {
             orderField:'',
             orderDirection: 'SORT_ASC',
             //默认选项目
-            checkAllGroup:['impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
+            checkAllGroup:['impression','click','install','install_per','reg_imei','activation','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
             current_account:'',
             current_version:'',
             current_time:[],
@@ -193,8 +193,15 @@ export default {
         //排序
         sortChange(column) {
             this.orderField = column.key;
-            this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-            this.getTableData();            
+            if(column.order == "asc"){
+                this.orderDirection = "SORT_ASC";
+            }else if(column.order == "desc"){
+                this.orderDirection = "SORT_DESC";
+            }else{
+                this.orderField = '';
+                this.orderDirection = "";
+            }           
+            this.getTableData();        
         },  
         //下一页
         changePage(val){
@@ -268,7 +275,7 @@ export default {
                 install : {title: '激活安装', key: 'install', sortable: true, "width": 120 },
                 install_per : {title: '激活安装率', key: 'install_per', sortable: true, "width": 120 },
                 reg_imei : {title: '注册设备数', key: 'reg_imei', sortable: true, "width": 120 },
-                reg_total : {title: '注册', key: 'reg_total', sortable: true, "width": 100 },
+                activation : {title: '注册', key: 'activation', sortable: true, "width": 100 },
                 reg_per : {title: '注册率', key: 'reg_per', sortable: true, "width": 100 },
                 reg_imei_cost : {title: '注册设备成本', key: 'reg_imei_cost', sortable: true, "width": 130 },
                 reg_cost : {title: '注册成本', key: 'reg_cost', sortable: true, "width": 130 },

@@ -38,7 +38,7 @@
 					<Checkbox label="install">激活安装</Checkbox>
                     <Checkbox label="install_per">激活安装率</Checkbox>
                     <Checkbox label="reg_imei">注册设备数</Checkbox>
-                    <Checkbox label="reg_total">注册</Checkbox>
+                    <Checkbox label="activation">注册</Checkbox>
                     <Checkbox label="reg_per">注册率</Checkbox>
                     <Checkbox label="reg_imei_cost">注册设备成本</Checkbox>
                     <Checkbox label="reg_arpu">注册ARPU</Checkbox>
@@ -101,7 +101,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = ['impression','click','install','install_per','reg_imei','reg_total','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'];
+					this.checkAllGroup = ['impression','click','install','install_per','reg_imei','activation','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'];
 				} else {
 					this.checkAllGroup = [];
 				}
