@@ -14,9 +14,9 @@
                 <p slot="title" class="card-title">
                     <Icon type="ios-paper"></Icon>
                     所选账户在所选时段数据汇总
-                    <ButtonGroup :style="{ float: 'right'}">
+                    <!-- <ButtonGroup :style="{ float: 'right'}">
                         <Button type="primary" @click="addBindId = true">新增绑定账户</Button>
-                    </ButtonGroup>
+                    </ButtonGroup> -->
                 </p>
                 <div class="map-con">
                     <Row :gutter="10">
@@ -78,7 +78,7 @@
         </Row>
 
         <!-- 按账户查看 - 按产品查看 -->
-        <view-tab :account="account" :principal="principal" :media="media"></view-tab>      
+        <view-tab :data="tableData" :media="media"></view-tab>      
 
         <!-- 线性表格 -->
         <linear-tabel :data-echart="echart" ></linear-tabel>
@@ -160,14 +160,11 @@ export default {
         echart(){
             return this.$store.state.home.echart;
         },
-        account(){
-            return this.$store.state.home.account;
-        },
-        principal(){
-            return this.$store.state.home.principal;
-        },
         media(){
             return this.$store.state.home.media;
+        },
+        tableData(){
+            return this.$store.state.home.data;
         }
     },
     methods: {   
