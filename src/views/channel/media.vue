@@ -43,7 +43,7 @@
             </Row>
         </div>    
         
-        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortChange" :height="height"></Table>
+        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortChange"></Table>
         <div style="margin:10px 10px 0;overflow: hidden">
             <div style="float: right;">
                 <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>

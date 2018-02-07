@@ -186,7 +186,17 @@ const newad = {
 			)
         },
         
-
+        //获取广告版位
+        getAdSpace( {commit}, data ){
+            Axios.get('api.php', {
+				action: 'gdtAdPut',
+				opt: 'ret_ads_config'
+			}).then(res => {
+                //console.log( res.data.adcreative_template )
+                commit('GET_AD_SPACE', res.data.adcreative_template )
+            }).catch( err => console.log('获取广告版位' + err ))
+        }
+        
 	}
 };
 
