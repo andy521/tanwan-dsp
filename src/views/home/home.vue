@@ -78,7 +78,7 @@
         </Row>
 
         <!-- 按账户查看 - 按产品查看 -->
-        <view-tab :data="tableData" :media="media"></view-tab>      
+        <view-tab :tdata="tableData" :media="media"></view-tab>      
 
         <!-- 线性表格 -->
         <linear-tabel :data-echart="echart" ></linear-tabel>
@@ -164,7 +164,7 @@ export default {
             return this.$store.state.home.media;
         },
         tableData(){
-            return this.$store.state.home.data;
+            return this.$store.state.home.tdata;
         }
     },
     methods: {   

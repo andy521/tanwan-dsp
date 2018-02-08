@@ -40,64 +40,7 @@
 		width: 100px;
 	}
 	
-	.w_flex {
-		display: -webkit-box;
-		display: -webkit-flex;
-		display: flex;
-		padding: 5px 0;
-	}
 	
-	.w_flex_hd {
-		width: 5em;
-		font-weight: bold;
-		text-align: right;
-		padding-right: 10px;
-	}
-	
-	.w_flex_bd {
-		-webkit-box-flex: 1;
-		-webkit-flex: 1;
-		flex: 1;
-	}
-	
-	.w_imgdiv {
-		border: solid 1px #eee;
-		width: 200px;
-		height: 150px;
-		position: relative;
-		overflow: hidden;
-	}
-	
-	.w_imgdiv img {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 100%;
-		transform: translate(-50%, -50%);
-		-webkit-transform: translate(-50%, -50%);
-	}
-	
-	.w_img_operation {
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		background: rgba(0, 0, 0, .7);
-		padding: 0 5px;
-	}
-	
-	.w_imt_tit {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		padding: 5px 10px;
-		background: rgba(0, 0, 0, 1);
-		color: #fff;
-	}
-	
-	.demo-carousel {
-		width: 300px;
-	}
 </style>
 
 <template>
@@ -122,7 +65,7 @@
 				<Button type="ghost" @click="copyAdwin=true">复制</Button>
 
 				<!--自定义指标-->
-				<view-tip v-model="checkAllGroup"></view-tip>
+				<view-tip v-model="checkAllGroup" :uncheck="getuncheck"></view-tip>
 				<Button type="primary" @click="tonewadd">新建广告</Button>
 				</Col>
 			</Row>
@@ -184,7 +127,7 @@
 				</Col>
 			</Row>
 			<div>
-				<Table :data="adList" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="table" @on-selection-change="taCheck" @on-sort-change="sortchange" ></Table>
+				<Table :data="adList" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="table" @on-selection-change="taCheck" @on-sort-change="sortchange"></Table>
 				<Row class="margin-top-10">
 					<Col span="10"> 表格尺寸
 					<Radio-group v-model="tableSize" type="button">
@@ -231,70 +174,24 @@
 				</Form>
 			</div>
 		</Modal>
-
 		<!--详情-->
-		<Modal v-model="detailswin" title="产品名称">
-			<Carousel v-model="value1" :height="300">
-				<CarouselItem>
-					<div class="demo-carousel">
-						<div class="w_imgdiv">
-							<img src="../../images/login_bg.jpg" />
-							<div class="w_img_operation">
-								<Icon type="search" size="18" color="#fff"></Icon>
-							</div>
-							<div class="w_imt_tit">整个地图就你1人，神装任爆，八倍回收！登录送V8！</div>
-						</div>
-					</div>
-				</CarouselItem>
-				<CarouselItem>
-					<div class="demo-carousel">4545454</div>
-				</CarouselItem>
-			</Carousel>
-			<div class="w_flex">
-				<div class="w_flex_hd">创意</div>
-				<div class="w_flex_bd">
-
-				</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">广告名称</div>
-				<div class="w_flex_bd">妖树-640×288单图(文)-20180115-副本-副本</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">广告ID</div>
-				<div class="w_flex_bd">43970019</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">投放日期</div>
-				<div class="w_flex_bd">2018-01-15开始(长期投放)</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">投放时间</div>
-				<div class="w_flex_bd">妖树-640×288单图(文)-20180115-副本-副本</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">定向条件</div>
-				<div class="w_flex_bd">地理位置：（常住、近期）安徽省、北京市、重庆市、福建省、广西壮族自治区、广东省、贵州省、甘肃省、湖南省、河南省、湖北省、河北省、海南省、黑龙江省、江西省、吉林省、江苏省、辽宁省、宁夏回族自治区、内蒙古自治区、青海省、上海市、山东省、四川省、山西省、陕西省、天津市、新疆维吾尔自治区、西藏自治区、云南省、浙江省、中国未知</div>
-			</div>
-			<div slot="footer">
-				<Button size="large" type="text">取消</Button>
-			</div>
-		</Modal>
-		<!--图片放大-->
+		<adgroup-detail v-model="details_id"></adgroup-detail>
 
 	</div>
 </template>
 
 <script>
 	import Axios from '@/api/index';
-	import { DateShortcuts, formatDate } from './data/DateShortcuts.js';
+	import { DateShortcuts, formatDate, changetime, deepClone } from './data/DateShortcuts.js';
 	import viewTip from './components/viewPopti.vue';
 	import searchTree from './components/searchTree.vue';
+	import adgroupDetail from './components/adgroupDetail.vue';
 
 	export default {
 		components: {
 			viewTip,
-			searchTree
+			searchTree,
+			adgroupDetail
 		},
 		data() {
 			return {
@@ -307,7 +204,8 @@
 				total_number: 1, //总数量
 				total_page: 1, //总页数
 				indeterminate: true,
-				checkAllGroup: ['configured_status', 'configured_status1', 'click_cost', 'click', 'click_per', 'fetch', 'fetch_per', 'install', 'click_install', 'reg_imei', 'reg_total', 'reg_per', 'reg_cost', 'reg_imei_cost', 'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'income_per', 'show_pv'], //默认选中
+				checkAllGroup: ['configured_status', 'click_cost', 'click', 'click_per', 'fetch', 'fetch_per', 'install', 'click_install', 'reg_imei', 'activation', 'reg_per', 'reg_cost', 'reg_imei_cost', 'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'income_per', 'show_pv'], //默认选中
+				uncheck: [], //没选中的
 				visible: false,
 				visible1: false,
 				startdate: false,
@@ -323,198 +221,83 @@
 				orderDirection: 'SORT_ASC', //排序方向
 				tableSize: 'small',
 				copyAdwin: false,
-
 				formItem: {
 					select: '',
 					select2: '',
 					radio: 'male',
 				},
 				detailswin: false,
-				value1: 0,
+				details_id: { //详情参数
+					account_id: '',
+					adgroup_id: ''
+				},
 				taColumns: [], //表头设置
-				tableColumns: {
-					checks: {
+				tableColumns: [{
 						type: 'selection',
 						fixed: "left",
-						width: 60
+						width: 60,
+						key: ''
 					},
-					game_name: {
+					{
 						title: '产品名称',
 						key: 'game_name',
 						fixed: "left",
 						width: 200
 					},
-					configured_status: {
-						title: '广告开关',
-						key: 'configured_status',
-						width: 150,
-						render: (h, params) => {
-							return h('div', [
-								h('i-switch', {
-									props: {
-										size: "small",
-										value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
-									},
-									on: {
-										'on-change': (value) => {
-											params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
-											Axios.post('api.php', {
-												action: 'gdtAdPut',
-												opt: 'campaigns_add',
-												do: 'edit',
-												account_id: params.row.account_id, //*必传*
-												campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-												campaign_name: params.row.campaign_name,
-												daily_budget: params.row.daily_budget*100, //日消耗限额
-												configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
-												speed_mode: params.row.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
-											}).then(
-												res => {
-													if(res.ret == 1) {
-														this.$Message.info(res.msg);
-														this.getCampaignsList(this.page);
-													}
-												}
-											).catch(
-												err => {
-													console.log('修改删除投放计划失败' + err)
-												}
-											)
-										}
-									}
-								})
-							]);
-						}
-					},
-					configured_status1: {
-						title: '广告状态',
-						key: 'configured_status',
-						width: 150,
-						render: (h, params) => {
-							return h('span', params.row.configured_status == "AD_STATUS_NORMAL" ? '开启' : '关闭');
-						}
-					},
-					account_name: {
+					{
 						title: '媒体账户',
 						key: 'account_name',
-						width: 150,
+						width: 160,
 						render: (h, params) => {
-							return [h('Button', {
+							return [h('span', params.row.account_name), h('Button', {
 								props: {
 									type: 'ghost',
 									size: 'small'
 								},
 								style: {
-									marginRight: '5px'
+									marginLeft: '10px'
 								},
 								on: {
 									click: () => {
 										window.location.href = ""
 									}
 								}
-							}, '登陆'), h('span', params.row.account_name)]
+							}, '登陆')]
 						}
 					},
-					campaign_id: {
+					{
 						title: '计划',
 						key: 'campaign_id',
 						width: 150
 					},
-					adgroup_name: {
+					{
 						title: '广告名称',
 						key: 'adgroup_name',
 						width: 400,
-
-					},
-					impression: {
-						title: '曝光',
-						sortable: 'custom',
-						key: 'impression',
-						width: 100
-					},
-					campaign_name: {
-						title: '计划名称',
-						sortable: 'custom',
-						key: 'campaign_name',
-						width: 300,
 						render: (h, params) => {
-							let value = params.row.campaign_name;
-							return [h('i-button', {
+							return h('Button', {
 								props: {
-									icon: "edit",
-									type: "text",
-									size: "small"
+									type: 'text',
+									size: 'small'
 								},
 								on: {
 									click: () => {
-										this.$Modal.confirm({
-											render: (h) => {
-												return h('Input', {
-													props: {
-														value: params.row.campaign_name,
-														autofocus: true,
-														placeholder: '请输入计划名称'
-													},
-													on: {
-														input: (val) => {
-															value = val;
-														}
-													}
-												})
-											},
-											onOk: () => {
-												if(value == '') {
-													this.$Message.info('请输入修改信息');
-													return;
-												}
-												Axios.post('api.php', {
-													action: 'gdtAdPut',
-													opt: 'campaigns_add',
-													do: 'edit',
-													account_id: params.row.account_id, //*必传*
-													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-													campaign_name: value,
-													daily_budget: params.row.daily_budget*100, //日消耗限额
-													configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
-													speed_mode: params.row.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
-												}).then(
-													res => {
-														if(res.ret == 1) {
-															this.$Message.info(res.msg);
-															this.getCampaignsList(this.page);
-														}
-													}
-												).catch(
-													err => {
-														console.log('修改删除投放计划失败' + err)
-													}
-												)
-											},
-										})
+										this.details_id = {
+											account_id: params.row.account_id,
+											adgroup_id: params.row.adgroup_id
+										}
 									}
 								}
-							}), h('span', params.row.campaign_name)]
+							}, params.row.adgroup_name)
 						}
 					},
-					click: {
-						title: '点击量',
-						sortable: 'custom',
-						key: 'click',
-						width: 150
-					},
-					click_per: {
+					{
 						title: '点击率',
 						sortable: 'custom',
 						key: 'click_per',
 						width: 150
 					},
-					click_cost: {
-						title: '点击均价',
-						sortable: 'custom',
-						key: 'click_cost',
-						width: 150
-					},
-					daily_budget: {
+					{
 						title: '日消耗限额',
 						sortable: 'custom',
 						key: 'daily_budget',
@@ -560,10 +343,7 @@
 													do: 'edit',
 													account_id: params.row.account_id, //*必传*
 													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-													campaign_name: params.row.campaign_name,
-													daily_budget: value, //日消耗限额
-													configured_status: params.row.configured_status*100, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
-													speed_mode: params.row.speed_mode //SPEED_MODE_FAST加速投放 SPEED_MODE_STANDARD标准投放
+													daily_budget: value, //日消耗限额													
 												}).then(
 													res => {
 														if(res.ret == 1) {
@@ -580,169 +360,226 @@
 										})
 									}
 								}
-							})]), h('span', params.row.daily_budget + '分')]
+							})]), h('span', params.row.daily_budget / 100 + '元')]
 						}
 					},
-					bid_mode: {
-						title: '出价',
-						key: 'bid_mode',
+					{
+						title: '广告开关/状态',
+						key: 'configured_status',
 						width: 150,
-
+						render: (h, params) => {
+							return h('div', [
+								h('i-switch', {
+									props: {
+										size: "small",
+										value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
+									},
+									style: {
+										marginRight: '10px'
+									},
+									on: {
+										'on-change': (value) => {
+											params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
+											Axios.post('api.php', {
+												action: 'gdtAdPut',
+												opt: 'campaigns_add',
+												do: 'edit',
+												account_id: params.row.account_id, //*必传*
+												campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
+												configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
+											}).then(
+												res => {
+													if(res.ret == 1) {
+														this.$Message.info(res.msg);
+														this.getCampaignsList(this.page);
+													}
+												}
+											).catch(
+												err => {
+													console.log('修改删除投放计划失败' + err)
+												}
+											)
+										}
+									}
+								}), h('span', params.row.configured_status == "AD_STATUS_NORMAL" ? '开启' : '关闭')
+							]);
+						}
 					},
-					cost: {
-						title: '花费',
+					{
+						title: '曝光',
 						sortable: 'custom',
-						key: 'cost',
-						width: 150
+						key: 'impression',
+						width: 100
 					},
-					fetch: {
-						title: '到达数',
-						sortable: 'custom',
-						key: 'fetch',
-						width: 150
-					},
-					fetch_per: {
-						title: '到达率',
-						sortable: 'custom',
-						key: 'fetch_per',
-						width: 150
-					},
-
-					down_ins_per: {
-						title: '下载率',
-						sortable: 'custom',
-						key: 'down_ins_per',
-						width: 150
-					},
-					download: {
-						title: '下载数',
-						sortable: 'custom',
-						key: 'download',
-						width: 150
-					},
-					install: {
-						title: '激活总量',
-						sortable: 'custom',
-						key: 'install',
-						width: 150
-					},
-					click_install: {
-						title: '点击激活率',
-						sortable: 'custom',
-						key: 'click_install',
-						width: 150
-					},
-					reg_imei: {
-						title: '注册设备数',
-						sortable: 'custom',
-						key: 'reg_imei',
-						width: 150
-					},
-					reg_total: {
-						title: '注册',
-						sortable: 'custom',
-						key: 'reg_total',
-						width: 150
-					},
-
-					reg_per: {
-						title: '注册率',
-						sortable: 'custom',
-						key: 'reg_per',
-						width: 150
-					},
-					reg_imei_cost: {
-						title: '注册设备成本',
-						sortable: 'custom',
-						key: 'reg_imei_cost',
-						width: 150
-					},
-
-					reg_cost: {
-						title: '注册成本',
-						sortable: 'custom',
-						key: 'reg_cost',
-						width: 150
-					},
-					download_per: {
-						title: '下载激活率',
-						sortable: 'custom',
-						key: 'download_per',
-						width: 150
-					},
-					install_per: {
-						title: '激活安装率',
-						sortable: 'custom',
-						key: 'install_per',
-						width: 150
-					},
-					login: {
-						title: '活跃数',
-						sortable: 'custom',
-						key: 'login',
-						width: 150
-					},
-					act_per: {
-						title: '活跃率',
-						sortable: 'custom',
-						key: 'act_per',
-						width: 150
-					},
-					pay_num: {
-						title: '付费人数',
-						sortable: 'custom',
-						key: 'pay_num',
-						width: 150
-					},
-					pay_total: {
-						title: '付费金额',
-						sortable: 'custom',
-						key: 'pay_total',
-						width: 150
-					},
-					pay_per: {
-						title: '付费率',
-						sortable: 'custom',
-						key: 'pay_per',
-						width: 150
-					},
-					reg_arpu: {
-						title: '注册ARPU',
-						sortable: 'custom',
-						key: 'reg_arpu',
-						width: 150
-					},
-					income_per: {
-						title: '回本率',
-						sortable: 'custom',
-						key: 'income_per',
-						width: 150
-					},
-					show_pv: {
+					{
 						title: '展示PV',
 						sortable: 'custom',
 						key: 'show_pv',
 						width: 150
 					},
-					show_ip: {
+					{
 						title: '展示IP',
 						sortable: 'custom',
 						key: 'show_ip',
 						width: 150
 					},
-					down_ip: {
+					{
 						title: '下载IP',
 						sortable: 'custom',
 						key: 'down_ip',
 						width: 150
+					},
+
+					{
+						title: '点击量',
+						sortable: 'custom',
+						key: 'click',
+						width: 150
+					},
+					{
+						title: '到达数',
+						sortable: 'custom',
+						key: 'fetch',
+						width: 150
+					},
+					{
+						title: '到达率',
+						sortable: 'custom',
+						key: 'fetch_per',
+						width: 150
+					},
+					{
+						title: '点击均价',
+						sortable: 'custom',
+						key: 'click_cost',
+						width: 150
+					},
+					{
+						title: '下载数',
+						sortable: 'custom',
+						key: 'download',
+						width: 150
+					},
+					{
+						title: '下载率',
+						sortable: 'custom',
+						key: 'down_ins_per',
+						width: 150
+					},
+					{
+						title: '激活总量',
+						sortable: 'custom',
+						key: 'install',
+						width: 150
+					},
+					{
+						title: '点击激活率',
+						sortable: 'custom',
+						key: 'click_install',
+						width: 150
+					},
+					{
+						title: '激活安装率',
+						sortable: 'custom',
+						key: 'install_per',
+						width: 150
+					},
+					{
+						title: '下载激活率',
+						sortable: 'custom',
+						key: 'download_per',
+						width: 150
+					},
+					{
+						title: '花费',
+						sortable: 'custom',
+						key: 'cost',
+						width: 150
+					},
+					{
+						title: '出价',
+						key: 'bid_mode',
+						width: 150,
+
+					},
+					{
+						title: '注册设备数',
+						sortable: 'custom',
+						key: 'reg_imei',
+						width: 150
+					},
+					{
+						title: '注册设备成本',
+						sortable: 'custom',
+						key: 'reg_imei_cost',
+						width: 150
+					},
+					{
+						title: '注册',
+						sortable: 'custom',
+						key: 'activation',
+						width: 150
+					},
+					{
+						title: '注册成本',
+						sortable: 'custom',
+						key: 'reg_cost',
+						width: 150
+					},
+					{
+						title: '注册率',
+						sortable: 'custom',
+						key: 'reg_per',
+						width: 150
+					},
+					{
+						title: '注册ARPU',
+						sortable: 'custom',
+						key: 'reg_arpu',
+						width: 150
+					},
+					{
+						title: '活跃数',
+						sortable: 'custom',
+						key: 'login',
+						width: 150
+					},
+					{
+						title: '活跃率',
+						sortable: 'custom',
+						key: 'act_per',
+						width: 150
+					},
+					{
+						title: '付费人数',
+						sortable: 'custom',
+						key: 'pay_num',
+						width: 150
+					},
+					{
+						title: '付费金额',
+						sortable: 'custom',
+						key: 'pay_total',
+						width: 150
+					},
+					{
+						title: '付费率',
+						sortable: 'custom',
+						key: 'pay_per',
+						width: 150
+					},
+					{
+						title: '回本率',
+						sortable: 'custom',
+						key: 'income_per',
+						width: 150
 					}
-				},
+				],
 			}
 		},
 		mounted() {
 			this.getMedia();
 			this.getCampaignsList();
-
 		},
 		methods: {
 			//新建广告
@@ -756,7 +593,6 @@
 			getids(ids) {
 				this.GameListIds = ids;
 			},
-
 			//获取媒体账号
 			getMedia() {
 				this.$store.dispatch('getMediaList');
@@ -773,13 +609,11 @@
 				} else {
 					this.page = page;
 				}
-
 				//字符串转json
 				var game_id = {};
 				for(var i = 0; i < this.GameListIds.length; i++) {
 					game_id[i] = this.GameListIds[i];
 				}
-
 				var data = {
 					tdate: this.DateDomain[0],
 					edate: this.DateDomain[1],
@@ -794,10 +628,8 @@
 					orderField: this.orderField, //排序的orderField参数名
 					orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
 				}
-				console.log(data)
 				this.$store.dispatch('getAdgroups', data);
 			},
-
 			//批量修改删除投放计划 
 			AmendCampaignsList(type) {
 				this.visible = false;
@@ -805,14 +637,26 @@
 					this.$Message.info('请勾选需要修改的数据');
 					return;
 				}
-				var data = {
-					id: this.taCheckids,
-					type: type,
-					configured_status: this.edit_status
-				}
-				this.$store.dispatch('amendCampaigns', data);
+				Axios.get('api.php', {
+					action: 'gdtAdPut',
+					opt: 'campaigns_add',
+					do: 'edits',
+					id: this.taCheckids, //必传[13,12,12]
+					type: type, //1 修改状态  3 删除 type
+					configured_status: this.edit_status, //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
+				}).then(
+					res => {
+						if(res.ret == 1) {
+							this.$Message.info(res.msg);
+							this.getCampaignsList(this.page);
+						}
+					}
+				).catch(
+					err => {
+						console.log('批量修改删除投放计划' + err)
+					}
+				)
 			},
-
 			//获取选中的id
 			taCheck(row) {
 				let ids = [];
@@ -827,22 +671,23 @@
 				this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
 				this.getCampaignsList();
 			},
-
 			//改变日期
 			changeDate(e) {
 				this.DateDomain = e;
 				this.getCampaignsList();
 			},
-
 			//导出报表
 			exportData(type) {
 				this.$refs['table'].exportCsv({
 					filename: 'gdtAdPut data',
 					original: false
 				});
+			},
+			//返回没有选中的
+			getuncheck(val) {
+				this.uncheck = val;
 			}
 		},
-
 		computed: {
 			//获取媒体账号
 			mediaList() {
@@ -855,16 +700,21 @@
 			//获取实时投放计划
 			adList() {
 				let adList = this.$store.state.plan.Adgroups;
-				console.log(adList)
 				this.total_number = adList.total_number;
 				this.total_page = adList.total_page;
-				let data = [this.tableColumns.checks, this.tableColumns.game_name, this.tableColumns.account_name, this.tableColumns.campaign_id, this.tableColumns.adgroup_name, this.tableColumns.campaign_name, this.tableColumns.daily_budget, this.tableColumns.impression, this.tableColumns.bid_mode, this.tableColumns.cost];
-				this.checkAllGroup.forEach(col => {
-					data.push(this.tableColumns[col])
+				//深层复制
+				let arr = deepClone(this.tableColumns)
+				this.uncheck.forEach(item => {
+					arr.forEach((col, i) => {
+						if(col.key == item) {
+							arr.splice(i, 1);
+						}
+					});
 				});
-				this.taColumns = data;
+				this.taColumns = arr;
 				return adList.list;
 			},
 		}
+
 	};
 </script>

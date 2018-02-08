@@ -4,22 +4,26 @@ const home = {
     state: {
         userNmae : '',
         //数据汇总
-        total: {},
+        total: {
+            impression:0,
+            click:0,
+            balance_1:0,
+            balance_2:0,
+            balance_4:0
+        },
         //曝光率
         echart:{},
         media:[],
-        data:{}
+        tdata:{},
     },
     mutations: {       
         GETOVERIEW ( state , data){
             state.total = data.total;            
             state.echart = data.echart;
-            state.data = { 
-                page: parseInt(data.page), 
-                page_size : parseInt(data.page_size), 
-                total_number : parseInt(data.total_number), 
-                total : parseInt(data.total_page), 
-                list: data.list 
+            state.tdata = {
+                total_number:data.total_number,
+                total_page:data.total_page,
+                list: data.list
             };
         }, 
         SETMEDIA (state , data){ 

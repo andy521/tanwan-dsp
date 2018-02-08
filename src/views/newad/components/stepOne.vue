@@ -61,8 +61,8 @@
 					<div class="camitem"><span>日消耗限额</span>{{campaign.daily_budget}}元/天</div>
 					<div class="camitem"><span>计划类型</span>{{campaign_type}}</div>
 					<div class="camitem"><span>标的物类型</span>{{product_type}}</div>
-					<div class="camitem"><span>开启状态</span>{{campaign.configured_status='AD_STATUS_NORMAL'?'有效':'无效'}}</div>
-					<div class="camitem"><span>投放速度模式</span>{{campaign.speed_mode='SPEED_MODE_FAST'?'加速投放':'标准投放'}}</div>
+					<div class="camitem"><span>开启状态</span>{{campaign.configured_status=='AD_STATUS_NORMAL'?'有效':'无效'}}</div>
+					<div class="camitem"><span>投放速度模式</span>{{campaign.speed_mode=='SPEED_MODE_FAST'?'加速投放':'标准投放'}}</div>
 				</div>
 			</div>
 			<br />
@@ -81,24 +81,22 @@
 					</FormItem>
 					<FormItem label="计划类型">
 						<Select v-model="formCustom.campaign_type" placeholder="请选择计划类型">
-							<Option v-for="item in campaign_type_list" :key="this" :value="item.name">{{item.name}}</Option>
+							<Option v-for="item in campaign_type_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
 					</FormItem>
 					<FormItem label="标的物类型">
 						<Select v-model="formCustom.product_type" placeholder="请选择标的物类型">
-							<Option v-for="item in product_type_list" :key="this" :value="item.name">{{item.name}}</Option>
+							<Option v-for="item in product_type_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
 					</FormItem>
 					<FormItem label="开启状态">
 						<Select v-model="formCustom.configured_status" placeholder="请选择开启状态">
-							<Option v-for="item in configured_status_list" :key="this" :value="item.name">{{item.name}}</Option>
+							<Option v-for="item in configured_status_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
 					</FormItem>
 					<FormItem label="投放速度模式">
 						<Select v-model="formCustom.speed_mode" placeholder="请选择投放速度模式">
-							<Option value="beijing">New York</Option>
-							<Option value="shanghai">London</Option>
-							<Option value="shenzhen">Sydney</Option>
+							<Option v-for="item in speed_mode_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
 					</FormItem>
 				</Form>
@@ -112,8 +110,10 @@
 </template>
 
 <script>
+	import Axios from "@/api/index"
 	export default {
 		name: 'stepOne',
+		props: ['next'],
 		data() {
 			const validatecampaign_name = (rule, value, callback) => {
 				if(value === '') {
@@ -125,6 +125,8 @@
 			const validatedaily_budget = (rule, value, callback) => {
 				if(value === '') {
 					callback(new Error('请输入消耗限额'));
+				} else if(value < 50 || value > 4000000) {
+					callback(new Error('50 元-4,000,000 元，单位为人民币'));
 				} else {
 					callback();
 				}
@@ -149,44 +151,47 @@
 					}],
 				},
 				account_id: 3415636, // this.$route.params.account_id,
-				tabsid: 0,
 				campaign_id: '', //推广计划id
+				tabsid: 0,
 				campaign: {}
 			}
 		},
 		mounted() {
 			//判断是否有推广计划id,没有返回选择
-			if(this.account_id) {
-				this.$store.dispatch('getCampaigns', this.account_id);
-			} else {
+			if(!this.account_id)
 				this.$router.push({
 					name: 'user_accounts'
 				});
-			}
-			//请求计划类型
-			this.$store.dispatch('get_campaign_type');
-			//请求标的物类型
-			this.$store.dispatch('get_product_type');
-			//请求状态类型
-			this.$store.dispatch('get_configured_status');
+			//请求推广计划
+			this.$store.dispatch('getCampaigns', this.account_id);
+
+			//获取所有状态
+			this.$store.dispatch('get_ads_config');
 		},
 		methods: {
 			//提交第一步填写数据
 			handleSubmit(name) {
 				this.$refs[name].validate((valid) => {
 					if(valid) {
-						//this.$Message.success('下一步');
-						let data = {
+						Axios.get('api.php', {
+							action: 'gdtAdPut',
+							opt: 'campaigns_add',
 							do: 'edit',
 							account_id: this.account_id,
-							campaign_type: this.formCustom.product_type,
+							campaign_type: this.formCustom.campaign_type,
 							campaign_name: this.formCustom.campaign_name,
-							daily_budget: this.formCustom.daily_budget,
+							daily_budget: this.formCustom.daily_budget * 100,
 							product_type: this.formCustom.product_type,
 							configured_status: this.formCustom.configured_status,
 							speed_mode: this.formCustom.speed_mode
-						}
-						this.$store.dispatch('campaignsAdd', data);
+						}).then(res => {
+							this.$Message.success('提交成功');
+							this.next(1);
+						}).catch(
+							err => {
+								console.log('新建广告计划' + err)
+							}
+						)
 					} else {
 						this.$Message.error('请填写完整资料');
 					}
@@ -197,17 +202,8 @@
 				if(this.campaign_id == '') {
 					this.$Message.error('请填选择推广计划');
 				} else {
-					let data = {
-						do: 'edit',
-						account_id: this.account_id,
-						campaign_type: this.campaign.product_type,
-						campaign_name: this.campaign.campaign_name,
-						daily_budget: this.campaign.daily_budget,
-						product_type: this.campaign.product_type,
-						configured_status: this.campaign.configured_status,
-						speed_mode: this.campaign.speed_mode
-					}
-					this.$store.dispatch('campaignsAdd', data);
+					this.next(1);
+					//alert('下一步')
 				}
 			},
 			//选择推广计划
@@ -219,17 +215,29 @@
 			}
 		},
 		computed: {
+			//获取投放速度模式
+			speed_mode_list() {
+				let list = this.$store.state.newad.ads_config.speed_mode;
+				this.formCustom.speed_mode = list[0].val_type;
+				return list;
+			},
 			//获取标的物类型
 			product_type_list() {
-				return this.$store.state.newad.product_type;
+				let list = this.$store.state.newad.ads_config.product_type;
+				this.formCustom.product_type = list[0].val_type;
+				return list;
 			},
 			//获取状态类型
 			configured_status_list() {
-				return this.$store.state.newad.configured_status;
+				let list = this.$store.state.newad.ads_config.configured_status;
+				this.formCustom.configured_status = list[0].val_type;
+				return list;
 			},
 			//获取计划类型
 			campaign_type_list() {
-				return this.$store.state.newad.campaign_type;
+				let list = this.$store.state.newad.ads_config.campaign_type;
+				this.formCustom.campaign_type = list[0].val_type;
+				return list;
 			},
 			//获取推广计划
 			campaignslist() {
@@ -237,7 +245,6 @@
 			},
 			//计划类型转换
 			campaign_type() {
-				console.log(this.campaign.campaign_type)
 				if(this.campaign.campaign_type == 'CAMPAIGN_TYPE_NORMAL') {
 					return "普通展示广告";
 				} else if(this.campaign.campaign_type == 'CAMPAIGN_TYPE_WECHAT_OFFICIAL_ACCOUNTS') {

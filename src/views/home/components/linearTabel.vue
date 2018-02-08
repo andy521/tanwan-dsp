@@ -1,5 +1,6 @@
 <style lang="less">
     .linear-table{height: 300px;}  
+    .ivu-card-head-inner, .ivu-card-head p{height: 32px;}
 </style>
 <template>
     <Row class-name="home-page-row1" class="margin-top-10">

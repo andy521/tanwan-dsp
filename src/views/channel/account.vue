@@ -47,12 +47,25 @@
             </Row>
         </div>    
         
-        <Table :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" size="small" @on-sort-change="sortChange"></Table>
-        <div style="margin:10px 10px 0;overflow: hidden">
-            <div style="float: right;">
-                <Page size="small" :total="total_number" :page-size="page_size" :current="page" @on-change="changePage"></Page>
-            </div>
-        </div>       
+        <Table :size="tableSize" :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv"  @on-sort-change="sortChange"></Table>
+
+        <Row class="margin-top-10">
+            <Col span="10">
+            <Radio-group v-model="tableSize" type="button">
+                <Radio label="large">大</Radio>
+                <Radio label="default">中</Radio>
+                <Radio label="small">小</Radio>
+            </Radio-group>
+              每页显示
+            <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getTableData()">
+                <Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+            </Select>
+            </Col>
+            <Col span="14" style="text-align: right;">
+                <Page :total="total_number" :page-size="page_size" ref="pages" @on-change="getTableData" show-elevator show-total></Page>
+            </Col>
+        </Row>
+      
     </Card>
 </template>
 <script>
@@ -66,6 +79,12 @@ export default {
         return {
             height:700,
             loading : true,
+            //每页数量 
+            page: 1,
+            page_size: 15, 
+            total_number: 1, //总数量
+            total_page: 1, //总页数
+            tableSize: 'small',
             //searchTree 组件清除属性
             account_disabled:true,
             sclear:false,
@@ -84,26 +103,15 @@ export default {
             current_media:'',
             current_version:'',
             current_time:[],
-            current_page:'',
             current_author:''
         }
     },
     computed :{ 
         list(){
-            //this.loading = false;
-            return this.$store.state.channel.list;
-        },
-        page(){
-            return this.$store.state.channel.page;
-        },
-        page_size(){
-            return this.$store.state.channel.page_size;
-        },
-        total_number(){
-            return this.$store.state.channel.total_number;
-        },
-        total_page(){
-            return this.$store.state.channel.total_page;
+            let channel = this.$store.state.channel;
+            this.total_number = channel.total_number;
+            this.total_page = channel.total_page;
+            return channel.list;
         },
         //媒体
         media(){
@@ -146,12 +154,19 @@ export default {
             });
         },
         //获取产品总览表格数据
-        getTableData(){
+        getTableData(page){
+            if(page === undefined) {
+                this.$refs['pages'].currentPage = 1;
+                this.page = 1;
+            } else {
+                this.page = page;
+            };
             let param = { 
                     do : 'accountOverview',
                     media_type : this.current_media,
                     os : this.current_version,
-                    page : this.current_page,
+                    page : this.page,
+                    page_size: this.page_size, 
                     account_id : this.current_account,
                     author : this.current_author,
                     orderField: this.orderField, 
@@ -176,12 +191,7 @@ export default {
                 this.orderDirection = "";
             }           
             this.getTableData();        
-        },  
-        //下一页
-        changePage(val){
-            this.current_page = val;
-            this.getTableData();        
-        },        
+        }, 
         //自定义时间
         changeDate(date){
             this.current_time = date;

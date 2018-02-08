@@ -42,23 +42,32 @@
                 <li  v-for="(item,index) in tab" :class="{cur:index == num }" @click="tabsChange(index)">{{item}}</li>
             </ul>            
             <div class="tr">
-
                 <Select @on-change="mediaChange" v-model="selectState"  placeholder="按媒体筛选" style="width:120px" class="margin-right-10">
                     <Option v-for="item in mediaList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-
+                
                 <DatePicker type="date" placeholder="自定义时间" @on-change="changeTime" style="width: 190px"  class="margin-right-10"></DatePicker>
                 <Button icon="document-text" @click="exportData()">下载报表</Button>
             </div>
         </div>
         
-        <Table height="390" :columns="tcolumns" :data="data.list" ref="TableExport" @on-sort-change="sortChange"></Table>
+        <Table :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange"></Table>
+        <Row class="margin-top-10">
+            <Col span="10">
+                <Radio-group v-model="tableSize" type="button">
+                    <Radio label="large">大</Radio>
+                    <Radio label="default">中</Radio>
+                    <Radio label="small">小</Radio>
+                </Radio-group>
+                <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="tableData()">
+                    <Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+                </Select>
+            </Col>
+            <Col span="14" style="text-align: right;">
+                <Page :total="tdata.total_number" :page-size="tdata.page_size" ref="pages" @on-change="tableData" show-elevator show-total></Page>
+            </Col>
+        </Row>
 
-        <div style="margin: 10px;overflow: hidden">
-            <div style="float: right;">
-                <Page size="small" :total="data.total_number" :page-size="data.page_size" :current="data.page" @on-change="changePage"></Page>
-            </div>
-        </div>
     </Card>    
 </template>
 <script>
@@ -68,7 +77,7 @@
         name: 'viewTab',
         props: {
             media : Array,
-            data:Object,
+            tdata : Object
         },
         data () {
             return {
@@ -76,13 +85,18 @@
                 num:0,
                 selectState:[],
                 mediaList:[],
+                //每页数量 
+                page: 1,
+                page_size: 10, 
+                total_number: 1, //总数量
+                total_page: 1, //总页数
+                tableSize: 'small',
                 //负责人
                 group:'',
                 //媒体型
                 media_type:'',
                 //按时间
                 time:'',
-                page :'',
                 //排序
                 orderField:'',
                 orderDirection: 'SORT_ASC',
@@ -124,12 +138,19 @@
         },
         methods : {
             //这里的排序没有做哈哈哈
-            tableData(){
+            tableData(page){
+                if(page === undefined) {
+                    this.$refs['pages'].currentPage = 1;
+                    this.page = 1;
+                } else {
+                    this.page = page;
+                };
                 let param = {
                     group_by: this.group,
                     media_type : this.media_type,
                     time:this.time,
-                    page:this.page,
+                    page : this.page,
+                    page_size: this.page_size,
                     orderField: this.orderField, 
 					orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 };

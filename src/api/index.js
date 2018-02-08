@@ -1,5 +1,7 @@
 import axios from "axios";
 import qs from "qs";
+import router from '@/router/index';
+import util from '@/utils/index';
 import { Message } from 'iview';
 
 let cancel ,promiseArr = {}
@@ -37,11 +39,17 @@ Axios.interceptors.request.use(
 //返回状态判断(添加响应拦截器)
 Axios.interceptors.response.use(
     res => {
-        //对响应数据做些事  
+        //对响应数据做些事          
         if (res.data && res.data.ret !=1) {
-            Message.info(res.data.msg);
-            //return Promise.reject(res.data);
-        }
+            //如果为-2返回到登录页面
+            if(res.data.ret == '-2'){
+                router.push({path: '/login'})
+                util.removeItem('user' );
+                util.removeItem('sessionid');
+                util.removeItem('access' );
+            }
+            Message.info(res.data.msg); 
+        }        
         return res.data;
     },
     error => {
@@ -54,8 +62,9 @@ Axios.interceptors.response.use(
 
 export default {
     //get请求
-    get (url,param) {
+    get (url,opt) {
         return new Promise((resolve,reject) => {
+            let sid = util.getItem('sessionid'),param = Object.assign({'sessionid':sid },opt)
             Axios({
                 method: 'get',
                 url,
@@ -69,8 +78,9 @@ export default {
         })
     },    
     //post请求
-    post (url,param) {
+    post (url,opt) {
         return new Promise((resolve,reject) => {
+            let sid = util.getItem('sessionid'),param = Object.assign({'sessionid':sid },opt)
             Axios({
                 method: 'post',
                 url,

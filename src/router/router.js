@@ -27,6 +27,7 @@ export const otherRouter = {
     component: Main,
     children: [
         { path: 'home', title: '后台首页',  name: 'home_index', component: () => import('@/views/home/home.vue') },
+        { path: 'useraccounts', title: '获取用户帐号', name: 'user_accounts',  component: () => import('@/views/time/userAccounts.vue') },
     ]
 };
 

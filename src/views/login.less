@@ -1,41 +1,41 @@
-.login{
+.login {
     width: 100%;
     height: 100%;
     background-image: url('../images/login_bg.jpg');
     background-position: center top;
     position: relative;
-    &-con{        
+    &-con {
         position: absolute;
         top: 243px;
         left: 50%;
-        margin-left:60px;        
-        .ivu-card{
+        margin-left: 60px;
+        .ivu-card {
             width: 435px;
             height: 510px;
             border-radius: 0;
             background: #f5f6f8;
         }
-        .ivu-card-head{
+        .ivu-card-head {
             border: none;
             padding: 54px 0 50px;
             text-align: center;
         }
-        .avatar{
+        .avatar {
             width: 72px;
             height: 72px;
             margin: 0 auto;
-            border-radius: 50%;  
-            position: relative;            
+            border-radius: 50%;
+            position: relative;
         }
-        .avatar img{
-            border-radius: 50%; 
+        .avatar img {
+            border-radius: 50%;
             overflow: hidden;
         }
-        .avatar::before{
-            content: "";            
+        .avatar::before {
+            content: "";
             position: absolute;
             left: 50%;
-            top:50%;
+            top: 50%;
             width: 90px;
             height: 90px;
             border: 1px solid #e8e8e8;
@@ -43,27 +43,27 @@
             display: block;
             border-radius: 50%;
         }
-        .ts{
+        .ts {
             margin-top: 30px;
             font-size: 20px;
         }
-        .ivu-card-body{
+        .ivu-card-body {
             padding: 0;
         }
-        &-header{
+        &-header {
             font-size: 16px;
             font-weight: 300;
             text-align: center;
             padding: 30px 0;
         }
-        .form-con{
+        .form-con {
             padding: 0 54px;
         }
-        .ivu-form-item{
+        .ivu-form-item {
             margin-bottom: 13px;
-            .ivu-form-item-content{
+            .ivu-form-item-content {
                 line-height: 52px;
-                .ivu-input{
+                .ivu-input {
                     height: 52px;
                     border-radius: 26px;
                     font-size: 14px;
@@ -71,20 +71,46 @@
                     text-indent: 62px;
                     padding: 0;
                 }
+                .ivu-input:focus,
+                .ivu-input:hover {
+                    border-color: #c0cbf9;
+                }
+                .ivu-input:focus {
+                    box-shadow: 0 3px 5px 0 rgba(71, 104, 143, .1);
+                }
+            }
+            .ivu-form-item-error .ivu-input:focus {
+                box-shadow: 0 3px 5px 0 rgba(237, 63, 20, .1);
             }
         }
-        .ivu-input-group-append{
+        .ivu-input-group-append {
             border: none
         }
-        .icon{
+        .icon {
             position: absolute;
-            left: 20px; 
+            left: 20px;
             top: 50%;
             width: 30px;
             height: 30px;
             margin-top: -15px;
         }
-        .ivu-btn-primary{
+        .icon_ft {
+            position: absolute;
+            display: none;
+            top: 50%;
+            right: 14px;
+            width: 24px;
+            height: 24px;
+            transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+            }
+        }
+        .ivu-btn-primary {
             margin-top: 2px;
             height: 54px;
             padding: 0;
@@ -93,18 +119,21 @@
             font-size: 18px;
             color: #fff;
             background: #4768f3;
-            box-shadow: 0 4px 12px rgba(71, 104, 243, .2);
+            box-shadow: 0 6px 8px rgba(71, 104, 243, .2);
         }
-        .login-tip{
+        .login-tip {
             margin-top: 32px;
         }
-        .login-tip .ivu-form-item-content,.ivu-checkbox-wrapper{
+        .login-tip .ivu-form-item-content,
+        .ivu-checkbox-wrapper {
             font-size: 14px;
             color: #808080;
             line-height: 1;
         }
-
-        .zf{
+        .ivu-form-item-content:hover .icon_ft {
+            display: block;
+        }
+        .zf {
             float: right;
             color: #808080;
         }

@@ -33,8 +33,7 @@
 				</div>
 
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="configured_status">广告开关</Checkbox>
-					<Checkbox label="configured_status1">广告状态，花费</Checkbox>
+					<Checkbox label="configured_status">广告开关/状态</Checkbox>
 					<Checkbox label="click_cost">点击均价（cpc）</Checkbox>
 					<Checkbox label="click">点击量</Checkbox>
 					<Checkbox label="click_per">点击率(CTR)</Checkbox>
@@ -55,7 +54,7 @@
 					<Checkbox label="install">激活总量</Checkbox>
 					<Checkbox label="click_install">点击激活率</Checkbox>
 					<Checkbox label="reg_imei">注册设备数</Checkbox>
-					<Checkbox label="reg_total">注册数</Checkbox>
+					<Checkbox label="activation">注册数</Checkbox>
 					<Checkbox label="reg_per">点击注册率</Checkbox>
 					<Checkbox label="reg_cost">注册成本</Checkbox>
 					<Checkbox label="reg_imei_cost">注册设备成本</Checkbox>
@@ -89,12 +88,18 @@
 <script>
 	export default {
 		name: 'viewTab',
-		props: ['value'],
+		props: ['value', 'uncheck'],
 		data() {
 			return {
 				indeterminate: true,
 				checkAll: false,
-				checkAllGroup: this.value
+				checkAllGroup: this.value,
+				checkAllGroups: ['configured_status', 'click_cost', 'click', 'click_per',
+					'fetch', 'fetch_per', 'down_ins_per', 'download',
+					'install', 'click_install', 'reg_imei', 'activation', 'reg_per', 'reg_cost', 'reg_imei_cost', 'install_per', 'download_per',
+					'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'reg_arpu', 'income_per',
+					'show_pv', 'show_ip', 'down_ip'
+				]
 			}
 		},
 		watch: {
@@ -102,6 +107,19 @@
 				this.checkAllGroup = val;
 			},
 			checkAllGroup(val) {
+				let uncheck = [];
+				this.checkAllGroups.forEach(item => {
+					let is=true;
+					val.forEach(col => {
+						if(item==col) {
+							is=false;
+						}
+					});
+					if(is){
+						uncheck.push(item)
+					}
+				});
+				this.uncheck(uncheck)
 				this.$emit('input', val)
 			},
 		},
@@ -115,12 +133,7 @@
 				}
 				this.indeterminate = false;
 				if(this.checkAll) {
-					this.checkAllGroup = ['configured_status', 'configured_status1', 'click_cost', 'click', 'click_per',
-						'fetch', 'fetch_per', 'down_ins_per', 'download',
-						'install', 'click_install', 'reg_imei', 'reg_total', 'reg_per', 'reg_cost', 'reg_imei_cost', 'install_per', 'download_per',
-						'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'reg_arpu', 'income_per',
-						'show_pv', 'show_ip', 'down_ip'
-					];
+					this.checkAllGroup = this.checkAllGroups;
 				} else {
 					this.checkAllGroup = [];
 				}

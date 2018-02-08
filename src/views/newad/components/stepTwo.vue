@@ -431,7 +431,7 @@
 						<p>已选择35/400</p>
 						<div class="ds_tag margin-top-10">
 							<p>列表</p>
-							<Tag class="margin-top-10" v-for="item in 50" :key="item" :name="item" closable type="dot" color="default">标签{{ item + 1 }}</Tag>
+							<Tag class="margin-top-10" v-for="(item,index) in 50" :key="index" :name="item" closable type="dot" color="default">标签{{ item + 1 }}</Tag>
 							<p>
 								<Button type="text">清空</Button>
 							</p>
@@ -489,12 +489,12 @@
 						<Row :gutter="15">
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5" :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5" :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 						</Row>
@@ -684,12 +684,12 @@
 						<Row :gutter="15">
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5" :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5" :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 						</Row>
@@ -719,12 +719,12 @@
 						<Row :gutter="15">
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5" :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5" :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 						</Row>
@@ -936,12 +936,12 @@
 						<Row :gutter="15">
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5" :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 							<Col span="12">
 							<Select>
-								<Option v-for="item in 5" :value="item">{{ item }}</Option>
+								<Option v-for="item in 5"  :key="item" :value="item">{{ item }}</Option>
 							</Select>
 							</Col>
 						</Row>
