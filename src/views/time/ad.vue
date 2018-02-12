@@ -9,11 +9,6 @@
 		display: inline-block;
 	}
 	
-	.ivu-card-head-inner,
-	.ivu-card-head p {
-		height: 25px;
-	}
-	
 	.tipbtn {
 		text-align: right;
 	}
@@ -35,12 +30,20 @@
 		width: 150px;
 	}
 	
+	
+	
 	.sel_state {
 		text-align: left;
-		width: 100px;
+		width: 110px;
 	}
-	
-	
+	.sel_state1{
+		text-align: left;
+		width: 200px;
+	}
+	.sel_state1.ivu-select-multiple .ivu-select-selection{
+		overflow: auto;
+		height: 32px;
+	}
 </style>
 
 <template>
@@ -76,10 +79,10 @@
 				<Col span="8">
 				<div class="btn-group clear">
 					<Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)">
-						<Button type="ghost" size="small">删除</Button>
+						<Button type="ghost" >删除</Button>
 					</Poptip>
 					<Poptip placement="bottom-start" v-model="visible">
-						<Button type="ghost" size="small">修改状态</Button>
+						<Button type="ghost">修改状态</Button>
 						<div class="api" slot="content">
 							<div>
 								<Select v-model="edit_status" :value="edit_status">
@@ -94,7 +97,7 @@
 						</div>
 					</Poptip>
 					<Poptip placement="bottom-start" v-model="visible1">
-						<Button type="ghost" size="small">修改日期</Button>
+						<Button type="ghost">修改日期</Button>
 						<div class="api" slot="content">
 							<div v-if="!startdate">
 								<DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy/MM/dd" :value="date2"></DatePicker>
@@ -111,17 +114,22 @@
 							</div>
 						</div>
 					</Poptip>
-					<Button type="ghost" size="small" @click="exportData()">下载报表</Button>
+					<Button type="ghost"  @click="exportData()">下载报表</Button>
 				</div>
 				</Col>
 				<Col span="16" style="text-align: right;">
-				<Select v-model="configured_status" :value="configured_status" size="small" class="sel_state" @on-change="getCampaignsList()">
+
+				<Select v-model="author_model" :value="author_model" multiple  class="sel_state1"   @on-change="getCampaignsList()" placeholder="请选择负责人">
+					<Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
+				</Select>
+
+				<Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
 					<Option value="0">所有未册除</Option>
 					<Option value="AD_STATUS_NORMAL">有效</Option>
 					<Option value="AD_STATUS_SUSPEND">暂停</Option>
 				</Select>
 
-				<DatePicker type="daterange" :options="options" size="small" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+				<DatePicker type="daterange" :options="options"  placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
 
 				<Checkbox v-model="check_value" @on-change="getCampaignsList()">过滤无数据的广告</Checkbox>
 				</Col>
@@ -219,6 +227,7 @@
 				edit_status: "AD_STATUS_NORMAL", //批量状态
 				orderField: '', //排序参数名
 				orderDirection: 'SORT_ASC', //排序方向
+				author_model:[],
 				tableSize: 'small',
 				copyAdwin: false,
 				formItem: {
@@ -309,12 +318,13 @@
 									placement: 'top',
 									content: '最低额度是该推广计划的今日消耗加上50元'
 								}
-							}, [h('i-button', {
+							}, [h('span', params.row.daily_budget / 100 + '元'), h('i-button', {
 								props: {
 									icon: "edit",
 									type: "text",
 									size: "small"
 								},
+								class: ['edit'],
 								on: {
 									click: () => {
 										this.$Modal.confirm({
@@ -360,7 +370,7 @@
 										})
 									}
 								}
-							})]), h('span', params.row.daily_budget / 100 + '元')]
+							})])]
 						}
 					},
 					{
@@ -580,6 +590,7 @@
 		mounted() {
 			this.getMedia();
 			this.getCampaignsList();
+			this.getAuthor();
 		},
 		methods: {
 			//新建广告
@@ -600,6 +611,10 @@
 			//获取推广计划
 			getCampaigns() {
 				this.$store.dispatch('getCampaigns', this.MediaListModel);
+			},
+			//获取负责人
+			getAuthor() {
+				this.$store.dispatch('getAuthor');
 			},
 			//获取实时投放计划
 			getCampaignsList(page) {
@@ -626,7 +641,8 @@
 					campaign_name: this.campaign_name,
 					check_value: this.check_value == false ? 0 : 1,
 					orderField: this.orderField, //排序的orderField参数名
-					orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+					orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+					author:this.author_model
 				}
 				this.$store.dispatch('getAdgroups', data);
 			},
@@ -679,7 +695,7 @@
 			//导出报表
 			exportData(type) {
 				this.$refs['table'].exportCsv({
-					filename: 'gdtAdPut data',
+					filename: '实时投放广告',
 					original: false
 				});
 			},
@@ -689,6 +705,10 @@
 			}
 		},
 		computed: {
+			//获取负责人
+			author() {
+				return this.$store.state.channel.author;
+			},
 			//获取媒体账号
 			mediaList() {
 				return this.$store.state.plan.mediaList;

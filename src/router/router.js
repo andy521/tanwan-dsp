@@ -79,7 +79,8 @@ export const appRouter = [
         title: '账号管理',
         component: Main,
         children: [
-            { path: 'setid', title: '账号管理', name: 'setid_index', component: () => import('@/views/setid/setid.vue')}
+            { path: 'setid', title: '负责人管理', name: 'setid_index', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue')},
+            { path: 'systemsetid', title: '系统账号管理', name: 'systemsetid_index', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue')}
         ]
     }
 ];

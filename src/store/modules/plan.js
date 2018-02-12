@@ -6,7 +6,8 @@ const plan = {
 		mediaList: [],
 		campaignslist: [],
 		adList: [],
-		Adgroups: []
+		Adgroups: [],
+		Media:[]
 	},
 	mutations: {
 		GET_GAMELIST(state, data) {
@@ -23,10 +24,28 @@ const plan = {
 		},
 		GET_ADGROUPS(state, data) {
 			state.Adgroups = data;
+		},
+		GET_MEDIA(state, data) {
+			state.Media = data;
 		}
-
 	},
 	actions: {
+		//媒体类型
+		getMedia({
+			commit
+		}) {
+			Axios.get('api.php', {
+				action: 'api',
+				opt: 'getMedia'
+			}).then(res => {
+				commit('GET_MEDIA', res.data)
+			}).catch(
+				err => {
+					console.log('媒体类型' + err)
+				}
+			)
+		},
+
 		//游戏列表
 		getGameList({
 			commit
@@ -142,7 +161,8 @@ const plan = {
 				campaign_name: data.campaign_name, //关键字
 				check_value: data.check_value, //状态
 				orderField: data.orderField, //排序的orderField参数名
-				orderDirection: data.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+				orderDirection: data.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+				author:data.author//负责人
 			}).then(
 				res => {
 					commit('GET_ADLIST', res.data)
@@ -170,7 +190,10 @@ const plan = {
 				configured_status: data.configured_status, //过滤无数据的广告
 				campaign_id: data.campaign_id, //广告
 				campaign_name: data.campaign_name, //关键字
-				check_value: data.check_value //状态
+				check_value: data.check_value, //状态
+				orderField: data.orderField, //排序的orderField参数名
+				orderDirection: data.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+				author:data.author//负责人
 			}).then(
 				res => {
 					commit('GET_ADGROUPS', res.data)

@@ -43,8 +43,8 @@ const channel = {
             }
             state.plan = c;
         },
-        AUTHOR(state,data){
-            let a = [{'value':'','label':'全部'}];
+        AUTHOR(state,data){            
+            let a = [];
             for(let i in data){
                 a.push({ 'label': data[i].author, 'value' : encodeURIComponent(data[i].author) })
             };

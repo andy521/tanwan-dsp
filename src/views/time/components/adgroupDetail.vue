@@ -87,26 +87,26 @@
 			<div class="w_flex_hd">投放日期</div>
 			<div class="w_flex_bd">{{adgroup_detail.begin_date|time_date}}~{{adgroup_detail.end_date|time_date}}</div>
 		</div>
-		<div class="w_flex">
+		<div class="w_flex" v-if="adgroup_detail.time_series">
 			<div class="w_flex_hd">投放时间</div>
 			<div class="w_flex_bd">{{adgroup_detail.time_series|weektime}}</div>
 		</div>
-		<div class="w_flex">
+		<div class="w_flex" v-if="adgroup_detail.optimization_goal">
 			<div class="w_flex_hd">优化目标</div>
 			<div class="w_flex_bd">
 				<span v-if="item.val_type==adgroup_detail.optimization_goal" size="large" v-for="item in ads_config.optimization_goal" :key="this">{{item.name}}</span>
 			</div>
 		</div>
-		<div class="w_flex">
+		<div class="w_flex" v-if="adgroup_detail.billing_event">
 			<div class="w_flex_hd">付费类型</div>
 			<div class="w_flex_bd">{{adgroup_detail.billing_event|billing_event}}</div>
 		</div>
-		<div class="w_flex">
+		<div class="w_flex" v-if="adgroup_detail.bid_amount">
 			<div class="w_flex_hd">广告出价</div>
 			<div class="w_flex_bd">{{adgroup_detail.bid_amount}}元</div>
 		</div>
 
-		<div class="w_flex">
+		<div class="w_flex" v-if="adgroup_detail.targeting">
 			<div class="w_flex_hd">定向条件</div>
 			<div class="w_flex_bd">
 				<div v-if="adgroup_detail.targeting.geo_location">
@@ -215,7 +215,7 @@
 						if(res.ret == 1) {
 							this.detailswin = true;
 							this.adgroup_detail = res.data;
-							console.log(res.data.targeting)
+							console.log(res.data)
 						}
 					}
 				).catch(
@@ -254,7 +254,6 @@
 				let business_interest = this.$store.state.newad.business_interest;
 				let ids = this.adgroup_detail.targeting.business_interest;
 				if(!ids) return;
-
 				var name = [];
 				ids.forEach(id => {
 					for(var i in business_interest) {

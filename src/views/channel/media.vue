@@ -25,13 +25,14 @@
                     <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index> 
                 </Col>               
 
-                <Col :xs="8" :md="3" offset="6">
+                <Col :xs="8" :md="3" offset="4">
                     <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
                 </Col>
-                <Col :xs="12" :md="2">                    
-                    <Select  @on-change="setPrincipal" placeholder="--负责人--"  class="margin-bottom-10">
+                <Col :xs="12" :md="4">                   
+
+                    <Select :value="current_author" @on-change="setPrincipal" multiple placeholder="--负责人--"  class="margin-bottom-10">
                         <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>  
+                    </Select>
                 </Col>
                 <Col :xs="12" :md="3">
                     <Button icon="funnel" long :loading="loading" @click="funnalAd">过滤无数据的广告</Button>
@@ -98,7 +99,7 @@ export default {
             current_media:'',
             current_version:'',
             current_time:[],
-            current_author:'',
+            current_author:[],
             current_check:''
         }
     },

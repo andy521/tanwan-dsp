@@ -14,9 +14,9 @@
                 <p slot="title" class="card-title">
                     <Icon type="ios-paper"></Icon>
                     所选账户在所选时段数据汇总
-                    <!-- <ButtonGroup :style="{ float: 'right'}">
-                        <Button type="primary" @click="addBindId = true">新增绑定账户</Button>
-                    </ButtonGroup> -->
+                    <ButtonGroup :style="{ float: 'right'}">
+						<Button type="primary" @click="addBindId = true">新增绑定账户</Button>
+					</ButtonGroup>
                 </p>
                 <div class="map-con">
                     <Row :gutter="10">
@@ -83,47 +83,23 @@
         <!-- 线性表格 -->
         <linear-tabel :data-echart="echart" ></linear-tabel>
 
-        <Modal
-            v-model="addBindId"
-            title="新增绑定账号"
-            @on-ok="addBindOk"
-            :mask-closable="false"
-            :closable="false"
-            :loading="loading"
-            >
-            <div class="padding-10">
-                <Form :model="formItem" label-position="right" :label-width="80" >                    
-                    <Row :gutter="10">
-                        <Col span="12">
-                            <FormItem label="账号平台">
-                                <Select v-model="formItem.platform">
-                                    <Option value="baidu">baidu</Option>
-                                    <Option value="google">google</Option>
-                                    <Option value="sogou">sogou</Option>
-                                </Select>
-                            </FormItem>
-                        </Col>
-                        <Col span="12">
-                            <FormItem label="推广方式">
-                                <Select v-model="formItem.mode">
-                                    <Option value="1">竞价推广</Option>
-                                </Select>
-                            </FormItem>
-                        </Col>
-                    </Row>                    
-                    <FormItem label="账号名字">
-                        <Input v-model="formItem.name"></Input>
-                    </FormItem>
-                    <FormItem label="账户密码">
-                        <Input v-model="formItem.password"></Input>
-                    </FormItem>
-                    <FormItem label="账号口令">
-                        <Input v-model="formItem.token"></Input>
-                    </FormItem>
-                </Form>
-            </div>           
-        </Modal>
-
+        <Modal v-model="addBindId" title="新增绑定账号" @on-ok="addBindOk('formItem')" :loading="loading">
+			<div class="padding-10">
+				<Form :model="formItem" ref="formItem" label-position="right" :label-width="80" :rules="ruleValidate">
+					<FormItem label="媒体类型">
+						<Select v-model="formItem.mediaId">
+							<Option v-for="item in Medialist" :value="item.mediaId" :key="this">{{ item.name }}</Option>
+						</Select>
+					</FormItem>
+					<FormItem label="帐号ID" prop="account_id">
+						<Input v-model="formItem.account_id"></Input>
+					</FormItem>
+					<FormItem label="账户名称" prop="account_name">
+						<Input v-model="formItem.account_name"></Input>
+					</FormItem>
+				</Form>
+			</div>
+		</Modal>
     </div>    
 </template>
 
@@ -144,12 +120,22 @@ export default {
         return {
             addBindId :false,
             loading: true,
-            formItem: {   
-                platform: '',             
-                mode: '',
-                name: '',
-                password: '',
-                token : ''
+            formItem: {
+                mediaId: '',
+                account_id: '',
+                account_name: '',
+            },
+            ruleValidate: {
+                account_id: [{
+                    required: true,
+                    message: '请输入帐号ID',
+                    trigger: 'blur'
+                }],
+                account_name: [{
+                    required: true,
+                    message: '请输入账户名称',
+                    trigger: 'blur'
+                }]
             }
         };
     },
@@ -165,6 +151,12 @@ export default {
         },
         tableData(){
             return this.$store.state.home.tdata;
+        },
+        Medialist() {
+            let Media = this.$store.state.plan.Media;
+            if(!Media[0]) return;
+            this.formItem.mediaId = Media[0].mediaId;
+            return Media;
         }
     },
     methods: {   
@@ -172,16 +164,43 @@ export default {
         getData(){            
             this.$store.dispatch('getOverview');
         },
+        //获取媒体类型
+        getMedia() {
+            this.$store.dispatch('getMedia');
+        },
         //新增绑定账户
-        addBindOk(){
-            //console.log(this.formItem)   
-            setTimeout(() => {
-                this.addBindId = false;
-            }, 20000);
+        addBindOk(name) {
+            this.loading = false;
+            this.$refs[name].validate((valid) => {
+                if(valid) {
+                    this.loading = true;
+                    Axios.post('api.php', {
+                        action: 'sys',
+                        opt: 'AdsAccountAdd',
+                        do: 'add',
+                        account_id: this.formItem.account_id,
+                        account_name: this.formItem.account_name,
+                        mediaId: this.formItem.mediaId
+                    }).then(
+                        res => {
+                            this.addBindId = false;
+                            if(res.ret == 1) {
+                                this.$Message.info(res.msg);
+                            }
+                        }
+                    ).catch(
+                        err => {
+                            console.log('新增绑定账号' + err)
+                        }
+                    )
+                }
+            })
+
         }
     },
     mounted(){
-        this.getData()
+        this.getData();
+        this.getMedia();
     }
 };
 </script>
