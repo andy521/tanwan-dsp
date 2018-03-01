@@ -1,8 +1,9 @@
 <style lang="less">
+    .ivu-table-small td{cursor: pointer}
     .newad .ivu-table-row-hover td{background-color: #f8f9fa;}
     .newad .ivu-table-row-highlight td{color: #e88e00}
     .newad .ivu-form-item-label{color: #888;}
-    .newad .ivu-form-item{margin-bottom: 15px;}
+    .newad .ivu-form-item{margin-bottom: 22px;}
     .adspace{margin:10px 0 30px; position: relative;}
     .ad_table{margin-right: 210px;}
     .preview{position: absolute;width: 200px;top: 0;right: 0;bottom: 0;background-color: #f8f9fa; display: none;}
@@ -15,15 +16,13 @@
     .ad-info{margin-top: 27px;    color: #555;}    
     .date_price{margin: 20px 0;}
     .next_btn{width: 300px; margin-top:40px;}
-    .next_btn .ivu-btn-large{padding: 10px 15px; font-size: 16px;}   
-    .week{margin:0 0 20px 90px;} 
-    .week .btn_clear{color: red;}
+    .next_btn .ivu-btn-large{padding: 10px 15px; font-size: 16px;}    
 </style>
 <template>
     <div class="newad">
         fdsfdsfsd
         <h3 class="subtit">广告版位</h3>
-        <Alert type="error" v-if="verify.ad"  show-icon>请选择要投放的版位</Alert>
+        <!-- <Alert type="error" v-if="verify.select_ad"  show-icon>请选择要投放的版位</Alert> -->
         <div class="adspace">
             <div :class="className">
                 <Table :columns="columnsAdSpace" :data="edition" highlight-row  @on-row-click="rowClick" size="small"></Table>
@@ -42,39 +41,38 @@
         </div>
         
         <h3 class="subtit">排期与出价</h3>  
-        <Alert type="error" v-if="verify.dp" show-icon>{{verify.dp_txt}}</Alert>      
+        <!-- <Alert type="error" v-if="verify.dp" show-icon>{{verify.dp_txt}}</Alert>       -->
         <div class="date_price">
-            <Form :model="datePrice" :label-width="90">
-                <FormItem label="投放日期：">
-                    <DatePicker v-model="datePrice.date" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
-                    <DatePicker v-model="datePrice.date" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
+            <Form ref="datePrice" :model="datePrice" :rules="ruleValidate" :label-width="90">
+                <FormItem label="投放日期：" prop="dates">  
+                    <Date-picker type="date" placeholder="选择日期" v-model="datePrice.date"></Date-picker>                  
+                    <!-- <Date-picker :options="options" format="yyyy/MM/dd" v-model="datePrice.date" type="date" placeholder="长期投放" style="width: 300px; margin-right:15px;"></Date-picker>
+                    <Date-picker :options="options" format="yyyy/MM/dd" v-model="datePrice.date" type="daterange"  placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></Date-picker> -->
                 </FormItem>
                 <FormItem label="投放时间：">
                     <div class="fl">
-                        <Checkbox @on-change="isAllDay" v-model="allDay">
+                        <Checkbox v-model="allDay">
                             <span>全天</span>                       
                         </Checkbox>
                         <span style="margin:0 20px; color:#999">/</span>    
                     </div>                
                     <div class="fl" v-if="allDay" @click="period">特定时间段</div>
                     <div class="fl" v-else>
-                        <Select :disabled="allDay" @on-change="startTime" placeholder="00:00" style="width:100px">
+                        <Select :disabled="allDay" @on-change="startTime" style="width:100px">
                             <Option v-for="item in timeStateList" :value="item.value" :key="item.value" :disabled="item.disabled">{{ item.label }}</Option>
                         </Select>
                         -
-                        <Select :disabled="allDay" @on-change="endTime" placeholder="24:00" style="width:100px;margin-right:10px;">
+                        <Select :disabled="allDay" @on-change="endTime" style="width:100px">
                             <Option v-for="item in timeEndList" :value="item.value" :key="item.value" :disabled="item.disabled">{{ item.label }}</Option>
                         </Select>
-                        <Button @click="showWeek" type="dashed">{{isWeekText}}</Button>
                     </div>
-                </FormItem>
-                <div class="week" v-if="isWeek">
-                    <week-time v-model="datePrice.time" ></week-time>
-                </div> 
-                <FormItem label="出价方式：">
+                    <!-- <span style="color:#ccc">(这里还差一个功能就是要程序判断是否朋友圈)</span> -->
+                    <!-- <Icon type="checkmark" /> -->
+                </FormItem>                
+                <FormItem label="出价方式：" prop="bidstyle"> 
                     <Select @on-change="getStyle" style="width:180px;margin-right:15px;" placeholder="请选择优化目标">
                         <Option v-for="item in goalList" :value="item.value" :key="item.id">{{ item.label }}</Option>
-                    </Select>
+                    </Select>                   
                     <RadioGroup v-model="datePrice.style" type="button" >
                         <Radio label="CPC" :disabled="disabled_cpc"></Radio>
                         <Radio label="CPM" :disabled="disabled_cpm"></Radio>
@@ -84,28 +82,28 @@
                 <FormItem label="出价：" prop="price">
                     <Input v-model="datePrice.price" placeholder="输入价格" number style="width:318px" @on-blur="getPrice" icon=""></Input> <span class="input-ts">元/点击</span>
                 </FormItem>
-                <FormItem label="广告名称">
-                    <Input v-model="datePrice.name" :maxlength="40" style="width: 450px"></Input> <span class="input-ts">{{datePrice.name.length}}/40</span>
+                <FormItem label="广告名称" prop="name">
+                    <Input v-model="datePrice.name" placeholder="请输入广告名称" :maxlength="40" style="width: 450px"></Input> <span class="input-ts">{{datePrice.name.length}}/40</span>
                 </FormItem>
+                <Form-item class="next_btn">                   
+                    <Button type="primary" @click="nextStep('datePrice')" long size="large">下一步</Button>
+                </Form-item>
             </Form>
         </div> 
 
-        <div class="next_btn">
-            <Button type="primary" @click="nextStep" long size="large">下一步</Button>
-        </div>       
+     
 
         <br>
         <br>
         <br>
         <br>
         <br>
-        
-        {{datePrice.time}}
+       
     </div>
 </template>
 <script>
-import weekTime from './weekTime.vue';
-import p65 from '@/images/adcreative/65.png';
+import timeWeek from '@/components/time-week/index.vue';
+import p65  from '@/images/adcreative/65.png';
 import p148 from '@/images/adcreative/148.png';
 import p184 from '@/images/adcreative/184.png';
 import p210 from '@/images/adcreative/210.png';
@@ -115,7 +113,7 @@ import p486 from '@/images/adcreative/486.png';
 import p487 from '@/images/adcreative/487.png';
 export default {
     components: {
-        weekTime,
+        timeWeek,
     },
     name: 'step-three',
     props:{
@@ -133,38 +131,43 @@ export default {
                 {title: '创意形式',key: 'modus'},
                 {title: '描述',key: 'description'}
             ],
+            imgSrc:'',            
+            options: {
+                disabledDate (date) {
+                    return date && date.valueOf() < Date.now() - 86400000;
+                }
+            },
             datePrice:{
                 //选择广告id
                 id:'',
                 date:'',
-                time:'111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
+                time:'',
                 style:'',
                 price:'',
                 name:''
-            },
-            imgSrc:'',
+            },            
             //投放时间
             allDay:true,
-            //特定时间段-开始时间
             timeStateList:[],
-            //特定时间段-结束时间
             timeEndList:[],
-            //选中的开始时间
-            timeState :'0', 
-            //选中的结束时间
-            timeEnd:'24',
             //出价方式
             disabled_cpc : true,
             disabled_cpm : true,
-            //是否显示高级设置
-            isWeek:false,
-            isWeekText:'高级设置',
-            //下一步操作时判断
-            verify :{
-                ad : false,
-                dp : false,
-                dp_txt : ''
-            } 
+            //表单验证
+            ruleValidate:{                
+                name: [
+                    { required: true, message: '广告名称不能为空', trigger: 'blur' }
+                ],
+                price: [
+                    { type:'number', required: true, message: '价格必须为数字值' } 
+                ],
+                dates: [
+                    { required: true, type: 'date', message: '请选择投放日期', trigger: 'change' }
+                ],
+                bidstyle : [
+                    { required: true, message: '请选出价方式', trigger: 'change' }
+                ]
+            }
         }
     },
     watch:{
@@ -216,39 +219,19 @@ export default {
                 this.datePrice.price = '';
             }
         },
-        //投放时间全天
-        isAllDay(val){
-            if(val){
-                this.isWeek = false;
-                this.datePrice.time = '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
-            }
-        },
         //特定时间段
         period(){
-            this.allDay  = false;            
-        },
-        //显示高级设置
-        showWeek(){
-            if(!this.isWeek){
-                this.isWeek = true;
-                this.isWeekText = '退出高级设置';
-            }else{
-                this.isWeek = false;
-                this.isWeekText = '高级设置';
-            }
-            
+            this.allDay  = false;
         },
         //特定时间段 - 开始时间
         startTime(val){
-            this.timeState = val;      
+            this.timeState = val;       
             this.setEndTime(this.timeState);
-            this.datePrice.time =  this.timeSeries(val,this.timeEnd);
         },
         //特定时间段 - 结束时间
         endTime(val){
             this.timeEnd = val; 
             this.setStartTime(this.timeEnd);
-            this.datePrice.time = this.timeSeries(this.timeState,val);
         },
         //设置特定时间开始时间
         setStartTime(t){
@@ -266,7 +249,6 @@ export default {
                 time.push(obj)
             }
             this.timeStateList = time;
-
         },
         //设置特定时间结束时间
         setEndTime(t){
@@ -284,58 +266,59 @@ export default {
                 time.push(obj)
             }
             this.timeEndList = time;
-        }, 
-        //计算出时间系
-        timeSeries(start,end){
-            /*
-            投放时间段，格式为 48 * 7 位字符串，且都为 0 和 1，以半个小时为最小粒度，从周一零点开始至周日 24 点结束。 
-            0 为不投放， 1 为投放，不传此字段、全为 0 、全为 1 均视为全时段投放。朋友圈广告的投放时间需大于等于 6 小时，小于等于 10 个自然日，
-            且每天投放的时段需保持一致字段长度最小 336 字节，长度最大 336 字节
-            111111000000000000111111111111111111111111111111
-            111111000000000000111111111111111111111111111111
-            111111000000000000111111111111111111111111111111
-            111111000000000000111111111111111111111111111111
-            111111000000000000111111111111111111111111111111
-            111111000000000000111111111111111111111111111111
-            111111000000000000111111111111111111111111111111
-            */
-            let day = 7, grid = 23, serice ='';
-            for(let i=0;i<7;i++){
-                for (let index = 0; index <= grid; index++) {
-                    if(index >= start && index <= end){
-                        serice += '11' 
-                    }else{
-                        serice += '00'  
-                    }                           
+        },
+        //设置特定时间开始时间
+        setStartTime(t){
+            let time = [];
+            for (let i = 0; i <= 24; i++){
+                let index =  i < 10 ? '0'+i : i;
+                let obj = {}
+                obj.value = i
+                obj.label = index + ':00';
+                if(i>=t){
+                    obj.disabled = true;
+                }else{
+                    obj.disabled = false;
                 }
+                time.push(obj)
             }
-            console.log(serice)
-            return serice;
-        },       
+            this.timeStateList = time;
+        },
+        //设置特定时间结束时间
+        setEndTime(t){
+            let time = [];
+            for(let i=24; i>=0; i--){
+                let index =  i < 10 ? '0'+i : i;
+                let obj = {}
+                obj.value = i
+                obj.label = index + ':00';
+                if(i<=t){
+                    obj.disabled = true;
+                }else{
+                    obj.disabled = false;
+                }
+                time.push(obj)
+            }
+            this.timeEndList = time;
+        },
         //下一步
-        nextStep(){
+        nextStep (name) {
+            console.log(this.datePrice)
             if(this.datePrice.id == ''){
-                this.verify.ad = true;
-                return false
+
             };
-            if(this.datePrice.date == ''){
-                this.verify.dp = true;
-                this.verify.dp_txt = "请设置投放日期";
-                return false
-            }
-            if(this.datePrice.price == ''){
-                this.verify.dp = true;
-                this.verify.dp_txt = "请填写价格";
-                return false
-            }
-            //提交下一步需要的信息
-            this.$emit('on-click', this.datePrice);
-        }       
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    this.$Message.success('提交成功!');
+                } else {
+                    this.$Message.error('表单验证失败!');
+                }
+            })
+        },    
     },
     mounted(){
         this.setStartTime(24);
-        this.setEndTime(0);
-       //this.timeSeries(0,23);      
+        this.setEndTime(0);      
     }   
 };
 </script>

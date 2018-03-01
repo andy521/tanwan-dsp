@@ -10,7 +10,7 @@ const newad = {
 		speed_mode: [], //投放速度模式
 		targetings: [], //定向
 		targeting_tags: [], //定向标签(地域)
-		business_interest: [] //商业兴趣
+        business_interest: [], //商业兴趣
 	},
 	mutations: {
 		GET_ADS_CONFIG(state, data) {
@@ -39,7 +39,7 @@ const newad = {
 		},
 		GET_BUSINESS_INTEREST(state, data) {
 			state.business_interest = data;
-		},
+        },
 	},
 	actions: {
 		//获取所有状态ret_ads_config
@@ -49,7 +49,7 @@ const newad = {
 			Axios.get('api.php', {
 				action: 'gdtAdPut',
 				opt: 'ret_ads_config'
-			}).then(res => {
+			}).then(res => { 
 				commit('GET_ADS_CONFIG', res.data)
 			}).catch(
 				err => {
@@ -185,17 +185,7 @@ const newad = {
 				}
 			)
         },
-        
-        //获取广告版位
-        getAdSpace( {commit}, data ){
-            Axios.get('api.php', {
-				action: 'gdtAdPut',
-				opt: 'ret_ads_config'
-			}).then(res => {
-                //console.log( res.data.adcreative_template )
-                commit('GET_AD_SPACE', res.data.adcreative_template )
-            }).catch( err => console.log('获取广告版位' + err ))
-        }
+
         
 	}
 };
