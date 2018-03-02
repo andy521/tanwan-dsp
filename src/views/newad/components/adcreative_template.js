@@ -59,25 +59,26 @@ const data = [
 				"required":1,
 				"amount": [1,20],
 				"des":"字数：1~20"
-			},
-			"deep_link":{
-				"name":"应用直达(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"impression_tracking_url":{
-				"name":"请输入曝光监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"click_tracking_url":{
-				"name":"请输入点击监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":" "
-			}
+            }
+            // ,
+			// "deep_link":{
+			// 	"name":"应用直达",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "impression_tracking_url":{
+			// 	"name":"请输入曝光监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "click_tracking_url":{
+			// 	"name":"请输入点击监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// }
 		}
 	},
 	{
@@ -102,25 +103,26 @@ const data = [
 				"required":1,
 				"amount": [1,25],
 				"des":"字数：1~25"
-			},
-			"deep_link":{
-				"name":"应用直达(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"impression_tracking_url":{
-				"name":"请输入曝光监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"click_tracking_url":{
-				"name":"请输入点击监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			}
+            }
+            // ,
+			// "deep_link":{
+			// 	"name":"应用直达",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "impression_tracking_url":{
+			// 	"name":"请输入曝光监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "click_tracking_url":{
+			// 	"name":"请输入点击监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// }
 		}
 	},
 	{
@@ -166,25 +168,26 @@ const data = [
 					"amount": [1,7],
 					"des":"字数：1~7"
 				}
-			},			
-			"deep_link":{
-				"name":"应用直达(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"impression_tracking_url":{
-				"name":"请输入曝光监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"click_tracking_url":{
-				"name":"请输入点击监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			}
+            }
+            //,			
+			// "deep_link":{
+			// 	"name":"应用直达",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "impression_tracking_url":{
+			// 	"name":"请输入曝光监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "click_tracking_url":{
+			// 	"name":"请输入点击监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// }
 		}
 	},
 	{
@@ -222,25 +225,26 @@ const data = [
 					"required":1,
 					"des":"字数：1~8"
 				}
-			},			
-			"deep_link":{
-				"name":"应用直达(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"impression_tracking_url":{
-				"name":"请输入曝光监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"click_tracking_url":{
-				"name":"请输入点击监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			}
+            }
+            //,			
+			// "deep_link":{
+			// 	"name":"应用直达",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "impression_tracking_url":{
+			// 	"name":"请输入曝光监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "click_tracking_url":{
+			// 	"name":"请输入点击监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// }
 		}
 	},
 	{
@@ -279,25 +283,26 @@ const data = [
 					"amount": [1,7],
 					"des":"字数：1~7"
 				}
-			},			
-			"deep_link":{
-				"name":"应用直达(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"impression_tracking_url":{
-				"name":"请输入曝光监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"click_tracking_url":{
-				"name":"请输入点击监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			}
+            }
+            //,			
+			// "deep_link":{
+			// 	"name":"应用直达",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "impression_tracking_url":{
+			// 	"name":"请输入曝光监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "click_tracking_url":{
+			// 	"name":"请输入点击监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// }
 		}
 	},
 	{
@@ -336,25 +341,26 @@ const data = [
 					"amount": [1,8],
 					"des":"字数：1~8"
 				}
-			},			
-			"deep_link":{
-				"name":"应用直达(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"impression_tracking_url":{
-				"name":"请输入曝光监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"click_tracking_url":{
-				"name":"请输入点击监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			}
+            }
+            //,			
+			// "deep_link":{
+			// 	"name":"应用直达(可选)",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":""
+			// },
+			// "impression_tracking_url":{
+			// 	"name":"请输入曝光监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "click_tracking_url":{
+			// 	"name":"请输入点击监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// }
 		}
 	},
 	{
@@ -395,25 +401,26 @@ const data = [
 				"quality":"50",
 				"format":"*.jpg|*.jpeg|*.png",
 				"des":"尺寸：300*300，大小：不超过50 KB，格式：*.jpg|*.jpeg|*.png"
-			},
-			"deep_link":{
-				"name":"应用直达(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"impression_tracking_url":{
-				"name":"请输入曝光监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			},
-			"click_tracking_url":{
-				"name":"请输入点击监测URL(可选)",
-				"type":"string",
-				"required":0,
-				"des":""
-			}
+            }
+            //,
+			// "deep_link":{
+			// 	"name":"应用直达",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "impression_tracking_url":{
+			// 	"name":"请输入曝光监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// },
+			// "click_tracking_url":{
+			// 	"name":"请输入点击监测URL",
+			// 	"type":"string",
+			// 	"required":0,
+			// 	"des":"(可选)"
+			// }
 		}
 	}
 ]
