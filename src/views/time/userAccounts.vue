@@ -7,7 +7,7 @@
 		<p>
 			<Row>
 				<Col span="12">
-				<Select v-model="account_id">
+				<Select v-model="account_id" placeholder="请选择帐号">
 					<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
 				</Select>
 
@@ -32,6 +32,10 @@
 		methods: {
 			//新建广告
 			tonewadd() {
+				if(this.account_id == '') {
+					this.$Message.info('请选择帐号');
+					return;
+				}
 				let query = {
 					account_id: this.account_id
 				};
@@ -41,15 +45,10 @@
 				});
 			}
 		},
-		watch: {
-			mediaList(e) {
-				this.account_id = e[0].account_id;
-			}
-		},
 		computed: {
 			//获取媒体账号
 			mediaList() {
-				return this.$store.state.plan.mediaList;;
+				return this.$store.state.plan.mediaList;
 			}
 		}
 	};

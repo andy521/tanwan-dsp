@@ -2,6 +2,14 @@
     @import "../../styles/common.less";
     @import '../../styles/table.less';
     .head{border-bottom: 1px solid #e9eaec; margin-bottom: 10px; padding: 0;}  
+        .sel_state1{
+		text-align: left;
+
+	}
+	.sel_state1.ivu-select-multiple .ivu-select-selection{
+		overflow: auto;
+		height: 32px;
+	}
 </style>
 <template>
     <Card dis-hover shadow>
@@ -49,10 +57,10 @@
                 <Col :xs="8" :md="3">
                     <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
                 </Col>
-                <Col :xs="12" :md="2">    
-                    <Select :value="current_author" @on-change="setPrincipal" multiple placeholder="--负责人--"  class="margin-bottom-10">
+                <Col :xs="12" :md="2">                                      
+                     <Select  @on-change="setPrincipal" v-model="current_author" :value="current_author" placeholder="--负责人--"  class="margin-bottom-10 sel_state1" multiple filterable >
                         <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
+                    </Select>  
                 </Col>                              
                 <Col :xs="12" :md="2">
                     <Button icon="document-text"  @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
@@ -255,7 +263,7 @@ export default {
         },
         //选择负责人
         setPrincipal(data){
-            this.current_author = data;
+            //this.current_author = data;
             this.getTableData();
         },
         //广告选择

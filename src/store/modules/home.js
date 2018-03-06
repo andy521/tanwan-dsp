@@ -34,7 +34,6 @@ const home = {
         //账户总览
         getOverview({commit},param){
             let opt = param || {};
-            console.log(opt)
             Axios.get('api.php', opt)
             .then( 
                 res=>{ commit('GETOVERIEW',res.data) }

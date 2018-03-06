@@ -141,7 +141,7 @@ export function changetime(time) {
 }
 
 //分钟转换时间
-function toHourMinute(minutes) {
+export function toHourMinute(minutes) {
 	let h = Math.floor(minutes / 60);
 	let m = minutes % 60
 	if(h < 10) h = "0" + h;

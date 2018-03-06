@@ -3,6 +3,8 @@ import  util  from "@/utils/index"
 const channel = {
     state: {
         list:[],
+        page:0,
+        page_size:0,
         total_number:0,
         total_page:0,
         game:[],
@@ -16,6 +18,10 @@ const channel = {
         GETCHANNELDATA (state , data){
             console.log(data)
             state.list = data.list;
+            //当前页
+            state.page = parseInt(data.page) || 1;
+            //每页条数
+            state.page_size = parseInt(data.page_size);
             //总条数
             state.total_number = parseInt(data.total_number);
             //总页数
@@ -43,7 +49,7 @@ const channel = {
             }
             state.plan = c;
         },
-        AUTHOR(state,data){            
+        AUTHOR(state,data){
             let a = [];
             for(let i in data){
                 a.push({ 'label': data[i].author, 'value' : encodeURIComponent(data[i].author) })

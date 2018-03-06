@@ -32,45 +32,45 @@
 </template>
 <script>
 import util from '@/utils/index';
-    export default {
-        name: 'create-image',
-        props: {
-            id: {
-                type: [String, Number],
-                required: true
-            },
-            size: {
-                type: String,
-                default: ''
-            },
-            des: {
-                type: String,
-                default: ''
-            },
-            quality: {
-                type: String,
-                default: ''
-            },
-            format: {
-                type: String,
-                default: ''
-            }
+export default {
+    name: 'create-image',
+    props: {
+        id: {
+            type: [String, Number],
+            required: true
         },
-        data () {
-            return {    
-                actionUrl:"",
-                desc: ''
-            }
+        size: {
+            type: String,
+            default: ''
         },
-        methods: {
-            //图片上传成功
-            handleSuccess(filte){
-                console.log(filte)
-            }
+        des: {
+            type: String,
+            default: ''
         },
-        mounted() {
-            //this.actionUrl = 'http://ads.tanwan.com/api.php?action=gdtAdPut&opt=adsimg_doadd&account_id=' + this.id + '&sessionid=' + util.getItem('sessionid');
-            //console.log(this.id)
-		}
+        quality: {
+            type: String,
+            default: ''
+        },
+        format: {
+            type: String,
+            default: ''
+        }
+    },
+    data () {
+        return {    
+            actionUrl:"",
+            desc: ''
+        }
+    },
+    methods: {
+        //图片上传成功
+        handleSuccess(filte){
+            console.log(filte)
+        }
+    },
+    mounted() {
+        this.actionUrl = 'http://ads.tanwan.com/api.php?action=gdtAdPut&opt=adsimg_doadd&account_id=' + this.id + '&sessionid=' + util.getItem('sessionid');
+        console.log(this.id)
     }
+}
 </script>

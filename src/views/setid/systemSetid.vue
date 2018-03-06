@@ -4,7 +4,7 @@
 <template>
 	<div class="ad">
 		<Card shadow>
-			<Select v-model="uId" style="width:200px" @on-change="getOpAccountUId">
+			<Select v-model="uId" style="width:200px" @on-change="getOpAccountUId" placeholder="请选择负责人">
 				<Option v-for="item in AdsAthour" :value="item.uId" :key="this">{{ item.uName }}</Option>
 			</Select>
 			<Tree :data="AdsAcccountJson" show-checkbox multiple class="margin-top-20" @on-check-change="changeTree"></Tree>

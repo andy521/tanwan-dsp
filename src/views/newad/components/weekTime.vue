@@ -171,7 +171,7 @@
 <script>
 	export default {
 		name: 'weekTime',
-        props: ['value'],
+		props: ['value'],
 		data() {
 			return {
 				week: [],

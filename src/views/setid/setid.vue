@@ -75,6 +75,7 @@
 									on: {
 										click: () => {
 											this.row = params.row;
+											this.uId=params.row.uid;
 											this.author_modal = true;
 										}
 									}

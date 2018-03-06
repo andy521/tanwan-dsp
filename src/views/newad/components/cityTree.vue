@@ -5,7 +5,6 @@
 			<Select v-model="searchcity" filterable remote :remote-method="remoteMethod1" :loading="loading" @on-change="changesearchcity" placeholder="搜索省、市">
 				<Option v-for="(option, index) in options" :value="option.value" :key="index">{{option.label}}</Option>
 			</Select>
-			</Select>
 			</Col>
 		</Row>
 		<Tree class="margin-top-10 citytree" :data="citylist" show-checkbox @on-check-change="changeTree"></Tree>
@@ -15,14 +14,13 @@
 <script>
 	export default {
 		name: 'cityTree',
-		props: ['value', 'callback'],
+		props: ['value'],
 		data() {
 			return {
 				searchcity: '',
 				list: [],
 				options: [],
 				loading: false,
-				citylist: [],
 				ids: []
 			}
 		},
@@ -31,10 +29,11 @@
 		},
 		watch: {
 			ids(ids) {
-				this.$emit('input', ids)
+				this.$emit('input', ids);
 			},
-			value() {},
-			targeting_tags() {},
+			value() {
+				this.ids = this.value;
+			},
 		},
 		methods: {
 			//点击树节点时触发
@@ -48,8 +47,16 @@
 				})
 				this.ids = ids;
 			},
-			changesearchcity(val) {
-				this.callback(val)
+			changesearchcity(val) {			
+				if(this.ids == []) {
+					this.ids.push(val)
+				} else {
+					let have = true;
+					this.ids.forEach(id => {
+						if(id == val) have = false;
+					})
+					if(have) this.ids.push(val);
+				}
 			},
 			remoteMethod1(query) {
 				if(query !== '') {
@@ -70,7 +77,7 @@
 			},
 		},
 		computed: {
-			targeting_tags() {
+			citylist() {
 				let list = this.$store.state.newad.targeting_tags;
 				let newlist = [];
 				let sellist = [];
@@ -106,10 +113,8 @@
 						children: children
 					}
 					newlist.push(newitem);
-
 				});
 				this.list = sellist;
-				this.citylist = newlist;
 				return newlist;
 			}
 		}

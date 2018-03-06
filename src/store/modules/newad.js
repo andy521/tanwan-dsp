@@ -10,14 +10,15 @@ const newad = {
 		speed_mode: [], //投放速度模式
 		targetings: [], //定向
 		targeting_tags: [], //定向标签(地域)
-        business_interest: [], //商业兴趣
+		business_interest: [], //商业兴趣
+		CustomAudiences: '', //获取自定义人群
+		CustomAudiences_ex: '', //获取自定义人群排除
+		appCategory: [] ////app行为按分类
+
 	},
 	mutations: {
 		GET_ADS_CONFIG(state, data) {
 			state.ads_config = data;
-		},
-		GET_AUTHOR(state, data) {
-			state.authorlist = data;
 		},
 		GET_CAMPAIGN_TYPE(state, data) {
 			state.campaign_type = data;
@@ -39,7 +40,16 @@ const newad = {
 		},
 		GET_BUSINESS_INTEREST(state, data) {
 			state.business_interest = data;
-        },
+		},
+		GET_CUSTOMAUDIENCES(state, data) {
+			state.CustomAudiences = data;
+		},
+		GET_CUSTOMAUDIENCESEX(state, data) {
+			state.CustomAudiences_ex = data;
+		},
+		GET_APPCATEGORY(state, data) {
+			state.appCategory = data;
+		},
 	},
 	actions: {
 		//获取所有状态ret_ads_config
@@ -49,7 +59,7 @@ const newad = {
 			Axios.get('api.php', {
 				action: 'gdtAdPut',
 				opt: 'ret_ads_config'
-			}).then(res => { 
+			}).then(res => {
 				commit('GET_ADS_CONFIG', res.data)
 			}).catch(
 				err => {
@@ -71,22 +81,6 @@ const newad = {
 			}).catch(
 				err => {
 					console.log('获取商业兴趣' + err)
-				}
-			)
-		},
-
-		//获取负责人
-		getAuthorlist({
-			commit
-		}) {
-			Axios.get('api.php', {
-				action: 'api',
-				opt: 'getAuthor'
-			}).then(res => {
-				commit('GET_AUTHOR', res.data)
-			}).catch(
-				err => {
-					console.log('获取负责人' + err)
 				}
 			)
 		},
@@ -184,9 +178,60 @@ const newad = {
 					console.log('获取定向标签(地域)' + err)
 				}
 			)
-        },
+		},
 
-        
+		//获取广告版位
+		getAdSpace({
+			commit
+		}, data) {
+			Axios.get('api.php', {
+				action: 'gdtAdPut',
+				opt: 'ret_ads_config'
+			}).then(res => {
+				commit('GET_AD_SPACE', res.data.adcreative_template)
+			}).catch(err => console.log('获取广告版位' + err))
+		},
+
+		//获取自定义人群
+		get_CustomAudiences({
+			commit
+		}, data) {
+			Axios.get('api.php', {
+				action: 'gdtAdPut',
+				opt: 'custom_audiences_get',
+				account_id: data.account_id,
+				name: data.name
+			}).then(res => {
+				commit('GET_CUSTOMAUDIENCES', res.data)
+			}).catch(err => console.log('获取自定义人群' + err))
+		},
+
+		//获取自定义人群排除
+		get_CustomAudiences_ex({
+			commit
+		}, data) {
+			Axios.get('api.php', {
+				action: 'gdtAdPut',
+				opt: 'custom_audiences_get',
+				account_id: data.account_id,
+				name: data.name
+			}).then(res => {
+				commit('GET_CUSTOMAUDIENCESEX', res.data)
+			}).catch(err => console.log('获取自定义人群' + err))
+		},
+
+		//app行为按分类
+		get_appCategory({
+			commit
+		}) {
+			Axios.get('api.php', {
+				action: 'gdtAdPut',
+				opt: 'targeting_tags',
+				type: 'app_category'
+			}).then(res => {
+				commit('GET_APPCATEGORY', res.data)
+			}).catch(err => console.log('app行为按分类' + err))
+		}
 	}
 };
 

@@ -42,9 +42,9 @@
 	
 	.tr {
 		float: right;
-		margin-top: -8px;
+		margin-top: -5px;
 	}
-	.sel_state1{
+		.sel_state1{
 		text-align: left;
 		width: 200px;
 	}
@@ -57,21 +57,23 @@
 </style>
 <template>
 	<Card dis-hover shadow class="margin-top-10">
-        <div slot="title" class="card-title">
-            <Icon type="ios-paper"></Icon> 按账户查看
+		<div class="tab">
+			<ul class="tab-item">
+				<li v-for="(item,index) in tab" :class="{cur:index == num }" @click="tabsChange(index)">{{item}}</li>
+			</ul>
+			<div class="tr">
+				<Select v-model="author_model" :value="author_model" class="sel_state1"  multiple filterable  @on-change="tableData()" placeholder="请选择负责人">
+					<Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
+				</Select>
 
-            <div class="tr">
-                <Select :value="author_model" class="sel_state1" multiple filterable  @on-change="authorChange" placeholder="请选择负责人">
-                    <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-                <Select @on-change="mediaChange" v-model="selectState" placeholder="按媒体筛选" style="width:120px" class="margin-right-10">
-                    <Option v-for="item in mediaList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
+				<Select @on-change="mediaChange" v-model="selectState" placeholder="按媒体筛选" style="width:120px" class="margin-right-10">
+					<Option v-for="item in mediaList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+				</Select>
 
-                <DatePicker type="date" placeholder="自定义时间" @on-change="changeTime" style="width: 190px" class="margin-right-10"></DatePicker>
-                <Button icon="document-text" @click="exportData()">下载报表</Button>
-            </div>
-        </div>
+				<DatePicker type="date" placeholder="自定义时间" @on-change="changeTime" style="width: 190px" class="margin-right-10"></DatePicker>
+				<Button icon="document-text" @click="exportData()">下载报表</Button>
+			</div>
+		</div>
 
 		<Table :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange"></Table>
 		<Row class="margin-top-10">
@@ -89,6 +91,7 @@
 			<Page :total="tdata.total_number" :page-size="tdata.page_size" ref="pages" @on-change="tableData" show-elevator show-total></Page>
 			</Col>
 		</Row>
+
 	</Card>
 </template>
 <script>
@@ -101,7 +104,8 @@
 			tdata: Object
 		},
 		data() {
-			return { 
+			return {
+				tab: ['按账户查看', '按负责人查看'],
 				num: 0,
 				selectState: [],
 				mediaList: [],
@@ -111,6 +115,8 @@
 				total_number: 1, //总数量
 				total_page: 1, //总页数
 				tableSize: 'small',
+				//负责人
+				group: '',
 				//媒体型
 				media_type: '',
 				//按时间
@@ -193,8 +199,9 @@
 					this.page = 1;
 				} else {
 					this.page = page;
-                };                
+				};
 				let param = {
+					group_by: this.group,
 					media_type: this.media_type,
 					time: this.time,
 					page: this.page,
@@ -206,15 +213,15 @@
 				this.$store.dispatch('getOverview', param);
 			},
 			//Tab
-			// tabsChange(index) {
-			// 	this.num = index;
-			// 	if(!!index) {
-			// 		this.group = 'author';
-			// 		this.tableData();
-			// 	} else {
-			// 		this.$store.dispatch('getOverview');
-			// 	}
-			// },
+			tabsChange(index) {
+				this.num = index;
+				if(!!index) {
+					this.group = 'author';
+					this.tableData();
+				} else {
+					this.$store.dispatch('getOverview');
+				}
+			},
 			//分页
 			changePage(val) {
 				this.page = val;
@@ -258,14 +265,9 @@
 					this.orderDirection = "";
 				}
 				this.tableData();
-            },
-            //选择负责人
-            authorChange(data){
-                this.author_model = data;
-                this.tableData();
-            },
+			},
 			//获取负责人
-			getAuthor() { 
+			getAuthor() {
 				this.$store.dispatch('getAuthor');
 			},
 		},
@@ -276,8 +278,8 @@
 			},
 		},
 		mounted() {
-            this.getMedia(); 
-            this.getAuthor();
+			this.getMedia();
+			this.getAuthor();
 		}
 	}
 </script>

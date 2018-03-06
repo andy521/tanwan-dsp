@@ -34,6 +34,17 @@
 		width: 100px;
 		color: #999;
 	}
+	
+	.next_btn {
+		width: 300px;
+		margin-top: 40px;
+	}
+	
+	.next_btn .ivu-btn-large {
+		padding: 10px 15px;
+		font-size: 16px;
+		width: 100%;
+	}
 </style>
 
 <template>
@@ -47,7 +58,7 @@
 				</div>
 			</Tooltip>
 		</div>
-		<Tabs v-model="tabsid" :animated="false" type="card">
+		<Tabs v-model="tabsid" :animated="false" type="card" class="margin-top-20">
 			<TabPane label="选择已有推广计划" name="0"></TabPane>
 			<TabPane label="新建推广计划" name="1"></TabPane>
 		</Tabs>
@@ -65,8 +76,9 @@
 					<div class="camitem"><span>投放速度模式</span>{{campaign.speed_mode=='SPEED_MODE_FAST'?'加速投放':'标准投放'}}</div>
 				</div>
 			</div>
-			<br />
-			<Button type="primary" size="large" style="width: 150px;" @click="campaignsAdd">下一步</Button>
+			<div class="next_btn">
+				<Button type="primary" size="large" @click="campaignsAdd">下一步</Button>
+			</div>
 		</div>
 		<div v-if="tabsid==1">
 			<h3 class="subtit">计划设置</h3>
@@ -102,8 +114,9 @@
 				</Form>
 				</Col>
 			</Row>
-			<br />
-			<Button type="primary" size="large" style="width: 150px;" @click="handleSubmit('formCustom')">下一步</Button>
+			<div class="next_btn">
+				<Button type="primary" size="large" @click="handleSubmit('formCustom')">下一步</Button>
+			</div>
 		</div>
 
 	</div>
@@ -113,7 +126,7 @@
 	import Axios from "@/api/index"
 	export default {
 		name: 'stepOne',
-		props: ['next'],
+		props: ['callback'],
 		data() {
 			const validatecampaign_name = (rule, value, callback) => {
 				if(value === '') {
@@ -150,7 +163,7 @@
 						trigger: 'blur'
 					}],
 				},
-				account_id: 3415636, // this.$route.params.account_id,
+				account_id: this.$route.params.account_id, //3415636
 				campaign_id: '', //推广计划id
 				tabsid: 0,
 				campaign: {}
@@ -185,25 +198,26 @@
 							configured_status: this.formCustom.configured_status,
 							speed_mode: this.formCustom.speed_mode
 						}).then(res => {
-							this.$Message.success('提交成功');
-							this.next(1);
+							if(res.ret == 1) {
+								this.$Message.success('提交成功');
+								this.callback(res.data.campaign_id, this.formCustom);
+							}
 						}).catch(
 							err => {
 								console.log('新建广告计划' + err)
 							}
 						)
 					} else {
-						this.$Message.error('请填写完整资料');
+						this.$Message.info('请填写完整资料');
 					}
 				})
 			},
 			//提交第一步默认数据
 			campaignsAdd() {
 				if(this.campaign_id == '') {
-					this.$Message.error('请填选择推广计划');
+					this.$Message.info('请填选择推广计划');
 				} else {
-					this.next(1);
-					//alert('下一步')
+					this.callback(this.campaign_id, this.campaign);
 				}
 			},
 			//选择推广计划

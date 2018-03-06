@@ -7,11 +7,11 @@ Vue.use(VueRouter);
 
 // 路由配置
 const RouterConfig = {
-    //mode: 'history', //用这个配置去掉地址栏上的#
+    // mode: 'history',
     routes: routers
 };
-const router = new VueRouter(RouterConfig);
 
+const router = new VueRouter(RouterConfig);
 // 输出router
 export default router;
 
