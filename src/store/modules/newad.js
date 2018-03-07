@@ -244,7 +244,7 @@ const newad = {
             .then( 
                 res=>{ commit('GET_GALLERY', res.data) }
             ).catch( 
-                err=>{ console.log('获取媒体失败' + err) }
+                err=>{ console.log('获取图库失败' + err) }
             ); 
         }
 	}

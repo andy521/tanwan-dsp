@@ -14,9 +14,12 @@ const webpackBaseConfig = require('./webpack.base.config.js');
 //const UglifyJsParallelPlugin = require('webpack-uglify-parallel');
 
 //https://github.com/fouber/blog/issues/6
+
+
 module.exports = merge(webpackBaseConfig, {
 	
     output: {
+		//用ExtractTextPlugin 来抽离css,css中img的路径会出现问题，通过设置publicPath 解决，采用绝对路径 http://blog.csdn.net/zshake/article/details/72453045
 		publicPath: 'dist/',
 		//publicPath: 'http://ads.vue.tanwan.com/dist/',
         filename: '[name].js',
@@ -24,7 +27,7 @@ module.exports = merge(webpackBaseConfig, {
     },
 	
 	plugins: [
-	
+		//清除之前的
 		new cleanWebpackPlugin(['dist/*'], {
             root: path.resolve(__dirname, '../')
         }),
@@ -47,7 +50,7 @@ module.exports = merge(webpackBaseConfig, {
 			chunks: ['vender-base','vender-exten','main'],
 			inject: 'body',
 			title:'贪玩游戏'
-		}),	 //http://www.bubuko.com/infodetail-1847157.html
+		}),
 		
 		//new webpack.optimize.CommonsChunkPlugin('vendor',  'vendor.js')
 	]	

@@ -29,8 +29,7 @@ module.exports = {
             { test: /\.js[x]?$/, include: [resolve('src')], exclude: /node_modules/, loader: 'happypack/loader?id=happybabel' }, //include 表示哪些目录中的 .js 文件需要进行 babel-loader
             { test: /\.css$/, use: ExtractTextPlugin.extract({ use: ['css-loader?minimize', 'autoprefixer-loader'], fallback: 'style-loader' })},
             { test: /\.less$/, use: ExtractTextPlugin.extract({ use: ['css-loader?minimize','autoprefixer-loader', 'less-loader'], fallback: 'style-loader' })},
-            //{ test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/, loader: 'url-loader?limit=1024' },   loader: 'url-loader?limit=8192&name=[path][name].[ext]'
-            { test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/, loader: "file-loader?limit=1024" },
+            { test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/, loader: "file-loader?limit=1024&name=img/[hash:8].[name].[ext]" },
             { test: /\.(html|tpl)$/, loader: 'html-loader'}
         ]
     },	
