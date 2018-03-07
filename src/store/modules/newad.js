@@ -13,7 +13,8 @@ const newad = {
 		business_interest: [], //商业兴趣
 		CustomAudiences: '', //获取自定义人群
 		CustomAudiences_ex: '', //获取自定义人群排除
-		appCategory: [] ////app行为按分类
+        appCategory: [], ////app行为按分类
+        gallery:{} //图库
 
 	},
 	mutations: {
@@ -49,7 +50,10 @@ const newad = {
 		},
 		GET_APPCATEGORY(state, data) {
 			state.appCategory = data;
-		},
+        },
+        GET_GALLERY(state, data){
+            state.gallery = data;
+        }
 	},
 	actions: {
 		//获取所有状态ret_ads_config
@@ -231,7 +235,18 @@ const newad = {
 			}).then(res => {
 				commit('GET_APPCATEGORY', res.data)
 			}).catch(err => console.log('app行为按分类' + err))
-		}
+        },
+        
+        //获取图库
+        get_gallery({commit},param){
+            console.log(param)
+            Axios.get('api.php',{'action':'gdtAdPut','opt':'adsimg','account_id':param.account_id,'width':param.width,'height':param.height})
+            .then( 
+                res=>{ commit('GET_GALLERY', res.data) }
+            ).catch( 
+                err=>{ console.log('获取媒体失败' + err) }
+            ); 
+        }
 	}
 };
 
