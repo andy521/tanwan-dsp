@@ -180,8 +180,18 @@
 		},
 		mounted() {
 			var that = this;
-			this.week = this.value.split("");
-			this.weekold = this.value.split("");
+			let weekStrArr = this.value.split("");
+			let weekIntArr = [];
+			let weekIntArr1 = [];
+			weekIntArr = weekStrArr.map(function(data) {
+				return +data;
+			});
+			weekIntArr1 = weekStrArr.map(function(data) {
+				return +data;
+			});
+			this.week = weekIntArr;
+			this.weekold = weekIntArr1;
+
 			//var week = []; 
 			//for(var i = 0; i < 336; i++) {
 			//	week.push(0);   
@@ -214,6 +224,9 @@
 				if(isSelect) {
 					endX = e.clientX;
 					endY = e.clientY;
+					if(Math.abs(startX - endX) < 3||Math.abs(startY - endY) < 3) {
+						return;
+					}
 					for(var i = 0; i < selList.length; i++) {
 						var sl = selList[i].offsetLeft;
 						var st = selList[i].offsetTop - document.getElementsByClassName("ad")[0].scrollTop;
@@ -283,10 +296,11 @@
 			check(index) {
 				if(this.week[index] == 1) {
 					this.$set(this.week, index, 0);
+					this.$set(this.weekold, index, 0);
 				} else {
 					this.$set(this.week, index, 1);
+					this.$set(this.weekold, index, 1);
 				}
-
 			},
 			//清空
 			empty() {

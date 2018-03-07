@@ -17,12 +17,14 @@
 	
 	.ritht_fixed {
 		position: fixed;
-		top: 40px;
+		top: 50%;
 		right: 40px;
 		width: 200px;
 		background: #f2f2f2;
 		padding: 20px;
 		z-index: 999;
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
 	}
 	
 	.fi_tit {
@@ -172,16 +174,29 @@
 	.red {
 		color: #ed3b3b;
 	}
-	.next_btn{width: 300px; margin-top:40px;}
-    .next_btn .ivu-btn-large{padding: 10px 15px; font-size: 16px; width: 100%;}   
+	
+	.next_btn {
+		width: 300px;
+		margin-top: 40px;
+	}
+	
+	.next_btn .ivu-btn-large {
+		padding: 10px 15px;
+		font-size: 16px;
+		width: 100%;
+	}
 </style>
 
 <template>
 
 	<div>
 		<div class="tit">广告</div>
+		<h3 class="subtit">目标详情</h3>
+		<Input v-model="product_refs_id" size="large" placeholder="请输入标的物ID" class="margin-top-20">
+		<span slot="prepend">标的物ID</span>
+		<span slot="append">{{product_refs_id.length}}/15</span>
+		</Input>
 		<h3 class="subtit">定向</h3>
-
 		<div class="margin-top-20">
 			<Select filterable size="large" placeholder="请选择定向" v-model="targetingsmodal" style="width:400px" @on-change="changetargetings">
 				<Option v-for="item in targetings" :value="item.targeting_id" :key="this">{{item.targeting_name}}</Option>
@@ -207,8 +222,13 @@
 						</div>
 						<!--城市选择-->
 						<city-tree v-model="targeting_item.targeting.geo_location.regions"></city-tree>
-
-						<CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types">
+						<CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types" v-if="plandata.campaign_type=='CAMPAIGN _TYPE_WECHAT_OFFICIAL_ ACCOUNTS'||plandata.campaign_type=='CAMPAIGN_TYPE_ WECHAT_MOMENTS'">
+							<Checkbox :label="item.val_type" size="large" v-for="item in ads_config.location_types" :key="this" v-if="item.val_type=='LIVE_IN'">{{item.name}}</Checkbox>
+						</CheckboxGroup>
+						<CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types" v-else-if="plandata.campaign_type=='CAMPAIGN _TYPE_NORMAL'">
+							<Checkbox :label="item.val_type" size="large" v-for="item in ads_config.location_types" :key="this" v-if="item.val_type=='VISITED_IN'">{{item.name}}</Checkbox>
+						</CheckboxGroup>
+						<CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types" v-else>
 							<Checkbox :label="item.val_type" size="large" v-for="item in ads_config.location_types" :key="this">{{item.name}}</Checkbox>
 						</CheckboxGroup>
 					</div>
@@ -883,7 +903,7 @@
 	import cityTree from './cityTree.vue';
 	export default {
 		name: 'stepTwo',
-		props: ['callback'],
+		props: ['plandata', 'callback'],
 		components: {
 			cityTree
 		},
@@ -891,6 +911,7 @@
 			return {
 				account_id: this.$route.params.account_id,
 				targetingsmodal: 0,
+				product_refs_id: '',
 				targeting_item: {
 					"account_id": "",
 					"id": "",
@@ -978,8 +999,6 @@
 			this.$store.dispatch('get_targetings');
 			//请求定向标签(地域)
 			this.$store.dispatch('get_targeting_tags');
-			//获取所有状态
-			this.$store.dispatch('get_ads_config');
 			//获取商业兴趣
 			this.$store.dispatch('get_business_interest');
 			//app行为按分类
@@ -1215,6 +1234,16 @@
 					this.$Message.info('定向包名称超出字数限制');
 					return;
 				}
+
+				if(this.product_refs_id == '') {
+					this.$Message.info('请输入标的物id');
+					return;
+				}
+				if(this.product_refs_id.length > 15) {
+					this.$Message.info('请输入标的物id超出字数限制');
+					return;
+				}
+
 				let targeting = {};
 
 				//验证地理位置
@@ -1333,7 +1362,7 @@
 					targeting: JSON.stringify(targeting)
 				}).then(res => {
 					if(res.ret == 1) {
-						this.callback(res.data.targeting_id, this.targeting_item);
+						this.callback(res.data.targeting_id, this.targeting_item, this.product_refs_id);
 						this.$Message.info(res.msg);
 					}
 				}).catch(err => console.log('添加/修改定向' + err))

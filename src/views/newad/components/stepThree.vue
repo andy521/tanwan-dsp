@@ -152,8 +152,8 @@
 			<div id="J_bid" class="date_price">
 				<Form :model="adgroup" :label-width="90">
 					<FormItem label="投放日期：">
-						<DatePicker @on-change="changeDateLong" v-model="adgroup.setdate" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
-						<DatePicker @on-change="changeDate" v-model="adgroup.setdate" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
+						<DatePicker @on-change="changeDateLong" v-model="adgroup.setdate" :options="options" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
+						<DatePicker @on-change="changeDate" v-model="adgroup.setdate" :options="options" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
 					</FormItem>
 					<FormItem label="投放时间：">
 						<div class="fl">
@@ -178,12 +178,12 @@
 						<week-time v-model="adgroup.time_series"></week-time>
 					</div>
 					<FormItem label="出价方式：">
-						<Select @on-change="getStyle" style="width:180px;margin-right:15px;" placeholder="请选择优化目标">
-							<Option v-for="item in goalList" :value="item.value" :key="item.id">{{ item.label }}</Option>
+						<Select @on-change="getStyle" v-model="adgroup.optimization_goal" style="width:180px;margin-right:15px;" placeholder="请选择优化目标">
+							<Option v-for="item in goalList.optimization_goal" :value="item.val_type" :key="this">{{ item.name }}</Option>
 						</Select>
-						<RadioGroup v-model="adgroup.style" type="button">
-							<Radio label="BILLINGEVENT_IMPRESSION" :disabled="disabled_cpc">按曝光扣费</Radio>
+						<RadioGroup v-model="adgroup.billing_event" type="button">
 							<Radio label="BILLINGEVENT_CLICK" :disabled="disabled_cpm">按点击扣费</Radio>
+							<Radio label="BILLINGEVENT_IMPRESSION" :disabled="disabled_cpc">按曝光扣费</Radio>
 						</RadioGroup>
 						<span style="color:#ccc;">（请先选优化目录，然后才可选择出价方式）</span>
 					</FormItem>
@@ -194,9 +194,8 @@
 						<Input v-model="adgroup.daily_budget" placeholder="输入日限额" number style="width:180px" icon=""></Input> <span class="input-ts">分</span>
 					</FormItem>
 					<FormItem label="落地页 url：">
-						<Input v-model="adgroup.destination_url" placeholder="输入落地页 url" type="url" style="width:450px" icon=""></Input> 
+						<Input v-model="adgroup.destination_url" placeholder="输入落地页 url" type="url" style="width:450px" icon=""></Input>
 					</FormItem>
-					
 
 					<FormItem style="margin-top:70px" label="广告名称">
 						<Input v-model="adgroup.adcreative_name" :maxlength="40" style="width: 450px"></Input> <span class="input-ts">{{adgroup.adcreative_name.length}}/40</span>
@@ -257,6 +256,11 @@
 						key: 'description'
 					}
 				],
+				 options: {
+                    disabledDate (date) {
+                        return date && date.valueOf() < Date.now() - 86400000;
+                    }
+                },
 				setdata: '',
 				adgroup: {
 					//选择广告id
@@ -271,14 +275,14 @@
 					end_date: '',
 					//投放时间段
 					time_series: '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
-					style: '',
+					billing_event: '',
 					//出价
 					bid_amount: '',
 					//广告名称              
 					adcreative_name: '',
 					adgroup_name: '',
 					daily_budget: '',
-					destination_url:''
+					destination_url: ''
 				},
 				imgSrc: '',
 				//投放时间
@@ -311,20 +315,10 @@
 
 		},
 		computed: {
-
-			//优化目标   出价方式要跟据优化目标来决定   
+			//获取所有状态
 			goalList() {
-				let goalArr = [],
-					goal = this.$store.state.newad.ads_config.optimization_goal;
-				for(let i in goal) {
-					goalArr.push({
-						'id': i,
-						'value': goal[i].val_type,
-						'label': goal[i].name
-					})
-				}
-				return goalArr;
-			},
+				return this.$store.state.newad.ads_config;
+			}
 		},
 		methods: {
 			tostep(step) {
@@ -346,13 +340,17 @@
 			//选择优化目标
 			getStyle(val) {
 				if(val == 'OPTIMIZATIONGOAL_CLICK' || val == 'OPTIMIZATIONGOAL_APP_ACTIVATE' || val == 'OPTIMIZATIONGOAL_APP_REGISTER' || val == 'OPTIMIZATIONGOAL_PROMOTION_CLICK_KEY_PAGE' || val == 'OPTIMIZATIONGOAL_ECOMMERCE_ORDER' || val == 'OPTIMIZATIONGOAL_APP_PURCHASE' || val == 'OPTIMIZATIONGOAL_ECOMMERCE_CHECKOUT' || val == 'OPTIMIZATIONGOAL_PAGE_RESERVATION') {
+					this.disabled_cpc = true;
+					this.disabled_cpm = false;
+					this.adgroup.billing_event = 'BILLINGEVENT_CLICK'
+				} else if(val == 'OPTIMIZATIONGOAL_IMPRESSION') {
 					this.disabled_cpc = false;
 					this.disabled_cpm = true;
-				} else if(val == 'OPTIMIZATIONGOAL_IMPRESSION') {
-					this.disabled_cpm = this.disabled_cpc = false;
+					this.adgroup.billing_event = 'BILLINGEVENT_IMPRESSION';
+				} else {
+					this.disabled_cpm = false;
+					this.disabled_cpc = false;
 				}
-				this.adgroup.optimization_goal = val;
-				this.adgroup.style = 'BILLINGEVENT_CLICK';
 			},
 			//选择广告版位
 			rowClick(row) {
@@ -386,7 +384,7 @@
 						break;
 				};
 				if(!this.adgroup.adcreative_name) {
-					this.adgroup.adcreative_name = row.name + '/' + row.modus + '/' + row.description;
+					this.adgroup.adcreative_name = row.name;
 				}
 				this.$emit('on-edition', row.element);
 			},
@@ -428,7 +426,6 @@
 					this.isWeek = false;
 					this.isWeekText = '高级设置';
 				}
-
 			},
 			//特定时间段 - 开始时间
 			startTime(val) {
@@ -522,15 +519,15 @@
 					this.verify.dp_txt = "出价需介于10分-10,000分之间";
 					return
 				};
-				if(this.plandata.campaign_type== 'CAMPAIGN_TYPE_WECHAT_MOMENTS') {
+				if(this.plandata.campaign_type == 'CAMPAIGN_TYPE_WECHAT_MOMENTS') {
 					if(this.adgroup.daily_budget < 100000 || this.adgroup.daily_budget > 1000000000) {
 						this.verify.dp = true;
 						this.verify.dp_txt = "日预算要求介于 100,000 – 1,000,000,000 分之间";
 						return
 					};
-				}else{
-					this.adgroup.daily_budget=='';
-				}				
+				} else {
+					this.adgroup.daily_budget == '';
+				}
 				if(this.adgroup.destination_url == '') {
 					this.verify.dp = true;
 					this.verify.dp_txt = "请填写落地页 url";

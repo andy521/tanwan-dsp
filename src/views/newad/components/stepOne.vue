@@ -40,6 +40,11 @@
 		margin-top: 40px;
 	}
 	
+	em,
+	var {
+		font-style: normal;
+	}
+	
 	.next_btn .ivu-btn-large {
 		padding: 10px 15px;
 		font-size: 16px;
@@ -48,7 +53,6 @@
 </style>
 
 <template>
-
 	<div class="stepone">
 		<div class="tit">
 			<Tooltip placement="right-start">
@@ -70,10 +74,12 @@
 			<div class="tabpane">
 				<div v-if="campaign_id!=''">
 					<div class="camitem"><span>日消耗限额</span>{{campaign.daily_budget}}元/天</div>
-					<div class="camitem"><span>计划类型</span>{{campaign_type}}</div>
-					<div class="camitem"><span>标的物类型</span>{{product_type}}</div>
-					<div class="camitem"><span>开启状态</span>{{campaign.configured_status=='AD_STATUS_NORMAL'?'有效':'无效'}}</div>
-					<div class="camitem"><span>投放速度模式</span>{{campaign.speed_mode=='SPEED_MODE_FAST'?'加速投放':'标准投放'}}</div>
+					<div class="camitem"><span>计划类型</span><em v-for="item in ads_config.campaign_type" v-if="campaign.campaign_type==item.val_type">{{item.name}}</em></div>
+					<div class="camitem"><span>标的物类型</span><em v-if="campaign.product_type=='UNKNOWN'">未知类型</em>
+						<em v-for="item in ads_config.product_type" v-if="campaign.product_type==item.val_type">{{item.name}}</em>
+					</div>
+					<div class="camitem"><span>开启状态</span><em v-for="item in ads_config.configured_status" v-if="campaign.configured_status==item.val_type">{{item.name}}</em></div>
+					<div class="camitem"><span>投放速度模式</span><em v-for="item in ads_config.speed_mode" v-if="campaign.speed_mode==item.val_type">{{item.name}}</em></div>
 				</div>
 			</div>
 			<div class="next_btn">
@@ -88,27 +94,27 @@
 					<FormItem label="推广计划名称" prop="campaign_name">
 						<Input v-model="formCustom.campaign_name" placeholder="请输入推广计划名称"></Input>
 					</FormItem>
-					<FormItem label="日消耗限额" prop="daily_budget">
-						<Input v-model="formCustom.daily_budget" placeholder="请输入消耗限额"></Input>
-					</FormItem>
 					<FormItem label="计划类型">
-						<Select v-model="formCustom.campaign_type" placeholder="请选择计划类型">
-							<Option v-for="item in campaign_type_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
+						<Select v-model="formCustom.campaign_type" placeholder="请选择计划类型" @on-change="campaign_type_change">
+							<Option v-for="item in ads_config.campaign_type" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
+					</FormItem>
+					<FormItem label="日消耗限额" prop="daily_budget" v-if="formCustom.campaign_type!='CAMPAIGN_TYPE_WECHAT_MOMENTS'">
+						<Input v-model="formCustom.daily_budget" placeholder="请输入消耗限额"></Input>
 					</FormItem>
 					<FormItem label="标的物类型">
 						<Select v-model="formCustom.product_type" placeholder="请选择标的物类型">
-							<Option v-for="item in product_type_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
+							<Option v-for="item in ads_config.product_type" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
 					</FormItem>
 					<FormItem label="开启状态">
 						<Select v-model="formCustom.configured_status" placeholder="请选择开启状态">
-							<Option v-for="item in configured_status_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
+							<Option v-for="item in ads_config.configured_status" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
 					</FormItem>
 					<FormItem label="投放速度模式">
 						<Select v-model="formCustom.speed_mode" placeholder="请选择投放速度模式">
-							<Option v-for="item in speed_mode_list" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
+							<Option v-for="item in ads_config.speed_mode" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
 						</Select>
 					</FormItem>
 				</Form>
@@ -118,7 +124,6 @@
 				<Button type="primary" size="large" @click="handleSubmit('formCustom')">下一步</Button>
 			</div>
 		</div>
-
 	</div>
 </template>
 
@@ -177,11 +182,13 @@
 				});
 			//请求推广计划
 			this.$store.dispatch('getCampaigns', this.account_id);
-
-			//获取所有状态
-			this.$store.dispatch('get_ads_config');
 		},
 		methods: {
+			campaign_type_change(campaign_type){
+				if(campaign_type=='CAMPAIGN_TYPE_WECHAT_MOMENTS'){
+					this.daily_budget=='';
+				}
+			},
 			//提交第一步填写数据
 			handleSubmit(name) {
 				this.$refs[name].validate((valid) => {
@@ -223,69 +230,25 @@
 			//选择推广计划
 			changcampaigns(e) {
 				this.campaignslist.forEach(item => {
-					if(item.campaign_id == e)
+					if(item.campaign_id == e) {
 						this.campaign = item;
+					}
 				});
 			}
 		},
 		computed: {
-			//获取投放速度模式
-			speed_mode_list() {
-				let list = this.$store.state.newad.ads_config.speed_mode;
-				this.formCustom.speed_mode = list[0].val_type;
-				return list;
-			},
-			//获取标的物类型
-			product_type_list() {
-				let list = this.$store.state.newad.ads_config.product_type;
-				this.formCustom.product_type = list[0].val_type;
-				return list;
-			},
-			//获取状态类型
-			configured_status_list() {
-				let list = this.$store.state.newad.ads_config.configured_status;
-				this.formCustom.configured_status = list[0].val_type;
-				return list;
-			},
-			//获取计划类型
-			campaign_type_list() {
-				let list = this.$store.state.newad.ads_config.campaign_type;
-				this.formCustom.campaign_type = list[0].val_type;
+			//获取所有状态
+			ads_config() {
+				let list = this.$store.state.newad.ads_config;
+				this.formCustom.speed_mode = list.speed_mode[0].val_type;
+				this.formCustom.product_type = list.product_type[0].val_type;
+				this.formCustom.configured_status = list.configured_status[0].val_type;
+				this.formCustom.campaign_type = list.campaign_type[0].val_type;
 				return list;
 			},
 			//获取推广计划
 			campaignslist() {
 				return this.$store.state.plan.campaignslist;
-			},
-			//计划类型转换
-			campaign_type() {
-				if(this.campaign.campaign_type == 'CAMPAIGN_TYPE_NORMAL') {
-					return "普通展示广告";
-				} else if(this.campaign.campaign_type == 'CAMPAIGN_TYPE_WECHAT_OFFICIAL_ACCOUNTS') {
-					return "微信公众号广告";
-				} else if(this.campaign.campaign_type == 'CAMPAIGN_TYPE_WECHAT_MOMENTS') {
-					return "微信朋友圈广告";
-				} else {
-					return "未知类型";
-				}
-			},
-			//标的物类型
-			product_type() {
-				if(this.campaign.product_type == 'PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM') {
-					return "腾讯开放平台移动应用";
-				} else if(this.campaign.product_type == 'PRODUCT_TYPE_APP_IOS') {
-					return "苹果应用";
-				} else if(this.campaign.product_type == 'PRODUCT_TYPE_ECOMMERCE') {
-					return "电商推广";
-				} else if(this.campaign.product_type == 'PRODUCT_TYPE_LINK_WECHAT') {
-					return "微信品牌页";
-				} else if(this.campaign.product_type == 'PRODUCT_TYPE_LBS_WECHAT') {
-					return "\t微信本地门店推广";
-				} else if(this.campaign.product_type == 'PRODUCT_TYPE_LINK') {
-					return "\t普通链接";
-				} else if(this.campaign.product_type == 'UNKNOWN') {
-					return "未知类型";
-				}
 			}
 		}
 	}

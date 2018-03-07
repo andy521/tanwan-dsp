@@ -21,22 +21,20 @@ export const newAd = {
 
 
 export const otherRouter = {
-    path: '/',
+    path: '/user',
     name: 'otherRouter',
     redirect: '/home',
     component: Main,
     children: [
-        { path: 'home', title: '后台首页',  name: 'home_index', component: () => import('@/views/home/home.vue') },
         { path: 'useraccounts', title: '获取用户帐号', name: 'user_accounts',  component: () => import('@/views/time/userAccounts.vue') },
     ]
 };
 
 
-
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
     {
-        path: '/index',
+        path: '/',
         icon: 'ios-home',
         name: 'overview',
         title: '账户总览',
