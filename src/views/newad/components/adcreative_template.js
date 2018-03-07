@@ -222,7 +222,8 @@ const data = [
 					"style":"corporate_name",
 					"name":"广告主名称",
 					"type":"string",
-					"required":1,
+                    "required":1,
+                    "amount": [1,8],
 					"des":"字数：1~8"
 				}
             }

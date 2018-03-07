@@ -33,10 +33,10 @@
         <div class="cell">        
             <div class="item" v-for="(item,index) in element"  v-if=" item === 'image' || item == 'image2' "> 
                 <div class="img_box" v-if="item === 'image'">
-                    <create-image :id="account" :size="template.image.size" :des="template.image.des" :quality="template.image.quality" :format="template.image.format"></create-image>
+                    <create-image type="image" @on-change="imgChange" :id="account" :size="template.image.size" :des="template.image.des" :quality="template.image.quality" :format="template.image.format"></create-image>
                 </div>
                 <div class="img_box" v-if="item === 'image2'">
-                    <create-image :size="template.image2.size" :des="template.image2.des" :quality="template.image2.quality" :format="template.image2.format"></create-image>
+                    <create-image type="image2" @on-change="imgChange" :id="account" :size="template.image2.size" :des="template.image2.des" :quality="template.image2.quality" :format="template.image2.format"></create-image>
                 </div>                    
             </div>
         </div>
@@ -45,7 +45,7 @@
         <div class="form_img" v-for="item in element" v-if="item === 'element_story'">               
             <div class="cell">
                 <div class="item" v-for="i in template.element_story.length[0]">
-                    <create-image :size="template.element_story.child.size" :des="template.element_story.child.des" :quality="template.element_story.child.quality" :format="template.element_story.child.format"></create-image>
+                    <create-image :type="'story_'+ i" @on-change="imgChange" :id="account" :size="template.element_story.child.size" :des="template.element_story.child.des" :quality="template.element_story.child.quality" :format="template.element_story.child.format"></create-image>
                 </div>
             </div>
         </div> 
@@ -146,10 +146,10 @@ export default {
             description:'',
             //商标
             corporate:{
-                'corporate_name':''
+                corporate_name:''
             },
             //组图
-            element_story:'',
+            element_story:[],
 
             //落地页URL
             destination_url:'',
@@ -175,11 +175,23 @@ export default {
             }
             //console.log(data)
         },
+        imgChange(data){
+            if(data.type == 'image'){
+                this.image = data.image_id;
+            }else if(data.type == 'image2'){
+                this.image2 = data.image_id;
+            }else{
+                let index = data.type.split('_')[1] - 1;
+                this.element_story[index] = data.image_id
+            }
+        },
         submit(){
             //把包数据 (创意元素，不同 adcreative_template_id 要求的元素不尽相同)
             let pack = {},
-                temp = this.template;            
+                temp = this.template;  
+
             this.element.forEach(item => {
+                console.log(item)
                 //title验证
                 if(item === 'title'){
                     //判断是否必填写
@@ -199,34 +211,54 @@ export default {
                         this.verify.show = true;
                         this.verify.des = temp.image.name +'提交失败';
                         return
-                    }
-                    pack.image = this.image;
+                    }else{
+                        this.verify.show = false;
+                        pack.image = this.image;
+                    }                    
                 }else if(item === 'image2'){
                     if(!!temp.image2.required && this.image2 == ''){
                         this.verify.show = true;
                         this.verify.des = temp.image2.name +'提交失败';
                         return
-                    }
-                    pack.image2 = this.image2;
+                    }else{
+                        this.verify.show = false;
+                        pack.image2 = this.image2;
+                    }                    
                 }else if(item === 'description'){
                     if(!!temp.description.required && this.description == ''){
                         this.verify.show = true;
                         this.verify.des = '请填写' + temp.description.name;
                         return
-                    }
-                    if(this.description.length < temp.description.amount[0] || this.description.length > temp.description.amount[1]){
+                    }else if(this.description.length < temp.description.amount[0] || this.description.length > temp.description.amount[1]){
                         this.verify.show = true;
                         this.verify.des = temp.description.name + '/' + temp.description.des;
                         return
+                    }else{
+                        this.verify.show = false;
+                        pack.description = this.description;
+                    }                    
+                }else if(item === 'element_story'){
+                    
+                    pack.element_story = this.element_story;
+                }else if(item === 'corporate'){  
+                    if(!!temp.corporate.child.required && this.corporate.corporate_name == ''){
+                        this.verify.show = true;
+                        this.verify.des = '请填写' + temp.corporate.name;
+                        return
+                    }else if(this.corporate.corporate_name.length < temp.corporate.child.amount[0] || this.corporate.corporate_name.length > temp.corporate.child.amount[1]){
+                        this.verify.show = true;
+                        this.verify.des = temp.corporate.child.name + '/' + temp.corporate.child.des;
+                    }else{
+                        this.verify.show = false;
+                        pack.corporate = this.corporate;
                     }
-                    pack.description = this.description;
                 }
-
             });
             
-          
-            console.log('提交---- adcreative_elements');
-            //this.verify.show = false;
+            if(!this.verify.show){
+                console.log(pack)
+                this.$emit('on-change', pack);
+            }
         }
     },
     mounted() {        

@@ -14,14 +14,15 @@
 		<side-bar v-model="setp"></side-bar>
 		<Content :style="{padding: '40px', minHeight: '280px', background: '#fff'}">
 			<!--步骤1-->
-			<step-one :callback="steponecallback" v-show="setp[0]==0"></step-one>
+			<!-- <step-one :callback="steponecallback" v-show="setp[0]==0"></step-one> -->
 			<!--步骤2-->
-			<step-two :callback="steptowcallback" v-show="setp[0]==1&&setp[1]==0"></step-two>
+			<!-- <step-two :callback="steptowcallback" v-show="setp[0]==1&&setp[1]==0"></step-two> -->
 			<!--步骤3-->
-			<step-three :edition="adcreative" @tostep="tostep" @on-edition="getEditionData" @on-click="threeInfo" v-show="setp[0]==1&&setp[1]==1||setp[1]==2"></step-three>
+			<!-- <step-three :edition="adcreative" @tostep="tostep" @on-edition="getEditionData" @on-click="threeInfo" v-show="setp[0]==1&&setp[1]==1||setp[1]==2"></step-three> -->
 
 			<!--上传创意-->
-			<up-creative v-show="setp[0]==2" :account="account_id" :template="creativeTemplate"></up-creative>
+			<!-- <up-creative v-show="setp[0]==2" :account="account_id" :template="creativeTemplate"></up-creative> -->
+            <up-creative :account="account_id" :template="creativeTemplate"></up-creative>
 		</Content>
 
 	</div>
@@ -46,7 +47,8 @@
 		},
 		data() {
 			return {
-				account_id: this.$route.params.account_id,
+                //account_id: this.$route.params.account_id,
+                account_id: 3495067,
 				campaign_id: '',
 				targeting_id: '',
 				//导行定位
@@ -81,28 +83,11 @@
 						"child": {
 							"style": "corporate_name",
 							"name": "广告主名称",
-							"type": "string",
+                            "type": "string",
+                            "amount": [1,8],
 							"required": 1,
 							"des": "字数：1~8"
 						}
-					},
-					"deep_link": {
-						"name": "应用直达",
-						"type": "string",
-						"required": 0,
-						"des": "(可选)"
-					},
-					"impression_tracking_url": {
-						"name": "请输入曝光监测URL",
-						"type": "string",
-						"required": 0,
-						"des": "(可选)"
-					},
-					"click_tracking_url": {
-						"name": "请输入点击监测URL",
-						"type": "string",
-						"required": 0,
-						"des": "(可选)"
 					}
 				},
 			}
@@ -115,10 +100,11 @@
 				});
 			};
 			//获取所有状态
-			this.$store.dispatch('get_ads_config');
+            this.$store.dispatch('get_ads_config');
+            
+            //console.log('返回account_id' + this.$route.params.account_id)
 		},
-		methods: {
-
+		methods: {            
 			//第一步数据返回
 			steponecallback(campaign_id, data) {
 				this.campaign_id = campaign_id;

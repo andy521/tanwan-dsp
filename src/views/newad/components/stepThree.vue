@@ -117,6 +117,10 @@
 	.ivu-table td {
 		cursor: pointer;
 	}
+	
+	.fl {
+		float: left;
+	}
 </style>
 <template>
 	<div class="newad">
@@ -146,10 +150,10 @@
 			<h3 class="subtit">排期与出价</h3>
 			<Alert type="error" v-if="verify.dp" show-icon class="margin-top-10">{{verify.dp_txt}}</Alert>
 			<div id="J_bid" class="date_price">
-				<Form :model="datePrice" :label-width="90">
+				<Form :model="adgroup" :label-width="90">
 					<FormItem label="投放日期：">
-						<DatePicker v-model="datePrice.date" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
-						<DatePicker v-model="datePrice.date" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
+						<DatePicker @on-change="changeDateLong" v-model="adgroup.setdate" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
+						<DatePicker @on-change="changeDate" v-model="adgroup.setdate" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
 					</FormItem>
 					<FormItem label="投放时间：">
 						<div class="fl">
@@ -171,23 +175,34 @@
 						</div>
 					</FormItem>
 					<div class="week" v-if="isWeek">
-						<week-time v-model="datePrice.time"></week-time>
+						<week-time v-model="adgroup.time_series"></week-time>
 					</div>
 					<FormItem label="出价方式：">
 						<Select @on-change="getStyle" style="width:180px;margin-right:15px;" placeholder="请选择优化目标">
 							<Option v-for="item in goalList" :value="item.value" :key="item.id">{{ item.label }}</Option>
 						</Select>
-						<RadioGroup v-model="datePrice.style" type="button">
-							<Radio label="CPC" :disabled="disabled_cpc"></Radio>
-							<Radio label="CPM" :disabled="disabled_cpm"></Radio>
+						<RadioGroup v-model="adgroup.style" type="button">
+							<Radio label="BILLINGEVENT_IMPRESSION" :disabled="disabled_cpc">按曝光扣费</Radio>
+							<Radio label="BILLINGEVENT_CLICK" :disabled="disabled_cpm">按点击扣费</Radio>
 						</RadioGroup>
 						<span style="color:#ccc;">（请先选优化目录，然后才可选择出价方式）</span>
 					</FormItem>
-					<FormItem label="出价：" prop="price">
-						<Input v-model="datePrice.price" placeholder="输入价格" number style="width:318px" @on-blur="getPrice" icon=""></Input> <span class="input-ts">元/点击</span>
+					<FormItem label="出价：">
+						<Input v-model="adgroup.bid_amount" placeholder="输入价格" number style="width:180px" @on-blur="getPrice" icon=""></Input> <span class="input-ts">元/点击</span>
 					</FormItem>
-					<FormItem label="广告名称">
-						<Input v-model="datePrice.name" :maxlength="40" style="width: 450px"></Input> <span class="input-ts">{{datePrice.name.length}}/40</span>
+					<FormItem label="日限额：" v-if="plandata.campaign_type=='CAMPAIGN_TYPE_WECHAT_MOMENTS'">
+						<Input v-model="adgroup.daily_budget" placeholder="输入日限额" number style="width:180px" icon=""></Input> <span class="input-ts">分</span>
+					</FormItem>
+					<FormItem label="落地页 url：">
+						<Input v-model="adgroup.destination_url" placeholder="输入落地页 url" type="url" style="width:450px" icon=""></Input> 
+					</FormItem>
+					
+
+					<FormItem style="margin-top:70px" label="广告名称">
+						<Input v-model="adgroup.adcreative_name" :maxlength="40" style="width: 450px"></Input> <span class="input-ts">{{adgroup.adcreative_name.length}}/40</span>
+					</FormItem>
+					<FormItem label="广告组名称">
+						<Input v-model="adgroup.adgroup_name" :maxlength="40" style="width: 450px"></Input> <span class="input-ts">{{adgroup.adgroup_name.length}}/40</span>
 					</FormItem>
 				</Form>
 			</div>
@@ -197,6 +212,7 @@
 			<Button type="primary" @click="nextStep" long size="large">下一步</Button>
 		</div>
 
+		<!-- <p style="width:800px;word-break:break-all;">{{adgroup.time_series}}</p> -->
 	</div>
 </template>
 <script>
@@ -220,7 +236,10 @@
 				type: Array,
 				default: () => []
 			},
-			setp: [1, 1]
+			setp: [1, 1],
+			plandata: {
+				type: Object
+			},
 		},
 		data() {
 			return {
@@ -238,14 +257,28 @@
 						key: 'description'
 					}
 				],
-				datePrice: {
+				setdata: '',
+				adgroup: {
 					//选择广告id
-					id: '',
-					date: '',
-					time: '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
+					adcreative_template_id: '',
+					//站点
+					site_set: '',
+					//广告优化目标类型
+					optimization_goal: '',
+					//开始投放日期
+					begin_date: '',
+					//结束投放日期
+					end_date: '',
+					//投放时间段
+					time_series: '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
 					style: '',
-					price: '',
-					name: ''
+					//出价
+					bid_amount: '',
+					//广告名称              
+					adcreative_name: '',
+					adgroup_name: '',
+					daily_budget: '',
+					destination_url:''
 				},
 				imgSrc: '',
 				//投放时间
@@ -278,6 +311,7 @@
 
 		},
 		computed: {
+
 			//优化目标   出价方式要跟据优化目标来决定   
 			goalList() {
 				let goalArr = [],
@@ -317,12 +351,14 @@
 				} else if(val == 'OPTIMIZATIONGOAL_IMPRESSION') {
 					this.disabled_cpm = this.disabled_cpc = false;
 				}
-				this.datePrice.style = 'CPC';
+				this.adgroup.optimization_goal = val;
+				this.adgroup.style = 'BILLINGEVENT_CLICK';
 			},
 			//选择广告版位
 			rowClick(row) {
 				this.className = 'ad_table';
-				this.datePrice.id = row.id;
+				this.adgroup.adcreative_template_id = row.id;
+				this.adgroup.site_set = row.site_set;
 				switch(row.id) {
 					case 65:
 						this.imgSrc = p65;
@@ -349,22 +385,34 @@
 						this.imgSrc = p487;
 						break;
 				};
-				this.datePrice.name = row.name + '/' + row.modus + '/' + row.description;
+				if(!this.adgroup.adcreative_name) {
+					this.adgroup.adcreative_name = row.name + '/' + row.modus + '/' + row.description;
+				}
 				this.$emit('on-edition', row.element);
+			},
+			//长期投放
+			changeDateLong(val) {
+				this.adgroup.begin_date = val;
+				this.adgroup.end_date = '';
+			},
+			//在期日期范围内投放
+			changeDate(val) {
+				this.adgroup.begin_date = val[0];
+				this.adgroup.end_date = val[1];
 			},
 			//出价 正则过滤非数字
 			getPrice() {
 				let patrn = /^\d+(\.\d+)?$/;
-				if(!patrn.exec(this.datePrice.price)) {
+				if(!patrn.exec(this.adgroup.bid_amount)) {
 					//this.$Message.error('请输入正确价格！');
-					this.datePrice.price = '';
+					this.adgroup.bid_amount = '';
 				}
 			},
 			//投放时间全天
 			isAllDay(val) {
 				if(val) {
 					this.isWeek = false;
-					this.datePrice.time = '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
+					this.adgroup.time_series = '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
 				}
 			},
 			//特定时间段
@@ -386,13 +434,13 @@
 			startTime(val) {
 				this.timeState = val;
 				this.setEndTime(this.timeState);
-				this.datePrice.time = this.timeSeries(val, this.timeEnd);
+				this.adgroup.time_series = this.timeSeries(val, this.timeEnd);
 			},
 			//特定时间段 - 结束时间
 			endTime(val) {
 				this.timeEnd = val;
 				this.setStartTime(this.timeEnd);
-				this.datePrice.time = this.timeSeries(this.timeState, val);
+				this.adgroup.time_series = this.timeSeries(this.timeState, val);
 			},
 			//设置特定时间开始时间
 			setStartTime(t) {
@@ -455,28 +503,55 @@
 						}
 					}
 				}
-				console.log(serice)
+				//console.log(serice)
 				return serice;
 			},
 			//下一步
 			nextStep() {
-				if(this.datePrice.id == '') {
+				if(this.adgroup.id == '') {
 					this.verify.ad = true;
-					return false
+					return
 				};
-				if(this.datePrice.date == '') {
+				if(this.adgroup.begin_date == '') {
 					this.verify.dp = true;
 					this.verify.dp_txt = "请设置投放日期";
-					return false
-				}
-				if(this.datePrice.price == '') {
+					return
+				};
+				if(this.adgroup.bid_amount < 10 || this.adgroup.bid_amount > 10000) {
 					this.verify.dp = true;
-					this.verify.dp_txt = "请填写价格";
-					return false
-				}
+					this.verify.dp_txt = "出价需介于10分-10,000分之间";
+					return
+				};
+				if(this.plandata.campaign_type== 'CAMPAIGN_TYPE_WECHAT_MOMENTS') {
+					if(this.adgroup.daily_budget < 100000 || this.adgroup.daily_budget > 1000000000) {
+						this.verify.dp = true;
+						this.verify.dp_txt = "日预算要求介于 100,000 – 1,000,000,000 分之间";
+						return
+					};
+				}else{
+					this.adgroup.daily_budget=='';
+				}				
+				if(this.adgroup.destination_url == '') {
+					this.verify.dp = true;
+					this.verify.dp_txt = "请填写落地页 url";
+					return
+				};
+				if(this.adgroup.adcreative_name == '') {
+					this.verify.dp = true;
+					this.verify.dp_txt = "请填写广告名称";
+					return
+				};
+				if(this.adgroup.adgroup_name == '') {
+					this.verify.dp = true;
+					this.verify.dp_txt = "请填写广告组名称";
+					return
+				};
 				//提交下一步需要的信息
 				this.modify = true;
-				this.$emit('on-click', this.datePrice);
+				//关闭错误提示信息
+				this.verify.ad = this.verify.dp = false;
+				//提交数据
+				this.$emit('on-click', this.adgroup);
 			}
 		},
 		mounted() {
