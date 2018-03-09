@@ -67,13 +67,14 @@
                 <Select @on-change="mediaChange" v-model="selectState" placeholder="按媒体筛选" style="width:120px" class="margin-right-10">
                     <Option v-for="item in mediaList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-
-                <DatePicker type="date" placeholder="自定义时间" @on-change="changeTime" style="width: 190px" class="margin-right-10"></DatePicker>
+                
+                <DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd"  @on-change="changeTime" class="margin-right-10"></DatePicker>
+                
                 <Button icon="document-text" @click="exportData()">下载报表</Button>
             </div>
         </div>
 
-		<Table :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange"></Table>
+		<Table :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange"></Table>        
 		<Row class="margin-top-10">
 			<Col span="10">
 			<Radio-group v-model="tableSize" type="button">
@@ -81,8 +82,8 @@
 				<Radio label="default">中</Radio>
 				<Radio label="small">小</Radio>
 			</Radio-group>
-			<Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="tableData()">
-				<Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+			<Select v-model="page_size" style="width:100px" placeholder="请选择" placement="top" transfer @on-change="tableData()">
+				<Option v-for="item in 200" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
 			</Select>
 			</Col>
 			<Col span="14" style="text-align: right;">
@@ -93,7 +94,7 @@
 </template>
 <script>
 	import util from '@/utils/index';
-
+    import { DateShortcuts , formatDate} from '@/utils/DateShortcuts.js';
 	export default {
 		name: 'viewTab',
 		props: {
@@ -104,7 +105,9 @@
 			return { 
 				num: 0,
 				selectState: [],
-				mediaList: [],
+                mediaList: [],
+                //日期辅助功能
+                options: DateShortcuts, 
 				//每页数量 
 				page: 1,
 				page_size: 10,
@@ -114,7 +117,7 @@
 				//媒体型
 				media_type: '',
 				//按时间
-				time: '',
+				date: [formatDate(new Date(), "yyyy-MM-dd"), formatDate(new Date(), "yyyy-MM-dd")],
 				//排序
 				orderField: '',
 				orderDirection: 'SORT_ASC',
@@ -160,10 +163,10 @@
 						sortable: 'custom',
 					},
 					{
-						title: '注册',
+						title: '注册设备数',
 						key: 'activation',
 						sortable: 'custom',
-					},
+                    },
 					{
 						title: '注册成本',
 						key: 'reg_cost',
@@ -171,12 +174,16 @@
 					},
 					{
 						title: '账户ID',
-						key: 'id'
+						key: 'account_id'
 					},
 					{
+						title: '负责人',
+						key: 'author'
+                    },
+                    {
 						title: '备注',
 						key: 'date'
-					},
+                    }
 				],
 			}
 		},
@@ -196,7 +203,8 @@
                 };                
 				let param = {
 					media_type: this.media_type,
-					time: this.time,
+					tdate: this.date[0],
+					edate: this.date[1],
 					page: this.page,
 					page_size: this.page_size,
 					orderField: this.orderField,
@@ -222,7 +230,7 @@
 			},
 			//按时间
 			changeTime(val) {
-				this.time = val;
+				this.date = val;
 				this.tableData();
 			},
 			//导出表单

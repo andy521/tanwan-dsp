@@ -35,23 +35,23 @@
 					<Row :gutter="10">
 
 						<Col :xs="24" :sm="12" :md="4" :style="{marginBottom: '10px'}">
-						<infor-card id-name="impression" :end-val="total.impression" iconType="ios-eye" color="#2d8cf0" intro-text="展示"></infor-card>
+						<infor-card id-name="impression" :end-val="total.impression" iconType="ios-eye" color="#4768f3" intro-text="展示"></infor-card>
 						</Col>
 
 						<Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
-						<infor-card id-name="click" :end-val="total.click" iconType="mouse" color="#64d572" intro-text="点击"></infor-card>
+						<infor-card id-name="click" :end-val="total.click" iconType="mouse" color="#02cf80" intro-text="点击"></infor-card>
 						</Col>
 
 						<Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
-						<infor-card id-name="balance_1" :end-val="total.balance_1" iconType="social-yen" color="#f90" intro-text="现金账户"></infor-card>
+						<infor-card id-name="balance_1" :end-val="total.balance_1" iconType="social-usd" color="#9859e8" intro-text="现金账户"></infor-card>
 						</Col>
 
 						<Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
-						<infor-card id-name="balance_2" :end-val="total.balance_2" iconType="social-buffer-outline" color="#f25e43" intro-text="虚拟账户"></infor-card>
+						<infor-card id-name="balance_2" :end-val="total.balance_2" iconType="social-buffer" color="#ff6122" intro-text="虚拟账户"></infor-card>
 						</Col>
 
 						<Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
-						<infor-card id-name="balance_4" :end-val="total.balance_4" iconType="card" color="#19be6b" intro-text="信用账户"></infor-card>
+						<infor-card id-name="balance_4" :end-val="total.balance_4" iconType="card" color="#15cc9e" intro-text="信用账户"></infor-card>
 						</Col>
 
 					</Row>
@@ -62,9 +62,9 @@
 
 		<!-- 按账户查看 - 按产品查看 -->
 		<view-tab :tdata="tableData" :media="media"></view-tab>
-
+        <div></div>
 		<!-- 线性表格 -->
-		<linear-tabel :data-echart="echart"></linear-tabel>
+		<linear-tabel :datas="echart"></linear-tabel> 
 
 		<Modal v-model="addBindId" title="选择媒体" @on-ok="addBindOk()" :loading="loading" ok-text="下一步">
 			<div class="padding-10">

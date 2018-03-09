@@ -1,10 +1,10 @@
-<style lang="less">
+<style lang="less" >
 	.bottom_line {
 		border-bottom: 1px solid rgb(233, 233, 233);
 		padding-bottom: 10px;
 	}
 	
-	.ivu-poptip-body {
+	.Poptiptap .ivu-poptip-body {
 		white-space: normal;
 		text-align: left;
 		padding: 20px;
@@ -81,14 +81,18 @@
 					<Checkbox label="show_ip">展示IP</Checkbox>
 					<Checkbox label="down_ip">下载IP</Checkbox>
 				</CheckboxGroup>
+				<div class="margin-top-20">
+					<Button @click="set_user_memo">保存操作</Button>
+				</div>
 			</div>
 		</Poptip>
 	</div>
 </template>
 <script>
+	import Axios from '@/api/index';
 	export default {
 		name: 'viewTab',
-		props: ['value', 'uncheck'],
+		props: ['value', 'uncheck', 'action', 'opt'],
 		data() {
 			return {
 				indeterminate: true,
@@ -102,6 +106,14 @@
 				]
 			}
 		},
+		mounted() {
+			let param = {
+				taction: this.action,
+				topt: this.opt
+			};
+
+			this.$store.dispatch('DiyIndex', param);
+		},
 		watch: {
 			value(val) {
 				this.checkAllGroup = val;
@@ -109,21 +121,31 @@
 			checkAllGroup(val) {
 				let uncheck = [];
 				this.checkAllGroups.forEach(item => {
-					let is=true;
+					let is = true;
 					val.forEach(col => {
-						if(item==col) {
-							is=false;
+						if(item == col) {
+							is = false;
 						}
 					});
-					if(is){
+					if(is) {
 						uncheck.push(item)
 					}
 				});
 				this.uncheck(uncheck)
 				this.$emit('input', val)
 			},
+			get_user_memo() {}
 		},
 		methods: {
+			//保存自定义指标
+			set_user_memo() {
+				let param = {
+					taction: this.action,
+					topt: this.opt,
+					memo: this.checkAllGroup.join(',')
+				};
+				this.$store.dispatch('SaveIndex', param);
+			},
 			//自定义指标全选
 			handleCheckAll() {
 				if(this.indeterminate) {
@@ -151,6 +173,14 @@
 					this.checkAll = false;
 				}
 			}
+		},
+		computed: {
+			//获取自定义指标
+			get_user_memo() {
+				let memo = this.$store.state.user.userindex;
+				this.checkAllGroup = memo;
+				return memo;
+			},
 		}
 	}
 </script>

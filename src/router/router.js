@@ -27,6 +27,7 @@ export const otherRouter = {
     component: Main,
     children: [
         { path: 'useraccounts', title: '获取用户帐号', name: 'user_accounts',  component: () => import('@/views/time/userAccounts.vue') },
+        { path: 'msgdetails', title: '系统消息详情', name: 'system_msg_details',  component: () => import('@/views/setid/systemMsgDetails.vue') },
     ]
 };
 
@@ -73,12 +74,14 @@ export const appRouter = [
     {
         path: '/setid',
         icon: 'gear-a',
-        name: 'setid',
         title: '账号管理',
+        name: 'setid',
+        access: 0,
         component: Main,
         children: [
             { path: 'setid', title: '负责人管理', name: 'setid_index', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue')},
-            { path: 'systemsetid', title: '系统账号管理', name: 'systemsetid_index', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue')}
+            { path: 'systemsetid', title: '系统账号管理', name: 'systemsetid_index', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue')},
+            { path: 'systemmsg', title: '系统消息', name: 'system_msg', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemMsg.vue')}
         ]
     }
 ];

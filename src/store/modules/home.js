@@ -36,7 +36,11 @@ const home = {
             let opt = param || {};
             Axios.get('api.php', opt)
             .then( 
-                res=>{ commit('GETOVERIEW',res.data) }
+                res=>{
+                    if(res.ret == '1'){
+                        commit('GETOVERIEW',res.data)
+                    }
+                }
             ).catch( 
                 err=>{ console.log('账户总览' + err) }
             );           

@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 	.w_flex {
 		display: -webkit-box;
 		display: -webkit-flex;
@@ -144,7 +144,7 @@
 
 <script>
 	import Axios from '@/api/index';
-	import { changetime } from '../data/DateShortcuts.js';
+	import { changetime } from '@/utils/DateShortcuts.js';
 	export default {
 		name: 'adgroupDetail',
 		props: ['value'],

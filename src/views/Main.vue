@@ -1,5 +1,6 @@
 <style lang="less">
     @import "./main.less";
+    .main-header .header-avator-con .user-dropdown-menu-con{width: 160px;}
 </style>
 <template>
 
@@ -7,7 +8,7 @@
     <div class="main" :class="{'main-hide-text': shrink}">
 
         <!-- 左侧导航 -->
-        <div class="sidebar-menu-con" :style="{width: shrink?'60px':'200px', overflow: shrink ? 'visible' : 'auto'}">
+        <div class="sidebar-menu-con" :style="{width: shrink?'40px':'200px', overflow: shrink ? 'visible' : 'auto'}">
             <shrinkable-menu
                 :shrink="shrink"
                 @on-change="handleSubmenuChange"
@@ -17,7 +18,8 @@
                 :menu-list="menuList"
             >
             <div slot="top" class="logo-con">
-                <img  src="../images/logo.png" key="max-logo" />
+                <img v-show="!shrink" src="../images/logo.png" key="max-logo" />
+                <img v-show="shrink" src="../images/logo-min.jpg" key="min-logo" />
             </div>
             </shrinkable-menu>
         </div>
@@ -25,8 +27,14 @@
         
 
         <!-- 头部 -->
-        <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'200px'}">
+        <div class="main-header-con" :style="{paddingLeft: shrink?'40px':'200px'}">
             <div class="main-header">
+
+                <div class="navicon-con">                     
+                    <Button :style="{transform: 'rotateZ(' + (this.shrink ? '-90' : '0') + 'deg)'}" type="text" @click="toggleClick">
+                        <Icon type="navicon" size="32"></Icon>
+                    </Button>
+                </div>
 
                 <!-- 头部LEFT -->
                 <div class="header-middle-con">
@@ -41,12 +49,38 @@
                     <!-- <theme-switch></theme-switch> -->
 
                     <!-- 用户信息 -->
-                    <div class="user-dropdown-menu-con">
+                    <div class="user-dropdown-menu-con">                       
+
+                        <Poptip placement="bottom-end" trigger="hover" width="400">
+							<span @click="tomsglist()">
+								<Badge :count="getMessages.read_count.no_read" style="margin-right: 20px;">
+									<Icon type="ios-bell-outline" size="26"></Icon>
+								</Badge>
+							</span>
+							<div class="api" slot="content">
+								<table width="100%" class="msgtable" v-if="getMessages.read_count.no_read>0">
+									<tbody>
+										<tr v-for="item in getMessages.message" v-if="item.have_read==0" @click="details(item.id)">
+											<td>
+												<Icon type="email-unread" size="16" color="#e33244"></Icon>
+												{{item.uName}}
+											</td>
+											<td align="right">{{item.message_time}}</td>
+										</tr>
+									</tbody>
+								</table>
+								<div v-else>暂无未读消息</div>
+
+							</div>
+						</Poptip>
+
                         <Button type="ghost" @click="quitLogin">退出登录</Button>
                         <!-- 全屏 -->
                         <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
+
                     </div>
                 </div>
+
 
             </div>
 
@@ -55,7 +89,7 @@
 
 
         <!-- main -->
-        <div class="single-page-con" :style="{left: shrink?'60px':'200px'}">
+        <div class="single-page-con" :style="{left: shrink?'40px':'200px'}">
             <div class="single-page">
                 <keep-alive :include="cachePage">
                     <router-view></router-view>
@@ -98,7 +132,10 @@
             menuTheme () {
                 //返回导航样式
                 return this.$store.state.app.menuTheme;
-            }
+            },//获取消息
+			getMessages() {
+				return this.$store.state.setid.MessagesData;
+			}
         },
 
         methods : {
@@ -110,6 +147,9 @@
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
+            },
+            toggleClick () {
+                this.shrink = !this.shrink;
             },
             quitLogin () {
                 console.log('退出登录');                
@@ -133,9 +173,23 @@
                 // }
                 return true;
             },
+            //查看消息详情
+			details(id) {
+				this.$router.push({
+					name: 'system_msg_details'
+				});
+				this.$store.dispatch('getSingleMessages', id);
+			},
+			//跳转消息列表
+			tomsglist() {
+				this.$router.push({
+					name: 'system_msg',
+				});
+			}
         },
         mounted () {
             this.init();
+            this.$store.dispatch('getMessages');
 	    }
     };
 </script>
@@ -143,5 +197,4 @@
 <style>
 .main-header-con{box-shadow:none;height: 60px;}
 .main .single-page-con{top: 60px;}
-.main-header .header-middle-con{left:-10px;}
 </style>

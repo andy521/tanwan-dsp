@@ -65,8 +65,7 @@
                             console.log(data.data)
                             if(data.ret == 1){
                                 Util.setItem('user', this.form.userName );  
-                                Util.setItem('sessionid', data.data.sessionid );  
-                                console.log( Util.getItem('sessionid') )                        
+                                Util.setItem('sessionid', data.data.sessionid );                     
                                 this.$store.dispatch('UserLogin', userinfo);  
                                 this.$router.push({ name: 'home_index' });
                             }

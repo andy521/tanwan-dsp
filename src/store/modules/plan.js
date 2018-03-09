@@ -7,7 +7,7 @@ const plan = {
 		campaignslist: [],
 		adList: [],
 		Adgroups: [],
-		Media:[]
+		Media: []
 	},
 	mutations: {
 		GET_GAMELIST(state, data) {
@@ -162,7 +162,7 @@ const plan = {
 				check_value: data.check_value, //状态
 				orderField: data.orderField, //排序的orderField参数名
 				orderDirection: data.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-				author:data.author//负责人
+				author: data.author //负责人
 			}).then(
 				res => {
 					commit('GET_ADLIST', res.data)
@@ -189,11 +189,11 @@ const plan = {
 				account_id: data.account_id, //媒体账号
 				configured_status: data.configured_status, //过滤无数据的广告
 				campaign_id: data.campaign_id, //广告
-				campaign_name: data.campaign_name, //关键字
+				adgroup_name: data.adgroup_name, //关键字
 				check_value: data.check_value, //状态
 				orderField: data.orderField, //排序的orderField参数名
 				orderDirection: data.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-				author:data.author//负责人
+				author: data.author //负责人
 			}).then(
 				res => {
 					commit('GET_ADGROUPS', res.data)
@@ -205,6 +205,7 @@ const plan = {
 			)
 		},
 
+	
 	}
 };
 

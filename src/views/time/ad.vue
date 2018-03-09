@@ -30,19 +30,27 @@
 		width: 150px;
 	}
 	
-	
-	
 	.sel_state {
 		text-align: left;
 		width: 110px;
 	}
-	.sel_state1{
+	
+	.sel_state1 {
 		text-align: left;
-		width: 200px;
+		width: 300px;
 	}
-	.sel_state1.ivu-select-multiple .ivu-select-selection{
+	
+	.sel_state1.ivu-select-multiple .ivu-select-selection {
 		overflow: auto;
 		height: 32px;
+	}
+	
+	.namediv {
+		cursor: pointer;
+	}
+	
+	.namediv:hover {
+		color: #57a3f3;
 	}
 </style>
 
@@ -53,11 +61,11 @@
 				<Col span="19">
 				<!--搜索游戏列表-->
 				<search-tree :callback="getids"></search-tree>
-				<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="全部媒体账号" @on-change="getCampaigns">
+				<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
 					<Option value="0">全部媒体账号</Option>
 					<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
 				</Select>
-				<Select v-model="CampaignsListModel" :value="CampaignsListModel" filterable class="sel" placeholder="全部广告" v-if="campaignslist.length>1">
+				<Select v-model="CampaignsListModel" :value="CampaignsListModel" filterable class="sel" placeholder="请选择广告" v-if="campaignslist.length>1">
 					<Option value="0">全部广告</Option>
 					<Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
 				</Select>
@@ -68,7 +76,7 @@
 				<Button type="ghost" @click="copyAdwin=true">复制</Button>
 
 				<!--自定义指标-->
-				<view-tip v-model="checkAllGroup" :uncheck="getuncheck"></view-tip>
+				<view-tip v-model="checkAllGroup" :uncheck="getuncheck" action="gdtAdPut" opt="adgroups"></view-tip>
 				<Button type="primary" @click="tonewadd">新建广告</Button>
 				</Col>
 			</Row>
@@ -79,7 +87,7 @@
 				<Col span="8">
 				<div class="btn-group clear">
 					<Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)">
-						<Button type="ghost" >删除</Button>
+						<Button type="ghost">删除</Button>
 					</Poptip>
 					<Poptip placement="bottom-start" v-model="visible">
 						<Button type="ghost">修改状态</Button>
@@ -96,7 +104,7 @@
 							</div>
 						</div>
 					</Poptip>
-					<Poptip placement="bottom-start" v-model="visible1">
+					<!--<Poptip placement="bottom-start" v-model="visible1">
 						<Button type="ghost">修改日期</Button>
 						<div class="api" slot="content">
 							<div v-if="!startdate">
@@ -113,13 +121,13 @@
 								<Button type="primary" size="small" @click="visible1 = false">确定</Button>
 							</div>
 						</div>
-					</Poptip>
-					<Button type="ghost"  @click="exportData()">下载报表</Button>
+					</Poptip>-->
+					<Button type="ghost" @click="exportData()">下载报表</Button>
 				</div>
 				</Col>
 				<Col span="16" style="text-align: right;">
 
-				<Select v-model="author_model" :value="author_model" multiple  class="sel_state1"   @on-change="getCampaignsList()" placeholder="请选择负责人">
+				<Select v-model="author_model" :value="author_model" multiple class="sel_state1" @on-change="getCampaignsList()" placeholder="请选择负责人">
 					<Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
 				</Select>
 
@@ -129,13 +137,14 @@
 					<Option value="AD_STATUS_SUSPEND">暂停</Option>
 				</Select>
 
-				<DatePicker type="daterange" :options="options"  placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+				<DatePicker type="daterange" :options="options" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
 
 				<Checkbox v-model="check_value" @on-change="getCampaignsList()">过滤无数据的广告</Checkbox>
 				</Col>
 			</Row>
 			<div>
-				<Table :data="adList" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="table" @on-selection-change="taCheck" @on-sort-change="sortchange"></Table>
+				<Table :data="adList" height="600" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="adtable" @on-selection-change="taCheck" @on-sort-change="sortchange">
+				</Table>
 				<Row class="margin-top-10">
 					<Col span="10"> 表格尺寸
 					<Radio-group v-model="tableSize" type="button">
@@ -145,7 +154,7 @@
 					</Radio-group>
 					每页显示
 					<Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-						<Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+						<Option v-for="item in 200" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
 					</Select>
 					</Col>
 					<Col span="14" style="text-align: right;">
@@ -190,7 +199,7 @@
 
 <script>
 	import Axios from '@/api/index';
-	import { DateShortcuts, formatDate, changetime, deepClone } from './data/DateShortcuts.js';
+	import { DateShortcuts, formatDate, changetime, deepClone } from '@/utils/DateShortcuts.js';
 	import viewTip from './components/viewPopti.vue';
 	import searchTree from './components/searchTree.vue';
 	import adgroupDetail from './components/adgroupDetail.vue';
@@ -208,7 +217,7 @@
 				CampaignsListModel: '0',
 				taCheckids: [], //选中ids
 				page: 1, //第N页
-				page_size: 15, //每页数量
+				page_size: 50, //每页数量
 				total_number: 1, //总数量
 				total_page: 1, //总页数
 				indeterminate: true,
@@ -226,8 +235,8 @@
 				check_value: false,
 				edit_status: "AD_STATUS_NORMAL", //批量状态
 				orderField: '', //排序参数名
-				orderDirection: 'SORT_ASC', //排序方向
-				author_model:[],
+				orderDirection: 'SORT_DESC', //排序方向
+				author_model: [],
 				tableSize: 'small',
 				copyAdwin: false,
 				formItem: {
@@ -246,12 +255,6 @@
 						fixed: "left",
 						width: 60,
 						key: ''
-					},
-					{
-						title: '产品名称',
-						key: 'game_name',
-						fixed: "left",
-						width: 200
 					},
 					{
 						title: '媒体账户',
@@ -284,11 +287,8 @@
 						key: 'adgroup_name',
 						width: 400,
 						render: (h, params) => {
-							return h('Button', {
-								props: {
-									type: 'text',
-									size: 'small'
-								},
+							return h('span', {
+								class: 'namediv',
 								on: {
 									click: () => {
 										this.details_id = {
@@ -304,6 +304,12 @@
 						title: '点击率',
 						sortable: 'custom',
 						key: 'click_per',
+						width: 150
+					},
+					{
+						title: '花费',
+						sortable: 'custom',
+						key: 'cost',
 						width: 150
 					},
 					{
@@ -500,12 +506,7 @@
 						key: 'download_per',
 						width: 150
 					},
-					{
-						title: '花费',
-						sortable: 'custom',
-						key: 'cost',
-						width: 150
-					},
+
 					{
 						title: '出价',
 						key: 'bid_mode',
@@ -583,11 +584,20 @@
 						sortable: 'custom',
 						key: 'income_per',
 						width: 150
+					}, {
+						title: '产品名称',
+						key: 'game_name',
+						width: 200
 					}
 				],
 			}
 		},
 		mounted() {
+			let campaign_id = this.$route.params.campaign_id
+			if(campaign_id) {
+				this.CampaignsListModel = campaign_id;
+			}
+
 			this.getMedia();
 			this.getCampaignsList();
 			this.getAuthor();
@@ -596,8 +606,7 @@
 			//新建广告
 			tonewadd() {
 				this.$router.push({
-					name: 'user_accounts',
-					//params: argu
+					name: 'user_accounts'
 				});
 			},
 			//获取选中游戏id
@@ -629,21 +638,23 @@
 				for(var i = 0; i < this.GameListIds.length; i++) {
 					game_id[i] = this.GameListIds[i];
 				}
+				
 				var data = {
 					tdate: this.DateDomain[0],
 					edate: this.DateDomain[1],
 					page: this.page,
 					page_size: this.page_size,
 					game_id: JSON.stringify(game_id), //this.GameListIds
-					account_id: this.MediaListModel,
+					account_id: this.MediaListModel == '0' ? '' : this.MediaListModel,
 					configured_status: this.configured_status,
-					campaign_id: this.CampaignsListModel,
-					campaign_name: this.campaign_name,
+					campaign_id: this.CampaignsListModel == '0' ? '' : this.CampaignsListModel,
+					adgroup_name: this.campaign_name,
 					check_value: this.check_value == false ? 0 : 1,
 					orderField: this.orderField, //排序的orderField参数名
 					orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-					author:this.author_model
+					author: this.author_model
 				}
+
 				this.$store.dispatch('getAdgroups', data);
 			},
 			//批量修改删除投放计划 
@@ -694,7 +705,7 @@
 			},
 			//导出报表
 			exportData(type) {
-				this.$refs['table'].exportCsv({
+				this.$refs['adtable'].exportCsv({
 					filename: '实时投放广告',
 					original: false
 				});

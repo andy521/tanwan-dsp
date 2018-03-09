@@ -45,15 +45,16 @@ Axios.interceptors.response.use(
 		if(res.data && res.data.ret != 1) {
 			//如果为-2返回到登录页面
 			if(res.data.ret == '-2') {
-				router.push({
-					path: "/login"
-				});
-				console.log('去登录')
+                util.removeItem('user')
+                router.replace({
+                    path: '/login',
+                    query: {redirect: router.currentRoute.fullPath}
+                });
+				//console.log('去登录')
 			}
 			Message.info(res.data.msg);
 			//return Promise.reject(res.data);
-		}
-
+        }
 		return res.data;
 	},
 	error => {

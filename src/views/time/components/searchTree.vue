@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 	.Treebox {
 		max-height: 400px;
 	}

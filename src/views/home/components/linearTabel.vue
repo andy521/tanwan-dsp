@@ -1,17 +1,12 @@
 <style lang="less">
-    .linear-table{height: 300px;}  
+    .linear-table{height: 300px; padding: 20px 0;}  
     .ivu-card-head-inner, .ivu-card-head p{height: 32px;}
 </style>
 <template>
     <Row class-name="home-page-row1" class="margin-top-10">
-        <Card :padding="0" dis-hover shadow>              
-            <p slot="title" class="card-title">                   
-                <Select placeholder="暴光率"  @on-change="getChange" style="width:200px">
-                    <Option v-for="item in exposureList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-            </p>            
+        <Card :padding="0" dis-hover shadow>             
             <div class="linear-table">                
-                <div style="width:100%;height:100%;" v-model="dataEchart" id="service_request_con"></div>
+                <div style="width:100%;height:100%;" id="service_request_con"></div>
             </div>
         </Card>
     </Row>
@@ -21,42 +16,34 @@ import echarts from 'echarts';
 export default {
     name: 'linearTabel',
     props:{
-        dataEchart:Object
+        datas: {
+            type: [Array, Object]         
+        }
     },
     data () {
         return {
-            echartData:{},
-            exposureList : [
-                {value: 'click',label: '点击率'},
-                {value: 'activation',label: '激活注册'},
-                {value: 'download',label: '下载率'},
-                {value: 'impression',label: '曝光率'}
-            ]
+            echartData:{}
         };
     },
     watch: {
-        dataEchart (val) {            
-            this.echartData = val;          
-            this.echartUpdate(val.impression);
+        datas(val) {
+            this.echartData = val;      
+            this.echartUpdate(val);
         }
     },
     methods : {
-        getChange(value){
-            let getData = this.echartData[value]
-            this.echartUpdate(getData)
-        },
         echartUpdate(data){ 
             let xb = [],
-                 len = data.length;
+                len = this.echartData[0].data.length;
             for(let i=1; i<= len; i++){
                 xb.push( i + '小时')
             };
 
             const option = {
                 tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }},                
-                // legend: {
-                //     data:['暴光量']
-                // },
+                legend: {
+                    data:['点击','下载','曝光量','转化']
+                },
                 grid: {left: '3%',right: '4%',bottom: '3%',containLabel: true},
                 toolbox: {feature: {saveAsImage: {}}},
                 xAxis: {
@@ -66,24 +53,15 @@ export default {
                 },
                 yAxis: {
                     type: 'value'
-                },
-                series: [
-                        {
-                            name:'暴光量',
-                            type:'line',
-                            stack: '总量',
-                            data: data
-                        }
-                    ]
-            };
-            //http://echarts.baidu.com/examples/index.html
+                }, 
+                series: data        
+            };           
             const serviceRequestCharts = echarts.init(document.getElementById('service_request_con'));
             serviceRequestCharts.setOption(option);
             window.addEventListener('resize', function () {
                 serviceRequestCharts.resize();
             });
         }
-
     }
 };
 </script>

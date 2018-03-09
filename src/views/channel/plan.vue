@@ -266,7 +266,7 @@ export default {
                 data : {title: '日期', key: 'date', "fixed": "left", sortable: 'custom', "width": 120 }, 
                 media_name : {title: '媒体', key: 'media_name', sortable: 'custom',"width": 120 },    
                 account_name :{title: '账号', key: 'account_name', sortable: 'custom',"width": 150 },  
-                campaign_id :{title: '计划', key: 'campaign_id', sortable: 'custom',"width": 150 },                        
+                campaign_name :{title: '计划', key: 'campaign_name', sortable: 'custom',"width": 250 },                        
                 cost : {title: '投入', key: 'cost', sortable: 'custom', "width": 100 },
                 impression : {title: '展示IP', key: 'impression', sortable: 'custom', "width": 100 },
                 click : {title: '点击IP', key: 'click', sortable: 'custom', "width": 150 },
@@ -294,7 +294,7 @@ export default {
                 tableColumnList.media_name,
                 tableColumnList.data,   
                 tableColumnList.account_name,
-                tableColumnList.campaign_id,          
+                tableColumnList.campaign_name,          
                 tableColumnList.click_per,
                 tableColumnList.cost,
             ];

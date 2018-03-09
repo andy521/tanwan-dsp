@@ -17,7 +17,11 @@
 	
 	.Poptiptap .ivu-poptip-body-content {
 		overflow: inherit;
-	}
+    }
+    .foot{
+        margin-top: 15px;
+        text-align: center;
+    }
 </style>
 
 <template>
@@ -58,14 +62,11 @@
                     <Checkbox label="pay_arpu">付费ARPU</Checkbox>
                     <Checkbox label="income_per">回本率</Checkbox>
                     <Checkbox label="ltv">LTV</Checkbox>
-				</CheckboxGroup>               
-
-				<!-- <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="game_name">产品名称</Checkbox>
-					<Checkbox label="cost">投入</Checkbox>
-					<Checkbox label="click_per">点击率</Checkbox>                    
-				</CheckboxGroup> -->
-			</div>
+				</CheckboxGroup>  
+                <div class="foot">
+                    <Button type="success" @click="saveIndex">保存自定义指标</Button>   
+                </div>
+			</div>            
 		</Poptip>
 	</div>
 </template>
@@ -87,7 +88,8 @@
         },
         mounted(){
             //传过来的默认选项
-            this.checkAllGroup = this.check;
+            this.checkAllGroup = this.check;              
+            //console.log(this.check)
         },
 		methods: {           
 			//自定义指标全选
@@ -106,7 +108,12 @@
 					this.checkAllGroup = [];
 				}
 				this.$emit('on-change', this.checkAllGroup);
-			},
+            },
+            //保存自定义指标
+            saveIndex(){
+                console.log('保存')
+                //this.$store.dispatch('channelIndex',param);
+            },
 			//自定义指标
 			checkAllGroupChange(data) {
                 this.$emit('on-change', this.checkAllGroup);

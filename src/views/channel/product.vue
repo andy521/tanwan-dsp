@@ -1,4 +1,4 @@
-<style lang="less">
+<style lang="less" >
     @import "../../styles/common.less";
     @import '../../styles/table.less';
     .head{border-bottom: 1px solid #e9eaec; margin-bottom: 10px; padding: 0;}  
@@ -35,7 +35,7 @@
                 </Col> 
 
                 <Col :xs="2" :md="2">
-                    <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index> 
+                    <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index>      
                 </Col>               
 
                 <Col :xs="8" :md="3" offset="2">
@@ -70,7 +70,6 @@
                 <Page :total="total_number" :page-size="page_size" ref="pages" @on-change="getTableData" show-elevator show-total></Page>
             </Col>
         </Row>
-
     </Card>
 </template>
 <script>
@@ -103,7 +102,7 @@ export default {
             //排序
             orderField:'',
             orderDirection: 'SORT_ASC',
-            //默认选项目
+            //默认自定义指标选项
             checkAllGroup:['impression','click','install','install_per','reg_imei','activation','reg_per','reg_imei_cost','reg_cost','login','act_per','act_cost','pay_num','pay_total','pay_per','reg_arpu','pay_arpu','income_per','ltv'],
             current_game:'',
             current_media:'',
@@ -130,7 +129,12 @@ export default {
         //负责人
         author(){
             return this.$store.state.channel.author;
-        }
+        },
+        //获取自定义指标
+        // userindex(){
+        //     let userindex = this.$store.state.user.userindex;
+        //     return userindex;
+        // },
     },
     watch: {
         list(data){
@@ -226,7 +230,7 @@ export default {
             //this.current_author = data;
             this.getTableData();
         },
-        //获取 自定义指标
+        //获取自定义指标
         getIndex(data){
             this.checkAllGroup = data;           
             this.tableColumns = this.getTableColumns();
@@ -265,7 +269,8 @@ export default {
                 tableColumnList.click_per,
                 tableColumnList.cost,
             ];
-            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) );            
+            //console.log(this.userindex)
+            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) );    
             return data;
         },
         changeTableColumns(){
@@ -279,6 +284,7 @@ export default {
         this.getAuthor();
         this.gameItem();
         this.mediaItem();
+        //this.$store.dispatch('DiyIndex', {'taction':'api','topt':'getGameTotalDay'}); 
     }
 }
 </script>

@@ -37,7 +37,7 @@
 	
 	.sel_state1 {
 		text-align: left;
-		width: 200px;
+		width: 300px;
 	}
 	
 	.demo-carousel {
@@ -48,6 +48,14 @@
 		overflow: auto;
 		height: 32px;
 	}
+	
+	.namediv {
+		cursor: pointer;
+	}
+	
+	.namediv:hover {
+		color: #57a3f3;
+	}
 </style>
 
 <template>
@@ -57,12 +65,11 @@
 				<Col span="19">
 				<!--搜索游戏列表-->
 				<search-tree :callback="getids"></search-tree>
-				<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="全部媒体账号" @on-change="getCampaigns">
+				<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
 					<Option value="0">全部媒体账号</Option>
 					<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
 				</Select>
-				<Select v-model="CampaignsListModel" :value="CampaignsListModel" filterable class="sel" placeholder="全部广告" v-if="campaignslist.length>1">
-					<Option value="0">全部广告</Option>
+				<Select v-model="CampaignsListModel" :value="CampaignsListModel" multiple filterable class="sel_state1"  placeholder="请选择广告" v-if="campaignslist.length>1">
 					<Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
 				</Select>
 				<Input v-model="campaign_name" class="inp" placeholder="请输入关键字"></Input>
@@ -72,7 +79,7 @@
 				<Button type="ghost" @click="copyAdwin=true">复制</Button>
 
 				<!--自定义指标-->
-				<view-tip v-model="checkAllGroup" :uncheck="getuncheck"></view-tip>
+				<view-tip v-model="checkAllGroup" :uncheck="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
 				</Col>
 			</Row>
 		</Card>
@@ -99,7 +106,7 @@
 							</div>
 						</div>
 					</Poptip>
-					<Poptip placement="bottom-start" v-model="visible1">
+					<!--<Poptip placement="bottom-start" v-model="visible1">
 						<Button type="ghost">修改日期</Button>
 						<div class="api" slot="content">
 							<div v-if="!startdate">
@@ -116,7 +123,7 @@
 								<Button type="primary" size="small" @click="visible1 = false">确定</Button>
 							</div>
 						</div>
-					</Poptip>
+					</Poptip>-->
 					<Button type="ghost" @click="exportData()">下载报表</Button>
 				</div>
 				</Col>
@@ -136,7 +143,7 @@
 				</Col>
 			</Row>
 			<div>
-				<Table :data="adList" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange"></Table>
+				<Table :data="adList" height="600" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange"></Table>
 
 				<Row class="margin-top-10">
 					<Col span="10"> 表格尺寸
@@ -147,7 +154,7 @@
 					</Radio-group>
 					每页显示
 					<Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-						<Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+						<Option v-for="item in 200" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
 					</Select>
 					</Col>
 					<Col span="14" style="text-align: right;">
@@ -190,7 +197,7 @@
 
 <script>
 	import Axios from '@/api/index';
-	import { DateShortcuts, formatDate, deepClone } from './data/DateShortcuts.js';
+	import { DateShortcuts, formatDate, deepClone } from '@/utils/DateShortcuts.js';
 	import viewTip from './components/viewPopti.vue';
 	import searchTree from './components/searchTree.vue';
 
@@ -203,10 +210,10 @@
 			return {
 				GameListIds: [], //搜索返回ids
 				MediaListModel: '0',
-				CampaignsListModel: '0',
+				CampaignsListModel: [],
 				taCheckids: [], //选中ids
 				page: 1, //第N页
-				page_size: 15, //每页数量
+				page_size: 50, //每页数量
 				total_number: 1, //总数量
 				total_page: 1, //总页数
 				indeterminate: true,
@@ -224,7 +231,7 @@
 				check_value: false,
 				edit_status: "AD_STATUS_NORMAL", //批量状态
 				orderField: '', //排序参数名
-				orderDirection: 'SORT_ASC', //排序方向
+				orderDirection: 'SORT_DESC', //排序方向
 				author_model: [],
 				tableSize: 'small',
 				copyAdwin: false,
@@ -242,12 +249,6 @@
 						key: ''
 					},
 					{
-						title: '产品名称',
-						key: 'game_name',
-						fixed: "left",
-						width: 200
-					},
-					{
 						title: '媒体账户',
 						key: 'account_name',
 						width: 160,
@@ -262,7 +263,7 @@
 								},
 								on: {
 									click: () => {
-										window.location.href = ""
+										window.location.href="http://e.qq.com/ads/"
 									}
 								}
 							}, '登陆')]
@@ -275,11 +276,25 @@
 					},
 					{
 						title: '计划名称',
+						sortable: 'custom',
 						key: 'campaign_name',
 						width: 300,
 						render: (h, params) => {
 							let value = params.row.campaign_name;
-							return [h('span', params.row.campaign_name), h('i-button', {
+							return [h('span', {
+								class: 'namediv',
+								on: {
+									click: () => {
+										let query = {
+											campaign_id: params.row.campaign_id
+										};
+										this.$router.push({
+											name: 'time_ad',
+											params: query
+										});
+									}
+								}
+							}, params.row.campaign_name), h('i-button', {
 								props: {
 									icon: "edit",
 									type: "text",
@@ -338,6 +353,12 @@
 						title: '点击率',
 						sortable: 'custom',
 						key: 'click_per',
+						width: 150
+					},
+					{
+						title: '花费',
+						sortable: 'custom',
+						key: 'cost',
 						width: 150
 					},
 					{
@@ -533,12 +554,7 @@
 						key: 'download_per',
 						width: 150
 					},
-					{
-						title: '花费',
-						sortable: 'custom',
-						key: 'cost',
-						width: 150
-					},
+
 					{
 						title: '出价',
 						key: 'bid_mode',
@@ -615,7 +631,12 @@
 						sortable: 'custom',
 						key: 'income_per',
 						width: 150
-					}
+					},
+					{
+						title: '产品名称',
+						key: 'game_name',
+						width: 200
+					},
 				],
 			}
 		},
@@ -660,7 +681,7 @@
 					page: this.page,
 					page_size: this.page_size,
 					game_id: JSON.stringify(game_id), //this.GameListIds
-					account_id: this.MediaListModel,
+					account_id: this.MediaListModel == '0' ? '' : this.MediaListModel,
 					configured_status: this.configured_status,
 					campaign_id: this.CampaignsListModel,
 					campaign_name: this.campaign_name,
@@ -745,6 +766,7 @@
 			//获取实时投放计划
 			adList() {
 				let adList = this.$store.state.plan.adList;
+				//console.log(adList)
 				this.total_number = adList.total_number;
 				this.total_page = adList.total_page;
 				//深层复制
