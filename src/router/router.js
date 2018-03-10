@@ -79,9 +79,9 @@ export const appRouter = [
         access: 0,
         component: Main,
         children: [
-            { path: 'setid', title: '负责人管理', name: 'setid_index', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue')},
-            { path: 'systemsetid', title: '系统账号管理', name: 'systemsetid_index', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue')},
-            { path: 'systemmsg', title: '系统消息', name: 'system_msg', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemMsg.vue')}
+            { path: 'principal', title: '负责人管理', name: 'setid_principal', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue')},
+            { path: 'systemsetid', title: '系统账号管理', name: 'setid_systemsetid', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue')},
+            { path: 'systemmsg', title: '系统消息', name: 'setid_systemmsg', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemMsg.vue')}
         ]
     }
 ];

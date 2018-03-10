@@ -34,8 +34,8 @@
                     </Select>                                      
                 </Col> 
 
-                <Col :xs="2" :md="2">
-                    <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index>      
+                <Col :xs="2" :md="2">  
+                    <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index>    
                 </Col>               
 
                 <Col :xs="8" :md="3" offset="2">
@@ -51,9 +51,10 @@
                 </Col>
 
             </Row>
-        </div>    
-        
+        </div>   
+
         <Table :size="tableSize" :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv"  @on-sort-change="sortChange"></Table>
+
         <Row class="margin-top-10">
             <Col span="10">
             <Radio-group v-model="tableSize" type="button">
@@ -98,6 +99,7 @@ export default {
                 {value: '2', label:'iOS'},
                 {value: '3', label:'安卓'},
             ],
+            //表格头部
             tableColumns: [],
             //排序
             orderField:'',
@@ -130,11 +132,6 @@ export default {
         author(){
             return this.$store.state.channel.author;
         },
-        //获取自定义指标
-        // userindex(){
-        //     let userindex = this.$store.state.user.userindex;
-        //     return userindex;
-        // },
     },
     watch: {
         list(data){
@@ -232,7 +229,7 @@ export default {
         },
         //获取自定义指标
         getIndex(data){
-            this.checkAllGroup = data;           
+            this.checkAllGroup = data;                 
             this.tableColumns = this.getTableColumns();
         },
         //设置表格头部
@@ -269,22 +266,20 @@ export default {
                 tableColumnList.click_per,
                 tableColumnList.cost,
             ];
-            //console.log(this.userindex)
-            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) );    
+            
+            this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) ); 
             return data;
         },
         changeTableColumns(){
             this.tableColumns = this.getTableColumns();
         }
     },
-    mounted(){
+    mounted(){        
         this.changeTableColumns();
-        //this.height = document.body.clientHeight - 225;
         this.getTableData();  
         this.getAuthor();
         this.gameItem();
         this.mediaItem();
-        //this.$store.dispatch('DiyIndex', {'taction':'api','topt':'getGameTotalDay'}); 
     }
 }
 </script>

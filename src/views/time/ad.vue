@@ -4,15 +4,15 @@
 	.sel {
 		width: 220px;
 	}
-	
+
 	.time .ivu-poptip {
 		display: inline-block;
 	}
-	
+
 	.tipbtn {
 		text-align: right;
 	}
-	
+
 	.clear:after {
 		content: '\20';
 		display: block;
@@ -20,35 +20,35 @@
 		clear: both;
 		visibility: hidden;
 	}
-	
+
 	.ivu-table .ivu-col span {
 		line-height: 24px;
 	}
-	
+
 	.inp {
 		display: inline-block;
 		width: 150px;
 	}
-	
+
 	.sel_state {
 		text-align: left;
 		width: 110px;
 	}
-	
+
 	.sel_state1 {
 		text-align: left;
 		width: 300px;
 	}
-	
+
 	.sel_state1.ivu-select-multiple .ivu-select-selection {
 		overflow: auto;
 		height: 32px;
 	}
-	
+
 	.namediv {
 		cursor: pointer;
 	}
-	
+
 	.namediv:hover {
 		color: #57a3f3;
 	}
@@ -359,7 +359,7 @@
 													do: 'edit',
 													account_id: params.row.account_id, //*必传*
 													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-													daily_budget: value, //日消耗限额													
+													daily_budget: value, //日消耗限额
 												}).then(
 													res => {
 														if(res.ret == 1) {
@@ -402,7 +402,7 @@
 												do: 'edit',
 												account_id: params.row.account_id, //*必传*
 												campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-												configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
+												configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停
 											}).then(
 												res => {
 													if(res.ret == 1) {
@@ -638,7 +638,7 @@
 				for(var i = 0; i < this.GameListIds.length; i++) {
 					game_id[i] = this.GameListIds[i];
 				}
-				
+
 				var data = {
 					tdate: this.DateDomain[0],
 					edate: this.DateDomain[1],
@@ -657,7 +657,7 @@
 
 				this.$store.dispatch('getAdgroups', data);
 			},
-			//批量修改删除投放计划 
+			//批量修改删除投放计划
 			AmendCampaignsList(type) {
 				this.visible = false;
 				if(this.taCheckids.length == 0) {

@@ -19,7 +19,8 @@ const user = {
             //console.log('用户登录 -----' + user)
         },
         USER_INDEX(state,data){
-            state.userindex = data.split(',');
+            let val = data ? data.split(',') : [];
+            state.userindex = val
         }
     },
     actions : {
@@ -71,6 +72,7 @@ const user = {
             let param = opt;
                 param.action = 'sys';
                 param.opt = 'set_user_memo';
+            console.log(param)
             Axios.get('api.php',param)
             .then( 
                 res=>{ console.log(res) }

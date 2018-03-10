@@ -83,13 +83,36 @@
 			return {
                 indeterminate: true,
                 checkAll: false,
-                checkAllGroup: [],
+                checkAllGroup: this.userindex,
+                action:'api',
+                opt:'getGameTotalDay'
 			}
+        },
+        computed: {
+			//获取自定义指标
+			userindex() {
+                let memo = this.$store.state.user.userindex;
+				//this.checkAllGroup = memo;
+				return memo;
+			},
+		},
+        watch:{
+            check(data){
+                this.checkAllGroup = data
+            },
+            userindex(data){
+                this.checkAllGroup = data;
+                this.$emit('on-change', this.checkAllGroup);
+            }
         },
         mounted(){
             //传过来的默认选项
-            this.checkAllGroup = this.check;              
-            //console.log(this.check)
+            this.checkAllGroup = this.check;
+            let param = {
+				taction: this.action,
+				topt: this.opt
+			};
+			this.$store.dispatch('DiyIndex', param);
         },
 		methods: {           
 			//自定义指标全选
@@ -110,9 +133,14 @@
 				this.$emit('on-change', this.checkAllGroup);
             },
             //保存自定义指标
-            saveIndex(){
+            saveIndex(){                
+                let param = {
+					taction: this.action,
+					topt: this.opt,
+					memo: this.checkAllGroup.join(',')
+				};
+                this.$store.dispatch('SaveIndex', param);
                 console.log('保存')
-                //this.$store.dispatch('channelIndex',param);
             },
 			//自定义指标
 			checkAllGroupChange(data) {
