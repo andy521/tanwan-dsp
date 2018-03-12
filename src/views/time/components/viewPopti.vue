@@ -1,20 +1,20 @@
-<style lang="less" >
+<style lang="less">
 	.bottom_line {
 		border-bottom: 1px solid rgb(233, 233, 233);
 		padding-bottom: 10px;
 	}
-
+	
 	.Poptiptap .ivu-poptip-body {
 		white-space: normal;
 		text-align: left;
 		padding: 20px;
 	}
-
+	
 	.checklist {
 		padding-bottom: 5px;
 		padding-top: 20px;
 	}
-
+	
 	.Poptiptap .ivu-poptip-body-content {
 		overflow: inherit;
 	}

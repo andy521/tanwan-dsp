@@ -43,37 +43,62 @@ const app = {
         },
         //更新菜单
         updateMenulist (state) {
-            let accessCode = parseInt( Util.getItem('access') );
             let menuList = [];
-            appRouter.forEach((item, index) => {              
+            //let accessCode = parseInt( Util.getItem('access') );            
+            // appRouter.forEach((item, index) => { 
+            //     if (item.children.length === 1) {
+            //         menuList.push(item);
+            //     } else {
+            //         let len = menuList.push(item);                      
+            //         let childrenArr = [];
+            //         childrenArr = item.children.filter(child => {
+            //             if (child.access !== undefined) {
+            //                 if (Util.showThisRoute(child.access, accessCode)) {
+            //                     return child;
+            //                 }
+            //             } else {
+            //                 return child;
+            //             }                        
+            //         });
+            //         if (childrenArr === undefined || childrenArr.length === 0) {
+            //             menuList.splice(len - 1, 1);
+            //         } else {
+            //             let handledItem = JSON.parse(JSON.stringify(menuList[len - 1]));
+            //             handledItem.children = childrenArr;
+            //             menuList.splice(len - 1, 1, handledItem);
+            //         }
+            //     }
+            // })
+
+            let access = Util.getItem('access'), _this = this;   
+            if(!access){
+                return
+            }
+            access = access.split(',');
+            appRouter.forEach((item, index) => { 
                 if (item.children.length === 1) {
                     menuList.push(item);
-                } else {
+                }else{
                     let len = menuList.push(item);
                     let childrenArr = [];
                     childrenArr = item.children.filter(child => {
-                        if (child.access !== undefined) {
-                            if (Util.showThisRoute(child.access, accessCode)) {
-                                return child;
-                            }
-                        } else {
+                        if(access.indexOf(child.name) != -1 || access.indexOf('all') != -1){
                             return child;
                         }
                     });
                     if (childrenArr === undefined || childrenArr.length === 0) {
                         menuList.splice(len - 1, 1);
-                    } else {
+                    }else{
                         let handledItem = JSON.parse(JSON.stringify(menuList[len - 1]));
                         handledItem.children = childrenArr;
                         menuList.splice(len - 1, 1, handledItem);
                     }
                 }
-            })
-            state.menuList = menuList;
+            });
             //console.log(menuList)
+            state.menuList = menuList;
         },
-        setOpenedList (state) {            
-
+        setOpenedList (state) {
             // Axios.get('api.php',{
             //     'action' : 'sys',
             //     'opt' : 'getMenuList'
@@ -84,7 +109,6 @@ const app = {
             // .catch(function(err){
             //     console.log(err);
             // });
-
             state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [otherRouter.children[0]];
         },
         initCachepage (state) {

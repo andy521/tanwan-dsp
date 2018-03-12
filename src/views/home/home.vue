@@ -168,7 +168,7 @@
 		},
 		mounted() {
 			this.getData();
-			this.getMedia();
+            this.getMedia();
 		}
 	};
 </script>

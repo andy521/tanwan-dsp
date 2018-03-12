@@ -5,8 +5,8 @@ const plan = {
 		gameList: [],
 		mediaList: [],
 		campaignslist: [],
-		adList: [],
-		Adgroups: [],
+		adList: {},
+		Adgroups:{},
 		Media: []
 	},
 	mutations: {
@@ -20,9 +20,13 @@ const plan = {
 			state.campaignslist = data;
 		},
 		GET_ADLIST(state, data) {
+			data.curr_page_total._disabled = true;
+			data.list.push(data.curr_page_total);
 			state.adList = data;
 		},
 		GET_ADGROUPS(state, data) {
+			data.curr_page_total._disabled = true;
+			data.list.push(data.curr_page_total);
 			state.Adgroups = data;
 		},
 		GET_MEDIA(state, data) {

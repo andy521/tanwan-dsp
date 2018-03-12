@@ -61,14 +61,44 @@
                             'action' : 'sys',
                             'opt' : 'login'
                         })
-                        .then((data)=>{
-                            console.log(data.data)
+                        .then((data)=>{                            
                             if(data.ret == 1){
                                 Util.setItem('user', this.form.userName );  
-                                Util.setItem('sessionid', data.data.sessionid );                     
+                                Util.setItem('sessionid',data.data.sessionid); 
+                                //权限管理
+                                let action = data.data.data.actionid;
+                                let access = [];
+                                if(action === 'all'){
+                                    access.push('all');
+                                }else{
+                                    action.forEach(item => {
+                                        switch(item){
+                                            case '999': 
+                                                access.push('time_plan');
+                                            break;
+                                            case '1030': 
+                                                access.push('time_ad') 
+                                            break;
+                                            case '1037': 
+                                                access.splice(1,0,'channel_product','channel_media','channel_account','channel_plan','channel_ad');
+                                            break;
+                                            case '1034': 
+                                                access.push('setid_principal');
+                                            break;
+                                            case '1035':
+                                                access.push('setid_systemsetid');
+                                            break;
+                                            case '1038': 
+                                                access.push('setid_systemmsg');
+                                            break;
+                                        }
+                                    });
+                                };                                              
+                                Util.setItem('access', access.join(",")); 
                                 this.$store.dispatch('UserLogin', userinfo);  
-                                this.$router.push({ name: 'home_index' });
+                                this.$router.push({ name: 'home_index' });                                
                             }
+
                         }).catch((err)=>{console.log(err)});
                     }
 				});

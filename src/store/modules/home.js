@@ -20,11 +20,9 @@ const home = {
         GETOVERIEW ( state , data){
             state.total = data.total;            
             state.echart = data.echart;
-            state.tdata = {
-                total_number:data.total_number,
-                total_page:data.total_page,
-                list: data.list
-            };
+            data.curr_page_total._disabled = true;
+            data.list.push(data.curr_page_total)
+            state.tdata = data;
         }, 
         SETMEDIA (state , data){ 
             state.media = data

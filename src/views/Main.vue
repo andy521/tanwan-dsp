@@ -183,7 +183,7 @@
 			//跳转消息列表
 			tomsglist() {
 				this.$router.push({
-					name: 'system_msg',
+					name: 'setid_systemmsg',
 				});
 			}
         },
