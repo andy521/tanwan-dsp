@@ -144,7 +144,7 @@
 						key: 'account_name'
 					},
 					{
-						title: '展现(暴光)',
+						title: '曝光',
 						key: 'impression',
 						sortable: 'custom',
 					},
