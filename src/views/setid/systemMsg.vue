@@ -7,7 +7,7 @@
 <template>
 	<div class="ad">
 		<Card shadow>
-			<Table :columns="columns1" :row-class-name="rowClassName" :data="getMessages.message" :size="tableSize" highlight-row @on-current-change="details"></Table>
+			<Table :columns="columns1" :row-class-name="rowClassName" :data="getMessages.message" :size="tableSize" highlight-row @on-current-change="details" stripe></Table>
 			<Row class="margin-top-10">
 				<Col span="10"> 表格尺寸
 				<Radio-group v-model="tableSize" type="button">
@@ -90,7 +90,7 @@
 			//查看消息详情
 			details(row) {
 				this.$router.push({
-					name: 'system_msg_details'
+					name: 'user_msgdetails'
 				});
 				this.$store.dispatch('getSingleMessages', row.id);
 			},

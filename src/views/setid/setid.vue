@@ -5,7 +5,7 @@
 <template>
 	<div class="ad">
 		<Card shadow>
-			<Table :columns="columns" :size="tableSize" :data="AdsAccount"></Table>
+			<Table :columns="columns" :size="tableSize" :data="AdsAccount" stripe></Table>
 			<Row class="margin-top-10">
 				<Col span="10"> 表格尺寸
 				<Radio-group v-model="tableSize" type="button">

@@ -148,7 +148,7 @@
 				</Col>
 			</Row>
 			<div>
-				<Table :data="adList" height="600" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName"></Table>
+				<Table :data="newAdList" height="600" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
 
 				<Row class="margin-top-10">
 					<Col span="10"> 表格尺寸
@@ -214,6 +214,7 @@
 		data() {
 			return {
 				loading: false,
+				adList: [], //数据列表
 				GameListIds: [], //搜索返回ids
 				MediaListModel: '0',
 				CampaignsListModel: [],
@@ -236,7 +237,7 @@
 				campaign_name: '', //关键字
 				check_value: false,
 				edit_status: "AD_STATUS_NORMAL", //批量状态
-				orderField: '', //排序参数名
+				orderField: 'daily_budget', //排序参数名
 				orderDirection: 'SORT_DESC', //排序方向
 				author_model: [],
 				tableSize: 'small',
@@ -296,7 +297,8 @@
 								on: {
 									click: () => {
 										let query = {
-											campaign_id: params.row.campaign_id
+											campaign_id: params.row.campaign_id,
+											campaign_name: params.row.campaign_name
 										};
 										this.$router.push({
 											name: 'time_ad',
@@ -419,7 +421,7 @@
 													do: 'edit',
 													account_id: params.row.account_id, //*必传*
 													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-													daily_budget: value * 100, //日消耗限额
+													daily_budget: value * 100, //日消耗限额													
 												}).then(
 													res => {
 														if(res.ret == 1) {
@@ -569,14 +571,14 @@
 						key: 'download_per',
 						width: 150
 					},
-
+//
+//					{
+//						title: '出价',
+//						key: 'bid_mode',
+//						width: 150
+//					},
 					{
-						title: '出价',
-						key: 'bid_mode',
-						width: 150
-					},
-					{
-						title: '注册设备数',
+						title: '注册',
 						sortable: 'custom',
 						key: 'reg_imei',
 						width: 150
@@ -588,7 +590,7 @@
 						width: 150
 					},
 					{
-						title: '注册',
+						title: '注册设备数',
 						sortable: 'custom',
 						key: 'activation',
 						width: 150
@@ -657,8 +659,8 @@
 		},
 		mounted() {
 			this.getMedia();
-			this.getCampaignsList();
 			this.getAuthor();
+			this.getCampaignsList();
 		},
 		methods: {
 			//获取选中游戏id
@@ -690,23 +692,42 @@
 				for(var i = 0; i < this.GameListIds.length; i++) {
 					game_id[i] = this.GameListIds[i];
 				}
-				var data = {
-					tdate: this.DateDomain[0],
-					edate: this.DateDomain[1],
-					page: this.page,
-					page_size: this.page_size,
-					game_id: JSON.stringify(game_id), //this.GameListIds
-					account_id: this.MediaListModel == '0' ? '' : this.MediaListModel,
-					configured_status: this.configured_status,
-					campaign_id: this.CampaignsListModel,
-					campaign_name: this.campaign_name,
-					check_value: this.check_value == false ? 0 : 1,
+				this.loading = true;
+				Axios.post('api.php', {
+					action: 'gdtAdPut',
+					opt: 'campaigns',
+					tdate: this.DateDomain[0], //开始时间
+					edate: this.DateDomain[1], //结速时间
+					page: this.page, //页码
+					page_size: this.page_size, //每页数量
+					game_id: JSON.stringify(game_id), //游戏id
+					account_id: this.MediaListModel == '0' ? '' : this.MediaListModel, //媒体账号
+					configured_status: this.configured_status, //过滤无数据的广告
+					campaign_id: this.CampaignsListModel, //广告
+					campaign_name: this.campaign_name, //关键字
+					check_value: this.check_value == false ? 0 : 1, //状态
 					orderField: this.orderField, //排序的orderField参数名
 					orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-					author: this.author_model
-				}
-				this.$store.dispatch('getAdList', data);
-				this.loading = true;
+					author: this.author_model //负责人
+				}).then(
+					res => {
+						this.loading = false;
+						if(res.ret == 1) {
+							//添加统计
+							res.data.curr_page_total._disabled = true;
+							res.data.list.push(res.data.curr_page_total);
+							this.total_number = res.data.total_number;
+							this.total_page = res.data.total_page;
+							this.adList = res.data.list;
+						}
+					}
+				).catch(
+					err => {
+						this.loading = false;
+						console.log('获取实时投放计划' + err)
+					}
+				)
+
 			},
 			//批量修改删除投放计划 
 			AmendCampaignsList(type) {
@@ -766,7 +787,7 @@
 				this.uncheck = val;
 			},
 			//表格高亮calss
-			rowClassName(row, index) {				
+			rowClassName(row, index) {
 				if(row._disabled) {
 					return 'table-statistics';
 				}
@@ -786,26 +807,18 @@
 				return this.$store.state.plan.campaignslist;
 			},
 			//获取实时投放计划
-			adList() {
-				let adList = this.$store.state.plan.adList;
-				if(adList.list) {
-					this.loading = false;
-					this.total_number = adList.total_number;
-					this.total_page = adList.total_page;
-					//深层复制
-					let arr = deepClone(this.tableColumns)
-
-					this.uncheck.forEach(item => {
-						arr.forEach((col, i) => {
-							if(col.key == item) {
-								arr.splice(i, 1);
-							}
-						});
+			newAdList() {
+				//深层复制
+				let arr = deepClone(this.tableColumns)
+				this.uncheck.forEach(item => {
+					arr.forEach((col, i) => {
+						if(col.key == item) {
+							arr.splice(i, 1);
+						}
 					});
-					this.taColumns = arr;
-				}
-
-				return adList.list;
+				});
+				this.taColumns = arr;
+				return this.adList;
 			}
 		}
 	};

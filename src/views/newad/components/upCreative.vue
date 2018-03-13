@@ -256,7 +256,6 @@ export default {
             });
             
             if(!this.verify.show){
-                console.log(pack)
                 this.$emit('on-change', pack);
             }
         }
