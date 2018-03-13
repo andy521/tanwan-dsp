@@ -4,15 +4,15 @@
 	.sel {
 		width: 220px;
 	}
-
+	
 	.time .ivu-poptip {
 		display: inline-block;
 	}
-
+	
 	.tipbtn {
 		text-align: right;
 	}
-
+	
 	.clear:after {
 		content: '\20';
 		display: block;
@@ -20,37 +20,47 @@
 		clear: both;
 		visibility: hidden;
 	}
-
+	
 	.ivu-table .ivu-col span {
 		line-height: 24px;
 	}
-
+	
 	.inp {
 		display: inline-block;
 		width: 150px;
 	}
-
+	
 	.sel_state {
 		text-align: left;
 		width: 110px;
 	}
-
+	
 	.sel_state1 {
 		text-align: left;
 		width: 300px;
 	}
-
+	
 	.sel_state1.ivu-select-multiple .ivu-select-selection {
 		overflow: auto;
 		height: 32px;
 	}
-
+	
 	.namediv {
 		cursor: pointer;
 	}
-
+	
 	.namediv:hover {
 		color: #57a3f3;
+	}
+	
+	.table-statistics {
+		color: #2b7ed1;
+		font-weight: bold;
+	}
+	
+	.campaign_name {
+		font-size: 18px;
+		margin-left: 20px;
 	}
 </style>
 
@@ -59,18 +69,23 @@
 		<Card shadow>
 			<Row>
 				<Col span="19">
+				<div v-if="params.campaign_name">
+					<Button type="primary" @click="back">返回</Button>
+					<span class="campaign_name">{{params.campaign_name}}</span>
+				</div>
 				<!--搜索游戏列表-->
-				<search-tree :callback="getids"></search-tree>
-				<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
-					<Option value="0">全部媒体账号</Option>
-					<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
-				</Select>
-				<Select v-model="CampaignsListModel" :value="CampaignsListModel" filterable class="sel" placeholder="请选择广告" v-if="campaignslist.length>1">
-					<Option value="0">全部广告</Option>
-					<Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
-				</Select>
-				<Input v-model="campaign_name" class="inp" placeholder="请输入关键字"></Input>
-				<Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
+				<div v-else>
+					<search-tree :callback="getids"></search-tree>
+					<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
+						<Option value="0">全部媒体账号</Option>
+						<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
+					</Select>
+					<Select v-model="CampaignsListModel" :value="CampaignsListModel" multiple filterable class="sel_state1" placeholder="请选择广告" v-if="campaignslist.length>1">
+						<Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
+					</Select>
+					<Input v-model="campaign_name" class="inp" placeholder="请输入关键字"></Input>
+					<Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
+				</div>
 				</Col>
 				<Col span="5" style="text-align: right;">
 				<Button type="ghost" @click="copyAdwin=true">复制</Button>
@@ -143,7 +158,8 @@
 				</Col>
 			</Row>
 			<div>
-				<Table :data="adList" height="600" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="adtable" @on-selection-change="taCheck" @on-sort-change="sortchange">
+				<Table :data="newAdList" height="600" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="adtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe>
+
 				</Table>
 				<Row class="margin-top-10">
 					<Col span="10"> 表格尺寸
@@ -154,7 +170,7 @@
 					</Radio-group>
 					每页显示
 					<Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-						<Option v-for="item in 200" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
+						<Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
 					</Select>
 					</Col>
 					<Col span="14" style="text-align: right;">
@@ -212,9 +228,12 @@
 		},
 		data() {
 			return {
+				params: this.$route.params,
+				loading: false,
+				adList: [], //数据列表
 				GameListIds: [], //搜索返回ids
 				MediaListModel: '0',
-				CampaignsListModel: '0',
+				CampaignsListModel: [],
 				taCheckids: [], //选中ids
 				page: 1, //第N页
 				page_size: 50, //每页数量
@@ -234,7 +253,7 @@
 				campaign_name: '', //关键字
 				check_value: false,
 				edit_status: "AD_STATUS_NORMAL", //批量状态
-				orderField: '', //排序参数名
+				orderField: 'daily_budget', //排序参数名
 				orderDirection: 'SORT_DESC', //排序方向
 				author_model: [],
 				tableSize: 'small',
@@ -261,20 +280,24 @@
 						key: 'account_name',
 						width: 160,
 						render: (h, params) => {
-							return [h('span', params.row.account_name), h('Button', {
-								props: {
-									type: 'ghost',
-									size: 'small'
-								},
-								style: {
-									marginLeft: '10px'
-								},
-								on: {
-									click: () => {
-										window.location.href = ""
+							if(params.row.account_name) {
+								return [h('span', params.row.account_name), h('Button', {
+									props: {
+										type: 'ghost',
+										size: 'small'
+									},
+									style: {
+										marginLeft: '10px'
+									},
+									on: {
+										click: () => {
+											window.location.href = ""
+										}
 									}
-								}
-							}, '登陆')]
+								}, '登陆')]
+							} else {
+								return h('span', '本页统计')
+							}
 						}
 					},
 					{
@@ -287,7 +310,8 @@
 						key: 'adgroup_name',
 						width: 400,
 						render: (h, params) => {
-							return h('span', {
+							let value = params.row.adgroup_name;
+							return [h('span', {
 								class: 'namediv',
 								on: {
 									click: () => {
@@ -297,7 +321,59 @@
 										}
 									}
 								}
-							}, params.row.adgroup_name)
+							}, params.row.adgroup_name), h('i-button', {
+								props: {
+									icon: "edit",
+									type: "text",
+									size: "small"
+								},
+								class: ['edit'],
+								on: {
+									click: () => {
+										this.$Modal.confirm({
+											render: (h) => {
+												return h('Input', {
+													props: {
+														value: params.row.adgroup_name,
+														autofocus: true,
+														placeholder: '请输入广告名称'
+													},
+													on: {
+														input: (val) => {
+															value = val;
+														}
+													}
+												})
+											},
+											onOk: () => {
+												if(value == '') {
+													this.$Message.info('请输入修改信息');
+													return;
+												}
+												Axios.post('api.php', {
+													action: 'gdtAdPut',
+													opt: 'campaigns_add',
+													do: 'edit',
+													account_id: params.row.account_id, //*必传*
+													adgroup_id: params.row.adgroup_id, //传这个值就是修改当前计划 不传就是添加新的计划
+													adgroup_name: value,
+												}).then(
+													res => {
+														if(res.ret == 1) {
+															this.$Message.info(res.msg);
+															this.getCampaignsList(this.page);
+														}
+													}
+												).catch(
+													err => {
+														console.log('修改删除广告计划失败' + err)
+													}
+												)
+											},
+										})
+									}
+								}
+							})]
 						}
 					},
 					{
@@ -358,8 +434,8 @@
 													opt: 'campaigns_add',
 													do: 'edit',
 													account_id: params.row.account_id, //*必传*
-													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-													daily_budget: value, //日消耗限额
+													adgroup_id: value, //传这个值就是修改当前计划 不传就是添加新的计划
+													daily_budget: params.row.daily_budget, //日消耗限额													
 												}).then(
 													res => {
 														if(res.ret == 1) {
@@ -384,41 +460,45 @@
 						key: 'configured_status',
 						width: 150,
 						render: (h, params) => {
-							return h('div', [
-								h('i-switch', {
-									props: {
-										size: "small",
-										value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
-									},
-									style: {
-										marginRight: '10px'
-									},
-									on: {
-										'on-change': (value) => {
-											params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
-											Axios.post('api.php', {
-												action: 'gdtAdPut',
-												opt: 'campaigns_add',
-												do: 'edit',
-												account_id: params.row.account_id, //*必传*
-												campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-												configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停
-											}).then(
-												res => {
-													if(res.ret == 1) {
-														this.$Message.info(res.msg);
-														this.getCampaignsList(this.page);
+							if(!params.row.configured_status) {
+								return
+							} else {
+								return h('div', [
+									h('i-switch', {
+										props: {
+											size: "small",
+											value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
+										},
+										style: {
+											marginRight: '10px'
+										},
+										on: {
+											'on-change': (value) => {
+												params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
+												Axios.post('api.php', {
+													action: 'gdtAdPut',
+													opt: 'campaigns_add',
+													do: 'edit',
+													account_id: params.row.account_id, //*必传*
+													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
+													configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 
+												}).then(
+													res => {
+														if(res.ret == 1) {
+															this.$Message.info(res.msg);
+															this.getCampaignsList(this.page);
+														}
 													}
-												}
-											).catch(
-												err => {
-													console.log('修改删除投放计划失败' + err)
-												}
-											)
+												).catch(
+													err => {
+														console.log('修改删除投放计划失败' + err)
+													}
+												)
+											}
 										}
-									}
-								}), h('span', params.row.configured_status == "AD_STATUS_NORMAL" ? '开启' : '关闭')
-							]);
+									}), h('span', params.row.configured_status == "AD_STATUS_NORMAL" ? '开启' : '关闭')
+								]);
+							}
 						}
 					},
 					{
@@ -509,12 +589,12 @@
 
 					{
 						title: '出价',
-						key: 'bid_mode',
+						key: 'bid_amount',
 						width: 150,
 
 					},
 					{
-						title: '注册设备数',
+						title: '注册',
 						sortable: 'custom',
 						key: 'reg_imei',
 						width: 150
@@ -526,7 +606,7 @@
 						width: 150
 					},
 					{
-						title: '注册',
+						title: '注册设备数',
 						sortable: 'custom',
 						key: 'activation',
 						width: 150
@@ -593,11 +673,11 @@
 			}
 		},
 		mounted() {
-			let campaign_id = this.$route.params.campaign_id
-			if(campaign_id) {
-				this.CampaignsListModel = campaign_id;
+			if(this.params.campaign_id) {
+				let id = [];
+				id.push(this.params.campaign_id)
+				this.CampaignsListModel = id;
 			}
-
 			this.getMedia();
 			this.getCampaignsList();
 			this.getAuthor();
@@ -639,25 +719,43 @@
 					game_id[i] = this.GameListIds[i];
 				}
 
-				var data = {
-					tdate: this.DateDomain[0],
-					edate: this.DateDomain[1],
-					page: this.page,
-					page_size: this.page_size,
-					game_id: JSON.stringify(game_id), //this.GameListIds
-					account_id: this.MediaListModel == '0' ? '' : this.MediaListModel,
-					configured_status: this.configured_status,
-					campaign_id: this.CampaignsListModel == '0' ? '' : this.CampaignsListModel,
-					adgroup_name: this.campaign_name,
-					check_value: this.check_value == false ? 0 : 1,
+				this.loading = true;
+				Axios.post('api.php', {
+					action: 'gdtAdPut',
+					opt: 'adgroups',
+					tdate: this.DateDomain[0], //开始时间
+					edate: this.DateDomain[1], //结速时间
+					page: this.page, //页码
+					page_size: this.page_size, //每页数量
+					game_id: JSON.stringify(game_id), //游戏id
+					account_id: this.MediaListModel == '0' ? '' : this.MediaListModel, //媒体账号
+					configured_status: this.configured_status, //过滤无数据的广告
+					campaign_id: this.CampaignsListModel, //广告
+					adgroup_name: this.campaign_name, //关键字
+					check_value: this.check_value == false ? 0 : 1, //状态
 					orderField: this.orderField, //排序的orderField参数名
 					orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-					author: this.author_model
-				}
-
-				this.$store.dispatch('getAdgroups', data);
+					author: this.author_model //负责人
+				}).then(
+					res => {
+						this.loading = false;
+						if(res.ret == 1) {
+							//添加统计
+							res.data.curr_page_total._disabled = true;
+							res.data.list.push(res.data.curr_page_total);
+							this.total_number = res.data.total_number;
+							this.total_page = res.data.total_page;
+							this.adList = res.data.list;
+						}
+					}
+				).catch(
+					err => {
+						this.loading = false;
+						console.log('获取实时投放广告' + err);
+					}
+				)
 			},
-			//批量修改删除投放计划
+			//批量修改删除投放计划 
 			AmendCampaignsList(type) {
 				this.visible = false;
 				if(this.taCheckids.length == 0) {
@@ -713,6 +811,16 @@
 			//返回没有选中的
 			getuncheck(val) {
 				this.uncheck = val;
+			},
+			//表格高亮calss
+			rowClassName(row, index) {
+				if(row._disabled) {
+					return 'table-statistics';
+				}
+			},
+			//返回
+			back() {
+				this.$router.go(-1)
 			}
 		},
 		computed: {
@@ -729,10 +837,7 @@
 				return this.$store.state.plan.campaignslist;
 			},
 			//获取实时投放计划
-			adList() {
-				let adList = this.$store.state.plan.Adgroups;
-				this.total_number = adList.total_number;
-				this.total_page = adList.total_page;
+			newAdList() {
 				//深层复制
 				let arr = deepClone(this.tableColumns)
 				this.uncheck.forEach(item => {
@@ -743,9 +848,8 @@
 					});
 				});
 				this.taColumns = arr;
-				return adList.list;
-			},
+				return this.adList;
+			}
 		}
-
 	};
 </script>

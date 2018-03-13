@@ -53,7 +53,7 @@
             </Row>
         </div>   
 
-        <Table :size="tableSize" :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv"  @on-sort-change="sortChange"></Table>
+        <Table :size="tableSize" :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv"  @on-sort-change="sortChange" :height="height"></Table>
 
         <Row class="margin-top-10">
             <Col span="10">
@@ -64,7 +64,7 @@
             </Radio-group>
               每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getTableData()">
-                <Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -88,7 +88,7 @@ export default {
             loading : true,  
             //每页数量 
             page: 1,
-            page_size: 15, 
+            page_size: 50, 
             total_number: 1, //总数量
             total_page: 1, //总页数
             tableSize: 'small',

@@ -5,7 +5,7 @@
 <template>
 	<div class="ad">
 		<Card shadow>
-			<Table :columns="columns" :size="tableSize" :data="AdsAccount"></Table>
+			<Table :columns="columns" :size="tableSize" :data="AdsAccount" stripe></Table>
 			<Row class="margin-top-10">
 				<Col span="10"> 表格尺寸
 				<Radio-group v-model="tableSize" type="button">
@@ -15,7 +15,7 @@
 				</Radio-group>
 				每页显示
 				<Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getAdsAccount()">
-					<Option v-for="item in 50" :value="item" :key="item" v-if="item%5==0">{{ item }}</Option>
+					<Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
 				</Select>
 				</Col>
 				<Col span="14" style="text-align: right;">
@@ -42,7 +42,7 @@
 				author_modal: false,
 				row: '',
 				page: 1, //第N页
-				page_size: 15, //每页数量
+				page_size: 50, //每页数量
 				total_number: 1, //总数量
 				total_page: 1, //总页数
 				tableSize: 'small',

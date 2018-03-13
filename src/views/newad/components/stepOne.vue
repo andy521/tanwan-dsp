@@ -175,6 +175,7 @@
 			}
 		},
 		mounted() {
+			this.campaign_id = this.$route.params.campaign_id;
 			//判断是否有推广计划id,没有返回选择
 			if(!this.account_id)
 				this.$router.push({
@@ -184,9 +185,9 @@
 			this.$store.dispatch('getCampaigns', this.account_id);
 		},
 		methods: {
-			campaign_type_change(campaign_type){
-				if(campaign_type=='CAMPAIGN_TYPE_WECHAT_MOMENTS'){
-					this.daily_budget=='';
+			campaign_type_change(campaign_type) {
+				if(campaign_type == 'CAMPAIGN_TYPE_WECHAT_MOMENTS') {
+					this.daily_budget == '';
 				}
 			},
 			//提交第一步填写数据
@@ -228,9 +229,9 @@
 				}
 			},
 			//选择推广计划
-			changcampaigns(e) {
+			changcampaigns(campaign_id) {
 				this.campaignslist.forEach(item => {
-					if(item.campaign_id == e) {
+					if(item.campaign_id == campaign_id) {
 						this.campaign = item;
 					}
 				});
@@ -248,7 +249,13 @@
 			},
 			//获取推广计划
 			campaignslist() {
-				return this.$store.state.plan.campaignslist;
+				let list = this.$store.state.plan.campaignslist;
+				list.forEach(item => {
+					if(item.campaign_id == this.campaign_id) {
+						this.campaign = item;
+					}
+				});
+				return list;
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <style lang="less">
     @import "./main.less";
-    .main-header .header-avator-con .user-dropdown-menu-con{width: 160px;}
+
 </style>
 <template>
 
@@ -176,14 +176,14 @@
             //查看消息详情
 			details(id) {
 				this.$router.push({
-					name: 'system_msg_details'
+					name: 'user_msgdetails'
 				});
 				this.$store.dispatch('getSingleMessages', id);
 			},
 			//跳转消息列表
 			tomsglist() {
 				this.$router.push({
-					name: 'system_msg',
+					name: 'setid_systemmsg',
 				});
 			}
         },

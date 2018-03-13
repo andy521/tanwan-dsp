@@ -2,7 +2,7 @@ let util = {
 
 };
 util.title = function (title) {
-    title = title || 'iView admin';
+    title = title || '登录贪玩DSP后台';
     window.document.title = title;
 };
 
@@ -278,9 +278,6 @@ util.removeItem = (a) => {
 	var b, c;
 	window.localStorage ? window.localStorage.removeItem("tw_" + a) : (b = new Date, b.setTime(b.getTime() - 1), c = H.getItem(a), null != c && (document.cookie = "tw_" + a + "=" + c + ";expires=" + b.toGMTString()))
 };
-
-
-
 
 
 export default util;

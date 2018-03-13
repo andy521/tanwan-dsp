@@ -5,10 +5,10 @@ import {routers, otherRouter, appRouter} from './router';
 import Util from '@/utils/index';
 Vue.use(VueRouter);
 
-// 路由配置
+// 路由配置  https://router.vuejs.org/zh-cn/essentials/history-mode.html
 const RouterConfig = {
-    // mode: 'history',
-    routes: routers
+   // mode: 'history',   //在创建router对象中，如果不配置mode，就会使用默认的hash模式，该模式下路径格式化为#!开关。
+    routes: routers  
 };
 
 const router = new VueRouter(RouterConfig);
@@ -31,8 +31,10 @@ router.beforeEach((to, from, next) => {
         });
     } else {
         const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
-        //console.log(curRouterObj);
+        
+        // console.log(curRouterObj.name); 登录时这个是没有的
         if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
+
             if (curRouterObj.access === parseInt( Util.getItem('access'))) {
                 Util.toDefaultPage([otherRouter, ...appRouter], to.name, router, next); // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
             } else {
@@ -41,6 +43,7 @@ router.beforeEach((to, from, next) => {
                     name: 'error-403'
                 });
             }
+
         } else { //没有配置权限的路由, 直接通过
             Util.toDefaultPage([...routers], to.name, router, next);
         }

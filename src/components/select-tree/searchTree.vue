@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 	.Treebox {max-height: 400px;}
     .ivu-poptip, .ivu-poptip-rel,.ivu-poptip .ivu-input-wrapper{display: block}
 </style>

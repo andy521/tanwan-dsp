@@ -198,7 +198,7 @@
 		</Input>
 		<h3 class="subtit">定向</h3>
 		<div class="margin-top-20">
-			<Select filterable size="large" placeholder="请选择定向" v-model="targetingsmodal" style="width:400px" @on-change="changetargetings">
+			<Select filterable size="large" placeholder="请选择定向" v-model="targeting_id" style="width:400px" @on-change="changetargetings">
 				<Option v-for="item in targetings" :value="item.targeting_id" :key="this">{{item.targeting_name}}</Option>
 			</Select>
 			<span class="grey">下拉选择已有定向包</span>
@@ -387,7 +387,7 @@
 							<Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-keyup="getAudiences()" placeholder="搜索用户群"></Input>
 							</Col>
 						</Row>
-						<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="custom_audience" size="small" @on-selection-change="taCheck"></Table>
+						<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="custom_audience" size="small" @on-selection-change="taCheck" ref="selection"></Table>
 						<div class="subtt margin-top-20"><span>排除用户群</span>
 							<Tooltip placement="top">
 								<Icon type="help-circled" color="#999"></Icon>
@@ -910,7 +910,7 @@
 		data() {
 			return {
 				account_id: this.$route.params.account_id,
-				targetingsmodal: 0,
+				targeting_id: '0',
 				product_refs_id: '',
 				targeting_item: {
 					"account_id": "",
@@ -995,6 +995,9 @@
 			}
 		},
 		mounted() {
+			if(this.targeting_id) {
+				this.targeting_id = this.$route.params.targeting_id;
+			};
 			//请求定向
 			this.$store.dispatch('get_targetings');
 			//请求定向标签(地域)
@@ -1006,7 +1009,6 @@
 			//获取自定义人群
 			this.getAudiences();
 			this.getAudiences_ex();
-
 		},
 		methods: {
 			getAudiences() {
@@ -1026,9 +1028,9 @@
 				this.$store.dispatch('get_CustomAudiences_ex', data);
 			},
 			//选择定向
-			changetargetings(e) {
+			changetargetings(targeting_id) {
 				this.targetings.forEach(item => {
-					if(item.targeting_id == e) {
+					if(item.targeting_id == targeting_id) {
 						this.targeting_item = item;
 						var result = item.targeting.age[0].split("~");
 						this.age = [parseInt(result[0]), parseInt(result[1])];
@@ -1395,48 +1397,46 @@
 			//获取定向
 			targetings() {
 				let list = this.$store.state.newad.targetings.list;
-				if(list) {
-					list.unshift({
-						"account_id": "",
-						"id": "",
-						"targeting_id": 0, //定向id 
-						"targeting_name": "新建定向", //定向名称
-						"targeting": {
-							"age": ["5~60"],
-							"gender": ["FEMALE"],
-							"education": [],
-							"relationship_status": [],
-							"living_status": [],
-							"geo_location": {
-								"regions": [],
-								"location_types": [],
-								"business_districts": []
-							},
-							"app_behavior": {
-								"object_type": "APP_CLASS",
-								"object_id_list": [],
-								"time_window": 1,
-								"act_id_list": []
-							},
-							"app_install_status": [],
-							"customized_audience": [],
-							"network_type": [],
-							"business_interest": [],
-							"network_operator": [],
-							"device_price": [],
-							"shopping_capability": [],
-							"paying_user_type": [],
-							"keyword": {
-								"words": []
-							},
-							"player_consupt": [],
-							"residential_community_price": [],
-							"custom_audience": [],
-							"excluded_custom_audience": [],
-							"description": [],
-						}
-					});
-				}
+				list.unshift({
+					"account_id": "",
+					"id": "",
+					"targeting_id": 0, //定向id 
+					"targeting_name": "新建定向", //定向名称
+					"targeting": {
+						"age": ["5~60"],
+						"gender": ["FEMALE"],
+						"education": [],
+						"relationship_status": [],
+						"living_status": [],
+						"geo_location": {
+							"regions": [],
+							"location_types": [],
+							"business_districts": []
+						},
+						"app_behavior": {
+							"object_type": "APP_CLASS",
+							"object_id_list": [],
+							"time_window": 1,
+							"act_id_list": []
+						},
+						"app_install_status": [],
+						"customized_audience": [],
+						"network_type": [],
+						"business_interest": [],
+						"network_operator": [],
+						"device_price": [],
+						"shopping_capability": [],
+						"paying_user_type": [],
+						"keyword": {
+							"words": []
+						},
+						"player_consupt": [],
+						"residential_community_price": [],
+						"custom_audience": [],
+						"excluded_custom_audience": [],
+						"description": [],
+					}
+				});
 				return list;
 			},
 			//商业兴趣转码
