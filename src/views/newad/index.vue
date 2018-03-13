@@ -126,9 +126,9 @@
 				});
 			};
 			
-//			if(this.campaign_id) {
-//				this.setp = [1, 0];
-//			};
+			if(this.campaign_id) {
+				this.setp = [1, 0];
+			};
 
 			//获取所有状态
 			this.$store.dispatch('get_ads_config');
@@ -178,9 +178,9 @@
 					'begin_date': this.adgroup.begin_date, //开始投放日期
 					'end_date': this.adgroup.end_date, //结束投放日期
 					'billing_event': this.adgroup.billing_event, //计费类型
-					'bid_amount': this.adgroup.bid_amount, //广告出价，单位为分
+					'bid_amount': this.adgroup.bid_amount*100, //广告出价，单位为分
 					'optimization_goal': this.adgroup.optimization_goal, //广告优化目标类型
-					'daily_budget': this.adgroup.daily_budget, //日限额，单位为分
+					'daily_budget': this.adgroup.daily_budget*100, //日限额，单位为分
 					'product_refs_id': this.product_refs_id, //标的物 id
 					'sub_product_refs_id': '', //子标的物 id
 					'targeting_id': this.targeting_id, //定向 id
