@@ -69,7 +69,7 @@
             </Row>
         </div>    
         
-        <Table :size="tableSize" :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" @on-sort-change="sortChange"></Table>
+        <Table :size="tableSize" :loading="loading" :columns="tableColumns" :data="list"  ref="tableCsv" @on-sort-change="sortChange" :height="height"></Table>
         <Row class="margin-top-10">
             <Col span="10">
             <Radio-group v-model="tableSize" type="button">

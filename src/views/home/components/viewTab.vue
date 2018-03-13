@@ -79,7 +79,7 @@
 			</div>
 		</div>
 
-		<Table :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName"></Table>
+		<Table :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397"></Table>
 		<Row class="margin-top-10">
 			<Col span="10">
 			<Radio-group v-model="tableSize" type="button">
@@ -92,7 +92,7 @@
 			</Select>
 			</Col>
 			<Col span="14" style="text-align: right;">
-			<Page :total="tdata.total_number" :page-size="tdata.page_size" ref="pages" @on-change="tableData" show-elevator show-total></Page>
+			<Page :total="parseInt(tdata.total_number)" :page-size="parseInt(tdata.page_size)" ref="pages" @on-change="tableData" show-elevator show-total></Page>
 			</Col>
 		</Row>
 	</Card>
@@ -229,16 +229,6 @@
 				};
 				this.$store.dispatch('getOverview', param);
 			},
-			//Tab
-			// tabsChange(index) {
-			// 	this.num = index;
-			// 	if(!!index) {
-			// 		this.group = 'author';
-			// 		this.tableData();
-			// 	} else {
-			// 		this.$store.dispatch('getOverview');
-			// 	}
-			// },
 			//分页
 			changePage(val) {
 				this.page = val;

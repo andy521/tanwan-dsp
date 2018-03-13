@@ -32,9 +32,9 @@ Axios.interceptors.request.use(
 		return config;
 	},
 	error => {
-		Message.info(error);
+		Message.info(res.data.msg);
 		console.log('拦截器' + error);
-		return Promise.reject(error.data.error.message);
+		return Promise.reject(error);
 	}
 );
 
@@ -50,60 +50,50 @@ Axios.interceptors.response.use(
                     path: '/login',
                     query: {redirect: router.currentRoute.fullPath}
                 });
-				//console.log('去登录')
 			}
 			Message.info(res.data.msg);
-			//return Promise.reject(res.data);
+			return Promise.reject(res.data.msg);
         }
 		return res.data;
 	},
 	error => {
 		// 返回 response 里的错误信息
-		Message.info(res.data.ret);
+		Message.info(res.data.msg);
 		console.log('拦截器' + error);
 		return Promise.reject(error);
 	}
 );
 
 export default {
-	//get请求
 	get(url, opt) {
 		return new Promise((resolve, reject) => {
-			let sid = util.getItem('sessionid');
-			//console.log(sid)
-			let param = Object.assign({
-				'sessionid': sid
-			}, opt)
-			Axios({
-				method: 'get',
-				url,
-				params: param,
-				cancelToken: new CancelToken(c => {
-					cancel = c
-				})
-			}).then(res => {
-				resolve(res)
-			})
+			let param = Object.assign({'sessionid': util.getItem('sessionid')}, opt);
+            Axios({
+                method: 'get',
+                url,
+                params: param,
+                cancelToken: new CancelToken(c => {
+                    cancel = c
+                })
+            }).then(res => {
+                resolve(res)
+            })
 		})
 	},
-	//post请求
 	post(url, opt) {
 		return new Promise((resolve, reject) => {
-			let sid = util.getItem('sessionid'),
-				param = Object.assign({
-					'sessionid': sid
-				}, opt)
-			Axios({
-					method: 'post',
-					url,
-					data: param,
-					cancelToken: new CancelToken(c => {
-						cancel = c
-					})
-				})
-				.then(res => {
-					resolve(res)
-				})
+			let param = Object.assign({'sessionid': util.getItem('sessionid')}, opt);
+            Axios({
+                method: 'post',
+                url,
+                data: param,
+                cancelToken: new CancelToken(c => {
+                    cancel = c
+                })
+            })
+            .then(res => {
+                resolve(res)
+            })
 		})
 	}
-}
+};
