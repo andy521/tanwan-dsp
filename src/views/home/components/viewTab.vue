@@ -79,7 +79,7 @@
 			</div>
 		</div>
 
-		<Table :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397"></Table>
+		<Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397"></Table>
 		<Row class="margin-top-10">
 			<Col span="10">
 			<Radio-group v-model="tableSize" type="button">
@@ -138,22 +138,46 @@
 								return h('span', params.row.media_name)
 							}
 						}
-					},
-					{
-						title: '账户名',
-						key: 'account_name'
-					},
+					},                
+                    {
+                        title: '账户名', key: 'account_name',
+                        render: (h, params) => {
+                            return h('Button', {
+                                props: {
+                                    type: 'text',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        let query = {id: params.row.account_id};
+                                        //跳转到计划总览
+                                        this.$router.push({
+                                            name: 'time_plan',
+                                            query: query
+                                        });
+                                    }
+                                }
+                            }, params.row.account_name)
+                        }
+                    }, 
 					{
 						title: '曝光',
 						key: 'impression',
 						sortable: 'custom',
-					},
-					{
+					},					                   
+                    {
 						title: '点击数',
 						key: 'click',
 						sortable: 'custom',
-					},
-
+                    },
+                    {
+						title: '点击率',
+						key: 'click_per',
+						sortable: 'custom',
+                    }, 
 					{
 						title: '推广余额',
 						key: 'balance',
