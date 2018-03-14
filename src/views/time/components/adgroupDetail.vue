@@ -200,7 +200,7 @@
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.device_price" :key="this">{{subitem.name}}</em>
 					</span>
 				</div>
-				<Button type="ghost" shape="circle" icon="edit" @click="editTargeting"></Button>
+				<Button type="ghost" icon="edit" @click="editTargeting">修改定向</Button>
 			</div>
 		</div>
 		<div slot="footer">
@@ -219,7 +219,7 @@
 			return {
 				detailswin: false,
 				value1: 0,
-				campaign_id:'',
+				campaign_id: '',
 				adgroup_detail: {
 					adcreative: [{
 						"adcreative_elements": {
@@ -285,14 +285,13 @@
 			//编辑
 			editTargeting() {
 				let query = {
-					account_id: this.adgroup_detail.account_id,
-					campaign_id:this.adgroup_detail.campaign_id,
-					targeting_id:this.adgroup_detail.targeting_id,
+					adgroup_detail: this.adgroup_detail,
+					account_id: this.adgroup_detail.account_id
 				};
 				this.$router.push({
 					name: 'newad',
 					params: query
-				});		
+				});
 			}
 		},
 		watch: {

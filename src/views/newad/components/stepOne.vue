@@ -175,12 +175,9 @@
 			}
 		},
 		mounted() {
-			this.campaign_id = this.$route.params.campaign_id;
-			//判断是否有推广计划id,没有返回选择
-			if(!this.account_id)
-				this.$router.push({
-					name: 'user_accounts'
-				});
+			if(this.$route.params.adgroup_detail) {
+				this.campaign_id = this.$route.params.adgroup_detail.campaign_id;
+			}
 			//请求推广计划
 			this.$store.dispatch('getCampaigns', this.account_id);
 		},

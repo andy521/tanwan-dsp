@@ -32,7 +32,7 @@ Axios.interceptors.request.use(
 		return config;
 	},
 	error => {
-		Message.info(res.data.msg);
+		//Message.info(res.data.msg);
 		console.log('拦截器' + error);
 		return Promise.reject(error);
 	}

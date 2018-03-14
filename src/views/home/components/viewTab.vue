@@ -221,7 +221,7 @@
 						key: 'author'
 					},
 					{
-						title: '备注',
+						title: '日期',
 						key: 'date'
 					}
 				],

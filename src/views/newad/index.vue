@@ -117,18 +117,20 @@
 		},
 		mounted() {
 			this.account_id = this.$route.params.account_id;
-			this.campaign_id = this.$route.params.campaign_id;
-			this.targeting_id = this.$route.params.targeting_id;
+
+			if(this.$route.params.adgroup_detail) {
+				console.log(this.$route.params.adgroup_detail)
+				this.campaign_id = this.$route.params.adgroup_detail.campaign_id;
+				this.targeting_id = this.$route.params.adgroup_detail.targeting_id;
+			}
 			//判断有没有id
 			if(!this.account_id) {
-				this.$router.push({
-					name: 'user_accounts'
-				});
+				this.$router.go(-1);
 			};
-			
-//			if(this.campaign_id) {
-//				this.setp = [1, 0];
-//			};
+
+			if(this.campaign_id) {
+				this.setp = [1, 0];
+			};
 
 			//获取所有状态
 			this.$store.dispatch('get_ads_config');
@@ -180,7 +182,7 @@
 					'billing_event': this.adgroup.billing_event, //计费类型
 					'bid_amount': this.adgroup.bid_amount, //广告出价，单位为分
 					'optimization_goal': this.adgroup.optimization_goal, //广告优化目标类型
-					'daily_budget': this.adgroup.daily_budget, //日限额，单位为分
+					'daily_budget': this.adgroup.daily_budget*100, //日限额，单位为分
 					'product_refs_id': this.product_refs_id, //标的物 id
 					'sub_product_refs_id': '', //子标的物 id
 					'targeting_id': this.targeting_id, //定向 id
@@ -199,9 +201,7 @@
 					if(res.ret == 1) {
 						this.$Message.info(res.msg);
 						console.log(res.msg)
-						this.$router.push({
-							name: 'time_ad'
-						});
+						this.$router.go(-1);
 					}
 				}).catch(err => console.log('广告组' + err))
 			}

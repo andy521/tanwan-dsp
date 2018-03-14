@@ -8,7 +8,9 @@ const newad = {
 		product_type: [], //标的物类型
 		configured_status: [], //状态类型
 		speed_mode: [], //投放速度模式
-		targetings: [], //定向
+		targetings: {
+			list:[]
+		}, //定向
 		targeting_tags: [], //定向标签(地域)
 		business_interest: [], //商业兴趣
 		CustomAudiences: '', //获取自定义人群

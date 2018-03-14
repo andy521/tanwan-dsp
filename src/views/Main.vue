@@ -152,7 +152,7 @@
                 this.shrink = !this.shrink;
             },
             quitLogin () {
-                console.log('退出登录');                
+                //console.log('退出登录');                
                 this.$store.dispatch('LoginOut', this);
                 this.$store.commit('clearOpenedSubmenu');
                 this.$router.push({name: 'login'});
@@ -189,6 +189,7 @@
         },
         mounted () {
             this.init();
+            //获取消息
             this.$store.dispatch('getMessages');
 	    }
     };
