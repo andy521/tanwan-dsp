@@ -72,18 +72,7 @@
 					<Button type="primary" @click="back">返回</Button>
 				</div>
 				<!--搜索游戏列表-->
-				<div v-else>
-					<search-tree :callback="getids"></search-tree>
-					<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
-						<Option value="0">全部媒体账号</Option>
-						<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
-					</Select>
-					<Select v-model="CampaignsListModel" :value="CampaignsListModel" multiple filterable class="sel_state1" placeholder="请选择广告" v-if="campaignslist.length>1">
-						<Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
-					</Select>
-					<Input v-model="campaign_name" class="inp" placeholder="请输入关键字"></Input>
-					<Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
-				</div>
+ 
 				</Col>
 				<Col span="5" style="text-align: right;">
 				<Button type="ghost" @click="copyAdwin=true">复制</Button>
@@ -218,7 +207,6 @@
 		},
 		data() {
 			return {
-				params: this.$route.query,
 				loading: false,
 				adList: [], //数据列表
 				GameListIds: [], //搜索返回ids
@@ -512,7 +500,6 @@
 							})])]
 						}
 					},
-
 					{
 						title: '展示PV',
 						sortable: 'custom',
@@ -581,12 +568,6 @@
 						key: 'download_per',
 						width: 150
 					},
-					//
-					//					{
-					//						title: '出价',
-					//						key: 'bid_mode',
-					//						width: 150
-					//					},
 					{
 						title: '注册',
 						sortable: 'custom',
@@ -804,10 +785,6 @@
 				if(row._disabled) {
 					return 'table-statistics';
 				}
-			},
-			//返回
-			back() {
-				this.$router.go(-1)
 			}
 		},
 		computed: {

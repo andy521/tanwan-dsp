@@ -20,10 +20,10 @@ module.exports = merge(webpackBaseConfig, {
 	
     output: {
 		//用ExtractTextPlugin 来抽离css,css中img的路径会出现问题，通过设置publicPath 解决，采用绝对路径 http://blog.csdn.net/zshake/article/details/72453045
-		publicPath: 'dist/',
-		//publicPath: 'http://ads.vue.tanwan.com/dist/',
-        filename: '[name].js',
-        chunkFilename: '[name].chunk.js'
+		//publicPath: 'dist/',
+		publicPath: 'http://ads.vue.tanwan.com/dist/',
+        filename: '[name].[hash].js',
+        chunkFilename: '[name].[hash].chunk.js'
     },
 	
 	plugins: [

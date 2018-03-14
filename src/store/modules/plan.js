@@ -17,6 +17,7 @@ const plan = {
 		GET_CAMPAIGNS(state, data) {
 			state.campaignslist = data;
 		},
+
 		GET_MEDIA(state, data) {
 			state.Media = data;
 		}

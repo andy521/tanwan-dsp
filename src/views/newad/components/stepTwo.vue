@@ -1028,10 +1028,6 @@
 				this.$store.dispatch('get_CustomAudiences_ex', data);
 			},
 			//选择定向
-			changetargetings(targeting_id) {			
-				this.targetings.forEach(item => {
-					console.log(this.targeting_id,item.targeting_id)
-					if(item.targeting_id == targeting_id) {						
 						this.targeting_item = item;
 						var result = item.targeting.age[0].split("~");
 						this.age = [parseInt(result[0]), parseInt(result[1])];

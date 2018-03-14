@@ -348,11 +348,6 @@
 												}
 												Axios.post('api.php', {
 													action: 'gdtAdPut',
-													opt: 'adgroups_add',
-													do: 'edit',
-													account_id: params.row.account_id, //*必传*
-													adgroup_id: params.row.adgroup_id, //传这个值就是修改当前计划 不传就是添加新的计划
-													adgroup_name: value
 												}).then(
 													res => {
 														if(res.ret == 1) {
@@ -501,8 +496,6 @@
 													opt: 'adgroups_add',
 													do: 'edit',
 													account_id: params.row.account_id, //*必传*
-													adgroup_id: params.row.adgroup_id,
-													daily_budget: value * 100, //日消耗限额	
 												}).then(
 													res => {
 														if(res.ret == 1) {
@@ -521,11 +514,7 @@
 								}
 							})])]
 						}
-					}, {
-						title: '产品名称',
-						key: 'game_name',
-						width: 200
-					}, {
+  {
 						title: '展示PV',
 						sortable: 'custom',
 						key: 'show_pv',
