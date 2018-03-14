@@ -701,7 +701,7 @@
 					action: 'adData',
 					opt: 'tasck_add',
 					act: 'cp_adgroup',
-					MeidaType: 'Gdt',
+					type: 'gdt',
 					account_id: this.formItem.account_id,
 					idArr: this.taCheckids.join(',')
 				}).then(

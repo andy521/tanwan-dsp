@@ -606,7 +606,7 @@
 						title: '注册设备成本',
 						sortable: 'custom',
 						key: 'reg_imei_cost',
-						width: 150
+						width: 150,						
 					},
 					{
 						title: '注册成本',
@@ -746,7 +746,7 @@
 					action: 'adData',
 					opt: 'tasck_add',
 					act: 'cp_campaigns',
-					MeidaType: 'Gdt',
+					type: 'gdt',
 					account_id: this.formItem.account_id,
 					campaign_id: this.formItem.campaign_id,
 					idArr: this.taCheckids.join(',')

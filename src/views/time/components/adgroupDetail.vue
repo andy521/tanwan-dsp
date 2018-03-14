@@ -200,7 +200,7 @@
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.device_price" :key="this">{{subitem.name}}</em>
 					</span>
 				</div>
-				<Button type="ghost" icon="edit" @click="editTargeting">修改定向</Button>
+				<Button type="ghost" icon="edit" @click="editTargeting">修改定向1</Button>
 			</div>
 		</div>
 		<div slot="footer">
@@ -284,6 +284,9 @@
 		methods: {
 			//编辑
 			editTargeting() {
+				
+				this.detailswin = false;
+				console.log(this.detailswin)
 				let query = {
 					adgroup_detail: this.adgroup_detail,
 					account_id: this.adgroup_detail.account_id
