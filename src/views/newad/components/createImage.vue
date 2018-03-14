@@ -1,7 +1,7 @@
 <style>
 .ivu-upload-drag{background: #f8f9fa;border: 1px solid rgba(57,73,103,.18);border-radius: 0;}
 .ivu-upload-drag:hover{border-style: solid;}
-.upload{padding: 60px 0;height: 200px;color: #a7abb1; position: relative;}
+.upload{padding: 50px 0;height: 200px;color: #a7abb1; position: relative; line-height: 1.8;}
 .size{font-weight: 900; font-size: 22px;}
 .way{font-weight: 900;font-size: 14px;line-height: 2;}
 .name{margin-top: -2px;}
@@ -105,11 +105,15 @@
     float: left;
     margin: 6px 0 0 6px;
 }
+.ivu-spin-fix .ivu-spin-main{
+    width: 100%;
+    line-height: 1.8;
+}
 </style>
 <template>
     <div class="creative">   
         <Spin v-if="loading" fix>
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+            <Progress :percent="percent" :stroke-width="5"></Progress>
             <div>正在上传</div>
         </Spin>        
         <Upload
@@ -119,24 +123,23 @@
             :show-upload-list="false"
             :max-size="imgSize"
             :action="actionUrl"
-            :on-success="handleSuccess"        
+            :on-success="handleSuccess"  
+            :on-exceeded-size="handleMaxSize"
             :on-format-error="handleFormatError"
             :before-upload="handleBeforeUpload"
             :on-progress="handleProgress"
             :on-error="handleError"
             >
-            <div class="upload" v-on:mouseenter="model.isShowGallery = true" v-on:mouseleave="model.isShowGallery = false">                
+            <div class="upload" v-on:mouseenter="model.isShowGallery = true" v-on:mouseleave="model.isShowGallery = false">
                 <div class="imgbox" v-show="isShowImg" :style="'background-image:url(' + preview_url+ ')'">
                     <div class="ts">
                         <p>请上传图片尺寸为：{{size}}(px)<br>
                         点击重新上传</p>
                     </div>
                 </div>
-                <div class="size">{{size}}(px)</div>
-                <p>(推荐尺寸)</p>
+                <div class="size">{{size}}(px)</div>                
                 <p class="way">点击或将文件拖拽到这里上传</p>  
                 <p>{{des}}</p>
-
             </div>            
         </Upload>        
         <div class="name">
@@ -209,6 +212,7 @@ import util from '@/utils/index';
             return {                
                 //上传图片loading
                 loading:false,
+                percent:0,
                 //是否显示预览图片
                 isShowImg:false,
                 //预览图片地址
@@ -216,7 +220,7 @@ import util from '@/utils/index';
                 //action 上传地址
                 actionUrl:"",
                 //图片大小
-                imgSize:10000,
+                imgSize:0,
                 //图片描述
                 remark: '',
                 //上传格式
@@ -249,11 +253,13 @@ import util from '@/utils/index';
 			},
         },
         methods: {
+            //图库确认
             ok () {
                 this.preview_url = this.model.preview_url;
                 this.info.image_id = this.model.image_id;
                 this.isShowImg = true; 
             },
+            //图库
             galleryLink(){
                 this.model.galleryModal=true;
                 let size = this.size.split('*');
@@ -264,6 +270,7 @@ import util from '@/utils/index';
                 };
                 this.$store.dispatch('get_gallery',param);
             },
+            //选择图库图片
             selectCreated(id){
                 this.model.sid = id;                
                 this.gallery.list.forEach(item=>{
@@ -281,14 +288,19 @@ import util from '@/utils/index';
             },
             //图片上传成功            
             handleSuccess(filte){
-                console.log(filte)
-                this.loading = true;
+                console.log(filte)                
                 if(filte.ret == '1'){
-                    this.loading = false;     
                     this.isShowImg = true;             
                     this.info.image_id = filte.data.image_id;
                     this.preview_url = filte.data.preview_url;
                     this.$emit('on-change', this.info);                    
+                }
+                if(filte.ret == '-1'){
+                    this.isShowImg = false;
+                    this.$Notice.warning({
+                        title: '图片尺寸不正确',
+                        desc: filte.msg
+                    });
                 }
             },
             handleFormatError (file) {
@@ -298,18 +310,31 @@ import util from '@/utils/index';
                 });
             },
             handleBeforeUpload (file) {
+                // console.log(file)
+                // console.log(this.imgSize)
                 // this.$Notice.warning({
                 //     title: '文件准备上传',
                 //     desc: '文件 ' + file.name + ' 准备上传。'
                 // });
             },
             handleProgress (event, file) {
-                console.log(event.percent)
+                this.loading = true;
+                this.percent = event.percent;
+                if(event.percent === 100){
+                    this.loading = false; 
+                }
+                //console.log(event.percent)
                 // this.$Notice.info({
                 //     title: '文件正在上传',
                 //     desc: '文件 ' + file.name + ' 正在上传。'
                 // });
 
+            },
+            handleMaxSize (file) {
+                this.$Notice.warning({
+                    title: '超出文件大小限制',
+                    desc: '文件 ' + file.name + ' 太大，不能超过' + this.imgSize + 'KB。'
+                });
             },
             handleError (event, file) {
                 this.$Notice.error({
@@ -318,9 +343,13 @@ import util from '@/utils/index';
                 });
             },
         },
-        mounted() {
-            this.imgSize = parseInt(this.format);
-            this.actionUrl = 'http://ads.tanwan.com/api.php?action=gdtAdPut&opt=adsimg_doadd&account_id=' + this.id + '&sessionid=' + util.getItem('sessionid') + '&remark=' + this.remark;
+        mounted() {            
+            let size = this.size.split('*'),
+                width = size[0],
+                height =size[1];          
+            this.imgSize = parseInt(this.quality);
+            this.actionUrl = 'http://ads.tanwan.com/api.php?action=gdtAdPut&opt=adsimg_doadd&account_id=' + this.id + '&sessionid=' + util.getItem('sessionid') + '&target_width=' + width + '&target_height=' + height + '&remark=' + this.remark
+            //上传图片的格式
             let gs = this.format.split('|'),
                 accept = [];
             gs.forEach(e => {

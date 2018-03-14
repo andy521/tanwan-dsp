@@ -15,36 +15,37 @@ const router = new VueRouter(RouterConfig);
 // 输出router
 export default router;
 
-
 router.beforeEach((to, from, next) => {
     iView.LoadingBar.start();
     Util.title(to.meta.title);     
-    if ( !Util.getItem('user') && to.name !== 'login') { // 判断是否已经登录且前往的页面不是登录页
+    if ( !Util.getItem('user') && to.name !== 'login') { 
+        // 判断是否已经登录且前往的页面不是登录页
         console.log('router' + '登录')
         next({
             name: 'login'
         });
-    } else if ( Util.getItem('user') && to.name === 'login') { // 判断是否已经登录且前往的是登录页
+    } else if ( Util.getItem('user') && to.name === 'login') { 
+        // 判断是否已经登录且前往的是登录页
         Util.title();
         next({
             name: 'home_index'
         });
     } else {
-        const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
-        
-        // console.log(curRouterObj.name); 登录时这个是没有的
-        if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
-
-            if (curRouterObj.access === parseInt( Util.getItem('access'))) {
-                Util.toDefaultPage([otherRouter, ...appRouter], to.name, router, next); // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
+        const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);  
+        // 需要判断权限的路由      
+        if (curRouterObj && curRouterObj.name !== undefined) { 
+            let access = Util.getItem('access');
+            if ( access.indexOf(curRouterObj.name) != -1 || access.indexOf('all') != -1 ) {
+                // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
+                Util.toDefaultPage([otherRouter, ...appRouter], to.name, router, next); 
             } else {
                 next({
                     replace: true,
                     name: 'error-403'
                 });
             }
-
-        } else { //没有配置权限的路由, 直接通过
+        } else { 
+            //没有配置权限的路由, 直接通过
             Util.toDefaultPage([...routers], to.name, router, next);
         }
     }    

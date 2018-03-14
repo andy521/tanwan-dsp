@@ -59,9 +59,8 @@
 				</div>
 			</Card>
 		</Row>
-
 		<!-- 按账户查看 - 按产品查看 -->
-		<view-tab :tdata="tableData" :media="media"></view-tab>
+		<view-tab :tdata="tdata" :media="media" @on-change="getData"></view-tab>
         <div></div>
 		<!-- 线性表格 -->
 		<linear-tabel :datas="echart"></linear-tabel> 
@@ -69,7 +68,7 @@
 		<Modal v-model="addBindId" title="选择媒体" @on-ok="addBindOk()" :loading="loading" ok-text="下一步">
 			<div class="padding-10">
 				<Select v-model="MeidaType">
-					<Option v-for="item in Medialist" :value="item.MeidaType" :key="this">{{ item.name }}</Option>
+					<Option v-for="item in media" :value="item.MeidaType" :key="this">{{ item.name }}</Option>
 				</Select>
 			</div>
 		</Modal>
@@ -90,7 +89,8 @@
 </template>
 
 <script>
-	import Axios from "@/api/index"
+    import Axios from "@/api/index"
+    import util from '@/utils/index';
 	import inforCard from './components/inforCard.vue';
 	import linearTabel from './components/linearTabel.vue';
 	import viewTab from './components/viewTab.vue';
@@ -107,35 +107,53 @@
 				authwin: false,
 				addBindId: false,
 				loading: true,
-				MeidaType: '',
-				authMedia: {}
+                MeidaType: '',                
+                authMedia: {},
+                //抽出数据
+                total: {impression:0,click:0,balance_1:0,balance_2:0,balance_4:0},
+                echart:[],
+                media:[],
+                tdata:{
+                    page_size:0,
+                    total_number:0,
+                    list:[]
+                },
 			};
-		},
-		computed: { // 计算属性的 getter
-			total() {
-				return this.$store.state.home.total;
-			},
-			echart() {
-				return this.$store.state.home.echart;
-			},
-			media() {
-				return this.$store.state.home.media;
-			},
-			tableData() {
-				return this.$store.state.home.tdata;
-			},
-			Medialist() {
-				return this.$store.state.plan.Media;
-			}
-		},
+        },    
 		methods: {
-			//获取账户总览总数据
-			getData() {
-				this.$store.dispatch('getOverview');
+            //获取账户总览总数据            
+			getData(param){
+                Axios.get('api.php',param).then( 
+                    res=>{
+                        if(res.ret == '1'){
+                            let data = res.data;
+                            this.echart = data.echart;
+                            this.tdata ={
+                                page_size:data.page_size,
+                                total_number:data.total_number,
+                                list:data.list   
+                            };
+                            this.total = data.total;
+                            //console.log(res.data)
+                        }
+                    }
+                ).catch( 
+                    err=>{ console.log('账户总览' + err) }
+                );
+
 			},
 			//获取媒体类型
 			getMedia() {
-				this.$store.dispatch('getMedia');
+				Axios.get('api.php',{'action':'api','opt':'getMedia'})
+                .then( 
+                    res=>{ 
+                        if(res.ret == '1'){
+                            this.media = res.data;
+                        }
+                    }
+                ).catch( 
+                    err=>{ console.log('获取媒体失败' + err) }
+                );
 			},
 			//新增绑定账户
 			addBindOk() {				
@@ -169,6 +187,12 @@
 		mounted() {
 			this.getData();
             this.getMedia();
-		}
+        },
+        // beforeDestroy() {    
+        //     this.$destroy()
+		// },
+        // destroyed() {
+        //     console.log('销毁完成状态')
+		// }
 	};
 </script>
