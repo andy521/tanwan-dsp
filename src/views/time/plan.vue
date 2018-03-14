@@ -668,7 +668,6 @@
 			}
 		},
 		mounted() {
-			console.log(this.params.id)
 			if(this.params.id) {
 				this.MediaListModel = this.params.id;
 			}

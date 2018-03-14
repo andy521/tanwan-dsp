@@ -157,10 +157,11 @@ const newad = {
 		//获取定向
 		get_targetings({
 			commit
-		}) {
+		},data) {
 			Axios.get('api.php', {
 				action: 'gdtAdPut',
-				opt: 'targetings'
+				opt: 'targetings',
+				account_id:data.account_id
 			}).then(res => {
 				commit('GET_TARGETINGS', res.data)
 			}).catch(
