@@ -28,7 +28,7 @@
     <div class="creative">    
         <div class="tit">广告创意</div>
         <h3>上传创意</h3>
-
+        
         <!-- 单个图片 -->
         <div class="cell">        
             <div class="item" v-for="(item,index) in element"  v-if=" item === 'image' || item == 'image2' "> 
@@ -52,7 +52,8 @@
 
         <!-- 文本资料 -->
         <div class="form">
-            <Alert type="error" v-if="verify.show" show-icon>{{verify.des}}</Alert>
+
+            <Alert type="error" v-show="verify.show" show-icon>{{verify.des}}</Alert>
             <Form :model="creativeForm" :label-width="90">
                 <div v-for="item in element">
 
@@ -188,74 +189,77 @@ export default {
         submit(){
             //把包数据 (创意元素，不同 adcreative_template_id 要求的元素不尽相同)
             let pack = {},
-                temp = this.template;  
-
-            this.element.forEach(item => {
-                console.log(item)
-                //title验证
-                if(item === 'title'){
-                    //判断是否必填写
-                    if(!!temp.title.required && this.title == ''){
-                        this.verify.show = true;
-                        this.verify.des = '请填写' + temp.title.name;
-                        return
-                    }
-                    if(this.title.length < temp.title.amount[0] || this.title.length > temp.title.amount[1]){
-                        this.verify.show = true;
-                        this.verify.des = temp.title.name + '/' + temp.title.des;
-                        return
-                    }
-                    pack.title = this.title;
-                }else if(item === 'image'){
-                    if(!!temp.image.required && this.image == ''){
-                        this.verify.show = true;
-                        this.verify.des = temp.image.name +'提交失败';
-                        return
-                    }else{
+                temp = this.template,
+                item = this.element;
+            //提交时验证数据   
+            for(let i =0,len=item.length; i<len; i++){
+                 switch(item[i]){
+                    case 'title':
+                        //判断是否必填写
+                        if(!!temp.title.required && this.title == ''){
+                            this.verify.show = true;
+                            this.verify.des = '请填写' + temp.title.name;
+                            return false;
+                        }
+                        if(this.title.length < temp.title.amount[0] || this.title.length > temp.title.amount[1]){
+                            this.verify.show = true;
+                            this.verify.des = temp.title.name + '/' + temp.title.des;
+                            return false;
+                        }
+                        this.verify.show = false;
+                        pack.title = this.title;
+                    break;
+                    case 'image':
+                        if(!!temp.image.required && this.image == ''){
+                            this.verify.show = true;
+                            this.verify.des = temp.image.name +'提交失败,请再次上传';
+                            return false;
+                        }
                         this.verify.show = false;
                         pack.image = this.image;
-                    }                    
-                }else if(item === 'image2'){
-                    if(!!temp.image2.required && this.image2 == ''){
-                        this.verify.show = true;
-                        this.verify.des = temp.image2.name +'提交失败';
-                        return
-                    }else{
+                    break;
+                    case 'image2':
+                        if(!!temp.image2.required && this.image2 == ''){    
+                            this.verify.show = true;
+                            this.verify.des = temp.image2.name +'提交失败,请再次上传';
+                            return false;
+                        }
                         this.verify.show = false;
                         pack.image2 = this.image2;
-                    }                    
-                }else if(item === 'description'){
-                    if(!!temp.description.required && this.description == ''){
-                        this.verify.show = true;
-                        this.verify.des = '请填写' + temp.description.name;
-                        return
-                    }else if(this.description.length < temp.description.amount[0] || this.description.length > temp.description.amount[1]){
-                        this.verify.show = true;
-                        this.verify.des = temp.description.name + '/' + temp.description.des;
-                        return
-                    }else{
+                    break;
+                    case 'description':
+                        if(!!temp.description.required && this.description == ''){
+                            this.verify.show = true;
+                            this.verify.des = '请填写' + temp.description.name;
+                            return false;
+                        }else if(this.description.length < temp.description.amount[0] || this.description.length > temp.description.amount[1]){
+                            this.verify.show = true;
+                            this.verify.des = temp.description.name + '/' + temp.description.des;
+                            return false;
+                        }
                         this.verify.show = false;
                         pack.description = this.description;
-                    }                    
-                }else if(item === 'element_story'){
-                    
-                    pack.element_story = this.element_story;
-                }else if(item === 'corporate'){  
-                    if(!!temp.corporate.child.required && this.corporate.corporate_name == ''){
-                        this.verify.show = true;
-                        this.verify.des = '请填写' + temp.corporate.name;
-                        return
-                    }else if(this.corporate.corporate_name.length < temp.corporate.child.amount[0] || this.corporate.corporate_name.length > temp.corporate.child.amount[1]){
-                        this.verify.show = true;
-                        this.verify.des = temp.corporate.child.name + '/' + temp.corporate.child.des;
-                    }else{
+                    break;
+                    case 'element_story':
+                        pack.element_story = this.element_story;
+                    break;
+                    case 'corporate':
+                        if(!!temp.corporate.child.required && this.corporate.corporate_name == ''){
+                            this.verify.show = true;
+                            this.verify.des = '请填写' + temp.corporate.child.name;
+                            return false;
+                        }else if(this.corporate.corporate_name.length < temp.corporate.child.amount[0] || this.corporate.corporate_name.length > temp.corporate.child.amount[1]){
+                            this.verify.show = true;
+                            this.verify.des = temp.corporate.child.name + '/' + temp.corporate.child.des;
+                            return false;
+                        }
                         this.verify.show = false;
                         pack.corporate = this.corporate;
-                    }
-                }
-            });
-            
+                    break;
+                }               
+            };
             if(!this.verify.show){
+                console.log(pack)
                 this.$emit('on-change', pack);
             }
         }

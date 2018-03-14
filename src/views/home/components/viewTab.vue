@@ -67,10 +67,10 @@
 
 			<div class="tr">
 				<Select :value="author_model" class="sel_state1" multiple filterable @on-change="authorChange" placeholder="请选择负责人">
-					<Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
+					<Option v-for="item in author" :value="item.author" :key="this">{{ item.author }}</Option>
 				</Select>
 				<Select @on-change="mediaChange" v-model="selectState" placeholder="按媒体筛选" style="width:120px" class="margin-right-10">
-					<Option v-for="item in mediaList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    <Option v-for="item in media" :value="item.MeidaType" :key="this">{{ item.name }}</Option>					
 				</Select>
 
 				<DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime" class="margin-right-10"></DatePicker>
@@ -79,7 +79,9 @@
 			</div>
 		</div>
 
-		<Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397"></Table>
+		<Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397">
+            <!-- <div slot="footer"></div> -->
+        </Table>
 		<Row class="margin-top-10">
 			<Col span="10">
 			<Radio-group v-model="tableSize" type="button">
@@ -97,14 +99,14 @@
 		</Row>
 	</Card>
 </template>
-<script>
-	import util from '@/utils/index';
+<script>	
+    import Axios from "@/api/index"
 	import { DateShortcuts, formatDate } from '@/utils/DateShortcuts.js';
 	export default {
 		name: 'viewTab',
 		props: {
 			media: Array,
-			tdata: Object
+			tdata: Object,
 		},
 		data() {
 			return {
@@ -127,8 +129,11 @@
 				orderField: '',
 				orderDirection: 'SORT_ASC',
 				//负责人
-				author_model: [],
-				tcolumns: [{
+                author_model: [],
+                author:[],
+				tcolumns: [
+
+                    {
 						title: '媒体',
 						key: 'media_name',
 						render: (h, params) => {
@@ -138,7 +143,8 @@
 								return h('span', params.row.media_name)
 							}
 						}
-					},                
+                    },    
+                                
                     {
                         title: '账户名', key: 'account_name',
                         render: (h, params) => {
@@ -227,11 +233,6 @@
 				],
 			}
 		},
-		watch: {
-			media(data) {
-				this.mediaList = util.mediaSelect(data);
-			}
-		},
 		methods: {
 			//这里的排序没有做哈哈哈
 			tableData(page) {
@@ -251,7 +252,7 @@
 					orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
 					author: this.author_model
 				};
-				this.$store.dispatch('getOverview', param);
+				this.$emit('on-change', param);
 			},
 			//分页
 			changePage(val) {
@@ -304,7 +305,17 @@
 			},
 			//获取负责人
 			getAuthor() {
-				this.$store.dispatch('getAuthor');
+                Axios.get('api.php',{'action':'api','opt':'getAuthor'})
+                .then( 
+                    res=>{ 
+                        if(res.ret == '1'){
+                            this.author = res.data
+                            //console.log(this.author)
+                        }
+                    }
+                ).catch( 
+                    err=>{ console.log('获取负责人' + err) }
+                ); 
 			},
 			//表格高亮calss
 			rowClassName(row, index) {
@@ -312,13 +323,7 @@
 					return 'table-statistics';
 				}
 			}
-		},
-		computed: {
-			//获取负责人
-			author() {
-				return this.$store.state.channel.author;
-			},
-		},
+        }, 
 		mounted() {
 			this.getMedia();
 			this.getAuthor();

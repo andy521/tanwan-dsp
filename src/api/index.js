@@ -4,7 +4,7 @@ import router from '../router/index';
 import util from '@/utils/index';
 import { Message } from 'iview';
 
-let cancel, promiseArr = {}
+let cancel, promiseArr = {};
 const CancelToken = axios.CancelToken;
 const Axios = axios.create({
 	baseURL: "http://ads.tanwan.com",

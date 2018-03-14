@@ -10,8 +10,10 @@ const app = {
         cachePage: [],
         lang: '',
         isFullScreen: false,
-        openedSubmenuArr: [], // 要展开的菜单数组
-        menuTheme: 'dark', // 主题
+        // 要展开的菜单数组
+        openedSubmenuArr: [], 
+        // 主题
+        menuTheme: 'dark', 
         themeColor: '',
         pageOpenedList: [{
             title: '首页',
@@ -33,7 +35,8 @@ const app = {
         ],
         tagsList: [...otherRouter.children],
         messageCount: 0,
-        dontCache: ['text-editor', 'artical-publish'] // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
+        // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
+        dontCache: ['text-editor', 'artical-publish'] 
     },
 
     mutations : {
@@ -43,33 +46,7 @@ const app = {
         },
         //更新菜单
         updateMenulist (state) {
-            let menuList = [];
-            //let accessCode = parseInt( Util.getItem('access') );            
-            // appRouter.forEach((item, index) => { 
-            //     if (item.children.length === 1) {
-            //         menuList.push(item);
-            //     } else {
-            //         let len = menuList.push(item);                      
-            //         let childrenArr = [];
-            //         childrenArr = item.children.filter(child => {
-            //             if (child.access !== undefined) {
-            //                 if (Util.showThisRoute(child.access, accessCode)) {
-            //                     return child;
-            //                 }
-            //             } else {
-            //                 return child;
-            //             }                        
-            //         });
-            //         if (childrenArr === undefined || childrenArr.length === 0) {
-            //             menuList.splice(len - 1, 1);
-            //         } else {
-            //             let handledItem = JSON.parse(JSON.stringify(menuList[len - 1]));
-            //             handledItem.children = childrenArr;
-            //             menuList.splice(len - 1, 1, handledItem);
-            //         }
-            //     }
-            // })
-
+            let menuList = [];            
             let access = Util.getItem('access'), _this = this;   
             if(!access){
                 return

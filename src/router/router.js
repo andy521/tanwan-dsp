@@ -1,5 +1,13 @@
 import Main from '@/views/Main.vue';
 // Main 框架的外层
+export const page404 = {
+    path: '/*',
+    name: 'error-404',
+    meta: {
+        title: '404-页面不存在'
+    },
+    component: () => import('@/views/error-page/404.vue')
+};
 
 export const loginRouter = {
     path: '/login',
@@ -18,7 +26,6 @@ export const newAd = {
     },
     component: () => import('@/views/newad/index.vue')
 };
-
 
 export const otherRouter = {
     path: '/user',

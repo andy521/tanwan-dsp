@@ -74,6 +74,7 @@
     </Card>
 </template>
 <script>
+import Axios from "@/api/index"
 import searchTree from '@/components/select-tree/searchTree.vue';
 import diyIndex from './components/diyIndex.vue';
 
@@ -110,16 +111,19 @@ export default {
             current_media:'',
             current_version:'',
             current_time:[],
-            current_author:[]
+            current_author:[],
+            list:[],
+            total_number:0,
+            total_page:0,
         }
     },
     computed :{ 
-        list(){
-            let channel = this.$store.state.channel;
-            this.total_number = channel.total_number;
-            this.total_page = channel.total_page;
-            return channel.list;
-        },
+        // list(){
+        //     let channel = this.$store.state.channel;
+        //     this.total_number = channel.total_number;
+        //     this.total_page = channel.total_page;
+        //     return channel.list;
+        // },
         //所有游戏
         game(){
             return this.$store.state.channel.game;
@@ -133,15 +137,15 @@ export default {
             return this.$store.state.channel.author;
         },
     },
-    watch: {
-        list(data){
-            //这里监听list变化了 把表格里loading隐藏  后期要考虑这样做是否妥当
-            if(data.length == 0){
-                this.$Message.info('没有查找到数据');
-            }
-            this.loading = false;
-        }
-    },
+    // watch: {
+    //     list(data){
+    //         //这里监听list变化了 把表格里loading隐藏  后期要考虑这样做是否妥当
+    //         if(data.length == 0){
+    //             this.$Message.info('没有查找到数据');
+    //         }
+    //         this.loading = false;
+    //     }
+    // },
     methods : {
         //获取所有游戏
         gameItem(){
@@ -170,6 +174,8 @@ export default {
                 this.page = page;
             };
             let param = { 
+                    action : 'api',
+                    opt : 'getGameTotalDay',
                     do : 'products',
                     game_id : this.current_game,
                     media_type : this.current_media,
@@ -186,7 +192,21 @@ export default {
                 param.tdate2 = this.current_time[1];
             }
             this.loading = true;
-            this.$store.dispatch('getChannelData',param);
+            Axios.get('api.php',param)
+            .then( 
+                res=>{
+                    if(res.ret == '1'){
+                        console.log(res.data)
+                        this.list = res.data.list;
+                        this.total_page = res.data.total_page;
+                        this.total_page = res.data.total_page;
+                        this.loading = false;
+                    }
+                }
+            ).catch( 
+                err=>{ console.log( err) }
+            );
+           // this.$store.dispatch('getChannelData',param);
         },
         //排序
         sortChange(column) {
