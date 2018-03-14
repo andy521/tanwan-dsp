@@ -43,7 +43,7 @@ npm run build
 
 ```
 # 项目地址
-http://ads.vue.tanwan.com/
+http://ads.vue.tanwan.com/   ID:sheji  psw : 123456
 
 http://e.qq.com/atlas/3415636/ad/create?from=listpage&id=44398031
 1517466390   Tanwan123

@@ -16,7 +16,7 @@
 .gallery_area{min-height: 40px; font-weight: 400; font-size: 14px; position: absolute; z-index: 10; left:0; top:calc(100% - 32px);width:100%; border: 1px solid #dbdee4;  text-align: center; background: #fff;box-shadow: 0 1px 5px rgba(0,0,0,.15);  color: #a7abb1;}
 .gallery_link{display: inline-block;font-size: 16px;padding: 0 30px;cursor: pointer;}
 .gallery_link:hover{background-color: #f5f6f8;}
-.created{margin:10px 0 10px 15px;height: 280px;overflow: auto;}
+.created{margin:10px 0 10px 15px;height: 280px;}
 .created li {
     height: 133px;
     line-height: 128px;
