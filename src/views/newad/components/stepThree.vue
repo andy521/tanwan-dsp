@@ -384,7 +384,7 @@
 						break;
 				};
 				if(!this.adgroup.adcreative_name) {
-					this.adgroup.adcreative_name = row.name + '/' + row.modus + '/' + row.description;
+					this.adgroup.adcreative_name = row.name;
 				}
 				this.$emit('on-edition', row.element);
 			},

@@ -27,7 +27,7 @@ export const otherRouter = {
     component: Main,
     children: [
         { path: 'useraccounts', title: '获取用户帐号', name: 'user_accounts',  component: () => import('@/views/time/userAccounts.vue') },
-        { path: 'msgdetails', title: '系统消息详情', name: 'user_msgdetails',  component: () => import('@/views/setid/systemMsgDetails.vue') }
+        { path: 'msgdetails', title: '系统消息详情', name: 'system_msg_details',  component: () => import('@/views/setid/systemMsgDetails.vue') },
     ]
 };
 

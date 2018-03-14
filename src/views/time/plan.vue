@@ -68,11 +68,17 @@
 		<Card shadow>
 			<Row>
 				<Col span="19">
-				<div v-if="params.id">
-					<Button type="primary" @click="back">返回</Button>
-				</div>
 				<!--搜索游戏列表-->
- 
+				<search-tree :callback="getids"></search-tree>
+				<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
+					<Option value="0">全部媒体账号</Option>
+					<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
+				</Select>
+				<Select v-model="CampaignsListModel" :value="CampaignsListModel" multiple filterable class="sel_state1" placeholder="请选择广告" v-if="campaignslist.length>1">
+					<Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
+				</Select>
+				<Input v-model="campaign_name" class="inp" placeholder="请输入关键字"></Input>
+				<Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
 				</Col>
 				<Col span="5" style="text-align: right;">
 				<Button type="ghost" @click="copyAdwin=true">复制</Button>
@@ -218,7 +224,7 @@
 				total_number: 1, //总数量
 				total_page: 1, //总页数
 				indeterminate: true,
-				checkAllGroup: ['campaign_name', 'campaign_id', 'impression', 'click', 'click_per', 'click_cost', 'cost', 'configured_status', 'daily_budget', 'game_name'], //默认选中				
+				checkAllGroup: ['configured_status', 'click_cost', 'click', 'click_per', 'fetch', 'fetch_per', 'install', 'click_install', 'reg_imei', 'activation', 'reg_per', 'reg_cost', 'reg_imei_cost', 'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'income_per', 'show_pv'], //默认选中
 				uncheck: [], //没选中的
 				visible: false,
 				visible1: false,
@@ -273,6 +279,11 @@
 								return h('span', '本页统计')
 							}
 						}
+					},
+					{
+						title: '计划',
+						key: 'campaign_id',
+						width: 150
 					},
 					{
 						title: '计划名称',
@@ -351,32 +362,9 @@
 						}
 					},
 					{
-						title: '计划',
-						key: 'campaign_id',
-						width: 150
-					},
-					{
-						title: '曝光',
-						sortable: 'custom',
-						key: 'impression',
-						width: 100
-					},
-					{
-						title: '点击量',
-						sortable: 'custom',
-						key: 'click',
-						width: 150
-					},
-					{
 						title: '点击率',
 						sortable: 'custom',
 						key: 'click_per',
-						width: 150
-					},
-					{
-						title: '点击均价',
-						sortable: 'custom',
-						key: 'click_cost',
 						width: 150
 					},
 					{
@@ -385,53 +373,6 @@
 						key: 'cost',
 						width: 150
 					},
-					{
-						title: '广告开关/状态',
-						key: 'configured_status',
-						width: 150,
-						render: (h, params) => {
-							if(!params.row.configured_status) {
-								return
-							} else {
-								return h('div', [
-									h('i-switch', {
-										props: {
-											size: "small",
-											value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
-										},
-										style: {
-											marginRight: '10px'
-										},
-										on: {
-											'on-change': (value) => {
-												params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
-												Axios.post('api.php', {
-													action: 'gdtAdPut',
-													opt: 'campaigns_add',
-													do: 'edit',
-													account_id: params.row.account_id, //*必传*
-													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划		
-													configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 											
-												}).then(
-													res => {
-														if(res.ret == 1) {
-															this.$Message.info(res.msg);
-															this.getCampaignsList(this.page);
-														}
-													}
-												).catch(
-													err => {
-														console.log('修改删除投放计划失败' + err)
-													}
-												)
-											}
-										}
-									}), h('span', params.row.configured_status == "AD_STATUS_NORMAL" ? '开启' : '关闭')
-								]);
-							}
-						}
-					},
-
 					{
 						title: '日消耗限额',
 						sortable: 'custom',
@@ -501,6 +442,58 @@
 						}
 					},
 					{
+						title: '广告开关/状态',
+						key: 'configured_status',
+						width: 150,
+						render: (h, params) => {
+							if(!params.row.configured_status) {
+								return
+							} else {
+								return h('div', [
+									h('i-switch', {
+										props: {
+											size: "small",
+											value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
+										},
+										style: {
+											marginRight: '10px'
+										},
+										on: {
+											'on-change': (value) => {
+												params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
+												Axios.post('api.php', {
+													action: 'gdtAdPut',
+													opt: 'campaigns_add',
+													do: 'edit',
+													account_id: params.row.account_id, //*必传*
+													campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划		
+													configured_status: params.row.configured_status, //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停 											
+												}).then(
+													res => {
+														if(res.ret == 1) {
+															this.$Message.info(res.msg);
+															this.getCampaignsList(this.page);
+														}
+													}
+												).catch(
+													err => {
+														console.log('修改删除投放计划失败' + err)
+													}
+												)
+											}
+										}
+									}), h('span', params.row.configured_status == "AD_STATUS_NORMAL" ? '开启' : '关闭')
+								]);
+							}
+						}
+					},
+					{
+						title: '曝光',
+						sortable: 'custom',
+						key: 'impression',
+						width: 100
+					},
+					{
 						title: '展示PV',
 						sortable: 'custom',
 						key: 'show_pv',
@@ -518,7 +511,12 @@
 						key: 'down_ip',
 						width: 150
 					},
-
+					{
+						title: '点击量',
+						sortable: 'custom',
+						key: 'click',
+						width: 150
+					},
 					{
 						title: '到达数',
 						sortable: 'custom',
@@ -531,7 +529,12 @@
 						key: 'fetch_per',
 						width: 150
 					},
-
+					{
+						title: '点击均价',
+						sortable: 'custom',
+						key: 'click_cost',
+						width: 150
+					},
 					{
 						title: '下载数',
 						sortable: 'custom',
@@ -568,6 +571,12 @@
 						key: 'download_per',
 						width: 150
 					},
+//
+//					{
+//						title: '出价',
+//						key: 'bid_mode',
+//						width: 150
+//					},
 					{
 						title: '注册',
 						sortable: 'custom',
@@ -649,9 +658,6 @@
 			}
 		},
 		mounted() {
-			if(this.params.id) {
-				this.MediaListModel = this.params.id;
-			}
 			this.getMedia();
 			this.getAuthor();
 			this.getCampaignsList();

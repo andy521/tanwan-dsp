@@ -5,6 +5,8 @@ const plan = {
 		gameList: [],
 		mediaList: [],
 		campaignslist: [],
+		adList: {},
+		Adgroups:{},
 		Media: []
 	},
 	mutations: {
@@ -17,7 +19,16 @@ const plan = {
 		GET_CAMPAIGNS(state, data) {
 			state.campaignslist = data;
 		},
-
+		GET_ADLIST(state, data) {
+			data.curr_page_total._disabled = true;
+			data.list.push(data.curr_page_total);
+			state.adList = data;
+		},
+		GET_ADGROUPS(state, data) {
+			data.curr_page_total._disabled = true;
+			data.list.push(data.curr_page_total);
+			state.Adgroups = data;
+		},
 		GET_MEDIA(state, data) {
 			state.Media = data;
 		}
@@ -134,7 +145,71 @@ const plan = {
 					console.log('修改删除投放计划失败' + err)
 				}
 			)
-		}
+		},
+
+		//获取实时投放计划
+		getAdList({
+			commit
+		}, data) {
+			Axios.post('api.php', {
+				action: 'gdtAdPut',
+				opt: 'campaigns',
+				tdate: data.tdate, //开始时间
+				edate: data.edate, //结速时间
+				page: data.page, //页码
+				page_size: data.page_size, //每页数量
+				game_id: data.game_id, //游戏id
+				account_id: data.account_id, //媒体账号
+				configured_status: data.configured_status, //过滤无数据的广告
+				campaign_id: data.campaign_id, //广告
+				campaign_name: data.campaign_name, //关键字
+				check_value: data.check_value, //状态
+				orderField: data.orderField, //排序的orderField参数名
+				orderDirection: data.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+				author: data.author //负责人
+			}).then(
+				res => {
+					commit('GET_ADLIST', res.data)
+				}
+			).catch(
+				err => {
+					console.log('获取实时投放计划' + err)
+				}
+			)
+		},
+
+		//获取实时投放广告
+		getAdgroups({
+			commit
+		}, data) {
+			Axios.post('api.php', {
+				action: 'gdtAdPut',
+				opt: 'adgroups',
+				tdate: data.tdate, //开始时间
+				edate: data.edate, //结速时间
+				page: data.page, //页码
+				page_size: data.page_size, //每页数量
+				game_id: data.game_id, //游戏id
+				account_id: data.account_id, //媒体账号
+				configured_status: data.configured_status, //过滤无数据的广告
+				campaign_id: data.campaign_id, //广告
+				adgroup_name: data.adgroup_name, //关键字
+				check_value: data.check_value, //状态
+				orderField: data.orderField, //排序的orderField参数名
+				orderDirection: data.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+				author: data.author //负责人
+			}).then(
+				res => {
+					commit('GET_ADGROUPS', res.data)
+				}
+			).catch(
+				err => {
+					console.log('获取实时投放广告' + err)
+				}
+			)
+		},
+
+	
 	}
 };
 
