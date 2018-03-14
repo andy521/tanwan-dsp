@@ -586,7 +586,7 @@
 					{
 						title: '注册设备成本',
 						sortable: 'custom',
-						key: 'reg_imei_cost',
+						key: 'reg_cost',
 						width: 150
 					},
 					{
@@ -598,7 +598,7 @@
 					{
 						title: '注册成本',
 						sortable: 'custom',
-						key: 'reg_cost',
+						key: 'reg_imei_cost',
 						width: 150
 					},
 					{
