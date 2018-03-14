@@ -8,7 +8,9 @@ const newad = {
 		product_type: [], //标的物类型
 		configured_status: [], //状态类型
 		speed_mode: [], //投放速度模式
-		targetings: [], //定向
+		targetings: {
+			list:[]
+		}, //定向
 		targeting_tags: [], //定向标签(地域)
 		business_interest: [], //商业兴趣
 		CustomAudiences: '', //获取自定义人群
@@ -155,10 +157,11 @@ const newad = {
 		//获取定向
 		get_targetings({
 			commit
-		}) {
+		},data) {
 			Axios.get('api.php', {
 				action: 'gdtAdPut',
-				opt: 'targetings'
+				opt: 'targetings',
+				account_id:data.account_id
 			}).then(res => {
 				commit('GET_TARGETINGS', res.data)
 			}).catch(
@@ -244,7 +247,7 @@ const newad = {
             .then( 
                 res=>{ commit('GET_GALLERY', res.data) }
             ).catch( 
-                err=>{ console.log('获取图库失败' + err) }
+                err=>{ console.log('获取媒体失败' + err) }
             ); 
         }
 	}

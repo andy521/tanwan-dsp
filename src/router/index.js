@@ -5,11 +5,6 @@ import {routers, otherRouter, appRouter} from './router';
 import Util from '@/utils/index';
 Vue.use(VueRouter);
 
-// 路由配置  https://router.vuejs.org/zh-cn/essentials/history-mode.html
-const RouterConfig = {
-    //mode: 'history',   //在创建router对象中，如果不配置mode，就会使用默认的hash模式，该模式下路径格式化为#!开关。
-    routes: routers  
-};
 
 const router = new VueRouter(RouterConfig);
 // 输出router

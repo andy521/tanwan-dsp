@@ -999,7 +999,7 @@
 				this.targeting_id = this.$route.params.targeting_id;
 			};
 			//请求定向
-			this.$store.dispatch('get_targetings');
+			this.$store.dispatch('get_targetings',this.account_id);
 			//请求定向标签(地域)
 			this.$store.dispatch('get_targeting_tags');
 			//获取商业兴趣
@@ -1028,9 +1028,6 @@
 				this.$store.dispatch('get_CustomAudiences_ex', data);
 			},
 			//选择定向
-			changetargetings(targeting_id) {
-				this.targetings.forEach(item => {
-					if(item.targeting_id == targeting_id) {
 						this.targeting_item = item;
 						var result = item.targeting.age[0].split("~");
 						this.age = [parseInt(result[0]), parseInt(result[1])];

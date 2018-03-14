@@ -2,7 +2,6 @@ let util = {
 
 };
 util.title = function (title) {
-    title = title || '贪玩DSP投放后台';
     window.document.title = title;
 };
 

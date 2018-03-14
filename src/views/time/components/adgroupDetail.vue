@@ -200,7 +200,7 @@
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.device_price" :key="this">{{subitem.name}}</em>
 					</span>
 				</div>
-				<Button type="ghost" shape="circle" icon="edit" @click="editTargeting"></Button>
+ 
 			</div>
 		</div>
 		<div slot="footer">
