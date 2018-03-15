@@ -116,12 +116,12 @@
 			}
 		},
 		mounted() {
-			this.account_id = this.$route.params.account_id;
+			this.account_id = this.$route.query.account_id;
 
-			if(this.$route.params.adgroup_detail) {
-				console.log(this.$route.params.adgroup_detail)
-				this.campaign_id = this.$route.params.adgroup_detail.campaign_id;
-				this.targeting_id = this.$route.params.adgroup_detail.targeting_id;
+			if(this.$route.query.adgroup_detail) {
+				console.log(this.$route.query.adgroup_detail)
+				this.campaign_id = this.$route.query.adgroup_detail.campaign_id;
+				this.targeting_id = this.$route.query.adgroup_detail.targeting_id;
 			}
 			//判断有没有id
 			if(!this.account_id) {

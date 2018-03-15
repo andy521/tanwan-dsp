@@ -119,24 +119,6 @@
 							</div>
 						</div>
 					</Poptip>
-					<!--<Poptip placement="bottom-start" v-model="visible1">
-						<Button type="ghost">修改日期</Button>
-						<div class="api" slot="content">
-							<div v-if="!startdate">
-								<DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy/MM/dd" :value="date2"></DatePicker>
-							</div>
-							<div class="tipbtn margin-top-10">
-								<Checkbox v-model="startdate">长期投放（仅设置开始时间）</Checkbox>
-							</div>
-							<div class="tipbtn margin-top-10" v-if="startdate">
-								<DatePicker type="date" placement="bottom-start" placeholder="请选择日期" format="yyyy/MM/dd" :value="date1"></DatePicker>
-							</div>
-							<div class="tipbtn margin-top-10">
-								<Button type="text" size="small" @click="visible1 = false">取消</Button>
-								<Button type="primary" size="small" @click="visible1 = false">确定</Button>
-							</div>
-						</div>
-					</Poptip>-->
 					<Button type="ghost" @click="exportData()">下载报表</Button>
 				</div>
 				</Col>
@@ -217,7 +199,7 @@
 		},
 		data() {
 			return {
-				params: this.$route.params,
+				params: this.$route.query,
 				mediaList: [], //媒体账号列表
 				campaignslist: [], //推广计划列表
 				campaignslistform: [], //复制推广计划列表

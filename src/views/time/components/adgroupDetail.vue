@@ -284,16 +284,14 @@
 		methods: {
 			//编辑
 			editTargeting() {
-				
 				this.detailswin = false;
-				console.log(this.detailswin)
 				let query = {
 					adgroup_detail: this.adgroup_detail,
 					account_id: this.adgroup_detail.account_id
 				};
 				this.$router.push({
 					name: 'newad',
-					params: query
+					query: query
 				});
 			}
 		},

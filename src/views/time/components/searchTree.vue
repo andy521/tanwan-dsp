@@ -91,14 +91,14 @@
 							title: item.game_name,
 							game_id: item.game_id,
 							game_byname: item.game_byname,
-							expand: true
+							expand: false
 						}
 						children.push(newv)
 					});
 					let newitem = {
 						title: item.name,
 						top: item.top,
-						expand: true,
+						expand: false,
 						children: children
 					}
 					newlist.push(newitem)

@@ -283,7 +283,7 @@
 										};
 										this.$router.push({
 											name: 'time_ad',
-											params: query
+											query: query
 										});
 									}
 								}

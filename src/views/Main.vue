@@ -191,6 +191,10 @@
             this.init();
             //获取消息
             this.$store.dispatch('getMessages');
+            
+            
+            
+            
 	    }
     };
 </script>
