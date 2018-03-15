@@ -125,14 +125,12 @@
 			getData(param){
                 Axios.get('api.php',param).then( 
                     res=>{
-                        if(res.ret == '1'){
+                         if(res.ret == '1'){
                             let data = res.data;
                             this.echart = data.echart;
-                            this.tdata ={
-                                page_size:data.page_size,
-                                total_number:data.total_number,
-                                list:data.list   
-                            };
+                             res.data.curr_page_total._disabled = true;
+				            res.data.list.push(data.curr_page_total)
+                            this.tdata =data;
                             this.total = data.total;
                             //console.log(res.data)
                         }
