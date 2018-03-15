@@ -34,7 +34,7 @@
 	}
 	
 	.carousel {
-		width: 300px;
+		width: 250px;
 		border: solid 1px #eee;
 		position: relative;
 	}
@@ -120,7 +120,7 @@
 			<div class="w_flex" v-if="adgroup_detail.adcreative.length>0">
 				<div class="w_flex_hd">创意</div>
 				<div class="w_flex_bd">
-					<Carousel class="carousel" v-model="CarouselItem" arrow="always" trigger="hover" :height="300">
+					<Carousel class="carousel" v-model="CarouselItem" arrow="always" trigger="hover" :height="250">
 						<CarouselItem class="carouselitem" v-for="item in adgroup_detail.adcreative" :key="this">
 							<div class="carouselbox">
 								<div class="txt">{{item.adcreative_name}}</div>
