@@ -1,4 +1,4 @@
-<style>
+<style >
 	.ivu-tag-border,
 	.ivu-tag-border.ivu-tag-red {
 		border: none!important;
@@ -43,12 +43,7 @@
 	.tr {
 		float: right;
 		margin-top: -8px;
-	}
-	
-	.sel_state1 {
-		text-align: left;
-		width: 200px;
-	}
+	} 
 	
 	.sel_state1.ivu-select-multiple .ivu-select-selection {
 		overflow: auto;
@@ -59,6 +54,12 @@
 		color: #2b7ed1;
 		font-weight: bold;
 	}
+    .smedia{
+        display:inline-block;
+        width: auto;
+        min-width: 150px;
+        margin: 0 10px;
+    }
 </style>
 <template>
 	<Card dis-hover shadow class="margin-top-10">
@@ -66,12 +67,10 @@
 			<Icon type="ios-paper"></Icon> 按账户查看
 
 			<div class="tr">
-				<Select :value="author_model" class="sel_state1" multiple filterable @on-change="authorChange" placeholder="请选择负责人">
-					<Option v-for="item in author" :value="item.author" :key="this">{{ item.author }}</Option>
-				</Select>
-				<Select @on-change="mediaChange" v-model="selectState" placeholder="按媒体筛选" style="width:120px" class="margin-right-10">
-                    <Option v-for="item in media" :value="item.MeidaType" :key="this">{{ item.name }}</Option>					
-				</Select>
+
+                <select-author  @on-change="authorChange"></select-author>
+
+                <select-media class="smedia" @on-change="mediaChange"></select-media>
 
 				<DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime" class="margin-right-10"></DatePicker>
 
@@ -101,8 +100,14 @@
 </template>
 <script>	
     import Axios from "@/api/index"
+    import selectMedia from '@/components/select-media/index.vue';
+    import selectAuthor from '@/components/select-author/index.vue';
 	import { DateShortcuts, formatDate } from '@/utils/DateShortcuts.js';
 	export default {
+        components: {
+            selectMedia,
+            selectAuthor
+        },
 		name: 'viewTab',
 		props: {
 			media: Array,
@@ -111,8 +116,6 @@
 		data() {
 			return {
 				num: 0,
-				selectState: [],
-				mediaList: [],
 				//日期辅助功能
 				options: DateShortcuts,
 				//每页数量 
@@ -281,10 +284,6 @@
 				this.media_type = val;
 				this.tableData();
 			},
-			//获取筛选媒体
-			getMedia() {
-				this.$store.dispatch('getMedia');
-			},
 			//排序
 			sortChange(column) {
 				this.orderField = column.key;
@@ -302,21 +301,7 @@
 			authorChange(data) {
 				this.author_model = data;
 				this.tableData();
-			},
-			//获取负责人
-			getAuthor() {
-                Axios.get('api.php',{'action':'api','opt':'getAuthor'})
-                .then( 
-                    res=>{ 
-                        if(res.ret == '1'){
-                            this.author = res.data
-                            //console.log(this.author)
-                        }
-                    }
-                ).catch( 
-                    err=>{ console.log('获取负责人' + err) }
-                ); 
-			},
+			},			
 			//表格高亮calss
 			rowClassName(row, index) {
 				if(row._disabled) {
@@ -325,8 +310,7 @@
 			}
         }, 
 		mounted() {
-			this.getMedia();
-			this.getAuthor();
+ 
 		}
 	}
 </script>

@@ -6,7 +6,7 @@ const user = {
         username : '',
         isLogin : 0,
         //用户自定义指标
-        userindex:[]
+        userindex:[],
     },
     mutations: {        
         USER_LOGINOUT ( state ){

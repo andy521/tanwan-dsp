@@ -45,7 +45,9 @@ Axios.interceptors.response.use(
 		if(res.data && res.data.ret != 1) {
 			//如果为-2返回到登录页面
 			if(res.data.ret == '-2') {
-                util.removeItem('user')
+                util.removeItem('user');
+                util.removeItem('sessionid');
+                util.removeItem('access');
                 router.replace({
                     path: '/login',
                     query: {redirect: router.currentRoute.fullPath}

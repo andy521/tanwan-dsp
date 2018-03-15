@@ -1,9 +1,9 @@
 <style>
-	.Treebox {max-height: 400px;}
-    .ivu-poptip, .ivu-poptip-rel,.ivu-poptip .ivu-input-wrapper{display: block}
+	.tree .Treebox {max-height: 400px;}
+    .tree,.tree .ivu-poptip-rel{display: block}
 </style>
 <template>
-	<Poptip placement="bottom-start" width="400">
+	<Poptip placement="bottom-start" class="tree" width="400">
 		<Input class="sel" v-model.trim.lazy="search" @on-change="changeSearch" icon="arrow-down-b"  placeholder="全部产品"></Input>
 		<div class="api" slot="content">
 			<div class="Treebox">
@@ -13,12 +13,11 @@
 	</Poptip>
 </template>
 <script>
+    import  Axios  from "@/api/index"
 	export default {
         name: 'searchTree',
         props: {
-            game : Array,
             clearable : Boolean,
-
         },
 		data() {
 			return {
@@ -31,10 +30,6 @@
         },
 
         watch: {
-            game(val){
-                this.gameData = val;
-                this.createTree()
-            },
             clearable(val){
                 console.log(val)
                 if(!!val){
@@ -44,6 +39,20 @@
             }
 		},
 		methods: {
+            //获取全部游戏     
+            getGame(){
+                Axios.get('api.php',{'action':'api','opt':'getGameLists'})
+                .then( 
+                    res=>{ 
+                        if(res.ret == '1'){
+                            this.gameData = res.data;
+                            this.createTree();
+                        }
+                    }
+                ).catch( 
+                    err=>{ console.log(err) }
+                );
+            },
             //创建树菜单
             createTree(){
                 let newlist = [];
@@ -105,6 +114,9 @@
                 this.search = name;
                 this.$emit('on-change', ids);
 			}
+        },
+        mounted(){       
+            this.getGame();
         }
 	}
 </script>

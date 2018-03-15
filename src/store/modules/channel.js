@@ -7,7 +7,6 @@ const channel = {
         page_size:0,
         total_number:0,
         total_page:0,
-        game:[],
         media:{},
         account:[],
         plan:[],
@@ -26,9 +25,6 @@ const channel = {
             state.total_number = parseInt(data.total_number);
             //总页数
             state.total_page = parseInt(data.total_page);
-        },
-        GAMELIST(state,data){            
-            state.game = data
         },
         MEDIALIST(state,data){
             let media = util.mediaSelect(data);
@@ -76,16 +72,6 @@ const channel = {
                 res=>{ commit('GETCHANNELDATA',res.data) }
             ).catch( 
                 err=>{ console.log( err) }
-            );
-        },
-
-        //获取全部游戏     
-        getGame({ commit }){
-            Axios.get('api.php',{'action':'api','opt':'getGameLists'})
-            .then( 
-                res=>{ commit('GAMELIST',res.data) }
-            ).catch( 
-                err=>{ console.log(err) }
             );
         },
 
