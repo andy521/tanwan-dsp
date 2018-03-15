@@ -119,24 +119,6 @@
 							</div>
 						</div>
 					</Poptip>
-					<!--<Poptip placement="bottom-start" v-model="visible1">
-						<Button type="ghost">修改日期</Button>
-						<div class="api" slot="content">
-							<div v-if="!startdate">
-								<DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy/MM/dd" :value="date2"></DatePicker>
-							</div>
-							<div class="tipbtn margin-top-10">
-								<Checkbox v-model="startdate">长期投放（仅设置开始时间）</Checkbox>
-							</div>
-							<div class="tipbtn margin-top-10" v-if="startdate">
-								<DatePicker type="date" placement="bottom-start" placeholder="请选择日期" format="yyyy/MM/dd" :value="date1"></DatePicker>
-							</div>
-							<div class="tipbtn margin-top-10">
-								<Button type="text" size="small" @click="visible1 = false">取消</Button>
-								<Button type="primary" size="small" @click="visible1 = false">确定</Button>
-							</div>
-						</div>
-					</Poptip>-->
 					<Button type="ghost" @click="exportData()">下载报表</Button>
 				</div>
 				</Col>
@@ -196,8 +178,6 @@
 				</Form>
 			</div>
 		</Modal>
-		<!--详情-->
-		<adgroup-detail v-model="details_id"></adgroup-detail>
 
 	</div>
 </template>
@@ -207,17 +187,15 @@
 	import { DateShortcuts, formatDate, changetime, deepClone } from '@/utils/DateShortcuts.js';
 	import viewTip from './components/viewPopti.vue';
 	import searchTree from './components/searchTree.vue';
-	import adgroupDetail from './components/adgroupDetail.vue';
-
+	import creativity from './components/creativity.vue';
 	export default {
 		components: {
 			viewTip,
-			searchTree,
-			adgroupDetail
+			searchTree
 		},
 		data() {
 			return {
-				params: this.$route.params,
+				params: this.$route.query,
 				mediaList: [], //媒体账号列表
 				campaignslist: [], //推广计划列表
 				campaignslistform: [], //复制推广计划列表
@@ -255,15 +233,22 @@
 					campaign_id: ''
 				},
 				detailswin: false,
-				details_id: { //详情参数
-					account_id: '',
-					adgroup_id: ''
-				},
 				taColumns: [], //表头设置
 				tableColumns: [{
-						type: 'selection',
+						type: 'expand',
+						width: 30,
 						fixed: "left",
-						width: 60,
+						render: (h, params) => {
+							return h(creativity, {
+								props: {
+									row: params.row
+								}
+							})
+						}
+					}, {
+						type: 'selection',
+						//fixed: "left",
+						width: 58,
 						key: ''
 					},
 					{
@@ -301,10 +286,8 @@
 								class: 'namediv',
 								on: {
 									click: () => {
-										this.details_id = {
-											account_id: params.row.account_id,
-											adgroup_id: params.row.adgroup_id
-										}
+										//params.row._expanded=true;
+										//console.log(params.row)
 									}
 								}
 							}, params.row.adgroup_name), h('i-button', {
@@ -606,7 +589,7 @@
 						title: '注册设备成本',
 						sortable: 'custom',
 						key: 'reg_imei_cost',
-						width: 150,						
+						width: 150,
 					},
 					{
 						title: '注册成本',
@@ -798,6 +781,7 @@
 						if(res.ret == 1) {
 							//添加统计
 							res.data.curr_page_total._disabled = true;
+							res.data.curr_page_total._disableExpand = true;
 							res.data.list.push(res.data.curr_page_total);
 							this.total_number = res.data.total_number;
 							this.total_page = res.data.total_page;

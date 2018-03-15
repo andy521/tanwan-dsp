@@ -237,7 +237,7 @@
 				taColumns: [], //表头设置
 				tableColumns: [{
 						type: 'selection',
-						fixed: "left",
+						//fixed: "left",
 						width: 60,
 						key: ''
 					},
@@ -283,7 +283,7 @@
 										};
 										this.$router.push({
 											name: 'time_ad',
-											params: query
+											query: query
 										});
 									}
 								}
