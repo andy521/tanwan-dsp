@@ -995,11 +995,11 @@
 			}
 		},
 		mounted() {
-			if(this.targeting_id) {
+			if(this.$route.params.targeting_id) {
 				this.targeting_id = this.$route.params.targeting_id;
 			};
 			//请求定向
-			this.$store.dispatch('get_targetings');
+			this.$store.dispatch('get_targetings',this.account_id);
 			//请求定向标签(地域)
 			this.$store.dispatch('get_targeting_tags');
 			//获取商业兴趣

@@ -152,8 +152,8 @@
 			<div id="J_bid" class="date_price">
 				<Form :model="adgroup" :label-width="90">
 					<FormItem label="投放日期：">
-						<DatePicker @on-change="changeDateLong" v-model="adgroup.setdate" :options="options" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
-						<DatePicker @on-change="changeDate" v-model="adgroup.setdate" :options="options" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
+						<DatePicker @on-change="changeDateLong"  :options="options" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
+						<DatePicker @on-change="changeDate" :options="options" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
 					</FormItem>
 					<FormItem label="投放时间：">
 						<div class="fl">
