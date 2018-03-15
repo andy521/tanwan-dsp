@@ -21,7 +21,7 @@
 			<step-three :plandata="plandata" :edition="adcreative" @tostep="tostep" @on-edition="getEditionData" @on-click="threeInfo" v-show="setp[0]==1&&setp[1]==1||setp[1]==2"></step-three>
 
 			<!--上传创意-->
-			<!--<up-creative v-show="setp[0]==2" :account="account_id" :template="creativeTemplate" @on-change="upCreativeCallback"></up-creative>-->
+			<up-creative v-show="setp[0]==2" :account="account_id" :template="creativeTemplate" @on-change="upCreativeCallback"></up-creative>
 		</Content>
 	</div>
 </template>
