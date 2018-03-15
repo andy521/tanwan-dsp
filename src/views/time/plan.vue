@@ -237,7 +237,7 @@
 				taColumns: [], //表头设置
 				tableColumns: [{
 						type: 'selection',
-						fixed: "left",
+						//fixed: "left",
 						width: 60,
 						key: ''
 					},

@@ -178,8 +178,6 @@
 				</Form>
 			</div>
 		</Modal>
-		<!--详情-->
-		<adgroup-detail v-model="details_id"></adgroup-detail>
 
 	</div>
 </template>
@@ -189,13 +187,11 @@
 	import { DateShortcuts, formatDate, changetime, deepClone } from '@/utils/DateShortcuts.js';
 	import viewTip from './components/viewPopti.vue';
 	import searchTree from './components/searchTree.vue';
-	import adgroupDetail from './components/adgroupDetail.vue';
-
+	import creativity from './components/creativity.vue';
 	export default {
 		components: {
 			viewTip,
-			searchTree,
-			adgroupDetail
+			searchTree
 		},
 		data() {
 			return {
@@ -237,15 +233,11 @@
 					campaign_id: ''
 				},
 				detailswin: false,
-				details_id: { //详情参数
-					account_id: '',
-					adgroup_id: ''
-				},
 				taColumns: [], //表头设置
 				tableColumns: [{
 						type: 'selection',
-						fixed: "left",
-						width: 60,
+						//fixed: "left",
+						width: 58,
 						key: ''
 					},
 					{
@@ -274,6 +266,17 @@
 						}
 					},
 					{
+						type: 'expand',
+						width: 30,
+						render: (h, params) => {
+							return h(creativity, {
+								props: {
+									row: params.row
+								}
+							})
+						}
+					},
+					{
 						title: '广告名称',
 						key: 'adgroup_name',
 						width: 400,
@@ -283,10 +286,9 @@
 								class: 'namediv',
 								on: {
 									click: () => {
-										this.details_id = {
-											account_id: params.row.account_id,
-											adgroup_id: params.row.adgroup_id
-										}
+										//
+										//params.row._expanded=false;
+										//console.log(params.row)
 									}
 								}
 							}, params.row.adgroup_name), h('i-button', {
@@ -588,7 +590,7 @@
 						title: '注册设备成本',
 						sortable: 'custom',
 						key: 'reg_imei_cost',
-						width: 150,						
+						width: 150,
 					},
 					{
 						title: '注册成本',
@@ -780,6 +782,7 @@
 						if(res.ret == 1) {
 							//添加统计
 							res.data.curr_page_total._disabled = true;
+							res.data.curr_page_total._disableExpand = true;
 							res.data.list.push(res.data.curr_page_total);
 							this.total_number = res.data.total_number;
 							this.total_page = res.data.total_page;
