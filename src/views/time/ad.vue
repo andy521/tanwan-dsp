@@ -235,6 +235,17 @@
 				detailswin: false,
 				taColumns: [], //表头设置
 				tableColumns: [{
+						type: 'expand',
+						width: 30,
+						fixed: "left",
+						render: (h, params) => {
+							return h(creativity, {
+								props: {
+									row: params.row
+								}
+							})
+						}
+					}, {
 						type: 'selection',
 						//fixed: "left",
 						width: 58,
@@ -266,17 +277,6 @@
 						}
 					},
 					{
-						type: 'expand',
-						width: 30,
-						render: (h, params) => {
-							return h(creativity, {
-								props: {
-									row: params.row
-								}
-							})
-						}
-					},
-					{
 						title: '广告名称',
 						key: 'adgroup_name',
 						width: 400,
@@ -286,8 +286,7 @@
 								class: 'namediv',
 								on: {
 									click: () => {
-										//
-										//params.row._expanded=false;
+										//params.row._expanded=true;
 										//console.log(params.row)
 									}
 								}
