@@ -26,14 +26,14 @@
                 <Col :xs="12" :md="3">
                     <!-- 账户选择: -->
                     <Select @on-change="setAccount" :disabled="account_disabled" placeholder="--账户选择--" style="width:100%"  class="margin-bottom-10">
-                        <Option v-for="item in account" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Option v-for="item in account" :value="item.account_id" :key="item.account_id">{{ item.account_name }}</Option>
                     </Select>
                 </Col>
 
                 <Col :xs="12" :md="3">
                     <!-- 计划选择: -->
                     <Select @on-change="setPlan" :disabled="plan_disabled" placeholder="--计划选择--" style="width:100%"  class="margin-bottom-10">
-                        <Option v-for="item in plan" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Option v-for="item in plan" :value="item.campaign_id" :key="item.campaign_id">{{ item.campaign_name }}</Option>
                     </Select>
                 </Col>
 
@@ -127,19 +127,13 @@ export default {
             current_time:[],
             current_campaigns:'',
             current_author:[],
-            list:[]
+            list:[],
+            //账号
+            account:[],
+            //计划
+            plan:[],
         }
-    },  
-    computed :{ 
-        //账号
-        account(){
-            return this.$store.state.channel.account
-        },
-        //计划
-        plan(){
-            return this.$store.state.channel.plan
-        }
-    },  
+    },
     methods : {        
         //导出表单
         exportData(){
@@ -200,28 +194,51 @@ export default {
             this.getTableData();        
         },       
         //自定义时间
-        changeDate(date){
-            this.current_time = date;
+        changeDate(data){
+            this.current_time = data;
             this.getTableData();
         },   
         //选择账户
         setAccount(data){     
             this.current_account = data;
-            this.getTableData();
+            // this.getTableData();
             //获取所有计划
             let param = {
+                action:'api',
+                opt:'getcampaigns',
                 MeidaType : this.current_media,
                 account_id : data
             };            
-            this.$store.dispatch('planCampaigns',param);
+            Axios.get('api.php',param)
+            .then( 
+                res=>{
+                    if(res.ret == '1'){
+                        console.log(res.data)
+                        this.plan = res.data
+                    }
+                }
+            ).catch( 
+                err=>{ console.log('获取媒体账号' + err) }
+            );
             this.plan_disabled=false;
         },
         //选择媒体
-        setMedia(data){            
+        setMedia(data){
             this.current_media = data;
-            this.getTableData();
+            // this.getTableData();
             //这里再获取账户
-            this.$store.dispatch('getAccount',data);
+            //this.$store.dispatch('getAccount',data);
+            Axios.get('api.php',{'action':'api','opt':'getAccount','MeidaType': data })
+            .then( 
+                res=>{
+                    if(res.ret == '1'){
+                        this.account = res.data;
+                    }
+                }
+            ).catch( 
+                err=>{ console.log('获取媒体账号' + err) }
+            ); 
+            
             this.account_disabled = false;
         },
         //选择版本
@@ -231,7 +248,7 @@ export default {
         },
         //选择计划
         setPlan(data){
-            this.current_campaigns = date;
+            this.current_campaigns = data;
             this.getTableData();
         },
         //选择负责人

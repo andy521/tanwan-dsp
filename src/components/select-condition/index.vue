@@ -66,7 +66,7 @@
 	export default {
         name: 'selectCondition',
         props:{
-            setp: {
+            level: {
                 type: [Number, String]
             },
         },
@@ -116,7 +116,7 @@
         },
         mounted(){       
             this.getMedia();
-            console.log(this.setp)
+            console.log(this.level)
         }
 	}
 </script>

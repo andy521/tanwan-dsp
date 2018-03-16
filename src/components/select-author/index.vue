@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 .author-btn{width: 100%; margin-top: 10px;}
 .author-btn>.ivu-btn{width: 50%;}
 .author-item{display: block;padding: 10px 0;border-bottom: 1px solid #f5f5f5;}
@@ -6,7 +6,7 @@
 </style>
 <template>
 
-    <Poptip class="author" placement="bottom" width="200">        
+    <Poptip class="author" placement="bottom-start" width="200">        
         <Button type="ghost"><Icon type="person-stalker"></Icon> 选择负责人</Button>
         <div class="api" slot="content">            
             <Checkbox-group v-model="value" @on-change="authorChange">

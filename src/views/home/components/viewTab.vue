@@ -1,4 +1,4 @@
-<style >
+<style>
 	.ivu-tag-border,
 	.ivu-tag-border.ivu-tag-red {
 		border: none!important;
