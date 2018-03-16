@@ -82,23 +82,35 @@
 
 				</Col>
 				<Col span="5" style="text-align: right;">
-				<Button type="ghost" @click="copyAd">复制</Button>
+				<Button type="ghost" icon="ios-copy" @click="copyAd">复制计划</Button>
 
-				<!--自定义指标-->
-				<view-tip v-model="checkAllGroup" :uncheck="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
 				</Col>
 			</Row>
 		</Card>
 
 		<Card shadow class="margin-top-10">
 			<Row>
-				<Col span="8">
+				<Col span="16">
+				<!--自定义指标-->
+				<view-tip v-model="checkAllGroup" :uncheck="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
+				<!--选择负责人-->
+				<select-author @on-change="authorChange"></select-author>
+				<Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
+					<Option value="0">所有未册除</Option>
+					<Option value="AD_STATUS_NORMAL">有效</Option>
+					<Option value="AD_STATUS_SUSPEND">暂停</Option>
+				</Select>
+				<DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+
+				<Checkbox v-model="check_value" @on-change="getCampaignsList()">过滤无数据的广告</Checkbox>
+				</Col>
+				<Col span="8" style="text-align: right;">
 				<div class="btn-group clear">
 					<Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)">
-						<Button type="ghost">删除</Button>
+						<Button type="ghost" icon="trash-a">删除</Button>
 					</Poptip>
 					<Poptip placement="bottom-start" v-model="visible">
-						<Button type="ghost">修改状态</Button>
+						<Button type="ghost" icon="edit">修改状态</Button>
 						<div class="api" slot="content">
 							<div>
 								<Select v-model="edit_status" :value="edit_status">
@@ -112,40 +124,8 @@
 							</div>
 						</div>
 					</Poptip>
-					<!--<Poptip placement="bottom-start" v-model="visible1">
-						<Button type="ghost">修改日期</Button>
-						<div class="api" slot="content">
-							<div v-if="!startdate">
-								<DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy/MM/dd" :value="date2"></DatePicker>
-							</div>
-							<div class="tipbtn margin-top-10">
-								<Checkbox v-model="startdate">长期投放（仅设置开始时间）</Checkbox>
-							</div>
-							<div class="tipbtn margin-top-10" v-if="startdate">
-								<DatePicker type="date" placement="bottom-start" placeholder="请选择日期" format="yyyy/MM/dd" :value="date1"></DatePicker>
-							</div>
-							<div class="tipbtn margin-top-10">
-								<Button type="text" size="small" @click="visible1 = false">取消</Button>
-								<Button type="primary" size="small" @click="visible1 = false">确定</Button>
-							</div>
-						</div>
-					</Poptip>-->
-					<Button type="ghost" @click="exportData()">下载报表</Button>
+					<Button type="ghost" icon="document-text" @click="exportData()">下载报表</Button>
 				</div>
-				</Col>
-				<Col span="16" style="text-align: right;">
-				<Select v-model="author_model" :value="author_model" multiple filterable class="sel_state1" @on-change="getCampaignsList()" placeholder="请选择负责人">
-					<Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
-				</Select>
-				<Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
-					<Option value="0">所有未册除</Option>
-					<Option value="AD_STATUS_NORMAL">有效</Option>
-					<Option value="AD_STATUS_SUSPEND">暂停</Option>
-				</Select>
-
-				<DatePicker type="daterange" :options="options" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-
-				<Checkbox v-model="check_value" @on-change="getCampaignsList()">过滤无数据的广告</Checkbox>
 				</Col>
 			</Row>
 			<div>
@@ -189,12 +169,14 @@
 	import Axios from '@/api/index';
 	import { DateShortcuts, formatDate, deepClone } from '@/utils/DateShortcuts.js';
 	import viewTip from './components/viewPopti.vue';
+	import selectAuthor from '@/components/select-author/index.vue';
 	import searchTree from './components/searchTree.vue';
 
 	export default {
 		components: {
 			viewTip,
-			searchTree
+			searchTree,
+			selectAuthor
 		},
 		data() {
 			return {
@@ -423,7 +405,6 @@
 							}
 						}
 					},
-
 					{
 						title: '日消耗限额',
 						sortable: 'custom',
@@ -492,7 +473,6 @@
 							})])]
 						}
 					},
-
 					{
 						title: '展示PV',
 						sortable: 'custom',
@@ -511,7 +491,6 @@
 						key: 'down_ip',
 						width: 150
 					},
-
 					{
 						title: '到达数',
 						sortable: 'custom',
@@ -524,7 +503,6 @@
 						key: 'fetch_per',
 						width: 150
 					},
-
 					{
 						title: '下载数',
 						sortable: 'custom',
@@ -572,7 +550,7 @@
 						sortable: 'custom',
 						key: 'reg_imei',
 						width: 150
-					},				
+					},
 					{
 						title: '注册设备数',
 						sortable: 'custom',
@@ -652,7 +630,6 @@
 				this.MediaListModel = this.params.id;
 			}
 			this.getMedia();
-			this.getAuthor();
 			this.getCampaignsList();
 		},
 		methods: {
@@ -716,9 +693,10 @@
 					}
 				)
 			},
-			//获取负责人
-			getAuthor() {
-				this.$store.dispatch('getAuthor');
+			//选择负责人
+			authorChange(data) {
+				this.author_model = data;
+				this.getCampaignsList();
 			},
 			//获取实时投放计划
 			getCampaignsList(page) {
@@ -842,10 +820,6 @@
 			}
 		},
 		computed: {
-			//获取负责人
-			author() {
-				return this.$store.state.channel.author;
-			},			
 			//获取实时投放计划
 			newAdList() {
 				//深层复制
