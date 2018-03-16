@@ -1,4 +1,4 @@
-<style lang="less">
+<style scoped>
     .linear-table{height: 300px; padding: 20px 0;}  
     .ivu-card-head-inner, .ivu-card-head p{height: 32px;}
 </style>

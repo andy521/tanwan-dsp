@@ -17,9 +17,10 @@
             <Row :gutter="10">
                 <Col :xs="12" :md="3">
                     <!-- 媒体选择: -->
-                    <Select @on-change="setMedia" placeholder="--媒体选择--" style="width:100%"  class="margin-bottom-10">
+                    <!-- <Select @on-change="setMedia" placeholder="--媒体选择--" style="width:100%"  class="margin-bottom-10">
                         <Option v-for="item in media" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
+                    </Select> -->
+                    <select-media @on-change="setMedia"></select-media>
                 </Col>
 
                 <Col :xs="12" :md="3">
@@ -47,13 +48,14 @@
                     <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index> 
                 </Col>               
 
-                <Col :xs="8" :md="3" offset="2">
+                <Col :xs="8" :md="3" offset="4">
                     <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
                 </Col>
-                <Col :xs="12" :md="4">                    
-                    <Select  @on-change="setPrincipal" v-model="current_author" :value="current_author" placeholder="--负责人--"  class="margin-bottom-10 sel_state1" multiple filterable >
+                <Col :xs="12" :md="2">                    
+                    <!-- <Select  @on-change="setPrincipal" v-model="current_author" :value="current_author" placeholder="--负责人--"  class="margin-bottom-10 sel_state1" multiple filterable >
                         <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>  
+                    </Select>   -->
+                    <select-author @on-change="setPrincipal"></select-author>
                 </Col>                              
                 <Col :xs="12" :md="2">
                     <Button icon="document-text"  @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
@@ -84,11 +86,15 @@
     </Card>
 </template>
 <script>
+import Axios from "@/api/index"
 import diyIndex from './components/diyIndex.vue';
-
+import selectMedia from '@/components/select-media/index.vue';
+import selectAuthor from '@/components/select-author/index.vue';
 export default {
     components: {
-        diyIndex
+        diyIndex,
+        selectMedia,
+        selectAuthor
     },
     data () {
         return {
@@ -120,20 +126,11 @@ export default {
             current_version:'',
             current_time:[],
             current_campaigns:'',
-            current_author:[]
+            current_author:[],
+            list:[]
         }
-    },
+    },  
     computed :{ 
-        list(){
-            let channel = this.$store.state.channel;
-            this.total_number = channel.total_number;
-            this.total_page = channel.total_page;
-            return channel.list;
-        },
-        //媒体
-        media(){
-            return this.$store.state.channel.media;
-        },
         //账号
         account(){
             return this.$store.state.channel.account
@@ -141,33 +138,9 @@ export default {
         //计划
         plan(){
             return this.$store.state.channel.plan
-        },
-        //负责人
-        author(){
-            return this.$store.state.channel.author;
         }
-    },
-    watch: {
-        list(data){
-            //这里监听list变化了 把表格里loading隐藏  后期要考虑这样做是否妥当
-            if(data.length == 0){
-                this.$Message.info('没有查找到数据');
-            }
-            this.loading = false;
-        },
-        account(data){
-            
-        }
-    },
+    },  
     methods : {        
-        //获取所以媒体
-        mediaItem(){            
-            this.$store.dispatch('getMedia');
-        },
-        //获取负责人
-        getAuthor(){
-            this.$store.dispatch('getAuthor');
-        },
         //导出表单
         exportData(){
             this.$refs.tableCsv.exportCsv({
@@ -183,6 +156,8 @@ export default {
                 this.page = page;
             };   
             let param = { 
+                    action : 'api',
+                    opt : 'getGameTotalDay',
                     do : 'planOverview',
                     media_type : this.current_media,
                     os : this.current_version,
@@ -198,8 +173,18 @@ export default {
                 param.tdate = this.current_time[0];
                 param.tdate2 = this.current_time[1];
             }
-            this.loading = true;
-            this.$store.dispatch('getChannelData',param);
+            Axios.get('api.php',param).then( 
+                res=>{
+                    if(res.ret == '1'){
+                        this.list = res.data.list;
+                        this.total_page = res.data.total_page;
+                        this.total_page = res.data.total_page;
+                        this.loading = false;
+                    }
+                }
+            ).catch( 
+                err=>{ console.log( err) }
+            );
         },
         //排序
         sortChange(column) {
@@ -251,7 +236,7 @@ export default {
         },
         //选择负责人
         setPrincipal(data){
-            //this.current_author = data;
+            this.current_author = data;
             this.getTableData();
         },
         //获取 自定义指标
@@ -314,8 +299,6 @@ export default {
             this.current_account = query.toString();
         }
         this.getTableData();
-        this.mediaItem(); 
-        this.getAuthor();
     }
 }
 </script>

@@ -1,4 +1,4 @@
-<style lang="less" >
+<style scoped >
     @import "../../styles/common.less";
     @import '../../styles/table.less';
     .head{border-bottom: 1px solid #e9eaec; margin-bottom: 10px; padding: 0;}  
@@ -9,7 +9,8 @@
 	.sel_state1.ivu-select-multiple .ivu-select-selection{
 		overflow: auto;
 		height: 32px;
-	}
+    }
+    .ivu-poptip-rel{display: block;}
 </style>
 <template>
     <Card dis-hover shadow>
@@ -17,14 +18,11 @@
             <Row :gutter="10">
 
                 <Col :xs="12" :md="5">
-                   <search-tree :game="game" :clearable="sclear" @on-change="getids"></search-tree>
+                   <search-tree :clearable="sclear" @on-change="getids"></search-tree>
                 </Col>
 
                 <Col :xs="12" :md="4">
-                    <!-- 媒体选择: -->
-                    <Select @on-change="setMedia" placeholder="--全部媒体--" style="width:100%"  class="margin-bottom-10">
-                        <Option v-for="item in media" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
+                    <select-media class="smedia" @on-change="setMedia"></select-media>
                 </Col>
 
                 <Col :xs="12" :md="2">
@@ -38,14 +36,13 @@
                     <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index>    
                 </Col>               
 
-                <Col :xs="8" :md="3" offset="2">
+                <Col :xs="8" :md="3" offset="4">
                     <DatePicker  @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
                 </Col>
-                <Col :xs="12" :md="4">                    
-                    <Select  @on-change="setPrincipal"  v-model="current_author" :value="current_author" placeholder="--负责人--" multiple filterable class="margin-bottom-10 sel_state1">
-                        <Option v-for="item in author" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>  
+                <Col :xs="12" :md="2">  
+                    <select-author @on-change="setPrincipal"></select-author>
                 </Col>
+
                 <Col :xs="12" :md="2">
                     <Button icon="document-text"  @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
                 </Col>
@@ -77,11 +74,15 @@
 import Axios from "@/api/index"
 import searchTree from '@/components/select-tree/searchTree.vue';
 import diyIndex from './components/diyIndex.vue';
+import selectMedia from '@/components/select-media/index.vue';
+import selectAuthor from '@/components/select-author/index.vue';
 
 export default {
     components: {
         searchTree,
-        diyIndex
+        diyIndex,
+        selectMedia,
+        selectAuthor
     },
     data () {
         return {
@@ -112,31 +113,15 @@ export default {
             current_version:'',
             current_time:[],
             current_author:[],
-            list:[],
-            total_number:0,
-            total_page:0,
+            list:[]
         }
     },
-    computed :{ 
-        // list(){
-        //     let channel = this.$store.state.channel;
-        //     this.total_number = channel.total_number;
-        //     this.total_page = channel.total_page;
-        //     return channel.list;
-        // },
+    //computed :{ 
         //所有游戏
-        game(){
-            return this.$store.state.channel.game;
-        },
-        //媒体
-        media(){
-            return this.$store.state.channel.media;
-        },
-        //负责人
-        author(){
-            return this.$store.state.channel.author;
-        },
-    },
+        // game(){
+        //     return this.$store.state.channel.game;
+        // },
+    //},
     // watch: {
     //     list(data){
     //         //这里监听list变化了 把表格里loading隐藏  后期要考虑这样做是否妥当
@@ -147,18 +132,6 @@ export default {
     //     }
     // },
     methods : {
-        //获取所有游戏
-        gameItem(){
-            this.$store.dispatch('getGame');
-        },
-        //获取所以媒体
-        mediaItem(){            
-            this.$store.dispatch('getMedia');
-        },
-        //获取负责人
-        getAuthor(){
-            this.$store.dispatch('getAuthor');
-        },
         //导出表单
         exportData(){
             this.$refs.tableCsv.exportCsv({
@@ -244,7 +217,7 @@ export default {
         },
         //选择负责人
         setPrincipal(data){
-            //this.current_author = data;
+            this.current_author = data;
             this.getTableData();
         },
         //获取自定义指标
@@ -296,10 +269,7 @@ export default {
     },
     mounted(){        
         this.changeTableColumns();
-        this.getTableData();  
-        this.getAuthor();
-        this.gameItem();
-        this.mediaItem();
+        this.getTableData();
     }
 }
 </script>

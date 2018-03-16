@@ -62,9 +62,7 @@
                             'opt' : 'login'
                         })
                         .then((data)=>{                            
-                            if(data.ret == 1){
-                                Util.setItem('user', this.form.userName );  
-                                Util.setItem('sessionid',data.data.sessionid); 
+                            if(data.ret == 1){                                 
                                 //权限管理
                                 let action = data.data.data.actionid;
                                 let access = [];
@@ -93,9 +91,11 @@
                                             break;
                                         }
                                     });
-                                };                                              
+                                };
+                                Util.setItem('user', this.form.userName );  
+                                Util.setItem('sessionid',data.data.sessionid);                                       
                                 Util.setItem('access', access.join(",")); 
-                                this.$store.dispatch('UserLogin', userinfo);  
+                                this.$store.dispatch('UserLogin', userinfo);
                                 this.$router.push({ name: 'home_index' });                                
                             }
 
