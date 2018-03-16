@@ -17,7 +17,7 @@
             <Row :gutter="10">
                 <Col :xs="12" :md="3">
                     <!-- 媒体选择: -->
-                    <select-condition @on-change="setAccount" :setp="2"></select-condition>
+                    <select-condition @on-change="setAccount" :level="2"></select-condition>
                 </Col>
                 
                 <Col :xs="12" :md="2">

@@ -26,21 +26,21 @@
                 <Col :xs="12" :md="3">
                     <!-- 账户选择: -->
                     <Select @on-change="setAccount" :disabled="account_disabled" placeholder="--账户选择--" style="width:100%"  class="margin-bottom-10">
-                        <Option v-for="item in account" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Option v-for="(item,index) in account" :value="item.account_id" :key="index">{{ item.account_name }}</Option>
                     </Select>
                 </Col>
 
                 <Col :xs="12" :md="3">
                     <!-- 计划选择: -->
                     <Select @on-change="setPlan" :disabled="plan_disabled" placeholder="--计划选择--" style="width:100%"  class="margin-bottom-10">
-                        <Option v-for="item in plan" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Option v-for="(item,index) in plan" :value="item.campaign_id" :key="index">{{ item.campaign_name }}</Option>
                     </Select>
                 </Col>
 
                 <Col :xs="12" :md="4">
                     <!-- 广告选择: -->
-                    <Select @on-change="setAdgroups" :disabled="plan_disabled" placeholder="--广告选择--" style="width:100%"  class="margin-bottom-10">
-                        <Option v-for="item in adgroups" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    <Select @on-change="setAdgroups" :disabled="adgroups_disabled" placeholder="--广告选择--" style="width:100%"  class="margin-bottom-10">
+                        <Option v-for="(item,index) in adgroups" :value="item.adgroup_id" :key="index">{{ item.adgroup_name }}</Option>
                     </Select>
                 </Col>
 
@@ -133,21 +133,14 @@ export default {
             current_campaigns:'',
             current_author:[],
             current_adgroup:'',
-            list:[]
-        }
-    },
-    computed :{ 
-        //账号
-        account(){
-            return this.$store.state.channel.account
-        },
-        //计划
-        plan(){
-            return this.$store.state.channel.plan
-        },
-        //广告选择
-        adgroups(){
-            return this.$store.state.channel.adgroups;
+            list:[],
+            //账号
+            account:[],
+            //计划
+            plan:[],
+            //广告选择
+            adgroups_disabled:true,
+            adgroups:[]
         }
     },
     methods : {        
@@ -218,23 +211,42 @@ export default {
         //选择账户
         setAccount(data){     
             this.current_account = data;
-            this.getTableData();
+            // this.getTableData();
             //获取所有计划
             let param = {
+                action:'api',
+                opt:'getcampaigns',
                 MeidaType : this.current_media,
                 account_id : data
             };            
-            this.$store.dispatch('planCampaigns',param);
-            this.$store.dispatch('Adgroups',param);
-            this.plan_disabled=false;
+            Axios.get('api.php',param)
+            .then( 
+                res=>{
+                    if(res.ret == '1'){
+                        console.log(res.data)
+                        this.plan = res.data
+                        this.plan_disabled=false;
+                    }
+                }
+            ).catch( 
+                err=>{ console.log('获取媒体账号' + err) }
+            );            
         },
         //选择媒体
-        setMedia(data){            
+        setMedia(data){
             this.current_media = data;
-            this.getTableData();
-            //这里再获取账户
-            this.$store.dispatch('getAccount',data);            
-            this.account_disabled = false;
+            Axios.get('api.php',{'action':'api','opt':'getAccount','MeidaType': data })
+            .then( 
+                res=>{
+                    if(res.ret == '1'){
+                        console.log(res.data)
+                        this.account = res.data;
+                        this.account_disabled = false;
+                    }
+                }
+            ).catch( 
+                err=>{ console.log('获取媒体账号' + err) }
+            );            
         },
         //选择版本
         setVersion(data){
@@ -243,8 +255,24 @@ export default {
         },
         //选择计划
         setPlan(data){
-            this.current_campaigns = date;
-            this.getTableData();
+            this.current_campaigns = data; 
+            let param = {
+                action:'api',
+                opt:'getAdgroups',
+                MeidaType : this.current_media,
+                account_id : data
+            };          
+            Axios.get('api.php',param)
+            .then( 
+                res=>{
+                    console.log(res.data)
+                    this.adgroups = res.data;
+                    this.adgroups_disabled = false;
+                }
+            ).catch( 
+                err=>{ console.log('获取负责人' + err) }
+            ); 
+            //this.getTableData();
         },
         //选择负责人
         setPrincipal(data){

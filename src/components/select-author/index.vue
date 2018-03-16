@@ -6,7 +6,7 @@
 </style>
 <template>
 
-    <Poptip class="author" placement="bottom-start" width="200" trigger="hover">        
+  <Poptip class="author" placement="bottom-start" width="200" trigger="hover">
         <Button type="ghost"><Icon type="person-stalker"></Icon> 选择负责人</Button>
         <div class="api" slot="content">            
             <Checkbox-group v-model="value" @on-change="authorChange">
