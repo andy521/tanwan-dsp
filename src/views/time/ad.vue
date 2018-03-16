@@ -73,9 +73,9 @@
 					<Button type="primary" @click="back">返回</Button>
 					<span class="campaign_name">{{params.campaign_name}}</span>
 				</div>
-				<!--搜索游戏列表-->
 				<div v-else>
-					<search-tree :callback="getids"></search-tree>
+					<!--搜索游戏列表-->
+					<search-tree :clearable="sclear" @on-change="getids"></search-tree>
 					<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
 						<Option value="0">全部媒体账号</Option>
 						<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
@@ -97,7 +97,7 @@
 			<Row>
 				<Col span="16">
 				<!--自定义指标-->
-				<view-tip v-model="checkAllGroup" :uncheck="getuncheck" action="gdtAdPut" opt="adgroups"></view-tip>
+				<view-tip @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-tip>
 				<!--选择负责人-->
 				<select-author @on-change="authorChange"></select-author>
 				<Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
@@ -116,7 +116,7 @@
 					<Poptip placement="bottom-start" v-model="visible">
 						<Button type="ghost" icon="edit">修改状态</Button>
 						<div class="api" slot="content">
-							<div>
+							<div style="text-align: left;">
 								<Select v-model="edit_status" :value="edit_status">
 									<Option value="AD_STATUS_NORMAL">启用</Option>
 									<Option value="AD_STATUS_SUSPEND">暂停</Option>
@@ -179,7 +179,7 @@
 	import Axios from '@/api/index';
 	import { DateShortcuts, formatDate, changetime, deepClone } from '@/utils/DateShortcuts.js';
 	import viewTip from './components/viewPopti.vue';
-	import searchTree from './components/searchTree.vue';
+	import searchTree from '@/components/select-tree/searchTree.vue';
 	import selectAuthor from '@/components/select-author/index.vue';
 	import creativity from './components/creativity.vue';
 	export default {
@@ -195,6 +195,7 @@
 				campaignslist: [], //推广计划列表
 				campaignslistform: [], //复制推广计划列表
 				loading: false,
+				sclear: false, //searchTree 组件清除属性
 				adList: [], //数据列表
 				GameListIds: [], //搜索返回ids
 				MediaListModel: '0',
@@ -205,7 +206,6 @@
 				total_number: 1, //总数量
 				total_page: 1, //总页数
 				indeterminate: true,
-				checkAllGroup: ['account_name', 'adgroup_name', 'campaign_id', 'impression', 'click', 'click_per', 'click_cost', 'cost', 'configured_status', 'daily_budget', 'game_name'], //默认选中
 				uncheck: [], //没选中的
 				visible: false,
 				visible1: false,
@@ -662,6 +662,7 @@
 			//获取选中游戏id
 			getids(ids) {
 				this.GameListIds = ids;
+				this.getCampaignsList();
 			},
 			//获取媒体账号
 			getMedia() {
@@ -730,7 +731,7 @@
 				}).then(
 					res => {
 						if(res.ret == 1) {
-							this.$Message.info('提交成功');
+							this.$Message.info(res.msg);
 						}
 					}
 				).catch(

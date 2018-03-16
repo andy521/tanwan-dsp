@@ -67,6 +67,7 @@
 	
 	.txt {
 		padding: 5px;
+		word-break: break-word;
 	}
 	
 	em {
@@ -125,8 +126,8 @@
 							<div class="carouselbox">
 								<div class="txt">{{item.adcreative_name}}</div>
 								<img :src="item.adcreative_elements.image_url" width="100%" />
-								<!--<div class="txt">{{item.adcreative_elements.title}}</div>-->
-								<div class="txt">{{item.adcreative_elements.corporate.corporate_name}}</div>
+								<div class="txt">{{item.adcreative_elements.title}}</div>
+								<!--								<div class="txt">{{item.adcreative_elements.corporate.corporate_name}}</div>-->
 							</div>
 							<div class="w_img_operation" @click="funpreview(item)">
 								<Icon type="search" size="18" color="#fff"></Icon>
@@ -202,9 +203,9 @@
 					<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.network_type" :key="this">{{subitem.name}}</em>
 					</span>
 					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.custom_audience">
+					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.customized_audience">
 						<span class="grey">定向用户群：</span>
-						<span v-for="item in adgroup_detail.targeting.custom_audience">{{item.name}}</span>
+						<span v-for="item in adgroup_detail.targeting.customized_audience">{{item.name}}</span>
 					</div>
 					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.excluded_custom_audience">
 						<span class="grey">排除用户群：</span>
@@ -329,7 +330,7 @@
 						},
 						"player_consupt": [],
 						"residential_community_price": [],
-						"custom_audience": [],
+						"customized_audience": [],
 						"excluded_custom_audience": [],
 						"description": [],
 					}
@@ -337,14 +338,6 @@
 			}
 		},
 		mounted() {
-			//请求定向标签(地域)
-			this.$store.dispatch('get_targeting_tags');
-			//获取所有状态
-			this.$store.dispatch('get_ads_config');
-			//获取商业兴趣
-			this.$store.dispatch('get_business_interest');
-			//获取App行为
-			this.$store.dispatch('get_appCategory');
 			Axios.post('api.php', {
 				action: 'gdtAdPut',
 				opt: 'get_adgroup_detail',
@@ -353,8 +346,8 @@
 			}).then(
 				res => {
 					if(res.ret == 1) {
-						this.adgroup_detail = res.data;
 						console.log(res.data)
+						this.adgroup_detail = res.data;
 					}
 				}
 			).catch(
@@ -379,7 +372,6 @@
 			funpreview(item) {
 				this.preview = item;
 				this.preview_win = true;
-				console.log(1)
 			}
 		},
 		computed: {
@@ -468,6 +460,5 @@
 				return changetime(time);
 			},
 		}
-
 	};
 </script>

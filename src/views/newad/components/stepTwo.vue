@@ -373,12 +373,12 @@
 								</div>
 							</Tooltip>
 						</div>
-						<div class="margin-top-10" v-if="targeting_item.targeting.custom_audience.length>0">
+						<div class="margin-top-10" v-if="targeting_item.targeting.customized_audience.length>0">
 							<p>已选择</p>
 							<div class="ds_tag margin-top-10">
-								<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)">{{ item.name }}</Tag>
+								<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)">{{ item.name }}</Tag>
 								<p>
-									<Button type="text" @click="targeting_item.targeting.custom_audience=[]">清空</Button>
+									<Button type="text" @click="targeting_item.targeting.customized_audience=[]">清空</Button>
 								</p>
 							</div>
 						</div>
@@ -387,7 +387,7 @@
 							<Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-keyup="getAudiences()" placeholder="搜索用户群"></Input>
 							</Col>
 						</Row>
-						<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="custom_audience" size="small" @on-selection-change="taCheck" ref="selection"></Table>
+						<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="customized_audience" size="small" @on-selection-change="taCheck" ref="selection"></Table>
 						<div class="subtt margin-top-20"><span>排除用户群</span>
 							<Tooltip placement="top">
 								<Icon type="help-circled" color="#999"></Icon>
@@ -501,7 +501,7 @@
 				</p>
 				<p v-if="Audiences_modeal">
 					<span>定向用户群：</span>
-					<em v-for="item in targeting_item.targeting.custom_audience">{{item.name}},</em>
+					<em v-for="item in targeting_item.targeting.customized_audience">{{item.name}},</em>
 				</p>
 				<p v-if="Audiences_modeal">
 					<span>排除用户群 ：</span>
@@ -783,12 +783,12 @@
 									</div>
 								</Tooltip>
 							</div>
-							<div class="margin-top-10" v-if="targeting_item.targeting.custom_audience.length>0">
+							<div class="margin-top-10" v-if="targeting_item.targeting.customized_audience.length>0">
 								<p>已选择</p>
 								<div class="ds_tag margin-top-10">
-									<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)">{{ item.name }}</Tag>
+									<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)">{{ item.name }}</Tag>
 									<p>
-										<Button type="text" @click="targeting_item.targeting.custom_audience=[]">清空</Button>
+										<Button type="text" @click="targeting_item.targeting.customized_audience=[]">清空</Button>
 									</p>
 								</div>
 							</div>
@@ -797,7 +797,7 @@
 								<Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-keyup="getAudiences()" placeholder="搜索用户群"></Input>
 								</Col>
 							</Row>
-							<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="custom_audience" size="small" @on-selection-change="taCheck"></Table>
+							<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="customized_audience" size="small" @on-selection-change="taCheck"></Table>
 							<div class="subtt margin-top-20"><span>排除用户群</span>
 								<Tooltip placement="top">
 									<Icon type="help-circled" color="#999"></Icon>
@@ -947,7 +947,7 @@
 						},
 						"player_consupt": [],
 						"residential_community_price": [],
-						"custom_audience": [],
+						"customized_audience": [],
 						"excluded_custom_audience": [],
 						"description": [],
 					}
@@ -1083,7 +1083,7 @@
 							this.paying_user_type_modeal = false;
 						}
 						//自定义人群
-						if(item.targeting.custom_audience.length > 0 || item.targeting.excluded_custom_audience.length > 0) {
+						if(item.targeting.customized_audience.length > 0 || item.targeting.excluded_custom_audience.length > 0) {
 							this.Audiences_modeal = true;
 						} else {
 							this.Audiences_modeal = false;
@@ -1207,11 +1207,11 @@
 				row.forEach(item => {
 					ids.push(item)
 				});
-				this.targeting_item.targeting.custom_audience = ids;
+				this.targeting_item.targeting.customized_audience = ids;
 			},
 			//删除自定义人群选中的id
 			removeAudiencesids(index) {
-				this.targeting_item.targeting.custom_audience.splice(index, 1);
+				this.targeting_item.targeting.customized_audience.splice(index, 1);
 			},
 			//获取自定义人群选中的id排除
 			taCheck_ex(row) {
@@ -1299,7 +1299,7 @@
 				//验证自定义人群
 				if(this.Audiences_modeal) {
 					if(this.verify_Audiences) {
-						targeting.custom_audience = this.targeting_item.targeting.custom_audience;
+						targeting.customized_audience = this.targeting_item.targeting.customized_audience;
 						targeting.excluded_custom_audience = this.targeting_item.targeting.excluded_custom_audience;
 					} else {
 						return;
@@ -1381,7 +1381,7 @@
 		computed: {
 
 			//获取自定义人群
-			custom_audience() {
+			customized_audience() {
 				return this.$store.state.newad.CustomAudiences.list;
 			},
 			//获取自定义人群排除
@@ -1432,7 +1432,7 @@
 						},
 						"player_consupt": [],
 						"residential_community_price": [],
-						"custom_audience": [],
+						"customized_audience": [],
 						"excluded_custom_audience": [],
 						"description": [],
 					}
@@ -1748,11 +1748,11 @@
 			},
 			//验证自定义人群
 			verify_Audiences() {
-				let custom_audience = this.targeting_item.targeting.custom_audience;
+				let customized_audience = this.targeting_item.targeting.customized_audience;
 				let excluded_custom_audience = this.targeting_item.targeting.excluded_custom_audience;
 				if(!this.Audiences_modeal) {
 					return true;
-				} else if(custom_audience.length <= 0 && excluded_custom_audience.length <= 0) {
+				} else if(customized_audience.length <= 0 && excluded_custom_audience.length <= 0) {
 					return false;
 				} else {
 					return true;
