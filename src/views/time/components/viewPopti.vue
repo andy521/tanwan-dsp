@@ -31,7 +31,6 @@
 				<div class="checklist">
 					媒体列
 				</div>
-
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
 					<Checkbox label="configured_status">广告开关/状态</Checkbox>
 					<Checkbox label="click_cost">点击均价（cpc）</Checkbox>
@@ -92,12 +91,12 @@
 	import Axios from '@/api/index';
 	export default {
 		name: 'viewTab',
-		props: ['value', 'uncheck', 'action', 'opt'],
+		props: ['action', 'opt'],
 		data() {
 			return {
 				indeterminate: true,
 				checkAll: false,
-				checkAllGroup: this.value,
+				checkAllGroup: ['account_name', 'adgroup_name', 'campaign_id', 'impression', 'click', 'click_per', 'click_cost', 'cost', 'configured_status', 'daily_budget', 'game_name'], //默认选中
 				checkAllGroups: ['configured_status', 'click_cost', 'click', 'click_per',
 					'fetch', 'fetch_per', 'down_ins_per', 'download',
 					'install', 'click_install', 'reg_imei', 'activation', 'reg_per', 'reg_cost', 'reg_imei_cost', 'install_per', 'download_per',
@@ -107,44 +106,44 @@
 			}
 		},
 		mounted() {
-			let param = {
+			Axios.get('api.php', {
+				action: 'sys',
+				opt: 'get_user_memo',
 				taction: this.action,
 				topt: this.opt
-			};
-
-			this.$store.dispatch('DiyIndex', param);
-		},
-		watch: {
-			value(val) {
-				this.checkAllGroup = val;
-			},
-			checkAllGroup(val) {
-				let uncheck = [];
-				this.checkAllGroups.forEach(item => {
-					let is = true;
-					val.forEach(col => {
-						if(item == col) {
-							is = false;
-						}
-					});
-					if(is) {
-						uncheck.push(item)
+			}).then(
+				res => {
+					if(res.ret == 1) {
+						this.checkAllGroup = res.data.split(',');
+						this.checkChange();
 					}
-				});
-				this.uncheck(uncheck)
-				this.$emit('input', val)
-			},
-			get_user_memo() {}
+				}
+			).catch(
+				err => {
+					console.log(err)
+				}
+			);
 		},
 		methods: {
 			//保存自定义指标
 			set_user_memo() {
-				let param = {
+				Axios.get('api.php', {
+					action: 'sys',
+					opt: 'set_user_memo',
 					taction: this.action,
 					topt: this.opt,
 					memo: this.checkAllGroup.join(',')
-				};
-				this.$store.dispatch('SaveIndex', param);
+				}).then(
+					res => {
+						if(res.ret == 1) {
+							this.$Message.info(res.msg);
+						}
+					}
+				).catch(
+					err => {
+						console.log(err)
+					}
+				);
 			},
 			//自定义指标全选
 			handleCheckAll() {
@@ -159,6 +158,7 @@
 				} else {
 					this.checkAllGroup = [];
 				}
+				this.checkChange();
 			},
 			//自定义指标
 			checkAllGroupChange(data) {
@@ -172,15 +172,24 @@
 					this.indeterminate = false;
 					this.checkAll = false;
 				}
-			}
-		},
-		computed: {
-			//获取自定义指标
-			get_user_memo() {
-				let memo = this.$store.state.user.userindex;
-				this.checkAllGroup = memo;
-				return memo;
+				this.checkChange();
 			},
+			//点击树节点时触发
+			checkChange() {
+				let uncheck = [];
+				this.checkAllGroups.forEach(item => {
+					let is = true;
+					this.checkAllGroup.forEach(col => {
+						if(item == col) {
+							is = false;
+						}
+					});
+					if(is) {
+						uncheck.push(item)
+					}
+				});
+				this.$emit('on-change', uncheck);
+			}
 		}
 	}
 </script>

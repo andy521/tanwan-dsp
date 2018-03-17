@@ -168,15 +168,15 @@
 						trigger: 'blur'
 					}],
 				},
-				account_id: this.$route.params.account_id, //3415636
+				account_id: this.$route.query.account_id, //3415636
 				campaign_id: '', //推广计划id
 				tabsid: 0,
 				campaign: {}
 			}
 		},
 		mounted() {
-			if(this.$route.params.adgroup_detail) {
-				this.campaign_id = this.$route.params.adgroup_detail.campaign_id;
+			if(this.$route.query.adgroup_detail) {
+				this.campaign_id = this.$route.query.adgroup_detail.campaign_id;
 			}
 			//请求推广计划
 			this.$store.dispatch('getCampaigns', this.account_id);
