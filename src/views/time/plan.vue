@@ -69,7 +69,7 @@
 			<Row>
 				<Col span="19">
 				<!--搜索游戏列表-->
-				<search-tree :clearable="sclear" @on-change="getids"></search-tree>
+				<search-tree  @on-change="getids"></search-tree>
 				<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
 					<Option value="0">全部媒体账号</Option>
 					<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
@@ -129,7 +129,7 @@
 				</Col>
 			</Row>
 			<div>
-				<Table :data="newAdList" height="600" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
+				<Table :data="newAdList" height="650" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
 
 				<Row class="margin-top-10">
 					<Col span="10"> 表格尺寸
@@ -184,7 +184,6 @@
 				mediaList: [], //媒体账号列表
 				campaignslist: [], //推广计划列表
 				loading: false,
-				sclear: false, //searchTree 组件清除属性
 				adList: [], //数据列表
 				GameListIds: [], //搜索返回ids
 				MediaListModel: '0',
@@ -678,7 +677,7 @@
 				Axios.post('api.php', {
 					action: 'adData',
 					opt: 'tasck_add',
-					act: 'cp_adgroup',
+					act: 'cp_campaigns',
 					type: 'gdt',
 					account_id: this.formItem.account_id,
 					idArr: this.taCheckids.join(',')

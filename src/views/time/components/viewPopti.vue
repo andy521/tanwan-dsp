@@ -1,10 +1,10 @@
-<style lang="less">
+<style scoped>
 	.bottom_line {
 		border-bottom: 1px solid rgb(233, 233, 233);
 		padding-bottom: 10px;
 	}
 	
-	.Poptiptap .ivu-poptip-body {
+	.poptipdiv {
 		white-space: normal;
 		text-align: left;
 		padding: 20px;
@@ -24,7 +24,7 @@
 	<div style="display: inline-block;">
 		<Poptip placement="bottom-start" width="500" class="Poptiptap" trigger="hover">
 			<Button type="primary">自定义指标</Button>
-			<div class="api" slot="content">
+			<div  slot="content" class="poptipdiv">
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
 				</div>
@@ -81,7 +81,7 @@
 					<Checkbox label="down_ip">下载IP</Checkbox>
 				</CheckboxGroup>
 				<div class="margin-top-20">
-					<Button @click="set_user_memo">保存操作</Button>
+					<Button type="ghost" @click="set_user_memo">保存操作</Button>
 				</div>
 			</div>
 		</Poptip>

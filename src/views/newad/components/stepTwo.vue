@@ -192,10 +192,15 @@
 	<div>
 		<div class="tit">广告</div>
 		<h3 class="subtit">目标详情</h3>
-		<Input v-model="product_refs_id" size="large" placeholder="请输入标的物ID" class="margin-top-20">
+
+		<!--<Input v-model="product_refs_id" size="large" placeholder="请输入标的物ID" class="margin-top-20">
 		<span slot="prepend">标的物ID</span>
 		<span slot="append">{{product_refs_id.length}}/15</span>
-		</Input>
+		</Input>-->
+		<Select filterable size="large" placeholder="请选择标的物id" v-model="product_refs_id" class="margin-top-20">
+			<Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="this">{{item.product_name}}</Option>
+		</Select>
+
 		<h3 class="subtit">定向</h3>
 		<div class="margin-top-20">
 			<Select filterable size="large" placeholder="请选择定向" v-model="targeting_id" style="width:400px" @on-change="changetargetings">
@@ -376,7 +381,10 @@
 						<div class="margin-top-10" v-if="targeting_item.targeting.customized_audience.length>0">
 							<p>已选择</p>
 							<div class="ds_tag margin-top-10">
-								<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)">{{ item.name }}</Tag>
+
+								<template v-for="subitem in customized_audience">
+									<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+								</template>
 								<p>
 									<Button type="text" @click="targeting_item.targeting.customized_audience=[]">清空</Button>
 								</p>
@@ -398,7 +406,10 @@
 						</div>
 						<div class="ds_tag margin-top-10" v-if="targeting_item.targeting.excluded_custom_audience.length>0">
 							<p>已选择</p>
-							<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)">{{ item.name }}</Tag>
+
+							<template v-for="subitem in customized_audience">
+								<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+							</template>
 							<p>
 								<Button type="text" @click="targeting_item.targeting.excluded_custom_audience=[]">清空</Button>
 							</p>
@@ -501,11 +512,19 @@
 				</p>
 				<p v-if="Audiences_modeal">
 					<span>定向用户群：</span>
-					<em v-for="item in targeting_item.targeting.customized_audience">{{item.name}},</em>
+					<em v-for="item in targeting_item.targeting.customized_audience">
+						<var v-for="subitem in customized_audience">
+							<var v-if="subitem.audience_id==item">{{subitem.name}},</var>
+						</var>
+					</em>
 				</p>
 				<p v-if="Audiences_modeal">
 					<span>排除用户群 ：</span>
-					<em v-for="item in targeting_item.targeting.excluded_custom_audience">{{item.name}},</em>
+					<em v-for="item in targeting_item.targeting.excluded_custom_audience">
+						<var v-for="subitem in customized_audience">
+							<var v-if="subitem.audience_id==item">{{subitem.name}},</var>
+						</var>
+					</em>
 				</p>
 				<p v-if="education_modeal">
 					<span>婚恋状态：</span>
@@ -786,7 +805,9 @@
 							<div class="margin-top-10" v-if="targeting_item.targeting.customized_audience.length>0">
 								<p>已选择</p>
 								<div class="ds_tag margin-top-10">
-									<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)">{{ item.name }}</Tag>
+									<template v-for="subitem in customized_audience">
+										<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+									</template>
 									<p>
 										<Button type="text" @click="targeting_item.targeting.customized_audience=[]">清空</Button>
 									</p>
@@ -797,7 +818,7 @@
 								<Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-keyup="getAudiences()" placeholder="搜索用户群"></Input>
 								</Col>
 							</Row>
-							<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="customized_audience" size="small" @on-selection-change="taCheck"></Table>
+							<Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="customized_audience" size="small" @on-selection-change="taCheck" ref="selection"></Table>
 							<div class="subtt margin-top-20"><span>排除用户群</span>
 								<Tooltip placement="top">
 									<Icon type="help-circled" color="#999"></Icon>
@@ -808,7 +829,10 @@
 							</div>
 							<div class="ds_tag margin-top-10" v-if="targeting_item.targeting.excluded_custom_audience.length>0">
 								<p>已选择</p>
-								<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)">{{ item.name }}</Tag>
+
+								<template v-for="subitem in customized_audience">
+									<Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+								</template>
 								<p>
 									<Button type="text" @click="targeting_item.targeting.excluded_custom_audience=[]">清空</Button>
 								</p>
@@ -909,9 +933,10 @@
 		},
 		data() {
 			return {
-				account_id: this.$route.params.account_id,
+				account_id: this.$route.query.account_id,
 				targeting_id: '0',
 				product_refs_id: '',
+				product_refs_ids: [],
 				targeting_item: {
 					"account_id": "",
 					"id": "",
@@ -935,7 +960,6 @@
 							"act_id_list": []
 						},
 						"app_install_status": [],
-						"customized_audience": [],
 						"network_type": [],
 						"business_interest": [],
 						"network_operator": [],
@@ -995,11 +1019,11 @@
 			}
 		},
 		mounted() {
-			if(this.$route.params.targeting_id) {
-				this.targeting_id = this.$route.params.targeting_id;
+			if(this.$route.query.targeting_id) {
+				this.targeting_id = this.$route.query.targeting_id;
 			};
 			//请求定向
-			this.$store.dispatch('get_targetings',this.account_id);
+			this.$store.dispatch('get_targetings', this.account_id);
 			//请求定向标签(地域)
 			this.$store.dispatch('get_targeting_tags');
 			//获取商业兴趣
@@ -1011,6 +1035,23 @@
 			this.getAudiences_ex();
 		},
 		methods: {
+			//获取标的物id
+			products_info_get() {
+				Axios.get('api.php', {
+					action: 'gdtAdput',
+					opt: 'products_info_get',
+					account_id: this.account_id,
+					product_type: this.plandata.product_type
+				}).then(res => {
+					if(res.ret == 1) {
+						this.product_refs_ids = res.data;
+					}
+				}).catch(
+					err => {
+						console.log('获取标的物id' + err)
+					}
+				)
+			},
 			getAudiences() {
 				//获取自定义人群
 				let data = {
@@ -1205,7 +1246,7 @@
 			taCheck(row) {
 				let ids = [];
 				row.forEach(item => {
-					ids.push(item)
+					ids.push(item.audience_id)
 				});
 				this.targeting_item.targeting.customized_audience = ids;
 			},
@@ -1217,7 +1258,7 @@
 			taCheck_ex(row) {
 				let ids = [];
 				row.forEach(item => {
-					ids.push(item)
+					ids.push(item.audience_id)
 				});
 				this.targeting_item.targeting.excluded_custom_audience = ids;
 			},
@@ -1371,6 +1412,9 @@
 			}
 		},
 		watch: {
+			plandata() {
+				this.products_info_get();
+			},
 			age(val) {
 				let age = [];
 				age.push(val[0] + '~' + val[1]);
@@ -1379,14 +1423,35 @@
 			targeting_tags() {},
 		},
 		computed: {
-
 			//获取自定义人群
 			customized_audience() {
-				return this.$store.state.newad.CustomAudiences.list;
+				let list = this.$store.state.newad.CustomAudiences.list;
+				let ids = this.targeting_item.targeting.customized_audience;
+				list.forEach(item => {
+					let checked=false;
+					ids.forEach(v => {
+						if(item.audience_id == v) {							
+							checked=true;							
+						}
+					})
+					console.log(checked)
+					item._checked = checked;
+
+				})
+				return list;
 			},
 			//获取自定义人群排除
 			excluded_custom_audience() {
-				return this.$store.state.newad.CustomAudiences_ex.list;
+				let list = this.$store.state.newad.CustomAudiences_ex.list;
+				let ids = this.targeting_item.targeting.excluded_custom_audience;
+				list.forEach(item => {
+					ids.forEach(v => {
+						if(item.audience_id == v) {
+							item._checked = true;
+						}
+					})
+				})
+				return list;
 			},
 
 			//获取所有状态
@@ -1420,7 +1485,6 @@
 							"act_id_list": []
 						},
 						"app_install_status": [],
-						"customized_audience": [],
 						"network_type": [],
 						"business_interest": [],
 						"network_operator": [],

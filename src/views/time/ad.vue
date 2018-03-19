@@ -75,7 +75,7 @@
 				</div>
 				<div v-else>
 					<!--搜索游戏列表-->
-					<search-tree :clearable="sclear" @on-change="getids"></search-tree>
+					<search-tree  @on-change="getids"></search-tree>
 					<Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
 						<Option value="0">全部媒体账号</Option>
 						<Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
@@ -133,7 +133,7 @@
 				</Col>
 			</Row>
 			<div>
-				<Table :data="newAdList" height="600" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="adtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe>
+				<Table :data="newAdList" height="650" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="adtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe>
 
 				</Table>
 				<Row class="margin-top-10">
@@ -194,8 +194,7 @@
 				mediaList: [], //媒体账号列表
 				campaignslist: [], //推广计划列表
 				campaignslistform: [], //复制推广计划列表
-				loading: false,
-				sclear: false, //searchTree 组件清除属性
+				loading: false,				
 				adList: [], //数据列表
 				GameListIds: [], //搜索返回ids
 				MediaListModel: '0',
@@ -233,16 +232,16 @@
 						type: 'expand',
 						width: 30,
 						fixed: "left",
-						render: (h, params) => {
+						render: (h, params) => {							
 							return h(creativity, {
 								props: {
-									row: params.row
+									row: params.row,
+									uncheck:this.uncheck
 								}
 							})
 						}
 					}, {
 						type: 'selection',
-						//fixed: "left",
 						width: 58,
 						key: ''
 					},
@@ -723,7 +722,7 @@
 				Axios.post('api.php', {
 					action: 'adData',
 					opt: 'tasck_add',
-					act: 'cp_campaigns',
+					act: 'cp_adgroup',
 					type: 'gdt',
 					account_id: this.formItem.account_id,
 					campaign_id: this.formItem.campaign_id,

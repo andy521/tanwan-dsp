@@ -33,7 +33,7 @@
 		color: #999;
 	}
 	
-	.carousel {
+	.carousel_ad {
 		width: 250px;
 		border: solid 1px #eee;
 		position: relative;
@@ -98,195 +98,295 @@
 		padding: 12px 24px;
 		font-size: 30px;
 	}
+	
+	.flex {
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+	}
+	
+	.ta {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 20px;
+		margin-top: -20px;
+	}
+	
+	.ta tr td:last-child {
+		width: auto;
+	}
 </style>
 <template>
 	<div>
-		<!--<Row class="expand-row">
-			<Col span="8">
-			<span class="expand-key">Job: </span>
-			<span class="expand-value">{{ row.account_id }}</span>
-			</Col>
-			<Col span="8">
-			<span class="expand-key">Interest: </span>
-			<span class="expand-value">{{ row.interest }}</span>
-			</Col>
-			<Col span="8">
-			<span class="expand-key">Birthday: </span>
-			<span class="expand-value">{{ row.birthday }}</span>
-			</Col>
-		</Row>-->
 
-		<!--创意详情-->
-		<div class="detail">
-			<div class="w_flex" v-if="adgroup_detail.adcreative.length>0">
-				<div class="w_flex_hd">创意</div>
-				<div class="w_flex_bd">
-					<Carousel class="carousel" v-model="CarouselItem" arrow="always" trigger="hover" :height="250">
-						<CarouselItem class="carouselitem" v-for="item in adgroup_detail.adcreative" :key="this">
-							<div class="carouselbox">
-								<div class="txt">{{item.adcreative_name}}</div>
-								<img :src="item.adcreative_elements.image_url" width="100%" />
-								<div class="txt">{{item.adcreative_elements.title}}</div>
-								<!--								<div class="txt">{{item.adcreative_elements.corporate.corporate_name}}</div>-->
-							</div>
-							<div class="w_img_operation" @click="funpreview(item)">
-								<Icon type="search" size="18" color="#fff"></Icon>
-							</div>
-						</CarouselItem>
-					</Carousel>
-				</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">广告名称</div>
-				<div class="w_flex_bd">{{adgroup_detail.adgroup_name}}</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">广告ID</div>
-				<div class="w_flex_bd">{{adgroup_detail.adgroup_id}}</div>
-			</div>
-			<div class="w_flex">
-				<div class="w_flex_hd">投放日期</div>
-				<div class="w_flex_bd">{{adgroup_detail.begin_date}}~{{adgroup_detail.end_date}}</div>
-			</div>
-			<div class="w_flex" v-if="adgroup_detail.time_series">
-				<div class="w_flex_hd">投放时间</div>
-				<div class="w_flex_bd" v-html="weektime"></div>
-			</div>
-			<div class="w_flex" v-if="adgroup_detail.optimization_goal">
-				<div class="w_flex_hd">优化目标</div>
-				<div class="w_flex_bd">
-					<span v-if="item.val_type==adgroup_detail.optimization_goal" size="large" v-for="item in ads_config.optimization_goal" :key="this">{{item.name}}</span>
-				</div>
-			</div>
-			<div class="w_flex" v-if="adgroup_detail.billing_event">
-				<div class="w_flex_hd">付费方式</div>
-				<div class="w_flex_bd"><span v-if="item.val_type==adgroup_detail.billing_event" size="large" v-for="item in ads_config.billing_event" :key="this">{{item.name}}</span></div>
-			</div>
-			<div class="w_flex" v-if="adgroup_detail.bid_amount">
-				<div class="w_flex_hd">广告出价</div>
-				<div class="w_flex_bd">{{adgroup_detail.bid_amount/100}}元/激活</div>
-			</div>
-			<div class="w_flex" v-if="adgroup_detail.site_set">
-				<div class="w_flex_hd">投放平台</div>
-				<div class="w_flex_bd">
-					<span v-for="item in adgroup_detail.site_set">
+		<table class="ta">
+			<!--<tr>
+				<td></td>
+				<td >媒体帐户</td>
+				<td></td>
+				<td></td>
+				<td>曝光量</td>
+				<td>点击</td>
+				<td>点击率 </td>
+				<td>点击均价</td>
+				<td>花费</td>
+				<td>广告开关/状态</td>
+				<td>日消耗限额</td>
+				<td>产品名称</td>
+				<td>展示PV</td>
+				<td>展示IP</td>
+				<td>下载IP</td>
+				<td>到达数</td>
+				<td>到达率</td>
+				<td>下载数</td>
+				<td>下载率</td>
+				<td>激活总量</td>
+				<td>点击激活率</td>
+				<td>激活安装率</td>
+				<td>下载激活率</td>
+				<td>出价</td>
+				<td>注册</td>
+				<td>注册设备数</td>
+				<td>注册设备成本</td>
+				<td>注册成本</td>
+				<td>注册率</td>
+				<td>注册ARPU</td>
+				<td>活跃数</td>
+				<td>活跃率</td>
+				<td>付费人数 </td>
+				<td>付费金额</td>
+				<td>付费率</td>
+				<td>回本率 </td>
+			</tr>-->
+			<tr v-for="item in adgroup_detail.adcreative">
+				<td width="58">{{item.adcreative_name}}</td>
+				<template v-for="subitem in checkAll">
+					<td width="160" v-if="subitem=='account_name'">{{item.adtodayArr.account_name}}</td>
+					<td width="400" v-if="subitem=='adgroup_name'"></td>
+					<td width="150" v-if="subitem=='campaign_id'">{{item.adtodayArr.campaign_id}}</td>
+					<td width="100" v-if="subitem=='impression'">{{item.adtodayArr.impression}}</td>
+					<td width="150" v-if="subitem=='click'">{{item.adtodayArr.click}}</td>
+					<td width="150" v-if="subitem=='click_per'">-</td>
+					<td width="150" v-if="subitem=='click_cost'">-</td>
+					<td width="150" v-if="subitem=='cost'">{{item.adtodayArr.cost}}</td>
+					<td width="150" v-if="subitem=='configured_status'">-</td>
+					<td width="150" v-if="subitem=='daily_budget'">-</td>
+					<td width="200" v-if="subitem=='game_name'">-</td>
+					<td width="150" v-if="subitem=='show_pv'">-</td>
+					<td width="150" v-if="subitem=='show_ip'">-</td>
+					<td width="150" v-if="subitem=='down_ip'">-</td>
+					<td width="150" v-if="subitem=='fetch'">-</td>
+					<td width="150" v-if="subitem=='fetch_per'">-</td>
+					<td width="150" v-if="subitem=='download'">{{item.adtodayArr.download}}</td>
+					<td width="150" v-if="subitem=='down_ins_per'">-</td>
+					<td width="150" v-if="subitem=='install'">-</td>
+					<td width="150" v-if="subitem=='click_install'">-</td>
+					<td width="150" v-if="subitem=='install_per'">-</td>
+					<td width="150" v-if="subitem=='download_per'">-</td>
+					<td width="150" v-if="subitem=='bid_amount'">-</td>
+					<td width="150" v-if="subitem=='reg_imei'">-</td>
+					<td width="150" v-if="subitem=='activation'">-</td>
+					<td width="150" v-if="subitem=='reg_imei_cost'">-</td>
+					<td width="150" v-if="subitem=='reg_cost'">-</td>
+					<td width="150" v-if="subitem=='reg_per'">-</td>
+					<td width="150" v-if="subitem=='reg_arpu'">-</td>
+					<td width="150" v-if="subitem=='login'">-</td>
+					<td width="150" v-if="subitem=='act_per'">-</td>
+					<td width="150" v-if="subitem=='pay_num'">-</td>
+					<td width="150" v-if="subitem=='pay_total'">-</td>
+					<td width="150" v-if="subitem=='pay_per'">-</td>
+					<td v-if="subitem=='income_per'">-</td>
+				</template>
+			</tr>
+		</table>
+
+		<div class="flex">
+			<div class="flex_item">
+				<!--创意详情-->
+				<div class="detail">
+					<div class="w_flex" v-if="adgroup_detail.adcreative.length>0">
+						<div class="w_flex_hd">创意</div>
+						<div class="w_flex_bd">
+							<Carousel class="carousel_ad" v-model="CarouselItem" arrow="always" trigger="hover" :height="250">
+								<CarouselItem class="carouselitem" v-for="item in adgroup_detail.adcreative" :key="this">
+									<div class="carouselbox" v-if="item.adcreative_elements">
+										<div class="txt">{{item.adcreative_name}}</div>
+										<img :src="item.adcreative_elements.image_url" width="100%" />
+										<div class="txt">{{item.adcreative_elements.title}}</div>
+										<!--								<div class="txt">{{item.adcreative_elements.corporate.corporate_name}}</div>-->
+									</div>
+									<div class="w_img_operation" @click="funpreview(item)">
+										<Icon type="search" size="18" color="#fff"></Icon>
+									</div>
+								</CarouselItem>
+							</Carousel>
+						</div>
+					</div>
+					<div class="w_flex">
+						<div class="w_flex_hd">广告名称</div>
+						<div class="w_flex_bd">{{adgroup_detail.adgroup_name}}</div>
+					</div>
+					<div class="w_flex">
+						<div class="w_flex_hd">广告ID</div>
+						<div class="w_flex_bd">{{adgroup_detail.adgroup_id}}</div>
+					</div>
+					<div class="w_flex">
+						<div class="w_flex_hd">投放日期</div>
+						<div class="w_flex_bd">{{adgroup_detail.begin_date}}~{{adgroup_detail.end_date}}</div>
+					</div>
+					<div class="w_flex" v-if="adgroup_detail.time_series">
+						<div class="w_flex_hd">投放时间</div>
+						<div class="w_flex_bd" v-html="weektime"></div>
+					</div>
+					<div class="w_flex" v-if="adgroup_detail.optimization_goal">
+						<div class="w_flex_hd">优化目标</div>
+						<div class="w_flex_bd">
+							<span v-if="item.val_type==adgroup_detail.optimization_goal" size="large" v-for="item in ads_config.optimization_goal" :key="this">{{item.name}}</span>
+						</div>
+					</div>
+					<div class="w_flex" v-if="adgroup_detail.billing_event">
+						<div class="w_flex_hd">付费方式</div>
+						<div class="w_flex_bd"><span v-if="item.val_type==adgroup_detail.billing_event" size="large" v-for="item in ads_config.billing_event" :key="this">{{item.name}}</span></div>
+					</div>
+					<div class="w_flex" v-if="adgroup_detail.bid_amount">
+						<div class="w_flex_hd">广告出价</div>
+						<div class="w_flex_bd">{{adgroup_detail.bid_amount/100}}元/激活</div>
+					</div>
+					<div class="w_flex" v-if="adgroup_detail.site_set">
+						<div class="w_flex_hd">投放平台</div>
+						<div class="w_flex_bd">
+							<span v-for="item in adgroup_detail.site_set">
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.site_set" :key="this">{{subitem.name}}&nbsp;</em>
 					</span>
-				</div>
-			</div>
-			<div class="w_flex" v-if="adgroup_detail.targeting">
-				<div class="w_flex_hd">定向条件</div>
-				<div class="w_flex_bd">
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.gender">
-						<span class="grey">性别：</span>
-						<span v-if="item.val_type==adgroup_detail.targeting.gender" size="large" v-for="item in ads_config.gender" :key="this">{{item.name}}</span>
+						</div>
 					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.age">
-						<span class="grey">年龄：</span> {{adgroup_detail.targeting.age.toString()}}岁
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.business_interest">
-						<span class="grey">商业兴趣：</span> {{businessids}}
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.app_behavior">
-						<span class="grey">App行为：</span>{{app_category}}，距离今天{{adgroup_detail.targeting.app_behavior.time_window}}天内，该类APP的
-						<span v-for="item in ads_config.act_id_list">
+					<div class="w_flex" v-if="adgroup_detail.targeting">
+						<div class="w_flex_hd">定向条件</div>
+						<div class="w_flex_bd">
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.gender">
+								<span class="grey">性别：</span>
+								<span v-if="item.val_type==adgroup_detail.targeting.gender" size="large" v-for="item in ads_config.gender" :key="this">{{item.name}}</span>
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.age">
+								<span class="grey">年龄：</span> {{adgroup_detail.targeting.age.toString()}}岁
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.business_interest">
+								<span class="grey">商业兴趣：</span> {{businessids}}
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.app_behavior">
+								<span class="grey">App行为：</span>{{app_category}}，距离今天{{adgroup_detail.targeting.app_behavior.time_window}}天内，该类APP的
+								<span v-for="item in ads_config.act_id_list">
 						<em v-for="subitem in adgroup_detail.targeting.app_behavior.act_id_list" v-if="subitem==item.val_type">{{item.name}},</em>
 					</span> 用户
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.app_install_status">
-						<span class="grey">App安装：</span>
-						<span size="large" v-for="item in ads_config.app_install_status" :key="this" v-if="item.val_type==adgroup_detail.targeting.app_install_status">{{item.name}}</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.network_type">
-						<span class="grey">联网方式：</span>
-						<span v-for="item in adgroup_detail.targeting.network_type">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.app_install_status">
+								<span class="grey">App安装：</span>
+								<span size="large" v-for="item in ads_config.app_install_status" :key="this" v-if="item.val_type==adgroup_detail.targeting.app_install_status">{{item.name}}</span>
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.network_type">
+								<span class="grey">联网方式：</span>
+								<span v-for="item in adgroup_detail.targeting.network_type">
 					<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.network_type" :key="this">{{subitem.name}}</em>
 					</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.customized_audience">
-						<span class="grey">定向用户群：</span>
-						<span v-for="item in adgroup_detail.targeting.customized_audience">{{item.name}}</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.excluded_custom_audience">
-						<span class="grey">排除用户群：</span>
-						<span v-for="item in adgroup_detail.targeting.excluded_custom_audience">{{item.name}}</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.education">
-						<span class="grey">婚恋状态：</span>
-						<span v-for="item in adgroup_detail.targeting.education">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.customized_audience">
+								<span class="grey">定向用户群：</span>
+								<span v-for="item in adgroup_detail.targeting.customized_audience">{{item.name}}</span>
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.excluded_custom_audience">
+								<span class="grey">排除用户群：</span>
+								<span v-for="item in adgroup_detail.targeting.excluded_custom_audience">{{item.name}}</span>
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.education">
+								<span class="grey">婚恋状态：</span>
+								<span v-for="item in adgroup_detail.targeting.education">
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.education" :key="this">{{subitem.name}}</em>
 					</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.living_status">
-						<span class="grey">工作状态：</span>
-						<span v-for="item in adgroup_detail.targeting.living_status">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.living_status">
+								<span class="grey">工作状态：</span>
+								<span v-for="item in adgroup_detail.targeting.living_status">
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.living_status" :key="this">{{subitem.name}}</em>
 					</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.keyword">
-						<span class="grey">关键词：</span>
-						<span v-for="item in adgroup_detail.targeting.keyword.words">{{item}}</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.paying_user_type">
-						<span class="grey">付费用户：</span>
-						<span v-for="item in adgroup_detail.targeting.paying_user_type">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.keyword">
+								<span class="grey">关键词：</span>
+								<span v-for="item in adgroup_detail.targeting.keyword.words">{{item}}</span>
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.paying_user_type">
+								<span class="grey">付费用户：</span>
+								<span v-for="item in adgroup_detail.targeting.paying_user_type">
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.paying_user_type" :key="this">{{subitem.name}}&nbsp;</em>
 					</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.shopping_capability">
-						<span class="grey">消费状态：</span>
-						<span v-for="item in adgroup_detail.targeting.shopping_capability">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.shopping_capability">
+								<span class="grey">消费状态：</span>
+								<span v-for="item in adgroup_detail.targeting.shopping_capability">
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.shopping_capability" :key="this">{{subitem.name}}&nbsp;</em>
 					</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.network_operator">
-						<span class="grey">消费状态：</span>
-						<span v-for="item in adgroup_detail.targeting.network_operator">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.network_operator">
+								<span class="grey">消费状态：</span>
+								<span v-for="item in adgroup_detail.targeting.network_operator">
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.network_operator" :key="this">{{subitem.name}}&nbsp;</em>
 					</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.device_price">
-						<span class="grey">设备价格：</span>
-						<span v-for="item in adgroup_detail.targeting.device_price">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.device_price">
+								<span class="grey">设备价格：</span>
+								<span v-for="item in adgroup_detail.targeting.device_price">
 						<em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.device_price" :key="this">{{subitem.name}}&nbsp;</em>
 					</span>
-					</div>
-					<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location">
-						<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location.location_types">
-							<span class="grey">地点类型：</span>
-							<span v-for="item in ads_config.location_types">
+							</div>
+							<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location">
+								<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location.location_types">
+									<span class="grey">地点类型：</span>
+									<span v-for="item in ads_config.location_types">
 						<em v-for="subitem in adgroup_detail.targeting.geo_location.location_types" v-if="subitem==item.val_type">{{item.name}}&nbsp;</em>
 					</span>
-						</div>
-						<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location.regions">
-							<span class="grey">地域：</span>{{new_regions}}
+								</div>
+								<div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location.regions">
+									<span class="grey">地域：</span>{{new_regions}}
+								</div>
+							</div>
+							<Button type="ghost" icon="edit" @click="editTargeting">修改定向</Button>
 						</div>
 					</div>
-					<Button type="ghost" icon="edit" @click="editTargeting">修改定向</Button>
 				</div>
 			</div>
+			<div class="flex_item" style="width: 1080px;">
+				<!-- 线性表格 -->
+				<echarts-tabel :datas="adgroup_detail" v-if="adgroup_detail.adcreative.length>0"></echarts-tabel>
+			</div>
 		</div>
+
 		<!--创意预览-->
 		<div class="Preview_bg" v-if="preview_win" @click="preview_win=false"></div>
 		<div class="Preview" v-if="preview_win">
 			<img :src="preview.adcreative_elements.image_url" width="100%" />
-			<div class="Preview_name">{{preview.adcreative_elements.corporate.corporate_name}}</div>
+			<div class="Preview_name">{{preview.adcreative_elements.title}}</div>
 		</div>
 	</div>
 </template>
 <script>
 	import Axios from '@/api/index';
+	import echartsTabel from './echartsTabel.vue';
 	import { changetime } from '@/utils/DateShortcuts.js';
 	export default {
+		components: {
+			echartsTabel
+		},
 		props: {
-			row: Object
+			row: Object,
+			uncheck: Array
 		},
 		data() {
 			return {
+				checkAllGroups: ['account_name', 'adgroup_name', 'campaign_id', 'impression', 'click', 'click_per', 'click_cost', 'cost', 'configured_status', 'daily_budget', 'game_name', 'show_pv', 'show_ip', 'down_ip', 'fetch', 'fetch_per', 'download', 'down_ins_per', 'install', 'click_install', 'install_per', 'download_per', 'bid_amount', 'reg_imei', 'activation', 'reg_imei_cost', 'reg_cost', 'reg_per', 'reg_arpu', 'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'income_per'],
 				CarouselItem: 0,
 				preview_win: false,
-				preview: {},
+				preview: {}, //预览
 				adgroup_detail: {
+					adgroup_id: '',
 					adcreative: [{
 						"adcreative_elements": {
 							"corporate": {
@@ -299,6 +399,11 @@
 						},
 						"adcreative_id": "",
 						"adcreative_name": "",
+						"configured_status": "",
+						"system_status": "",
+						"reject_message": "",
+						"adtodayArr": {},
+						"adhourArr": []
 					}],
 					targeting: {
 						"age": ["5~60"],
@@ -346,7 +451,6 @@
 			}).then(
 				res => {
 					if(res.ret == 1) {
-						console.log(res.data)
 						this.adgroup_detail = res.data;
 					}
 				}
@@ -375,6 +479,21 @@
 			}
 		},
 		computed: {
+			checkAll() {
+				let check = [];
+				this.checkAllGroups.forEach(item => {
+					let is = true;
+					this.uncheck.forEach(col => {
+						if(item == col) {
+							is = false;
+						}
+					});
+					if(is) {
+						check.push(item);
+					}
+				});
+				return check;
+			},
 			//获取所有状态
 			ads_config() {
 				return this.$store.state.newad.ads_config;
