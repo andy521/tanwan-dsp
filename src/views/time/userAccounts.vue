@@ -36,7 +36,7 @@
 					this.$Message.info('请选择帐号');
 					return;
 				}
-				
+
 				let query = {
 					account_id: this.account_id
 				};

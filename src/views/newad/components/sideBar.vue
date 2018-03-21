@@ -1,4 +1,4 @@
-<style lang="less">
+<style>
 	.sidediv {
 		position: fixed;
 		top: 0;
@@ -54,6 +54,9 @@
 
 <template>
 	<div class="sidediv">
+		<div class="sidebox">
+			<Button type="primary" @click="back">返回</Button>
+		</div>
 		<div class="sidebox">
 			<div class="item" v-for="(item,index) in current">
 				<div v-if="index > step[0]">
@@ -129,6 +132,10 @@
 			}
 		},
 		methods: {
+			 //返回
+			back() {
+			this.$router.go(-1);
+			},
 			navigation(index,subindex) {
 				let step=[index,subindex];
 				this.$emit('input', step);

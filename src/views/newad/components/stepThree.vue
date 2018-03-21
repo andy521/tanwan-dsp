@@ -4,7 +4,7 @@
 	}
 	
 	.newad .ivu-table-row-highlight td {
-		color: #e88e00
+		color: #e88e00;
 	}
 	
 	.newad .ivu-form-item-label {
@@ -82,7 +82,7 @@
 		position: absolute;
 		bottom: 0;
 		width: 100%;
-		background: rgba(0, 0, 0, .2);
+		background: rgba(0, 0, 0, 0.2);
 		padding: 8px;
 		text-align: center;
 	}
@@ -152,8 +152,14 @@
 			<div id="J_bid" class="date_price">
 				<Form :model="adgroup" :label-width="90">
 					<FormItem label="投放日期：">
-						<DatePicker @on-change="changeDateLong"  :options="options" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px; margin-right:15px;"></DatePicker>
-						<DatePicker @on-change="changeDate" :options="options" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
+						<div>
+							<RadioGroup v-model="datetype">
+								<Radio label="1">长期投放</Radio>
+								<Radio label="2">在某日期范围内投放</Radio>
+							</RadioGroup>
+						</div>
+						<DatePicker v-if="datetype==1" v-model="adgroup.begin_date" :options="options" type="date" format="yyyy-MM-dd" placeholder="长期投放" style="width: 300px;"></DatePicker>
+						<DatePicker v-if="datetype==2" v-model="DateDomain" :options="options" type="daterange" format="yyyy-MM-dd" placement="bottom-end" placeholder="在某日期范围内投放" style="width: 300px"></DatePicker>
 					</FormItem>
 					<FormItem label="投放时间：">
 						<div class="fl">
@@ -215,20 +221,21 @@
 	</div>
 </template>
 <script>
-	import weekTime from './weekTime.vue';
-	import p65 from '@/images/adcreative/65.png';
-	import p148 from '@/images/adcreative/148.png';
-	import p184 from '@/images/adcreative/184.png';
-	import p210 from '@/images/adcreative/210.png';
-	import p471 from '@/images/adcreative/471.png';
-	import p473 from '@/images/adcreative/473.png';
-	import p486 from '@/images/adcreative/486.png';
-	import p487 from '@/images/adcreative/487.png';
+	import { formatDate } from "@/utils/DateShortcuts.js";
+	import weekTime from "./weekTime.vue";
+	import p65 from "@/images/adcreative/65.png";
+	import p148 from "@/images/adcreative/148.png";
+	import p184 from "@/images/adcreative/184.png";
+	import p210 from "@/images/adcreative/210.png";
+	import p471 from "@/images/adcreative/471.png";
+	import p473 from "@/images/adcreative/473.png";
+	import p486 from "@/images/adcreative/486.png";
+	import p487 from "@/images/adcreative/487.png";
 	export default {
 		components: {
-			weekTime,
+			weekTime
 		},
-		name: 'step-three',
+		name: "step-three",
 		props: {
 			//广告版位数据
 			edition: {
@@ -238,53 +245,58 @@
 			setp: [1, 1],
 			plandata: {
 				type: Object
-			},
+			}
 		},
 		data() {
 			return {
-				className: '',
+				className: "",
 				columnsAdSpace: [{
-						title: '广告版位',
-						key: 'name'
+						title: "广告版位",
+						key: "name"
 					},
 					{
-						title: '创意形式',
-						key: 'modus'
+						title: "创意形式",
+						key: "modus"
 					},
 					{
-						title: '描述',
-						key: 'description'
+						title: "描述",
+						key: "description"
 					}
 				],
-				 options: {
-                    disabledDate (date) {
-                        return date && date.valueOf() < Date.now() - 86400000;
-                    }
-                },
-				setdata: '',
+				options: {
+					disabledDate(date) {
+						return date && date.valueOf() < Date.now() - 86400000;
+					}
+				},
+				setdata: "",
+				datetype: '1',
+				DateDomain: [
+					formatDate(new Date(), "yyyy-MM-dd"),
+					formatDate(new Date(), "yyyy-MM-dd")
+				], //筛选时间
 				adgroup: {
 					//选择广告id
-					adcreative_template_id: '',
+					adcreative_template_id: "",
 					//站点
-					site_set: '',
+					site_set: "",
 					//广告优化目标类型
-					optimization_goal: '',
+					optimization_goal: "",
 					//开始投放日期
-					begin_date: '',
+					begin_date: formatDate(new Date(), "yyyy-MM-dd"),
 					//结束投放日期
-					end_date: '',
+					end_date: "",
 					//投放时间段
-					time_series: '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
-					billing_event: '',
+					time_series: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+					billing_event: "",
 					//出价
-					bid_amount: '',
-					//广告名称              
-					adcreative_name: '',
-					adgroup_name: '',
-					daily_budget: '',
-					destination_url: ''
+					bid_amount: "",
+					//广告名称
+					adcreative_name: "",
+					adgroup_name: "",
+					daily_budget: "",
+					destination_url: ""
 				},
-				imgSrc: '',
+				imgSrc: "",
 				//投放时间
 				allDay: true,
 				//特定时间段-开始时间
@@ -292,28 +304,26 @@
 				//特定时间段-结束时间
 				timeEndList: [],
 				//选中的开始时间
-				timeState: '0',
+				timeState: "0",
 				//选中的结束时间
-				timeEnd: '24',
+				timeEnd: "24",
 				//出价方式
 				disabled_cpc: true,
 				disabled_cpm: true,
 				//是否显示高级设置
 				isWeek: false,
-				isWeekText: '高级设置',
+				isWeekText: "高级设置",
 				//下一步操作时判断
 				verify: {
 					ad: false,
 					dp: false,
-					dp_txt: ''
+					dp_txt: ""
 				},
 				//是否修改版位
 				modify: false
-			}
+			};
 		},
-		watch: {
-
-		},
+		watch: {},
 		computed: {
 			//获取所有状态
 			goalList() {
@@ -322,31 +332,38 @@
 		},
 		methods: {
 			tostep(step) {
-				this.$emit('tostep', step)
+				this.$emit("tostep", step);
 			},
 			//阻止修改广告版位
 			isModify() {
 				this.$Modal.confirm({
-					title: '修改版位',
-					content: '<p>修改版位，已填写的广告创意将会被清空',
+					title: "修改版位",
+					content: "<p>修改版位，已填写的广告创意将会被清空",
 					onOk: () => {
 						this.modify = false;
 					},
-					onCancel: () => {
-
-					}
+					onCancel: () => {}
 				});
 			},
 			//选择优化目标
 			getStyle(val) {
-				if(val == 'OPTIMIZATIONGOAL_CLICK' || val == 'OPTIMIZATIONGOAL_APP_ACTIVATE' || val == 'OPTIMIZATIONGOAL_APP_REGISTER' || val == 'OPTIMIZATIONGOAL_PROMOTION_CLICK_KEY_PAGE' || val == 'OPTIMIZATIONGOAL_ECOMMERCE_ORDER' || val == 'OPTIMIZATIONGOAL_APP_PURCHASE' || val == 'OPTIMIZATIONGOAL_ECOMMERCE_CHECKOUT' || val == 'OPTIMIZATIONGOAL_PAGE_RESERVATION') {
+				if(
+					val == "OPTIMIZATIONGOAL_CLICK" ||
+					val == "OPTIMIZATIONGOAL_APP_ACTIVATE" ||
+					val == "OPTIMIZATIONGOAL_APP_REGISTER" ||
+					val == "OPTIMIZATIONGOAL_PROMOTION_CLICK_KEY_PAGE" ||
+					val == "OPTIMIZATIONGOAL_ECOMMERCE_ORDER" ||
+					val == "OPTIMIZATIONGOAL_APP_PURCHASE" ||
+					val == "OPTIMIZATIONGOAL_ECOMMERCE_CHECKOUT" ||
+					val == "OPTIMIZATIONGOAL_PAGE_RESERVATION"
+				) {
 					this.disabled_cpc = true;
 					this.disabled_cpm = false;
-					this.adgroup.billing_event = 'BILLINGEVENT_CLICK'
-				} else if(val == 'OPTIMIZATIONGOAL_IMPRESSION') {
+					this.adgroup.billing_event = "BILLINGEVENT_CLICK";
+				} else if(val == "OPTIMIZATIONGOAL_IMPRESSION") {
 					this.disabled_cpc = false;
 					this.disabled_cpm = true;
-					this.adgroup.billing_event = 'BILLINGEVENT_IMPRESSION';
+					this.adgroup.billing_event = "BILLINGEVENT_IMPRESSION";
 				} else {
 					this.disabled_cpm = false;
 					this.disabled_cpc = false;
@@ -354,7 +371,7 @@
 			},
 			//选择广告版位
 			rowClick(row) {
-				this.className = 'ad_table';
+				this.className = "ad_table";
 				this.adgroup.adcreative_template_id = row.id;
 				this.adgroup.site_set = row.site_set;
 				switch(row.id) {
@@ -382,35 +399,27 @@
 					case 487:
 						this.imgSrc = p487;
 						break;
-				};
+				}
 				if(!this.adgroup.adcreative_name) {
 					this.adgroup.adcreative_name = row.name;
 				}
-				this.$emit('on-edition', row.element);
+				this.$emit("on-edition", row.element);
 			},
-			//长期投放
-			changeDateLong(val) {
-				this.adgroup.begin_date = val;
-				this.adgroup.end_date = '';
-			},
-			//在期日期范围内投放
-			changeDate(val) {
-				this.adgroup.begin_date = val[0];
-				this.adgroup.end_date = val[1];
-			},
+
 			//出价 正则过滤非数字
 			getPrice() {
 				let patrn = /^\d+(\.\d+)?$/;
 				if(!patrn.exec(this.adgroup.bid_amount)) {
 					//this.$Message.error('请输入正确价格！');
-					this.adgroup.bid_amount = '';
+					this.adgroup.bid_amount = "";
 				}
 			},
 			//投放时间全天
 			isAllDay(val) {
 				if(val) {
 					this.isWeek = false;
-					this.adgroup.time_series = '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
+					this.adgroup.time_series =
+						"111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
 				}
 			},
 			//特定时间段
@@ -421,10 +430,10 @@
 			showWeek() {
 				if(!this.isWeek) {
 					this.isWeek = true;
-					this.isWeekText = '退出高级设置';
+					this.isWeekText = "退出高级设置";
 				} else {
 					this.isWeek = false;
-					this.isWeekText = '高级设置';
+					this.isWeekText = "高级设置";
 				}
 			},
 			//特定时间段 - 开始时间
@@ -443,34 +452,33 @@
 			setStartTime(t) {
 				let time = [];
 				for(let i = 0; i <= 24; i++) {
-					let index = i < 10 ? '0' + i : i;
-					let obj = {}
-					obj.value = i
-					obj.label = index + ':00';
+					let index = i < 10 ? "0" + i : i;
+					let obj = {};
+					obj.value = i;
+					obj.label = index + ":00";
 					if(i >= t) {
 						obj.disabled = true;
 					} else {
 						obj.disabled = false;
 					}
-					time.push(obj)
+					time.push(obj);
 				}
 				this.timeStateList = time;
-
 			},
 			//设置特定时间结束时间
 			setEndTime(t) {
 				let time = [];
 				for(let i = 24; i >= 0; i--) {
-					let index = i < 10 ? '0' + i : i;
-					let obj = {}
-					obj.value = i
-					obj.label = index + ':00';
+					let index = i < 10 ? "0" + i : i;
+					let obj = {};
+					obj.value = i;
+					obj.label = index + ":00";
 					if(i <= t) {
 						obj.disabled = true;
 					} else {
 						obj.disabled = false;
 					}
-					time.push(obj)
+					time.push(obj);
 				}
 				this.timeEndList = time;
 			},
@@ -490,13 +498,13 @@
 				*/
 				let day = 7,
 					grid = 23,
-					serice = '';
+					serice = "";
 				for(let i = 0; i < 7; i++) {
 					for(let index = 0; index <= grid; index++) {
 						if(index >= start && index <= end) {
-							serice += '11'
+							serice += "11";
 						} else {
-							serice += '00'
+							serice += "00";
 						}
 					}
 				}
@@ -505,56 +513,63 @@
 			},
 			//下一步
 			nextStep() {
-				if(this.adgroup.id == '') {
+				if(this.datetype=='2'){
+					this.adgroup.begin_date=this.DateDomain[0];
+					this.adgroup.end_date=this.DateDomain[1];
+				}
+				if(this.adgroup.id == "") {
 					this.verify.ad = true;
-					return
-				};
-				if(this.adgroup.begin_date == '') {
+					return;
+				}
+				if(this.adgroup.begin_date == "") {
 					this.verify.dp = true;
 					this.verify.dp_txt = "请设置投放日期";
-					return
-				};
-				if(this.adgroup.bid_amount < 10 || this.adgroup.bid_amount > 10000) {
+					return;
+				}
+				if(this.adgroup.bid_amount < 0.1 || this.adgroup.bid_amount > 100) {
 					this.verify.dp = true;
 					this.verify.dp_txt = "出价需介于10分-10,000分之间";
-					return
-				};
-				if(this.plandata.campaign_type == 'CAMPAIGN_TYPE_WECHAT_MOMENTS') {
-					if(this.adgroup.daily_budget < 100000 || this.adgroup.daily_budget > 1000000000) {
+					return;
+				}
+				if(this.plandata.campaign_type == "CAMPAIGN_TYPE_WECHAT_MOMENTS") {
+					if(
+						this.adgroup.daily_budget < 100000 ||
+						this.adgroup.daily_budget > 1000000000
+					) {
 						this.verify.dp = true;
 						this.verify.dp_txt = "日预算要求介于 100,000 – 1,000,000,000 分之间";
-						return
-					};
+						return;
+					}
 				} else {
-					this.adgroup.daily_budget == '';
+					this.adgroup.daily_budget == "";
 				}
-				if(this.adgroup.destination_url == '') {
-					this.verify.dp = true;
-					this.verify.dp_txt = "请填写落地页 url";
-					return
-				};
-				if(this.adgroup.adcreative_name == '') {
+//				if(this.adgroup.destination_url == "") {
+//					this.verify.dp = true;
+//					this.verify.dp_txt = "请填写落地页 url";
+//					return;
+//				}
+				if(this.adgroup.adcreative_name == "") {
 					this.verify.dp = true;
 					this.verify.dp_txt = "请填写广告名称";
-					return
-				};
-				if(this.adgroup.adgroup_name == '') {
+					return;
+				}
+				if(this.adgroup.adgroup_name == "") {
 					this.verify.dp = true;
 					this.verify.dp_txt = "请填写广告组名称";
-					return
-				};
+					return;
+				}
 				//提交下一步需要的信息
 				this.modify = true;
 				//关闭错误提示信息
 				this.verify.ad = this.verify.dp = false;
 				//提交数据
-				this.$emit('on-click', this.adgroup);
+				this.$emit("on-click", this.adgroup);
 			}
 		},
 		mounted() {
 			this.setStartTime(24);
 			this.setEndTime(0);
-			//this.timeSeries(0,23);      
+			//this.timeSeries(0,23);
 		}
 	};
 </script>

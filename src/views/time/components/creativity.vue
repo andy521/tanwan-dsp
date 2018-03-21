@@ -1,120 +1,120 @@
 <style scoped>
-	.detail {
-		background: #fff;
-		width: 500px;
-		padding: 20px;
-	}
-	
-	.w_flex {
-		display: -webkit-box;
-		display: -webkit-flex;
-		display: flex;
-		padding: 5px 0;
-	}
-	
-	.w_flex_hd {
-		width: 5em;
-		font-weight: bold;
-		text-align: right;
-		padding-right: 10px;
-	}
-	
-	.w_flex_bd {
-		-webkit-box-flex: 1;
-		-webkit-flex: 1;
-		flex: 1;
-	}
-	
-	.w_flex_bd_div {
-		padding-bottom: 5px;
-	}
-	
-	.grey {
-		color: #999;
-	}
-	
-	.carousel_ad {
-		width: 250px;
-		border: solid 1px #eee;
-		position: relative;
-	}
-	
-	.carouselitem {
-		position: relative;
-	}
-	
-	.carouselbox {
-		position: absolute;
-		top: 50%;
-		left: 0;
-		width: 100%;
-		transform: translateY(-50%);
-	}
-	
-	.carouselbox img {
-		display: block;
-	}
-	
-	.w_img_operation {
-		position: absolute;
-		top: 0;
-		right: 0;
-		background: rgba(0, 0, 0, .7);
-		padding: 0 5px;
-		cursor: pointer;
-		z-index: 99;
-	}
-	
-	.txt {
-		padding: 5px;
-		word-break: break-word;
-	}
-	
-	em {
-		font-style: normal;
-	}
-	
-	.Preview_bg {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, .3);
-		z-index: 99;
-	}
-	
-	.Preview {
-		position: fixed;
-		width: 750px;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background: #fff;
-		z-index: 100;
-	}
-	
-	.Preview_name {
-		padding: 12px 24px;
-		font-size: 30px;
-	}
-	
-	.flex {
-		display: -webkit-box;
-		display: -webkit-flex;
-		display: flex;
-	}
-	
-	.ta {
-		width: 100%;
-		border-collapse: collapse;
-		margin-bottom: 20px;
-		margin-top: -20px;
-	}
-	
-	.ta tr td:last-child {
-		width: auto;
-	}
+.detail {
+  background: #fff;
+  width: 500px;
+  padding: 20px;
+}
+
+.w_flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  padding: 5px 0;
+}
+
+.w_flex_hd {
+  width: 5em;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.w_flex_bd {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+.w_flex_bd_div {
+  padding-bottom: 5px;
+}
+
+.grey {
+  color: #999;
+}
+
+.carousel_ad {
+  width: 250px;
+  border: solid 1px #eee;
+  position: relative;
+}
+
+.carouselitem {
+  position: relative;
+}
+
+.carouselbox {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
+.carouselbox img {
+  display: block;
+}
+
+.w_img_operation {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0 5px;
+  cursor: pointer;
+  z-index: 99;
+}
+
+.txt {
+  padding: 5px;
+  word-break: break-word;
+}
+
+em {
+  font-style: normal;
+}
+
+.Preview_bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 99;
+}
+
+.Preview {
+  position: fixed;
+  width: 750px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  z-index: 100;
+}
+
+.Preview_name {
+  padding: 12px 24px;
+  font-size: 30px;
+}
+
+.flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.ta {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  margin-top: -20px;
+}
+
+.ta tr td:last-child {
+  width: auto;
+}
 </style>
 <template>
 	<div>
@@ -160,7 +160,7 @@
 			</tr>-->
 			<tr v-for="item in adgroup_detail.adcreative">
 				<td width="58">{{item.adcreative_name}}</td>
-				<template v-for="subitem in checkAll">
+				<template v-for="subitem in checkAll" >
 					<td width="160" v-if="subitem=='account_name'">{{item.adtodayArr.account_name}}</td>
 					<td width="400" v-if="subitem=='adgroup_name'"></td>
 					<td width="150" v-if="subitem=='campaign_id'">{{item.adtodayArr.campaign_id}}</td>
@@ -168,10 +168,7 @@
 					<td width="150" v-if="subitem=='click'">{{item.adtodayArr.click}}</td>
 					<td width="150" v-if="subitem=='click_per'">-</td>
 					<td width="150" v-if="subitem=='click_cost'">-</td>
-					<td width="150" v-if="subitem=='cost'">{{item.adtodayArr.cost}}</td>
-					<td width="150" v-if="subitem=='configured_status'">-</td>
-					<td width="150" v-if="subitem=='daily_budget'">-</td>
-					<td width="200" v-if="subitem=='game_name'">-</td>
+					<td width="150" v-if="subitem=='cost'">{{item.adtodayArr.cost}}</td>					
 					<td width="150" v-if="subitem=='show_pv'">-</td>
 					<td width="150" v-if="subitem=='show_ip'">-</td>
 					<td width="150" v-if="subitem=='down_ip'">-</td>
@@ -195,7 +192,10 @@
 					<td width="150" v-if="subitem=='pay_num'">-</td>
 					<td width="150" v-if="subitem=='pay_total'">-</td>
 					<td width="150" v-if="subitem=='pay_per'">-</td>
-					<td v-if="subitem=='income_per'">-</td>
+					<td width="150" v-if="subitem=='income_per'">-</td>
+					<td width="150" v-if="subitem=='configured_status'">-</td>
+					<td width="150" v-if="subitem=='daily_budget'">-</td>
+					<td width="150" v-if="subitem=='game_name'">-</td>
 				</template>
 			</tr>
 		</table>
@@ -368,216 +368,252 @@
 	</div>
 </template>
 <script>
-	import Axios from '@/api/index';
-	import echartsTabel from './echartsTabel.vue';
-	import { changetime } from '@/utils/DateShortcuts.js';
-	export default {
-		components: {
-			echartsTabel
-		},
-		props: {
-			row: Object,
-			uncheck: Array
-		},
-		data() {
-			return {
-				checkAllGroups: ['account_name', 'adgroup_name', 'campaign_id', 'impression', 'click', 'click_per', 'click_cost', 'cost', 'configured_status', 'daily_budget', 'game_name', 'show_pv', 'show_ip', 'down_ip', 'fetch', 'fetch_per', 'download', 'down_ins_per', 'install', 'click_install', 'install_per', 'download_per', 'bid_amount', 'reg_imei', 'activation', 'reg_imei_cost', 'reg_cost', 'reg_per', 'reg_arpu', 'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'income_per'],
-				CarouselItem: 0,
-				preview_win: false,
-				preview: {}, //预览
-				adgroup_detail: {
-					adgroup_id: '',
-					adcreative: [{
-						"adcreative_elements": {
-							"corporate": {
-								"corporate_img": "",
-								"corporate_name": ""
-							},
-							"image": "",
-							"image_url": "",
-							"title": ""
-						},
-						"adcreative_id": "",
-						"adcreative_name": "",
-						"configured_status": "",
-						"system_status": "",
-						"reject_message": "",
-						"adtodayArr": {},
-						"adhourArr": []
-					}],
-					targeting: {
-						"age": ["5~60"],
-						"gender": ["FEMALE"],
-						"education": [],
-						"relationship_status": [],
-						"living_status": [],
-						"geo_location": {
-							"regions": [],
-							"location_types": [],
-							"business_districts": []
-						},
-						"app_behavior": {
-							"object_type": "APP_CLASS",
-							"object_id_list": [],
-							"time_window": 1,
-							"act_id_list": []
-						},
-						"app_install_status": [],
-						"customized_audience": [],
-						"network_type": [],
-						"business_interest": [],
-						"network_operator": [],
-						"device_price": [],
-						"shopping_capability": [],
-						"paying_user_type": [],
-						"keyword": {
-							"words": []
-						},
-						"player_consupt": [],
-						"residential_community_price": [],
-						"customized_audience": [],
-						"excluded_custom_audience": [],
-						"description": [],
-					}
-				},
-			}
-		},
-		mounted() {
-			Axios.post('api.php', {
-				action: 'gdtAdPut',
-				opt: 'get_adgroup_detail',
-				account_id: this.row.account_id,
-				adgroup_id: this.row.adgroup_id
-			}).then(
-				res => {
-					if(res.ret == 1) {
-						this.adgroup_detail = res.data;
-					}
-				}
-			).catch(
-				err => {
-					console.log('获取详情失败' + err)
-				}
-			)
-		},
-		methods: {
-			//编辑
-			editTargeting() {
-				this.detailswin = false;
-				let query = {
-					adgroup_detail: this.adgroup_detail,
-					account_id: this.adgroup_detail.account_id
-				};
-				this.$router.push({
-					name: 'newad',
-					query: query
-				});
-			},
-			funpreview(item) {
-				this.preview = item;
-				this.preview_win = true;
-			}
-		},
-		computed: {
-			checkAll() {
-				let check = [];
-				this.checkAllGroups.forEach(item => {
-					let is = true;
-					this.uncheck.forEach(col => {
-						if(item == col) {
-							is = false;
-						}
-					});
-					if(is) {
-						check.push(item);
-					}
-				});
-				return check;
-			},
-			//获取所有状态
-			ads_config() {
-				return this.$store.state.newad.ads_config;
-			},
-			//省市区转码
-			new_regions() {
-				let regions = this.$store.state.newad.targeting_tags;
-				let ids = this.adgroup_detail.targeting.geo_location.regions;
-				if(!ids) return;
-				var name = [];
-				ids.forEach(id => {
-					for(var i in regions) {
-						var e = regions[i].list;
-						for(var j in e) {
-							var f = e[j];
-							if(f.id == id) {
-								name.push(f.name)
-							}
-						}
-					}
-				});
-				return name.toString();
-			},
-			//商业兴趣转码
-			businessids() {
-				let business_interest = this.$store.state.newad.business_interest;
-				let ids = this.adgroup_detail.targeting.business_interest;
-				if(!ids) return;
-				var name = [];
-				ids.forEach(id => {
-					for(var i in business_interest) {
-						var item1 = business_interest[i];
-						if(item1.id == id) {
-							name.push(item1.name)
-						}
-						var item2 = item1.list;
-						for(var j in item2) {
-							if(item2[j].id == id) {
-								name.push(item2[j].name)
-							}
-							for(var k in item2[j].list) {
-								var n = item2[j].list[k];
-								if(n.id == id) {
-									name.push(n.name)
-								}
-							}
-						}
-					}
-				});
-				return name.toString();
-			},
-			//app行为转码
-			app_category() {
-				let appCategory = this.$store.state.newad.appCategory;
-				let ids = this.adgroup_detail.targeting.app_behavior.object_id_list;
-				if(!ids) return;
-				var name = [];
-				ids.forEach(id => {
-					for(var i in appCategory) {
-						var item1 = appCategory[i];
-						if(item1.id == id) {
-							name.push(item1.name)
-						}
-						var item2 = item1.list;
-						for(var j in item2) {
-							if(item2[j].id == id) {
-								name.push(item2[j].name)
-							}
-							for(var k in item2[j].list) {
-								var n = item2[j].list[k];
-								if(n.id == id) {
-									name.push(n.name)
-								}
-							}
-						}
-					}
-				});
-				return name.toString();
-			},
-			//投放时间转换
-			weektime: function() {
-				let time = this.adgroup_detail.time_series;
-				return changetime(time);
-			},
-		}
-	};
+import Axios from "@/api/index";
+import echartsTabel from "./echartsTabel.vue";
+import { changetime } from "@/utils/DateShortcuts.js";
+export default {
+  components: {
+    echartsTabel
+  },
+  props: {
+    row: Object,
+    uncheck: Array
+  },
+  data() {
+    return {
+      checkAllGroups: [
+        "account_name",
+        "adgroup_name",
+        "campaign_id",
+        "impression",
+        "click",
+        "click_per",
+        "click_cost",
+        "cost",
+        "configured_status",
+        "daily_budget",
+        "game_name",
+        "show_pv",
+        "show_ip",
+        "down_ip",
+        "fetch",
+        "fetch_per",
+        "download",
+        "down_ins_per",
+        "install",
+        "click_install",
+        "install_per",
+        "download_per",
+        "bid_amount",
+        "reg_imei",
+        "activation",
+        "reg_imei_cost",
+        "reg_cost",
+        "reg_per",
+        "reg_arpu",
+        "login",
+        "act_per",
+        "pay_num",
+        "pay_total",
+        "pay_per",
+        "income_per"
+      ],
+      CarouselItem: 0,
+      preview_win: false,
+      preview: {}, //预览
+      adgroup_detail: {
+        adgroup_id: "",
+        adcreative: [
+          {
+            adcreative_elements: {
+              corporate: {
+                corporate_img: "",
+                corporate_name: ""
+              },
+              image: "",
+              image_url: "",
+              title: ""
+            },
+            adcreative_id: "",
+            adcreative_name: "",
+            configured_status: "",
+            system_status: "",
+            reject_message: "",
+            adtodayArr: {},
+            adhourArr: []
+          }
+        ],
+        targeting: {
+          age: ["5~60"],
+          gender: ["FEMALE"],
+          education: [],
+          relationship_status: [],
+          living_status: [],
+          geo_location: {
+            regions: [],
+            location_types: [],
+            business_districts: []
+          },
+          app_behavior: {
+            object_type: "APP_CLASS",
+            object_id_list: [],
+            time_window: 1,
+            act_id_list: []
+          },
+          app_install_status: [],
+          customized_audience: [],
+          network_type: [],
+          business_interest: [],
+          network_operator: [],
+          device_price: [],
+          shopping_capability: [],
+          paying_user_type: [],
+          keyword: {
+            words: []
+          },
+          player_consupt: [],
+          residential_community_price: [],
+          customized_audience: [],
+          excluded_custom_audience: [],
+          description: []
+        }
+      }
+    };
+  },
+  mounted() {
+    Axios.post("api.php", {
+      action: "gdtAdPut",
+      opt: "get_adgroup_detail",
+      account_id: this.row.account_id,
+      adgroup_id: this.row.adgroup_id
+    })
+      .then(res => {
+        if (res.ret == 1) {
+          this.adgroup_detail = res.data;
+        }
+      })
+      .catch(err => {
+        console.log("获取详情失败" + err);
+      });
+  },
+  methods: {
+    //编辑
+    editTargeting() {
+      this.detailswin = false;
+      let query = {
+        adgroup_detail: this.adgroup_detail,
+        account_id: this.adgroup_detail.account_id
+      };
+      this.$router.push({
+        name: "newad",
+        query: query
+      });
+    },
+    funpreview(item) {
+      this.preview = item;
+      this.preview_win = true;
+    }
+  },
+  computed: {
+    checkAll() {
+      let check = [];
+      this.checkAllGroups.forEach(item => {
+        let is = true;
+        this.uncheck.forEach(col => {
+          if (item == col) {
+            is = false;
+          }
+        });
+        if (is) {
+          check.push(item);
+        }
+      });
+      return check;
+    },
+    //获取所有状态
+    ads_config() {
+      return this.$store.state.newad.ads_config;
+    },
+    //省市区转码
+    new_regions() {
+      let regions = this.$store.state.newad.targeting_tags;
+      let ids = this.adgroup_detail.targeting.geo_location.regions;
+      if (!ids) return;
+      var name = [];
+      ids.forEach(id => {
+        for (var i in regions) {
+          var e = regions[i].list;
+          for (var j in e) {
+            var f = e[j];
+            if (f.id == id) {
+              name.push(f.name);
+            }
+          }
+        }
+      });
+      return name.toString();
+    },
+    //商业兴趣转码
+    businessids() {
+      let business_interest = this.$store.state.newad.business_interest;
+      let ids = this.adgroup_detail.targeting.business_interest;
+      if (!ids) return;
+      var name = [];
+      ids.forEach(id => {
+        for (var i in business_interest) {
+          var item1 = business_interest[i];
+          if (item1.id == id) {
+            name.push(item1.name);
+          }
+          var item2 = item1.list;
+          for (var j in item2) {
+            if (item2[j].id == id) {
+              name.push(item2[j].name);
+            }
+            for (var k in item2[j].list) {
+              var n = item2[j].list[k];
+              if (n.id == id) {
+                name.push(n.name);
+              }
+            }
+          }
+        }
+      });
+      return name.toString();
+    },
+    //app行为转码
+    app_category() {
+      let appCategory = this.$store.state.newad.appCategory;
+      let ids = this.adgroup_detail.targeting.app_behavior.object_id_list;
+      if (!ids) return;
+      var name = [];
+      ids.forEach(id => {
+        for (var i in appCategory) {
+          var item1 = appCategory[i];
+          if (item1.id == id) {
+            name.push(item1.name);
+          }
+          var item2 = item1.list;
+          for (var j in item2) {
+            if (item2[j].id == id) {
+              name.push(item2[j].name);
+            }
+            for (var k in item2[j].list) {
+              var n = item2[j].list[k];
+              if (n.id == id) {
+                name.push(n.name);
+              }
+            }
+          }
+        }
+      });
+      return name.toString();
+    },
+    //投放时间转换
+    weektime: function() {
+      let time = this.adgroup_detail.time_series;
+      return changetime(time);
+    }
+  }
+};
 </script>

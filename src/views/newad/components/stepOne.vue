@@ -73,7 +73,7 @@
 			</Select>
 			<div class="tabpane">
 				<div v-if="campaign_id!=''">
-					<div class="camitem"><span>日消耗限额</span>{{campaign.daily_budget}}元/天</div>
+					<div class="camitem"><span>日消耗限额</span>{{campaign.daily_budget/100}}元/天</div>
 					<div class="camitem"><span>计划类型</span><em v-for="item in ads_config.campaign_type" v-if="campaign.campaign_type==item.val_type">{{item.name}}</em></div>
 					<div class="camitem"><span>标的物类型</span><em v-if="campaign.product_type=='UNKNOWN'">未知类型</em>
 						<em v-for="item in ads_config.product_type" v-if="campaign.product_type==item.val_type">{{item.name}}</em>
