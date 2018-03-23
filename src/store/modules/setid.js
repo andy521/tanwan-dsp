@@ -10,9 +10,13 @@ const setid = {
 			read_count: {},
 			message: []
 		}, //系统消息
-		SingleMessages: {} //系统消息详情
+        SingleMessages: {}, //系统消息详情
+        planparam:''
 	},
 	mutations: {
+        saveplan(state, data){
+            state.planparam = data;
+        },
 		GET_ADSACCOUNT(state, data) {
 			state.AdsAccount = data;
 		},

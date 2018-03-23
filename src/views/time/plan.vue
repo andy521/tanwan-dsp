@@ -103,7 +103,6 @@
                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
                 </Select>
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-
                 <Checkbox v-model="check_value" @on-change="getCampaignsList()">过滤无数据的广告</Checkbox>
                 </Col>
                 <Col span="8" style="text-align: right;">
@@ -140,7 +139,7 @@
                             </div>
                             <div class="tipbtn margin-top-10">
                                 <Button type="text" size="small" @click="visible1 = false">取消</Button>
-                                <Button type="primary" size="small" @click="visible1 = false">确定</Button>
+                                <Button type="primary" size="small" @click="DateChanged">确定</Button>
                             </div>
                         </div>
                     </Poptip>
@@ -163,7 +162,7 @@
                     </Select>
                     </Col>
                     <Col span="14" style="text-align: right;">
-                    <Page :total="total_number" :page-size="page_size" ref="pages" @on-change="getCampaignsList" show-elevator show-total></Page>
+                    <Page :total="total_number" :current="page" :page-size="page_size" ref="pages" @on-change="getCampaignsList" show-elevator show-total></Page>
                     </Col>
                 </Row>
             </div>
@@ -180,7 +179,6 @@
                 </Form>
             </div>
         </Modal>
-
     </div>
 </template>
 
@@ -208,6 +206,7 @@ export default {
             MediaListModel: "0",
             CampaignsListModel: [],
             taCheckids: [], //选中ids
+            taCheckitem: [], //选中item
             page: 1, //第N页
             page_size: 50, //每页数量
             total_number: 1, //总数量
@@ -236,7 +235,7 @@ export default {
             campaign_name: "", //关键字
             check_value: false,
             edit_status: "AD_STATUS_NORMAL", //批量状态
-            orderField: "daily_budget", //排序参数名
+            orderField: "", //排序参数名
             orderDirection: "SORT_DESC", //排序方向
             author_model: [],
             tableSize: "small",
@@ -493,13 +492,14 @@ export default {
                 //						width: 150
                 //					},
                 {
-                    title: "注册",
+                    title: "注册设备数",
                     sortable: "custom",
                     key: "reg_imei",
                     width: 150
                 },
+
                 {
-                    title: "注册设备数",
+                    title: "注册",
                     sortable: "custom",
                     key: "activation",
                     width: 150
@@ -737,6 +737,12 @@ export default {
                     title: "产品名称",
                     key: "game_name",
                     width: 200
+                },
+                {
+                    title: "负责人",
+                    sortable: "custom",
+                    key: "author",
+                    width: 150
                 }
             ]
         };
@@ -745,8 +751,26 @@ export default {
         if (this.params.id) {
             this.MediaListModel = this.params.id;
         }
+        //返回时获取保存数据
+        let planparam = this.$store.state.setid.planparam;
+        if (this.$route.meta.keepAlive&&planparam!='') {
+            this.DateDomain = planparam.DateDomain;
+            this.page = planparam.page;
+            this.page_size = planparam.page_size;
+            this.GameListIds = planparam.game_id;
+            this.MediaListModel = planparam.account_id;
+            this.configured_status = planparam.configured_status;
+            this.campaign_id = planparam.campaign_id;
+            this.campaign_name = planparam.campaign_name;
+            this.check_value = planparam.check_value;
+            this.orderField = planparam.orderField;
+            this.orderDirection = planparam.orderDirection;
+            this.author_model = planparam.author;
+            this.getCampaignsList(this.page);
+        } else {
+            this.getCampaignsList();
+        }
         this.getMedia();
-        this.getCampaignsList();
     },
     methods: {
         //获取选中游戏id
@@ -879,6 +903,41 @@ export default {
                     console.log("批量修改删除投放计划" + err);
                 });
         },
+        //批量修改目期
+        DateChanged() {
+            this.visible = false;
+            if (this.taCheckids.length == 0) {
+                this.$Message.info("请勾选需要修改的数据");
+                return;
+            }
+            let begin_date = "";
+            let end_date = "";
+            //判断是否长期投放
+            if (this.startdate) {
+                begin_date = this.date1;
+            } else {
+                begin_date = this.date2[0];
+                end_date = this.date2[1];
+            }
+            Axios.get("api.php", {
+                action: "gdtAdPut",
+                opt: "campaigns_add",
+                do: "edits",
+                id: this.taCheckids, //必传[13,12,12]
+                type: 1, //1 修改状态  3 删除 type
+                begin_date: begin_date, //开始投放日期
+                end_date: end_date //结束投放日期
+            })
+                .then(res => {
+                    if (res.ret == 1) {
+                        this.$Message.info(res.msg);
+                        this.getCampaignsList(this.page);
+                    }
+                })
+                .catch(err => {
+                    console.log("批量修改日期" + err);
+                });
+        },
         //排序
         sortchange(column) {
             this.orderField = column.key;
@@ -889,9 +948,12 @@ export default {
         //获取选中的id
         taCheck(row) {
             let ids = [];
+            let it = [];
             row.forEach(item => {
                 ids.push(item.id);
+                it.push(item);
             });
+            this.taCheckitem = it;
             this.taCheckids = ids;
         },
         //改变日期
@@ -944,6 +1006,34 @@ export default {
             this.taColumns = arr;
             return this.adList;
         }
+    },
+    //跳转时保存数据
+    beforeRouteLeave(to, from, next) {
+        if (to.name == "time_ad") {
+            let param = {
+                DateDomain: this.DateDomain, //时间
+                page: this.page, //页码
+                page_size: this.page_size, //每页数量
+                game_id: this.GameListIds, //游戏id
+                account_id: this.MediaListModel, //媒体账号
+                configured_status: this.configured_status, //过滤无数据的广告
+                campaign_id: this.CampaignsListModel, //广告
+                campaign_name: this.campaign_name, //关键字
+                check_value: this.check_value, //状态
+                orderField: this.orderField, //排序的orderField参数名
+                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+                author: this.author_model //负责人
+            };
+            this.$store.commit("saveplan", param);
+        }
+        from.meta.keepAlive = false;
+        next();
+    },
+    beforeRouteEnter(to, from, next) {
+        if (from.name == "time_ad") {
+            to.meta.keepAlive = true;
+        }
+        next();
     }
 };
 </script>

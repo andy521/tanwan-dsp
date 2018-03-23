@@ -1,4 +1,4 @@
-<style>
+<style >
 @import "../../styles/common.less";
 @import "../../styles/table.less";
 .sel {
@@ -62,6 +62,9 @@
     font-size: 18px;
     margin-left: 20px;
 }
+.ivu-tooltip-inner{
+    white-space: normal;
+}
 </style>
 
 <template>
@@ -76,13 +79,19 @@
                 <div v-else>
                     <!--搜索游戏列表-->
                     <search-tree @on-change="getids"></search-tree>
-                    <Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
+                    <Select v-model="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
                         <Option value="0">全部媒体账号</Option>
                         <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
                     </Select>
-                    <Select v-model="CampaignsListModel" :value="CampaignsListModel" multiple filterable class="sel_state1" placeholder="请选择广告" v-if="campaignslist.length>1">
+                    <Select v-model="CampaignsListModel" multiple filterable class="sel_state1" placeholder="请选择广告" v-if="campaignslist.length>1">
                         <Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
                     </Select>
+
+                    <!-- <Select value="ad"  style="width:70px" >
+                        <Option value="ad">广告</Option>
+                        <Option value="product">标的物</Option>
+                    </Select> -->
+
                     <Input v-model="campaign_name" class="inp" placeholder="请输入关键字"></Input>
                     <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </div>
@@ -142,7 +151,7 @@
                             </div>
                             <div class="tipbtn margin-top-10">
                                 <Button type="text" size="small" @click="visible1 = false">取消</Button>
-                                <Button type="primary" size="small" @click="visible1 = false">确定</Button>
+                                <Button type="primary" size="small" @click="DateChanged">确定</Button>
                             </div>
                         </div>
                     </Poptip>
@@ -174,11 +183,6 @@
         <Modal v-model="copyAdwin" title="复制广告" @on-ok="submitCopy">
             <div class="margin-top-10">
                 <Form :model="formItem" :label-width="100">
-                    <FormItem label="选择复制的帐户">
-                        <Select v-model="formItem.account_id" :value="formItem.account_id" filterable placeholder="请选择媒体账号" @on-change="getCampaignsform">
-                            <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
-                        </Select>
-                    </FormItem>
                     <FormItem label="选择复制的计划" v-if="campaignslistform.length>1">
                         <Select v-model="formItem.campaign_id" :value="formItem.campaign_id" filterable placeholder="请选择广告">
                             <Option v-for="item in campaignslistform" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
@@ -220,6 +224,7 @@ export default {
             MediaListModel: "0",
             CampaignsListModel: [],
             taCheckids: [], //选中ids
+            taCheckitem: [], //选中item
             page: 1, //第N页
             page_size: 50, //每页数量
             total_number: 1, //总数量
@@ -248,7 +253,7 @@ export default {
             campaign_name: "", //关键字
             check_value: false,
             edit_status: "AD_STATUS_NORMAL", //批量状态
-            orderField: "daily_budget", //排序参数名
+            orderField: "", //排序参数名
             orderDirection: "SORT_DESC", //排序方向
             author_model: [],
             tableSize: "small",
@@ -263,7 +268,7 @@ export default {
                 {
                     type: "expand",
                     width: 30,
-                    fixed: "left",
+                    //fixed: "left",
                     render: (h, params) => {
                         return h(creativity, {
                             props: {
@@ -325,8 +330,20 @@ export default {
                                     class: "namediv",
                                     on: {
                                         click: () => {
-                                            //params.row._expanded=true;
-                                            //console.log(params.row)
+                                            let arr = deepClone(this.adList);
+                                            arr.forEach((v, i) => {
+                                                if (
+                                                    v.adgroup_id ==
+                                                    params.row.adgroup_id
+                                                ) {
+                                                    if (v._expanded) {
+                                                        v._expanded = false;
+                                                    } else {
+                                                        v._expanded = true;
+                                                    }
+                                                }
+                                            });
+                                            this.adList = arr;
                                         }
                                     }
                                 },
@@ -435,7 +452,6 @@ export default {
                     key: "cost",
                     width: 150
                 },
-
                 {
                     title: "展示PV",
                     sortable: "custom",
@@ -502,7 +518,6 @@ export default {
                     key: "download_per",
                     width: 150
                 },
-
                 {
                     title: "出价",
                     key: "bid_amount",
@@ -581,7 +596,67 @@ export default {
                     width: 150
                 },
                 {
-                    title: "广告开关/状态",
+                    title: "状态",
+                    sortable: "custom",
+                    key: "system_status",
+                    width: 150,
+                    render: (h, params) => {
+                        let item = "";
+                        //要判断是否已获取到ads_config
+                        if (this.ads_config.system_status) {
+                            this.ads_config.system_status.forEach(v => {
+                                if (v.val_type == params.row.system_status) {
+                                    item = v;
+                                }
+                            });
+                        }
+                        if (
+                            params.row.reject_message != "null" &&
+                            params.row.reject_message
+                        ) {
+                            return [
+                                h(
+                                    "span",
+                                    {
+                                        style: {
+                                            color: item.color
+                                        }
+                                    },
+                                    item.name
+                                ),
+                                h(
+                                    "Tooltip",
+                                    {
+                                        props: {
+                                            content: params.row.reject_message,
+                                            placement: "top"
+                                        }
+                                    },
+                                    [
+                                        h("Icon", {
+                                            props: {
+                                                type: "help-circled",
+                                                color: item.color
+                                            }
+                                        })
+                                    ]
+                                )
+                            ];
+                        } else {
+                            return h(
+                                "span",
+                                {
+                                    style: {
+                                        color: item.color
+                                    }
+                                },
+                                item.name
+                            );
+                        }
+                    }
+                },
+                {
+                    title: "广告开关",
                     key: "configured_status",
                     width: 150,
                     render: (h, params) => {
@@ -919,12 +994,50 @@ export default {
                     console.log("批量修改删除投放计划" + err);
                 });
         },
+        //批量修改目期
+        DateChanged() {
+            this.visible = false;
+            if (this.taCheckids.length == 0) {
+                this.$Message.info("请勾选需要修改的数据");
+                return;
+            }
+            let begin_date = "";
+            let end_date = "";
+            //判断是否长期投放
+            if (this.startdate) {
+                begin_date = this.date1;
+            } else {
+                begin_date = this.date2[0];
+                end_date = this.date2[1];
+            }
+            Axios.get("api.php", {
+                action: "gdtAdPut",
+                opt: "adgroups_add",
+                do: "edits",
+                id: this.taCheckids, //必传[13,12,12]
+                type: 1, //1 修改状态  3 删除 type
+                begin_date: begin_date, //开始投放日期
+                end_date: end_date //结束投放日期
+            })
+                .then(res => {
+                    if (res.ret == 1) {
+                        this.$Message.info(res.msg);
+                        this.getCampaignsList(this.page);
+                    }
+                })
+                .catch(err => {
+                    console.log("批量修改日期" + err);
+                });
+        },
         //获取选中的id
         taCheck(row) {
             let ids = [];
+            let it = [];
             row.forEach(item => {
                 ids.push(item.id);
+                it.push(item);
             });
+            this.taCheckitem = it;
             this.taCheckids = ids;
         },
         //排序
@@ -962,14 +1075,32 @@ export default {
         },
         //复制
         copyAd() {
-            if (this.taCheckids.length > 0) {
-                this.copyAdwin = true;
+            if (this.taCheckitem.length > 0) {
+                //判断是否为同一媒帐号
+                let id = this.taCheckitem[0].account_id;
+                let same = true;
+                this.taCheckitem.forEach(v => {
+                    if (id != v.account_id) {
+                        same = false;
+                    }
+                });
+                if (same) {
+                    this.formItem.account_id = id;
+                    this.getCampaignsform(id);
+                    this.copyAdwin = true;
+                } else {
+                    this.$Message.info("请选择同一媒体帐号");
+                }
             } else {
                 this.$Message.info("请勾选要复制的广告");
             }
         }
     },
     computed: {
+        //获取所有状态
+        ads_config() {
+            return this.$store.state.newad.ads_config;
+        },
         //获取实时投放计划
         newAdList() {
             //深层复制

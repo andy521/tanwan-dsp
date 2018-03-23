@@ -203,7 +203,7 @@
 
 		<h3 class="subtit">定向</h3>
 		<div class="margin-top-20">
-			<Select filterable size="large" placeholder="请选择定向" v-model="targeting_id" style="width:400px" @on-change="changetargetings">
+			<Select filterable size="large" placeholder="请选择定向" v-model="targeting_id" style="width:500px" @on-change="changetargetings">
 				<Option v-for="item in targetings" :value="item.targeting_id" :key="this">{{item.targeting_name}}</Option>
 			</Select>
 			<span class="grey">下拉选择已有定向包</span>
@@ -1021,8 +1021,8 @@
 		mounted() {
 			if(this.$route.query.targeting_id) {
 				this.targeting_id = this.$route.query.targeting_id;
-			};
-			//请求定向
+            };
+            //请求定向
 			this.$store.dispatch('get_targetings', this.account_id);
 			//请求定向标签(地域)
 			this.$store.dispatch('get_targeting_tags');
@@ -1044,7 +1044,7 @@
 					product_type: this.plandata.product_type
 				}).then(res => {
 					if(res.ret == 1) {
-						this.product_refs_ids = res.data;
+                        this.product_refs_ids = res.data;                       
 					}
 				}).catch(
 					err => {
@@ -1069,9 +1069,14 @@
 				this.$store.dispatch('get_CustomAudiences_ex', data);
 			},
 			//选择定向
-			changetargetings(targeting_id) {
+			changetargetings(targeting_id) {                
 				this.targetings.forEach(item => {
-					if(item.targeting_id == targeting_id) {
+
+                    
+					if(item.targeting_id == targeting_id) { 
+                        
+                        console.log(item.targeting_id)   
+                                         
 						this.targeting_item = item;
 						var result = item.targeting.age[0].split("~");
 						this.age = [parseInt(result[0]), parseInt(result[1])];
@@ -1434,7 +1439,6 @@
 							checked=true;							
 						}
 					})
-					console.log(checked)
 					item._checked = checked;
 
 				})
@@ -1461,7 +1465,7 @@
 
 			//获取定向
 			targetings() {
-				let list = this.$store.state.newad.targetings.list;
+                let list = this.$store.state.newad.targetings.list;                
 				list.unshift({
 					"account_id": "",
 					"id": "",

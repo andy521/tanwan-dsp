@@ -32,7 +32,7 @@
 					媒体列
 				</div>
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="configured_status">广告开关/状态</Checkbox>
+					<Checkbox label="configured_status">广告开关</Checkbox>
 					<Checkbox label="click_cost">点击均价（cpc）</Checkbox>
 					<Checkbox label="click">点击量</Checkbox>
 					<Checkbox label="click_per">点击率(CTR)</Checkbox>

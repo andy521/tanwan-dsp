@@ -50,6 +50,10 @@ router.beforeEach((to, from, next) => {
         }
     }    
     //console.log("用户名是" +  Util.getItem('user') )
+   
+  
+    
+
 });
 router.afterEach((to) => {    
     Util.openNewPage(router.app, to.name, to.params, to.query);
