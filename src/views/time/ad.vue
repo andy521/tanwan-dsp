@@ -62,7 +62,7 @@
     font-size: 18px;
     margin-left: 20px;
 }
-.ivu-tooltip-inner{
+.ivu-tooltip-inner {
     white-space: normal;
 }
 </style>
@@ -71,7 +71,7 @@
     <div class="time">
         <Card shadow>
             <Row>
-                <Col span="19">
+                <Col span="18">
                 <div v-if="params.campaign_name">
                     <Button type="primary" @click="back">返回</Button>
                     <span class="campaign_name">{{params.campaign_name}}</span>
@@ -96,7 +96,8 @@
                     <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </div>
                 </Col>
-                <Col span="5" style="text-align: right;">
+                <Col span="6" style="text-align: right;">
+                <Button type="ghost" icon="log-in" @click="tologin">登陆</Button>
                 <Button type="ghost" icon="ios-copy" @click="copyAd">复制广告</Button>
                 <Button type="primary" icon="android-add" @click="tonewadd">新建广告</Button>
                 </Col>
@@ -286,32 +287,10 @@ export default {
                 {
                     title: "媒体账户",
                     key: "account_name",
-                    width: 160,
+                    width: 120,
                     render: (h, params) => {
                         if (params.row.account_name) {
-                            return [
-                                h("span", params.row.account_name),
-                                h(
-                                    "Button",
-                                    {
-                                        props: {
-                                            type: "ghost",
-                                            size: "small"
-                                        },
-                                        style: {
-                                            marginLeft: "10px"
-                                        },
-                                        on: {
-                                            click: () => {
-                                                window.open(
-                                                    "http://e.qq.com/ads/"
-                                                );
-                                            }
-                                        }
-                                    },
-                                    "登陆"
-                                )
-                            ];
+                            return h("span", params.row.account_name);
                         } else {
                             return h("span", "本页统计");
                         }
@@ -420,7 +399,7 @@ export default {
                 {
                     title: "计划",
                     key: "campaign_id",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "曝光",
@@ -432,174 +411,177 @@ export default {
                     title: "点击量",
                     sortable: "custom",
                     key: "click",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "点击率",
                     sortable: "custom",
                     key: "click_per",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "点击均价",
                     sortable: "custom",
                     key: "click_cost",
-                    width: 150
+                    width: 110
                 },
                 {
                     title: "花费",
                     sortable: "custom",
                     key: "cost",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "展示PV",
                     sortable: "custom",
                     key: "show_pv",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "展示IP",
                     sortable: "custom",
                     key: "show_ip",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "下载IP",
                     sortable: "custom",
                     key: "down_ip",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "到达数",
                     sortable: "custom",
                     key: "fetch",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "到达率",
                     sortable: "custom",
                     key: "fetch_per",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "下载数",
                     sortable: "custom",
                     key: "download",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "下载率",
                     sortable: "custom",
                     key: "down_ins_per",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "激活总量",
                     sortable: "custom",
                     key: "install",
-                    width: 150
+                    width: 110
                 },
                 {
                     title: "点击激活率",
                     sortable: "custom",
                     key: "click_install",
-                    width: 150
+                    width: 120
                 },
                 {
                     title: "激活安装率",
                     sortable: "custom",
                     key: "install_per",
-                    width: 150
+                    width: 120
                 },
                 {
                     title: "下载激活率",
                     sortable: "custom",
                     key: "download_per",
-                    width: 150
+                    width: 120
                 },
                 {
                     title: "出价",
                     key: "bid_amount",
-                    width: 150
+                    width: 100,
+                    render: (h, params) => {
+                        return h("span", params.row.bid_amount / 100);
+                    }
                 },
                 {
                     title: "注册",
                     sortable: "custom",
                     key: "reg_imei",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "注册设备数",
                     sortable: "custom",
                     key: "activation",
-                    width: 150
+                    width: 120
                 },
                 {
                     title: "注册设备成本",
                     sortable: "custom",
                     key: "reg_imei_cost",
-                    width: 150
+                    width: 130
                 },
                 {
                     title: "注册成本",
                     sortable: "custom",
                     key: "reg_cost",
-                    width: 150
+                    width: 110
                 },
                 {
                     title: "注册率",
                     sortable: "custom",
                     key: "reg_per",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "注册ARPU",
                     sortable: "custom",
                     key: "reg_arpu",
-                    width: 150
+                    width: 120
                 },
                 {
                     title: "活跃数",
                     sortable: "custom",
                     key: "login",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "活跃率",
                     sortable: "custom",
                     key: "act_per",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "付费人数",
                     sortable: "custom",
                     key: "pay_num",
-                    width: 150
+                    width: 110
                 },
                 {
                     title: "付费金额",
                     sortable: "custom",
                     key: "pay_total",
-                    width: 150
+                    width: 110
                 },
                 {
                     title: "付费率",
                     sortable: "custom",
                     key: "pay_per",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "回本率",
                     sortable: "custom",
                     key: "income_per",
-                    width: 150
+                    width: 100
                 },
                 {
                     title: "状态",
                     sortable: "custom",
                     key: "system_status",
-                    width: 150,
+                    width: 110,
                     render: (h, params) => {
                         let item = "";
                         //要判断是否已获取到ads_config
@@ -658,7 +640,7 @@ export default {
                 {
                     title: "广告开关",
                     key: "configured_status",
-                    width: 150,
+                    width: 100,
                     render: (h, params) => {
                         if (!params.row.configured_status) {
                             return;
@@ -730,6 +712,17 @@ export default {
                     width: 150,
                     render: (h, params) => {
                         let value = params.row.daily_budget;
+                        //三位数加逗号
+                        let newvalue = (value / 100)
+                            .toString()
+                            .split("")
+                            .reverse()
+                            .join("")
+                            .replace(/(\d{3})/g, "$1,")
+                            .replace(/\,$/, "")
+                            .split("")
+                            .reverse()
+                            .join("");
                         return [
                             h(
                                 "Tooltip",
@@ -741,10 +734,7 @@ export default {
                                     }
                                 },
                                 [
-                                    h(
-                                        "span",
-                                        params.row.daily_budget / 100 + "元"
-                                    ),
+                                    h("span", newvalue + "元"),
                                     h("i-button", {
                                         props: {
                                             icon: "edit",
@@ -839,6 +829,10 @@ export default {
         this.getCampaignsList();
     },
     methods: {
+        //去登陆
+        tologin() {
+            window.open("http://e.qq.com/ads/");
+        },
         //新建广告
         tonewadd() {
             this.$router.push({

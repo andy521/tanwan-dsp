@@ -200,9 +200,9 @@ export default {
     },
     mounted() {
         if (this.$route.query.adgroup_detail) {
-            this.campaign_id = this.$route.query.adgroup_detail.campaign_id;          
+            this.campaign_id = this.$route.query.adgroup_detail.campaign_id;
         }
-         this.getCampaigns();
+        this.getCampaigns();
     },
     methods: {
         //获取推广计划

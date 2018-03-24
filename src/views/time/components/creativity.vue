@@ -122,39 +122,39 @@ em {
             <tr v-for="item in adgroup_detail.adcreative">
                 <td width="56">{{item.adcreative_name}}</td>
                 <template v-for="subitem in checkAll">
-                    <td width="160" v-if="subitem=='account_name'">{{item.adtodayArr.account_name}}</td>
+                    <td width="120" v-if="subitem=='account_name'">{{item.adtodayArr.account_name}}</td>
                     <td width="400" v-else-if="subitem=='adgroup_name'"></td>
-                    <td width="150" v-else-if="subitem=='campaign_id'">{{item.adtodayArr.campaign_id}}</td>
+                    <td width="100" v-else-if="subitem=='campaign_id'">{{item.adtodayArr.campaign_id}}</td>
                     <td width="100" v-else-if="subitem=='impression'">{{item.adtodayArr.impression}}</td>
-                    <td width="150" v-else-if="subitem=='click'">{{item.adtodayArr.click}}</td>
-                    <td width="150" v-else-if="subitem=='click_per'">-</td>
-                    <td width="150" v-else-if="subitem=='click_cost'">-</td>
-                    <td width="150" v-else-if="subitem=='cost'">{{item.adtodayArr.cost}}</td>
-                    <td width="150" v-else-if="subitem=='show_pv'">-</td>
-                    <td width="150" v-else-if="subitem=='show_ip'">-</td>
-                    <td width="150" v-else-if="subitem=='down_ip'">-</td>
-                    <td width="150" v-else-if="subitem=='fetch'">-</td>
-                    <td width="150" v-else-if="subitem=='fetch_per'">-</td>
-                    <td width="150" v-else-if="subitem=='download'">{{item.adtodayArr.download}}</td>
-                    <td width="150" v-else-if="subitem=='down_ins_per'">-</td>
-                    <td width="150" v-else-if="subitem=='install'">-</td>
-                    <td width="150" v-else-if="subitem=='click_install'">-</td>
-                    <td width="150" v-else-if="subitem=='install_per'">-</td>
-                    <td width="150" v-else-if="subitem=='download_per'">-</td>
-                    <td width="150" v-else-if="subitem=='bid_amount'">-</td>
-                    <td width="150" v-else-if="subitem=='reg_imei'">-</td>
-                    <td width="150" v-else-if="subitem=='activation'">{{item.adtodayArr.activation}}</td>
-                    <td width="150" v-else-if="subitem=='reg_imei_cost'">-</td>
-                    <td width="150" v-else-if="subitem=='reg_cost'">-</td>
-                    <td width="150" v-else-if="subitem=='reg_per'">-</td>
-                    <td width="150" v-else-if="subitem=='reg_arpu'">-</td>
-                    <td width="150" v-else-if="subitem=='login'">-</td>
-                    <td width="150" v-else-if="subitem=='act_per'">-</td>
-                    <td width="150" v-else-if="subitem=='pay_num'">-</td>
-                    <td width="150" v-else-if="subitem=='pay_total'">-</td>
-                    <td width="150" v-else-if="subitem=='pay_per'">-</td>
-                    <td width="150" v-else-if="subitem=='income_per'">-</td>
-                    <td width="150" v-else-if="subitem=='system_status'">
+                    <td width="100" v-else-if="subitem=='click'">{{item.adtodayArr.click}}</td>
+                    <td width="100" v-else-if="subitem=='click_per'">-</td>
+                    <td width="110" v-else-if="subitem=='click_cost'">-</td>
+                    <td width="100" v-else-if="subitem=='cost'">{{item.adtodayArr.cost}}</td>
+                    <td width="100" v-else-if="subitem=='show_pv'">-</td>
+                    <td width="100" v-else-if="subitem=='show_ip'">-</td>
+                    <td width="100" v-else-if="subitem=='down_ip'">-</td>
+                    <td width="100" v-else-if="subitem=='fetch'">-</td>
+                    <td width="100" v-else-if="subitem=='fetch_per'">-</td>
+                    <td width="100" v-else-if="subitem=='download'">{{item.adtodayArr.download}}</td>
+                    <td width="100" v-else-if="subitem=='down_ins_per'">-</td>
+                    <td width="110" v-else-if="subitem=='install'">-</td>
+                    <td width="120" v-else-if="subitem=='click_install'">-</td>
+                    <td width="120" v-else-if="subitem=='install_per'">-</td>
+                    <td width="120" v-else-if="subitem=='download_per'">-</td>
+                    <td width="100" v-else-if="subitem=='bid_amount'">-</td>
+                    <td width="100" v-else-if="subitem=='reg_imei'">-</td>
+                    <td width="120" v-else-if="subitem=='activation'">{{item.adtodayArr.activation}}</td>
+                    <td width="130" v-else-if="subitem=='reg_imei_cost'">-</td>
+                    <td width="110" v-else-if="subitem=='reg_cost'">-</td>
+                    <td width="100" v-else-if="subitem=='reg_per'">-</td>
+                    <td width="120" v-else-if="subitem=='reg_arpu'">-</td>
+                    <td width="100" v-else-if="subitem=='login'">-</td>
+                    <td width="100" v-else-if="subitem=='act_per'">-</td>
+                    <td width="110" v-else-if="subitem=='pay_num'">-</td>
+                    <td width="110" v-else-if="subitem=='pay_total'">-</td>
+                    <td width="100" v-else-if="subitem=='pay_per'">-</td>
+                    <td width="100" v-else-if="subitem=='income_per'">-</td>
+                    <td width="110" v-else-if="subitem=='system_status'">
                         <template v-for="col in ads_config.system_status" v-if="col.val_type==item.system_status">
                             <span :style="{color:col.color}">{{col.name}}</span>
                             <Tooltip placement="top" v-if="item.reject_message != 'null' && item.reject_message">
@@ -163,7 +163,7 @@ em {
                             </Tooltip>
                         </template>
                     </td>
-                    <td width="150" v-else-if="subitem=='configured_status'">{{item.configured_status =="AD_STATUS_NORMAL"? "开启": "关闭"}}</td>
+                    <td width="100" v-else-if="subitem=='configured_status'">{{item.configured_status =="AD_STATUS_NORMAL"? "开启": "关闭"}}</td>
                     <td width="150" v-else-if="subitem=='daily_budget'">-</td>
                     <td width="150" v-else-if="subitem=='game_name'">-</td>
                 </template>

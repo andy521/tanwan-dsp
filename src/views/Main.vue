@@ -87,7 +87,7 @@
             <div class="single-page">
                 <keep-alive :include="cachePage">
                     <router-view></router-view>
-                </keep-alive>            
+                </keep-alive>
             </div>
         </div>
         <!-- main END -->
@@ -116,6 +116,19 @@ export default {
             openedSubmenuArr: this.$store.state.app.openedSubmenuArr
         };
     },
+    mounted() {
+        this.init();
+        //获取消息
+        this.$store.dispatch("getMessages");
+        //请求定向标签(地域)
+        this.$store.dispatch("get_targeting_tags");
+        //获取所有状态
+        this.$store.dispatch("get_ads_config");
+        //获取商业兴趣
+        this.$store.dispatch("get_business_interest");
+        //获取App行为
+        this.$store.dispatch("get_appCategory");
+    },
     computed: {
         //缓存页面
         cachePage() {
@@ -132,7 +145,6 @@ export default {
             return this.$store.state.setid.MessagesData;
         }
     },
-
     methods: {
         init() {
             //更新菜单
@@ -181,19 +193,6 @@ export default {
                 name: "setid_systemmsg"
             });
         }
-    },
-    mounted() {
-        this.init();
-        //获取消息
-        this.$store.dispatch("getMessages");
-        //请求定向标签(地域)
-        this.$store.dispatch("get_targeting_tags");
-        //获取所有状态
-        this.$store.dispatch("get_ads_config");
-        //获取商业兴趣
-        this.$store.dispatch("get_business_interest");
-        //获取App行为
-        this.$store.dispatch("get_appCategory");
     }
 };
 </script>

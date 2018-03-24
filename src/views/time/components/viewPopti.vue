@@ -79,6 +79,8 @@
 					<Checkbox label="show_pv">展示PV</Checkbox>
 					<Checkbox label="show_ip">展示IP</Checkbox>
 					<Checkbox label="down_ip">下载IP</Checkbox>
+                    <Checkbox label="campaign_id">计划</Checkbox>
+                    <Checkbox label="game_name">产品名称</Checkbox>
 				</CheckboxGroup>
 				<div class="margin-top-20">
 					<Button type="ghost" @click="set_user_memo">保存操作</Button>
@@ -96,12 +98,12 @@
 			return {
 				indeterminate: true,
 				checkAll: false,
-				checkAllGroup: ['account_name', 'adgroup_name', 'campaign_id', 'impression', 'click', 'click_per', 'click_cost', 'cost', 'configured_status', 'daily_budget', 'game_name'], //默认选中
+				checkAllGroup: [], //默认选中
 				checkAllGroups: ['configured_status', 'click_cost', 'click', 'click_per',
 					'fetch', 'fetch_per', 'down_ins_per', 'download',
 					'install', 'click_install', 'reg_imei', 'activation', 'reg_per', 'reg_cost', 'reg_imei_cost', 'install_per', 'download_per',
 					'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'reg_arpu', 'income_per',
-					'show_pv', 'show_ip', 'down_ip'
+					'show_pv', 'show_ip', 'down_ip','campaign_id','game_name'
 				]
 			}
 		},
