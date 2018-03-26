@@ -242,7 +242,6 @@
 				type: Array,
 				default: () => []
 			},
-			setp: [1, 1],
 			plandata: {
 				type: Object
 			}
@@ -332,7 +331,7 @@
 		},
 		methods: {
 			tostep(step) {
-				this.$emit("tostep", step);
+                this.$store.commit("save_step",step);  
 			},
 			//阻止修改广告版位
 			isModify() {

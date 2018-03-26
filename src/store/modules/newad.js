@@ -1,13 +1,12 @@
 import Axios from "@/api/index";
 
 const newad = {
-    state: {
+    state: { 
+        step: [0, 0], //导行定位
+        adgroup_detail: {}, //定向详情
+
         ads_config: [], //所有状态
-        authorlist: [], //负责人
-        campaign_type: [], //计划类型
         product_type: [], //标的物类型
-        configured_status: [], //状态类型
-        speed_mode: [], //投放速度模式
         targetings: {
             list: []
         }, //定向
@@ -15,24 +14,21 @@ const newad = {
         business_interest: [], //商业兴趣
         CustomAudiences: '', //获取自定义人群
         CustomAudiences_ex: '', //获取自定义人群排除
-        appCategory: [], ////app行为按分类
+        appCategory: [], //app行为按分类
         gallery: {}, //图库
     },
-    mutations: {     
+    mutations: {  
+        save_step(state, step) {
+            state.step = step;
+        },
+        save_adgroup_detail(state, adgroup_detail) {
+            state.adgroup_detail = adgroup_detail;
+        },
         GET_ADS_CONFIG(state, data) {
             state.ads_config = data;
         },
-        GET_CAMPAIGN_TYPE(state, data) {
-            state.campaign_type = data;
-        },
         GET_PRODUCT_TYPE(state, data) {
             state.product_type = data;
-        },
-        GET_CONFIGURED_TYPE(state, data) {
-            state.configured_status = data;
-        },
-        GET_SPEED_TYPE(state, data) {
-            state.speed_mode = data;
         },
         GET_TARGETINGS(state, data) {
             state.targetings = data;
@@ -90,22 +86,6 @@ const newad = {
             )
         },
 
-        //获取计划类型
-        get_campaign_type({
-            commit
-        }) {
-            Axios.get('api.php', {
-                action: 'gdtAdPut',
-                opt: 'get_campaign_type'
-            }).then(res => {
-                commit('GET_CAMPAIGN_TYPE', res.data)
-            }).catch(
-                err => {
-                    console.log('获取计划类型' + err)
-                }
-            )
-        },
-
         //获取标的物类型
         get_product_type({
             commit
@@ -122,45 +102,14 @@ const newad = {
             )
         },
 
-        //获取状态类型
-        get_configured_status({
-            commit
-        }) {
-            Axios.get('api.php', {
-                action: 'gdtAdPut',
-                opt: 'get_configured_status'
-            }).then(res => {
-                commit('GET_CONFIGURED_TYPE', res.data)
-            }).catch(
-                err => {
-                    console.log('获取状态类型' + err)
-                }
-            )
-        },
-        //获取投放速度模式
-        get_speed_mode({
-            commit
-        }) {
-            Axios.get('api.php', {
-                action: 'gdtAdPut',
-                opt: 'get_speed_mode'
-            }).then(res => {
-                commit('GET_SPEED_TYPE', res.data)
-            }).catch(
-                err => {
-                    console.log('获取投放速度模式' + err)
-                }
-            )
-        },
-
         //获取定向
         get_targetings({
             commit
-        },account_id) {
+        }, account_id) {
             Axios.get('api.php', {
                 action: 'gdtAdPut',
                 opt: 'targetings',
-                account_id:account_id
+                account_id: account_id
             }).then(res => {
                 commit('GET_TARGETINGS', res.data)
             }).catch(
@@ -240,13 +189,25 @@ const newad = {
         },
 
         //获取图库
-        get_gallery({ commit }, param) {
+        get_gallery({
+            commit
+        }, param) {
             console.log(param)
-            Axios.get('api.php', { 'action': 'gdtAdPut', 'opt': 'adsimg', 'account_id': param.account_id, 'width': param.width, 'height': param.height })
+            Axios.get('api.php', {
+                    'action': 'gdtAdPut',
+                    'opt': 'adsimg',
+                    'account_id': param.account_id,
+                    'width': param.width,
+                    'height': param.height
+                })
                 .then(
-                    res => { commit('GET_GALLERY', res.data) }
+                    res => {
+                        commit('GET_GALLERY', res.data)
+                    }
                 ).catch(
-                    err => { console.log('获取图库失败' + err) }
+                    err => {
+                        console.log('获取图库失败' + err)
+                    }
                 );
         }
     }

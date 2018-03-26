@@ -472,10 +472,13 @@ export default {
         //编辑
         editTargeting() {
             this.detailswin = false;
+            this.$store.commit("save_adgroup_detail", this.adgroup_detail);           
             let query = {
-                adgroup_detail: this.adgroup_detail,
                 account_id: this.adgroup_detail.account_id,
-                targeting_id: this.adgroup_detail.targeting_id
+                campaign_id:this.adgroup_detail.campaign_id,
+                targeting_id: this.adgroup_detail.targeting_id,
+                product_refs_id:this.adgroup_detail.product_refs_id,
+                product_type:this.adgroup_detail.product_type
             };
             this.$router.push({
                 name: "newad",

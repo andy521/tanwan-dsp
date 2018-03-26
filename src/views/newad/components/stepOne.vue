@@ -72,9 +72,10 @@ var {
                 <Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{item.campaign_name}}</Option>
             </Select>
             <div class="tabpane">
-                <div v-if="campaign_id!=''">
+                <div v-if="campaign_id!=''&& ads_config.length!=0">
                     <div class="camitem">
-                        <span>日消耗限额</span>{{campaign.daily_budget/100}}元/天</div>
+                        <span>日消耗限额</span>{{campaign.daily_budget/100}}元/天
+                    </div>
                     <div class="camitem">
                         <span>计划类型</span>
                         <em v-for="item in ads_config.campaign_type" v-if="campaign.campaign_type==item.val_type">{{item.name}}</em>
@@ -106,7 +107,7 @@ var {
                     <FormItem label="推广计划名称" prop="campaign_name">
                         <Input v-model="formCustom.campaign_name" placeholder="请输入推广计划名称"></Input>
                     </FormItem>
-                    <FormItem label="计划类型">
+                    <FormItem label="计划类型" prop="campaign_type">
                         <Select v-model="formCustom.campaign_type" placeholder="请选择计划类型" @on-change="campaign_type_change">
                             <Option v-for="item in ads_config.campaign_type" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
                         </Select>
@@ -114,17 +115,17 @@ var {
                     <FormItem label="日消耗限额" prop="daily_budget" v-if="formCustom.campaign_type!='CAMPAIGN_TYPE_WECHAT_MOMENTS'">
                         <Input v-model="formCustom.daily_budget" placeholder="请输入消耗限额"></Input>
                     </FormItem>
-                    <FormItem label="标的物类型">
+                    <FormItem label="标的物类型" prop="product_type">
                         <Select v-model="formCustom.product_type" placeholder="请选择标的物类型">
                             <Option v-for="item in ads_config.product_type" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem label="开启状态">
+                    <FormItem label="开启状态" prop="configured_status">
                         <Select v-model="formCustom.configured_status" placeholder="请选择开启状态">
                             <Option v-for="item in ads_config.configured_status" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem label="投放速度模式">
+                    <FormItem label="投放速度模式" prop="speed_mode">
                         <Select v-model="formCustom.speed_mode" placeholder="请选择投放速度模式">
                             <Option v-for="item in ads_config.speed_mode" :key="item.val_type" :value="item.val_type">{{item.name}}</Option>
                         </Select>
@@ -174,18 +175,48 @@ export default {
             ruleCustom: {
                 campaign_name: [
                     {
+                        required: true,
                         validator: validatecampaign_name,
                         trigger: "blur"
                     }
                 ],
+                campaign_type: [
+                    {
+                        required: true,
+                        message: "请选择计划类型",
+                        trigger: "change"
+                    }
+                ],
                 daily_budget: [
                     {
+                        required: true,
                         validator: validatedaily_budget,
                         trigger: "blur"
                     }
+                ],
+                product_type: [
+                    {
+                        required: true,
+                        message: "请选择标的物类型",
+                        trigger: "change"
+                    }
+                ],
+                configured_status: [
+                    {
+                        required: true,
+                        message: "请选择开启状态",
+                        trigger: "change"
+                    }
+                ],
+                speed_mode: [
+                    {
+                        required: true,
+                        message: "请选择投放速度模式",
+                        trigger: "change"
+                    }
                 ]
             },
-            account_id: this.$route.query.account_id, //3415636
+            account_id: "", //3415636
             campaign_id: "", //推广计划id
             tabsid: 0,
             campaign: {
@@ -199,8 +230,10 @@ export default {
         };
     },
     mounted() {
-        if (this.$route.query.adgroup_detail) {
-            this.campaign_id = this.$route.query.adgroup_detail.campaign_id;
+        let query = this.$route.query;
+        this.account_id = query.account_id;
+        if (query.campaign_id) {
+            this.campaign_id = query.campaign_id;
         }
         this.getCampaigns();
     },
@@ -251,10 +284,12 @@ export default {
                         .then(res => {
                             if (res.ret == 1) {
                                 this.$Message.success("提交成功");
-                                this.callback(
-                                    res.data.campaign_id,
-                                    this.formCustom
+                                this.$store.commit("save_step", [1, 0]);
+                                this.$store.commit(
+                                    "save_campaign_id",
+                                    res.data.campaign_id
                                 );
+                                this.callback(this.formCustom);
                             }
                         })
                         .catch(err => {
@@ -270,7 +305,8 @@ export default {
             if (this.campaign_id == "") {
                 this.$Message.info("请填选择推广计划");
             } else {
-                this.callback(this.campaign_id, this.campaign);
+                this.$store.commit("save_step", [1, 0]);
+                this.callback(this.campaign);
             }
         },
         //选择推广计划
@@ -285,18 +321,8 @@ export default {
     computed: {
         //获取所有状态
         ads_config() {
-            let list = this.$store.state.newad.ads_config;
-            this.formCustom.speed_mode = list.speed_mode[0].val_type;
-            this.formCustom.product_type = list.product_type[0].val_type;
-            this.formCustom.configured_status =
-                list.configured_status[0].val_type;
-            this.formCustom.campaign_type = list.campaign_type[0].val_type;
-            return list;
+            return this.$store.state.newad.ads_config;
         }
     }
 };
 </script>
-
-<style>
-
-</style>
