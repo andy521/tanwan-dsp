@@ -13,7 +13,7 @@
 }
 
 .w_flex_hd {
-    width: 5em;
+    width: 6em;
     font-weight: bold;
     text-align: right;
     padding-right: 10px;
@@ -54,15 +54,16 @@
 .carouselbox img {
     display: block;
 }
-
-.w_img_operation {
+.img_operation {
     position: absolute;
     top: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 0 5px;
-    cursor: pointer;
     z-index: 99;
+}
+.w_img_operation {
+    padding: 5px;
+    cursor: pointer;
+    display: inline-block;
 }
 
 .txt {
@@ -184,15 +185,26 @@ em {
                                         <img :src="item.adcreative_elements.image_url" width="100%" />
                                         <div class="txt">{{item.adcreative_elements.title}}</div>
                                     </div>
-                                    <div class="w_img_operation" @click="funpreview(item)">
-                                        <Icon type="search" size="18" color="#fff"></Icon>
+                                    <div class="img_operation">
+                                        <span class="w_img_operation" @click="editTargeting(1)">
+                                            <Tooltip placement="bottom-end">
+                                                <Icon type="android-create" size="18" color="#666"></Icon>
+                                                <div slot="content">修改创意</div>
+                                            </Tooltip>
+                                        </span>
+                                        <span class="w_img_operation" @click="funpreview(item)">
+                                            <Tooltip placement="bottom-end">
+                                                <Icon type="search" size="18" color="#666"></Icon>
+                                                <div slot="content">放大图片</div>
+                                            </Tooltip>
+                                        </span>
                                     </div>
                                 </CarouselItem>
                             </Carousel>
                         </div>
                     </div>
                     <div class="w_flex">
-                        <div class="w_flex_hd">广告名称</div>
+                        <div class="w_flex_hd">广告组名称</div>
                         <div class="w_flex_bd">{{adgroup_detail.adgroup_name}}</div>
                     </div>
                     <div class="w_flex">
@@ -319,7 +331,7 @@ em {
                                     <span class="grey">地域：</span>{{new_regions}}
                                 </div>
                             </div>
-                            <Button type="ghost" icon="edit" @click="editTargeting">修改定向</Button>
+                            <Button type="ghost" icon="edit" @click="editTargeting(0)">修改定向</Button>
                         </div>
                     </div>
                 </div>
@@ -470,16 +482,22 @@ export default {
     },
     methods: {
         //编辑
-        editTargeting() {
+        editTargeting(e) {
             this.detailswin = false;
-            this.$store.commit("save_adgroup_detail", this.adgroup_detail);           
+            this.$store.commit("save_adgroup_detail", this.adgroup_detail);
             let query = {
                 account_id: this.adgroup_detail.account_id,
-                campaign_id:this.adgroup_detail.campaign_id,
+                campaign_id: this.adgroup_detail.campaign_id,
                 targeting_id: this.adgroup_detail.targeting_id,
-                product_refs_id:this.adgroup_detail.product_refs_id,
-                product_type:this.adgroup_detail.product_type
+                product_refs_id: this.adgroup_detail.product_refs_id,
+                product_type: this.adgroup_detail.product_type,
+                adgroup_id: this.adgroup_detail.adgroup_id,
             };
+            if (e == 0) {
+                this.$store.commit("save_step", [1, 0]);
+            } else if (e == 1) {
+                this.$store.commit("save_step", [2, 0]);
+            }
             this.$router.push({
                 name: "newad",
                 query: query

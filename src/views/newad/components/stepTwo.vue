@@ -193,10 +193,6 @@
         <div class="tit">广告</div>
         <h3 class="subtit">目标详情</h3>
 
-        <!--<Input v-model="product_refs_id" size="large" placeholder="请输入标的物ID" class="margin-top-20">
-		<span slot="prepend">标的物ID</span>
-		<span slot="append">{{product_refs_id.length}}/15</span>
-		</Input>-->
         <Select filterable size="large" placeholder="请选择标的物id" v-model="product_refs_id" class="margin-top-20">
             <Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="this">{{item.product_name}}</Option>
         </Select>
@@ -595,10 +591,10 @@
 
             <h3 class="fi_tit">预计最大覆盖用户</h3>
             <p>
-                <span class="fi_user_count">279,603,200</span>人</p>
+                <span class="fi_user_count">{{approximate_count|toThousands}}</span>人</p>
             <h3 class="fi_tit margin-top-20">预计最大日曝光量</h3>
             <p>
-                <span class="fi_user_count">2,035,865,600</span>次</p>
+                <span class="fi_user_count">{{impression|toThousands}}</span>次</p>
         </div>
 
         <!--弹出层-->
@@ -969,7 +965,9 @@ export default {
             targeting_id: "0",
             product_type: "",
             product_refs_id: "",
+            destination_url: "",
             product_refs_ids: [],
+            targetings: [],
             targeting_item: {
                 account_id: "",
                 id: "",
@@ -1051,7 +1049,9 @@ export default {
             ],
             Audiencesname: "", //自定义人群搜索关键词
             Audiencesname_ex: "", //自定义人群搜索关键词排除
-            appCategory_modeal: false //app行为switch
+            appCategory_modeal: false, //app行为switch
+            approximate_count: "", //大致覆盖人数
+            impression: "" //预估日曝光量
         };
     },
     mounted() {
@@ -1067,25 +1067,39 @@ export default {
         }
         if (query.product_type) {
             this.product_type = query.product_type;
-        } else {
-            this.product_type = this.plandata.product_type;
         }
-        //请求定向
-        this.$store.dispatch("get_targetings", this.account_id);
-
         //请求定向标签(地域)
         this.$store.dispatch("get_targeting_tags");
         //获取商业兴趣
         this.$store.dispatch("get_business_interest");
         //app行为按分类
         this.$store.dispatch("get_appCategory");
-
+        //获取定向列表
+        this.get_targetings();
         this.products_info_get();
         //获取自定义人群
         this.getAudiences();
         this.getAudiences_ex();
     },
     methods: {
+        //获取预估覆盖人数、出价
+        get_estimation() {
+            Axios.get("api.php", {
+                action: "gdtAdput",
+                opt: "get_estimation",
+                account_id: this.account_id,
+                targeting: JSON.stringify(this.targeting_item.targeting)
+            })
+                .then(res => {
+                    if (res.ret == 1) {
+                        this.approximate_count = res.data.approximate_count;
+                        this.impression = res.data.impression;
+                    }
+                })
+                .catch(err => {
+                    console.log("获取预估覆盖人数、出价" + err);
+                });
+        },
         //获取标的物id
         products_info_get() {
             Axios.get("api.php", {
@@ -1119,15 +1133,75 @@ export default {
             };
             this.$store.dispatch("get_CustomAudiences_ex", data);
         },
+        //获取定向
+        get_targetings() {
+            Axios.get("api.php", {
+                action: "gdtAdPut",
+                opt: "targetings",
+                account_id: this.account_id
+            })
+                .then(res => {
+                    if (res.ret == 1) {
+                        res.data.list.unshift({
+                            account_id: "",
+                            id: "",
+                            targeting_id: 0, //定向id
+                            targeting_name: "新建定向", //定向名称
+                            targeting: {
+                                age: [],
+                                gender: [],
+                                education: [],
+                                relationship_status: [],
+                                living_status: [],
+                                geo_location: {
+                                    regions: [],
+                                    location_types: [],
+                                    business_districts: []
+                                },
+                                app_behavior: {
+                                    object_type: "APP_CLASS",
+                                    object_id_list: [],
+                                    time_window: 1,
+                                    act_id_list: []
+                                },
+                                app_install_status: [],
+                                network_type: [],
+                                business_interest: [],
+                                network_operator: [],
+                                device_price: [],
+                                shopping_capability: [],
+                                paying_user_type: [],
+                                keyword: {
+                                    words: []
+                                },
+                                player_consupt: [],
+                                residential_community_price: [],
+                                customized_audience: [],
+                                excluded_custom_audience: [],
+                                description: []
+                            }
+                        });
+                        this.targetings = res.data.list;
+                        this.changetargetings();
+                    }
+                })
+                .catch(err => {
+                    console.log("获取定向" + err);
+                });
+        },
         //选择定向
         changetargetings() {
             this.targetings.forEach(item => {
                 if (item.targeting_id == this.targeting_id) {
+                    if (!item.targeting) {
+                        this.targeting_item.account_id = item.account_id;
+                        this.targeting_item.id = item.id;
+                        this.targeting_item.targeting_id = item.targeting_id;
+                        this.targeting_item.targeting_name =
+                            item.targeting_name;
+                        return;
+                    }
                     this.targeting_item = item;
-                    
-                    var result = item.targeting.age[0].split("~");
-
-                    this.age = [parseInt(result[0]), parseInt(result[1])];
                     //地域
                     if (
                         item.targeting.geo_location.regions.length > 0 ||
@@ -1138,7 +1212,9 @@ export default {
                         this.city_modeal = false;
                     }
                     //年龄
-                    if (item.targeting.age[0]) {
+                    if (item.targeting.age.length > 0) {
+                        var result = item.targeting.age[0].split("~");
+                        this.age = [parseInt(result[0]), parseInt(result[1])];
                         this.age_modeal = true;
                     } else {
                         this.age_modeal = false;
@@ -1226,10 +1302,12 @@ export default {
                     }
                 }
             });
+            this.get_estimation();
         },
         //删除城市
         removecity(index) {
             this.targeting_item.targeting.geo_location.regions.splice(index, 1);
+            this.get_estimation();
         },
         //商业兴趣返回ids
         businessidsCallback(data) {
@@ -1241,10 +1319,12 @@ export default {
                 }
             });
             this.targeting_item.targeting.business_interest = ids;
+            this.get_estimation();
         },
         //删除商业兴趣
         removebusiness(index) {
             this.targeting_item.targeting.business_interest.splice(index, 1);
+            this.get_estimation();
         },
         //删除app行为
         removeappCategoryids(index) {
@@ -1252,6 +1332,7 @@ export default {
                 index,
                 1
             );
+            this.get_estimation();
         },
         //app行为返回ids
         CategoryidsCallback(data) {
@@ -1263,10 +1344,12 @@ export default {
                 }
             });
             this.targeting_item.targeting.app_behavior.object_id_list = ids;
+            this.get_estimation();
         },
         //删除关健词
         removeword(index) {
             this.targeting_item.targeting.keyword.words.splice(index, 1);
+            this.get_estimation();
         },
         //添加关健词
         addword() {
@@ -1281,6 +1364,7 @@ export default {
                 this.targeting_item.targeting.keyword.words.push(this.newword);
                 this.newword = "";
             }
+            this.get_estimation();
         },
         //上传关健词
         readFileword(e) {
@@ -1306,6 +1390,7 @@ export default {
                     }
                 };
             }
+            this.get_estimation();
         },
         //获取自定义人群选中的id
         taCheck(row) {
@@ -1314,10 +1399,12 @@ export default {
                 ids.push(item.audience_id);
             });
             this.targeting_item.targeting.customized_audience = ids;
+            this.get_estimation();
         },
         //删除自定义人群选中的id
         removeAudiencesids(index) {
             this.targeting_item.targeting.customized_audience.splice(index, 1);
+            this.get_estimation();
         },
         //获取自定义人群选中的id排除
         taCheck_ex(row) {
@@ -1326,6 +1413,7 @@ export default {
                 ids.push(item.audience_id);
             });
             this.targeting_item.targeting.excluded_custom_audience = ids;
+            this.get_estimation();
         },
 
         //删除自定义人群选中的id排除
@@ -1334,6 +1422,7 @@ export default {
                 index,
                 1
             );
+            this.get_estimation();
         },
         //下一步
         submitStepTwo() {
@@ -1354,9 +1443,7 @@ export default {
                 this.$Message.info("请输入标的物id超出字数限制");
                 return;
             }
-
             let targeting = {};
-
             //验证地理位置
             if (this.city_modeal) {
                 if (this.verify_geo_location) {
@@ -1364,6 +1451,12 @@ export default {
                 } else {
                     return;
                 }
+            }
+            //年龄
+            if (this.age_modeal) {
+                let age = [];
+                age.push(this.age[0] + "~" + this.age[1]);
+                targeting.age = age;
             }
             //验证商业兴趣
             if (this.business_modeal) {
@@ -1468,6 +1561,8 @@ export default {
                 opt: "targetings_add",
                 do: "edit",
                 account_id: this.account_id,
+                targeting_id:
+                    this.MediaListModel == "0" ? "" : this.targeting_id,
                 id: this.targeting_item.id,
                 targeting_name: this.targeting_item.targeting_name,
                 targeting: JSON.stringify(targeting)
@@ -1476,9 +1571,10 @@ export default {
                     if (res.ret == 1) {
                         this.callback(
                             res.data.targeting_id,
-                            this.targeting_item,
-                            this.product_refs_id
+                            this.product_refs_id,
+                            this.destination_url
                         );
+                        this.$store.commit("save_step", [1, 1]);
                         this.$Message.info(res.msg);
                     }
                 })
@@ -1486,12 +1582,24 @@ export default {
         }
     },
     watch: {
+        product_refs_id(val) {
+            this.product_refs_ids.forEach(element => {
+                if (val == element.product_refs_id) {
+                    this.destination_url = JSON.parse(element.product_info).product_type_app_android_open_platform.app_property_pkg_url;
+                }
+            });
+        },
         age(val) {
             let age = [];
             age.push(val[0] + "~" + val[1]);
             this.targeting_item.targeting.age = age;
+            this.get_estimation();
         },
-        targeting_tags() {}
+        plandata() {
+            this.product_type = this.plandata.product_type;
+            this.products_info_get();
+            this.get_estimation();
+        }
     },
     computed: {
         //获取自定义人群
@@ -1522,56 +1630,9 @@ export default {
             });
             return list;
         },
-
         //获取所有状态
         ads_config() {
             return this.$store.state.newad.ads_config;
-        },
-
-        //获取定向
-        targetings() {
-            let list = this.$store.state.newad.targetings.list;
-            list.unshift({
-                account_id: "",
-                id: "",
-                targeting_id: 0, //定向id
-                targeting_name: "新建定向", //定向名称
-                targeting: {
-                    age: ["5~60"],
-                    gender: ["FEMALE"],
-                    education: [],
-                    relationship_status: [],
-                    living_status: [],
-                    geo_location: {
-                        regions: [],
-                        location_types: [],
-                        business_districts: []
-                    },
-                    app_behavior: {
-                        object_type: "APP_CLASS",
-                        object_id_list: [],
-                        time_window: 1,
-                        act_id_list: []
-                    },
-                    app_install_status: [],
-                    network_type: [],
-                    business_interest: [],
-                    network_operator: [],
-                    device_price: [],
-                    shopping_capability: [],
-                    paying_user_type: [],
-                    keyword: {
-                        words: []
-                    },
-                    player_consupt: [],
-                    residential_community_price: [],
-                    customized_audience: [],
-                    excluded_custom_audience: [],
-                    description: []
-                }
-            });
-
-            return list;
         },
         //商业兴趣转码
         businessname() {
@@ -1579,9 +1640,12 @@ export default {
             let ids = this.targeting_item.targeting.business_interest;
             ids.forEach(id => {
                 for (var i in this.business) {
-                    var e = this.business[i].children;
-                    for (var j in e) {
-                        var f = e[j];
+                    var e = this.business[i];
+                    if (e.label == id) {
+                        name.push(e.title);
+                    }
+                    for (var j in e.children) {
+                        var f = e.children[j];
                         if (f.label == id) {
                             name.push(f.title);
                         }
@@ -1974,6 +2038,23 @@ export default {
                 return false;
             } else {
                 return true;
+            }
+        }
+    },
+    filters: {
+        toThousands: function(val) {
+            if (val) {
+                //三位数加逗号
+                return val
+                    .toString()
+                    .split("")
+                    .reverse()
+                    .join("")
+                    .replace(/(\d{3})/g, "$1,")
+                    .replace(/\,$/, "")
+                    .split("")
+                    .reverse()
+                    .join("");
             }
         }
     }

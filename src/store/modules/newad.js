@@ -1,15 +1,12 @@
 import Axios from "@/api/index";
 
 const newad = {
-    state: { 
+    state: {
         step: [0, 0], //导行定位
-        adgroup_detail: {}, //定向详情
+        adgroup_detail: "", //定向详情
 
         ads_config: [], //所有状态
-        product_type: [], //标的物类型
-        targetings: {
-            list: []
-        }, //定向
+        product_type: [], //标的物类型       
         targeting_tags: [], //定向标签(地域)
         business_interest: [], //商业兴趣
         CustomAudiences: '', //获取自定义人群
@@ -17,7 +14,7 @@ const newad = {
         appCategory: [], //app行为按分类
         gallery: {}, //图库
     },
-    mutations: {  
+    mutations: {
         save_step(state, step) {
             state.step = step;
         },
@@ -29,9 +26,6 @@ const newad = {
         },
         GET_PRODUCT_TYPE(state, data) {
             state.product_type = data;
-        },
-        GET_TARGETINGS(state, data) {
-            state.targetings = data;
         },
         GET_TARGETING_TAGS(state, data) {
             state.targeting_tags = data;
@@ -98,23 +92,6 @@ const newad = {
             }).catch(
                 err => {
                     console.log('获取标的物类型' + err)
-                }
-            )
-        },
-
-        //获取定向
-        get_targetings({
-            commit
-        }, account_id) {
-            Axios.get('api.php', {
-                action: 'gdtAdPut',
-                opt: 'targetings',
-                account_id: account_id
-            }).then(res => {
-                commit('GET_TARGETINGS', res.data)
-            }).catch(
-                err => {
-                    console.log('获取定向' + err)
                 }
             )
         },
@@ -192,7 +169,6 @@ const newad = {
         get_gallery({
             commit
         }, param) {
-            console.log(param)
             Axios.get('api.php', {
                     'action': 'gdtAdPut',
                     'opt': 'adsimg',
