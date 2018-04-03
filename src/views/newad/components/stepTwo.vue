@@ -452,7 +452,7 @@
 
             <Input v-model="targeting_item.targeting_name" size="large" placeholder="请输入定向包名称" class="margin-top-10">
             <span slot="prepend">定向包名称</span>
-            <span slot="append">{{targeting_item.targeting_name.length}}/15</span>
+            <span slot="append">{{targeting_item.targeting_name.length}}/30</span>
             </Input>
 
             <div class="margin-top-10 next_btn">
@@ -502,7 +502,7 @@
                         <var v-for="subitem in targeting_item.targeting.app_behavior.act_id_list">
                             <var v-if="subitem==item.val_type">{{item.name}},</var>
                         </var>
-                    </em>
+                    </em>用户
                 </p>
                 <p v-if="app_install_status_modeal">
                     <span>App安装：</span>
@@ -1430,7 +1430,7 @@ export default {
                 this.$Message.info("请输入定向包名称");
                 return;
             }
-            if (this.targeting_item.targeting_name.length > 15) {
+            if (this.targeting_item.targeting_name.length > 30) {
                 this.$Message.info("定向包名称超出字数限制");
                 return;
             }

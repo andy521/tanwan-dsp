@@ -3,14 +3,6 @@ ul,
 li {
     list-style: none;
 }
-.ivu-upload-drag {
-    background: #f8f9fa;
-    border: 1px solid rgba(57, 73, 103, 0.18);
-    border-radius: 0;
-}
-.ivu-upload-drag:hover {
-    border-style: solid;
-}
 .upload {
     color: #a7abb1;
     position: relative;
@@ -24,9 +16,6 @@ li {
     font-weight: 900;
     font-size: 14px;
     line-height: 2;
-}
-.name {
-    margin-top: -1px;
 }
 
 .txtbox {
@@ -75,14 +64,15 @@ li {
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
-.ivu-spin-fix {
-    z-index: 100;
-}
-.ivu-upload {
+
+.upload_div {
     position: relative;
-    z-index: 10;
+}
+.upload_div:hover .gallery_area {
+    display: block;
 }
 .gallery_area {
+    display: none;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -200,10 +190,7 @@ li {
     float: left;
     margin: 6px 0 0 6px;
 }
-.ivu-spin-fix .ivu-spin-main {
-    width: 100%;
-    line-height: 1.8;
-}
+
 .creative {
     position: relative;
 }
@@ -214,27 +201,28 @@ li {
             <Progress :percent="percent" :stroke-width="5"></Progress>
             <div>正在上传</div>
         </Spin>
-        <Upload multiple type="drag" :format="accept" :show-upload-list="false" :max-size="imgSize" :action="actionUrl" :on-success="handleSuccess" :on-exceeded-size="handleMaxSize" :on-format-error="handleFormatError" :before-upload="handleBeforeUpload" :on-progress="handleProgress" :on-error="handleError" :style="{width:img_size[0]+ 'px',height:img_size[1]+ 'px'}">
-            <div class="upload" v-on:mouseenter="model.isShowGallery = true" v-on:mouseleave="model.isShowGallery = false" :style="{width:img_size[0]+ 'px',height:img_size[1]+ 'px'}">
-                <div class="imgbox" :style="'background-image:url(' + preview_url+ ')'">
-                    <div class="ts">
-                        <p>请上传图片尺寸为：{{template.element.image.size}}(px)<br> 点击重新上传
-                        </p>
+        <div class="upload_div" :style="{width:img_size[0]+ 'px' }">
+            <Upload multiple type="drag" :format="accept" :show-upload-list="false" :max-size="imgSize" :action="actionUrl" :on-success="handleSuccess" :on-exceeded-size="handleMaxSize" :on-format-error="handleFormatError" :before-upload="handleBeforeUpload" :on-progress="handleProgress" :on-error="handleError">
+                <div class="upload" :style="{width:img_size[0]+ 'px',height:img_size[1]+ 'px'}">
+                    <div class="imgbox" :style="'background-image:url(' + preview_url+ ')'">
+                        <div class="ts">
+                            <p>请上传图片尺寸为：{{template.element.image.size}}(px)<br> 点击重新上传
+                            </p>
+                        </div>
+                    </div>
+                    <div class="txtbox">
+                        <div class="size">{{template.element.image.size}}(px)</div>
+                        <p class="way">点击或将文件拖拽到这里上传</p>
+                        <p>{{template.element.image.des}}</p>
                     </div>
                 </div>
-                <div class="txtbox">
-                    <div class="size">{{template.element.image.size}}(px)</div>
-                    <p class="way">点击或将文件拖拽到这里上传</p>
-                    <p>{{template.element.image.des}}</p>
-                </div>
-            </div>
-            <div v-show="model.isShowGallery" class="gallery_area" v-on:mouseenter="model.isShowGallery = true" v-on:mouseleave="model.isShowGallery = false">
-                <p class="gallery_link" @click="galleryLink">
+            </Upload>
+            <div class="gallery_area">
+                <p class="gallery_link" @click="galleryLink(1)">
                     <Icon type="ios-albums-outline"></Icon> 从图库选择</p>
             </div>
-        </Upload>
-
-        <div class="name" :style="{width:img_size[0]+ 'px'}">
+        </div>
+        <div class="margin-top-10" :style="{width:img_size[0]+ 'px'}">
             <Input v-model="remark" :maxlength="10" placeholder="请输入图片描述(可选)">
             <span slot="append">{{remark.length}}/10</span>
             </Input>
@@ -263,7 +251,7 @@ li {
                         </div>
                     </div>
                 </div>
-                <Page :total="gallery.total_number" :page-size="10" size="small" show-total></Page>
+                <Page :total="total_number" :current="page" :page-size="page_size" size="small" show-total @on-change="galleryLink"></Page>
             </div>
         </Modal>
     </div>
@@ -272,6 +260,7 @@ li {
 //广告版位数量
 import adcreative_template from "./adcreative_template.js";
 import util from "@/utils/index";
+import Axios from "@/api/index";
 export default {
     name: "create-image",
     props: {
@@ -344,8 +333,6 @@ export default {
             //图库
             model: {
                 galleryModal: false,
-                //是否显示图库
-                isShowGallery: false,
                 //选择图库图片ID
                 sid: "",
                 //显示以选择
@@ -354,7 +341,12 @@ export default {
                 preview_url: "",
                 //图库选择图片ID
                 image_id: ""
-            }
+            },
+            gallery:"",
+            page: 1, //第N页
+            page_size: 20, //每页数量
+            total_number: 1, //总数量
+            total_page: 1, //总页数
         };
     },
     mounted() {
@@ -393,33 +385,39 @@ export default {
                     this.img_size = this.template.element.image.size.split("*");
                 }
             });
-
             this.preview_url = this.imgsrc;
         },
-        //获取图库
-        gallery() {
-            return this.$store.state.newad.gallery;
-        }
+      
     },
     methods: {
         //图库确认
         ok() {
             this.preview_url = this.model.preview_url;
             this.info.image_id = this.model.image_id;
-
             this.$emit("on-change", this.info);
         },
         //图库
-        galleryLink() {
+        galleryLink(page) {
+            this.page = page;            
             this.model.galleryModal = true;
             let size = this.template.element.image.size.split("*");
-            let param = {
+            Axios.get("api.php", {
+                action: "gdtAdPut",
+                opt: "adsimg",
                 account_id: this.id,
                 width: size[0],
-                height: size[1]
-            };
-            console.log(param);
-            this.$store.dispatch("get_gallery", param);
+                height: size[1],
+                page: this.page, //页码
+                page_size: this.page_size //每页数量
+            })
+                .then(res => {
+                   this.gallery=res.data;
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                })
+                .catch(err => {
+                    console.log("获取图库失败" + err);
+                });
         },
         //选择图库图片
         selectCreated(id) {
