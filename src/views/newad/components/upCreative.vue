@@ -1,5 +1,5 @@
-<style>
-.creative h3{
+<style scoped>
+.creative h3 {
     font-size: 20px;
     font-weight: 900;
     line-height: 1;
@@ -7,266 +7,225 @@
     color: #404246;
     margin-bottom: 20px;
 }
-.tit{font-size: 34px;font-weight: 900;padding-top: 37px; color: #404246;}
-
-.cell{
-    position: relative;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
+.tit {
+    font-size: 34px;
+    font-weight: 900;
+    padding-top: 37px;
+    color: #404246;
 }
-.item{-webkit-box-flex: 1;-webkit-flex: 1; flex: 1;}
-.form{margin-top: 40px;}
-.next_btn{width: 300px; margin-top:40px;}
-.next_btn .ivu-btn-large{padding: 10px 15px; font-size: 16px;}   
+.item {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}
+.form {
+    margin-top: 40px;
+}
+.next_btn {
+    width: 300px;
+    margin-top: 40px;
+}
+.next_btn .ivu-btn-large {
+    padding: 10px 15px;
+    font-size: 16px;
+}
+
+.nav-tabs {
+    font-size: 14px;
+    margin-top: 20px;
+    height: 36px;
+    border-bottom: solid 1px #eee;
+}
+.nav-tabs li {
+    float: left;
+    position: relative;
+    display: block;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.nav-tabs li .close {
+    margin-left: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.nav-tabs li.cur::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background: #e88e00;
+}
+ul,
+li {
+    list-style: none;
+}
+.nav-main {
+    margin-top: 20px;
+}
+.imgdiv {
+    position: relative;
+    height: 200px;
+    background: #f8f9fa;
+    border: 1px solid rgba(57, 73, 103, 0.18);
+}
+.imgdiv img {
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 </style>
 
 <template>
-    <div class="creative">    
+    <div class="creative">
         <div class="tit">广告创意</div>
         <h3>上传创意</h3>
-        
-        <!-- 单个图片 -->
-        <div class="cell">        
-            <div class="item" v-for="(item,index) in element"  v-if=" item === 'image' || item == 'image2' "> 
-                <div class="img_box" v-if="item === 'image'">
-                    <create-image type="image" @on-change="imgChange" :id="account" :size="template.image.size" :des="template.image.des" :quality="template.image.quality" :format="template.image.format"></create-image>
-                </div>
-                <div class="img_box" v-if="item === 'image2'">
-                    <create-image type="image2" @on-change="imgChange" :id="account" :size="template.image2.size" :des="template.image2.des" :quality="template.image2.quality" :format="template.image2.format"></create-image>
-                </div>                    
-            </div>
-        </div>
-
-        <!-- 列表图片 -->
-        <div class="form_img" v-for="item in element" v-if="item === 'element_story'">               
-            <div class="cell">
-                <div class="item" v-for="i in template.element_story.length[0]">
-                    <create-image :type="'story_'+ i" @on-change="imgChange" :id="account" :size="template.element_story.child.size" :des="template.element_story.child.des" :quality="template.element_story.child.quality" :format="template.element_story.child.format"></create-image>
-                </div>
-            </div>
-        </div> 
-
-        <!-- 文本资料 -->
-        <div class="form">
-
-            <Alert type="error" v-show="verify.show" show-icon>{{verify.des}}</Alert>
-            <Form :model="creativeForm" :label-width="90">
-                <div v-for="item in element">
-
-                    <Form-item v-if="item === 'title'" :label="template.title.name">
-                        <Input v-model="title" :maxlength="template.title.amount[1]" :placeholder=" '请输入' + template.title.name  + template.title.des"><span slot="append">{{title.length}}/{{template.title.amount[1]}}</span> </Input>
-                    </Form-item>
-
-                    <Form-item v-if="item === 'button_text'" :label="template.button_text.name">
-                        <Input v-model="button_text" :maxlength="template.button_text.amount[1]" :placeholder=" '请输入' + template.button_text.name  + template.button_text.des"><span slot="append">{{button_text.length}}/{{template.button_text.amount[1]}}</span> </Input>
-                    </Form-item>
-
-                    <Form-item v-if="item === 'deep_link'" :label="template.deep_link.name">
-                        <Input v-model="deep_link"  :placeholder=" '请输入' + template.deep_link.name + template.deep_link.des"> </Input>
-                    </Form-item>
-
-                    <Form-item v-if="item === 'bottom_text'" :label="template.bottom_text.name">
-                        <Input v-model="bottom_text"  :placeholder=" '请输入' + template.bottom_text.name"> </Input>
-                    </Form-item>
-
-                    <Form-item v-if="item === 'impression_tracking_url'" :label="template.impression_tracking_url.name">
-                        <Input v-model="impression_tracking_url"  :placeholder=" '请输入' + template.impression_tracking_url.name + template.impression_tracking_url.des"> </Input>
-                    </Form-item>
-
-                    <Form-item v-if="item === 'click_tracking_url'" :label="template.click_tracking_url.name">
-                        <Input v-model="click_tracking_url"  :placeholder=" '请输入' + template.click_tracking_url.name  + template.click_tracking_url.des"> </Input>
-                    </Form-item>
-                    
-                    <Form-item v-if="item === 'description'" :label="template.description.name">
-                        <Input v-model="description"  :placeholder=" '请输入' + template.description.name  + template.description.des"> </Input>
-                    </Form-item>
-
-                    <!-- corporate -->
-                    <Form-item v-if="item === 'corporate'" :label="template.corporate.child.name">
-                        <Input v-model="corporate.corporate_name"  :placeholder=" '请输入' + template.corporate.child.name  + template.corporate.child.des"> </Input>
-                    </Form-item>
-
-                </div>
-            </Form>
-        </div>
-
+        <ul class="nav-tabs">
+            <li v-for="(item,index) in adcreative" :key="this" @click="handleChange(index)" :class="[ index ==current  ? 'cur' : '']">
+                {{item.adcreative_name}}
+                <span class="close" v-if="index>0" @click.stop="handleRemove(index)">
+                    <Icon type="android-close"></Icon>
+                </span>
+            </li>
+            <li class="nav-tabs-add" @click="addCreativity">
+                <a href="javascript:;" role="tab">+添加创意</a>
+            </li>
+        </ul>
+        <ul class="nav-main">
+            <li v-for="(item,index) in adcreative" v-show="index==current">
+                <create-image type="image" @on-change="imgChange" :id="account_id" :templateid="id" :imgsrc="item.adcreative_elements.image_url"></create-image>
+                <Input v-model="item.adcreative_elements.title" class="margin-top-10">
+                <span slot="prepend">广告文案</span>
+                <span slot="append">{{item.adcreative_elements.title.length}}/30</span>
+                </Input>
+                <Input v-model="item.adcreative_elements.corporate.corporate_name" class="margin-top-10">
+                <span slot="prepend">广告主名称</span>
+                <span slot="append">{{item.adcreative_elements.corporate.corporate_name.length}}/30</span>
+                </Input>
+            </li>
+        </ul>
 
         <div class="next_btn">
             <Button type="primary" @click="submit" long size="large">提交</Button>
         </div>
-         
-        <br/>
-        <br/>
+
     </div>
 </template>
 <script>
-import createImage from './createImage.vue';
+import createImage from "./createImage.vue";
 export default {
     components: {
         createImage
+        //twTab
     },
-    name: 'up-creative',
-    props: {
-        account: {
-            type: [String, Number],
-            required: true
-        },
-        template: {
-            type: Object,
-            default: () => {}
-        }
-    },
-    data () {
+    name: "up-creative",
+    props: ["id"],
+    data() {
         return {
-            //上传创意Form
-            creativeForm:{
-                input:''
-            },
-            //需要在页面渲染的元素，提交里根据这里面的去找值
-            element:[],
-            //图片路径
-            image:'', 
-            image2:'',           
-            //广告文案
-            title:'',
-            //按钮文字
-            button_text:'',
-            //左下辅助文字
-            bottom_text:'',
-            //应用直达
-            deep_link:'',
-            //请输入曝光监测URL
-            impression_tracking_url:'',
-            //请输入点击监测URL
-            click_tracking_url:'',
-            //广告描述
-            description:'',
-            //商标
-            corporate:{
-                corporate_name:''
-            },
-            //组图
-            element_story:[],
-
-            //落地页URL
-            destination_url:'',
-
-            //提交时验证
-            verify :{
-                show : false,
-                des : ''
-            },
-
-        }
+            account_id: this.$route.query.account_id,
+            //创意数据
+            adcreative: [
+                {
+                    adcreative_name: "创意1",
+                    adcreative_id: "",
+                    adcreative_elements: {
+                        image: "",
+                        title: "",
+                        corporate: {
+                            corporate_name: "",
+                            corporate_img: ""
+                        },
+                        image_url: ""
+                    }
+                }  ,{
+                    adcreative_name: "创意1",
+                    adcreative_id: "",
+                    adcreative_elements: {
+                        image: "",
+                        title: "",
+                        corporate: {
+                            corporate_name: "",
+                            corporate_img: ""
+                        },
+                        image_url: ""
+                    }
+                }             
+            ],
+            //当前创意索引
+            current: 0
+        };
     },
-    watch :{
-        template(data){
-            this.createHtml(data); 
-        }
+    mounted() {
+       
     },
-    methods:{
-        createHtml(data){
-            this.element=[];
-            for(let i in data){
-                this.element.push(i);
-            }
-            //console.log(data)
+    methods: {
+        //当前创意
+        handleChange(index) {
+            this.current = index;
         },
-        imgChange(data){
-            if(data.type == 'image'){
-                this.image = data.image_id;
-            }else if(data.type == 'image2'){
-                this.image2 = data.image_id;
-            }else{
-                let index = data.type.split('_')[1] - 1;
-                this.element_story[index] = data.image_id
-            }
+        //删除创意
+        handleRemove(index) {
+            this.adcreative.splice(index, 1);
+            this.current = 0;
         },
-        submit(){
-            //把包数据 (创意元素，不同 adcreative_template_id 要求的元素不尽相同)
-            let pack = {},
-                temp = this.template,
-                item = this.element;
-            //提交时验证数据   
-            for(let i =0,len=item.length; i<len; i++){
-                 switch(item[i]){
-                    case 'title':
-                        //判断是否必填写
-                        if(!!temp.title.required && this.title == ''){
-                            this.verify.show = true;
-                            this.verify.des = '请填写' + temp.title.name;
-                            return false;
-                        }
-                        if(this.title.length < temp.title.amount[0] || this.title.length > temp.title.amount[1]){
-                            this.verify.show = true;
-                            this.verify.des = temp.title.name + '/' + temp.title.des;
-                            return false;
-                        }
-                        this.verify.show = false;
-                        pack.title = this.title;
-                    break;
-                    case 'image':
-                        if(!!temp.image.required && this.image == ''){
-                            this.verify.show = true;
-                            this.verify.des = temp.image.name +'提交失败,请再次上传';
-                            return false;
-                        }
-                        this.verify.show = false;
-                        pack.image = this.image;
-                    break;
-                    case 'image2':
-                        if(!!temp.image2.required && this.image2 == ''){    
-                            this.verify.show = true;
-                            this.verify.des = temp.image2.name +'提交失败,请再次上传';
-                            return false;
-                        }
-                        this.verify.show = false;
-                        pack.image2 = this.image2;
-                    break;
-                    case 'description':
-                        if(!!temp.description.required && this.description == ''){
-                            this.verify.show = true;
-                            this.verify.des = '请填写' + temp.description.name;
-                            return false;
-                        }else if(this.description.length < temp.description.amount[0] || this.description.length > temp.description.amount[1]){
-                            this.verify.show = true;
-                            this.verify.des = temp.description.name + '/' + temp.description.des;
-                            return false;
-                        }
-                        this.verify.show = false;
-                        pack.description = this.description;
-                    break;
-                    case 'element_story':
-                        pack.element_story = this.element_story;
-                    break;
-                    case 'corporate':
-                        if(!!temp.corporate.child.required && this.corporate.corporate_name == ''){
-                            this.verify.show = true;
-                            this.verify.des = '请填写' + temp.corporate.child.name;
-                            return false;
-                        }else if(this.corporate.corporate_name.length < temp.corporate.child.amount[0] || this.corporate.corporate_name.length > temp.corporate.child.amount[1]){
-                            this.verify.show = true;
-                            this.verify.des = temp.corporate.child.name + '/' + temp.corporate.child.des;
-                            return false;
-                        }
-                        this.verify.show = false;
-                        pack.corporate = this.corporate;
-                    break;
-                }               
+        //增加创意
+        addCreativity() {
+            if (this.adcreative.length == 5) {
+                this.$Message.info("最多创建5个创意");
+                return;
+            }
+            let data = {
+                adcreative_name:
+                    "创意" + (parseInt(this.adcreative.length) + 1),
+                adcreative_id: "",
+                adcreative_elements: {
+                    image: "",
+                    title: "",
+                    corporate: {
+                        corporate_name: "",
+                        corporate_img: ""
+                    },
+                    image_url: ""
+                }
             };
-            if(!this.verify.show){
-                console.log(pack)
-                this.$emit('on-change', pack);
-            }
+            this.adcreative.push(data);
+            this.current = parseInt(this.adcreative.length) - 1;
+        },
+        imgChange(info) {
+            this.adcreative[this.current].adcreative_elements.image =
+                info.image_id;
+        },
+        //提交
+        submit() {
+            //验证数据是否正确
+            // 问题
+            // 传过来要修改的创意，修改规则是什么
+            // 数据格式与原来规则的格式不一样
+            this.$emit("on-change", this.adcreative);
         }
     },
-    mounted() {        
-        //选择了那个广告版位的ID        
-        this.createHtml(this.template); 
+    watch: {
+        adgroup_detail() {}
+    },
+    computed: {
+        //详情传过来的参数
+        adgroup_detail() {
+            let adgroup_detail = this.$store.state.newad.adgroup_detail;
+            if (adgroup_detail.adcreative) {
+                this.adcreative = adgroup_detail.adcreative;
+            }
+            return adgroup_detail;
+        }
     }
-}
+};
 </script>

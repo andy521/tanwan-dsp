@@ -145,7 +145,8 @@
 										this.$router.push({
 											name: 'home_index'
 										});
-									}                                
+                                    }   
+                                    //location.reload();                             
                             }
 
                         }).catch((err)=>{console.log(err)});

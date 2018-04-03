@@ -15,29 +15,17 @@
 <script>
     import  Axios  from "@/api/index"
 	export default {
-        name: 'searchTree',
-        props: {
-            clearable : Boolean,
-        },
+        name: 'searchTree',        
 		data() {
 			return {
 				search: '',
-				visible: false,
+                visible: false,
+                getList:[],
 				newlist: [],
                 ids: [],
                 gameData:[],
 			}
         },
-
-        watch: {
-            clearable(val){
-                console.log(val)
-                if(!!val){
-                    this.search = '';
-                    this.createTree();
-                }
-            }
-		},
 		methods: {
             //获取全部游戏     
             getGame(){
@@ -75,15 +63,20 @@
 					}
 					newlist.push(newitem)
                 });
-                this.newlist = newlist;
+                this.getList = this.newlist = newlist;
             },
 			//搜索关键字
 			changeSearch() {
+                if(this.search == ''){
+                    this.createTree();
+                    return
+                }
                 console.log(this.search)
-                let filterGame = [],                    
+                let filterGame = [], 
+                    list = this.getList,                   
                     text = new RegExp("" + this.search + "", "gmi");
-
-                this.newlist.forEach( (item,i) =>{
+                console.log(this.newlist)  
+                list.forEach( (item,i) =>{
                     if(item.title.search(text) != -1){
                         filterGame.push(item)
                     }
@@ -115,7 +108,8 @@
                 this.$emit('on-change', ids);
 			}
         },
-        mounted(){       
+        mounted(){   
+            console.log(this.search)
             this.getGame();
         }
 	}

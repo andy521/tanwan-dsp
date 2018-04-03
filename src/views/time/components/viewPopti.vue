@@ -1,10 +1,10 @@
-<style lang="less">
+<style scoped>
 	.bottom_line {
 		border-bottom: 1px solid rgb(233, 233, 233);
 		padding-bottom: 10px;
 	}
 	
-	.Poptiptap .ivu-poptip-body {
+	.poptipdiv {
 		white-space: normal;
 		text-align: left;
 		padding: 20px;
@@ -24,7 +24,7 @@
 	<div style="display: inline-block;">
 		<Poptip placement="bottom-start" width="500" class="Poptiptap" trigger="hover">
 			<Button type="primary">自定义指标</Button>
-			<div class="api" slot="content">
+			<div  slot="content" class="poptipdiv">
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
 				</div>
@@ -32,7 +32,7 @@
 					媒体列
 				</div>
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="configured_status">广告开关/状态</Checkbox>
+					<Checkbox label="configured_status">广告开关</Checkbox>
 					<Checkbox label="click_cost">点击均价（cpc）</Checkbox>
 					<Checkbox label="click">点击量</Checkbox>
 					<Checkbox label="click_per">点击率(CTR)</Checkbox>
@@ -79,9 +79,11 @@
 					<Checkbox label="show_pv">展示PV</Checkbox>
 					<Checkbox label="show_ip">展示IP</Checkbox>
 					<Checkbox label="down_ip">下载IP</Checkbox>
+                    <Checkbox label="campaign_id">计划</Checkbox>
+                    <Checkbox label="game_name">产品名称</Checkbox>
 				</CheckboxGroup>
 				<div class="margin-top-20">
-					<Button @click="set_user_memo">保存操作</Button>
+					<Button type="ghost" @click="set_user_memo">保存操作</Button>
 				</div>
 			</div>
 		</Poptip>
@@ -96,12 +98,12 @@
 			return {
 				indeterminate: true,
 				checkAll: false,
-				checkAllGroup: ['account_name', 'adgroup_name', 'campaign_id', 'impression', 'click', 'click_per', 'click_cost', 'cost', 'configured_status', 'daily_budget', 'game_name'], //默认选中
+				checkAllGroup: [], //默认选中
 				checkAllGroups: ['configured_status', 'click_cost', 'click', 'click_per',
 					'fetch', 'fetch_per', 'down_ins_per', 'download',
 					'install', 'click_install', 'reg_imei', 'activation', 'reg_per', 'reg_cost', 'reg_imei_cost', 'install_per', 'download_per',
 					'login', 'act_per', 'pay_num', 'pay_total', 'pay_per', 'reg_arpu', 'income_per',
-					'show_pv', 'show_ip', 'down_ip'
+					'show_pv', 'show_ip', 'down_ip','campaign_id','game_name'
 				]
 			}
 		},
