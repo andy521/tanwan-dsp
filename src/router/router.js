@@ -53,18 +53,28 @@ export const appRouter = [
     },
     {
         path: '/time',
-        icon: 'clock',
-        title: '实时投放',
+        icon: 'social-tux',
+        title: '广点通实时投放',
         name: 'time',
         access: 0,
         component: Main,
         children: [
-            {
-                path: 'plan', title: '实时投放计划', name: 'time_plan', meta: {
-                    keepAlive: false
-                }, icon: 'android-radio-button-off', component: () => import('@/views/time/plan.vue')
-            },
+            { path: 'plan', title: '实时投放计划', name: 'time_plan', meta: { keepAlive: false}, icon: 'android-radio-button-off', component: () => import('@/views/time/plan.vue')},
             { path: 'ad', title: '实时投放广告', name: 'time_ad', icon: 'android-radio-button-off', component: () => import('@/views/time/ad.vue') },
+        ]
+    },
+    {
+        path: '/uc',
+        icon: 'ios-flower-outline',
+        name: 'uc',
+        title: 'UC实时投放',  
+        access: 0,      
+        component: Main,
+        children: [
+            { path: 'plan', title: '推广计划', name: 'uc_plan', icon: 'android-radio-button-off', component: () => import('@/views/uc/index.vue') },
+            { path: 'unit', title: '推广单元', name: 'uc_unit', icon: 'android-radio-button-off', component: () => import('@/views/uc/unit.vue') },
+            { path: 'idea', title: '创意', name: 'uc_idea', icon: 'android-radio-button-off', component: () => import('@/views/uc/idea.vue') },
+            { path: 'report', title: '数据报告', name: 'uc_report', icon: 'android-radio-button-off', component: () => import('@/views/uc/report.vue') },
         ]
     },
     {
