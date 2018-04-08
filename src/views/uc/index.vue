@@ -194,7 +194,7 @@
                 //筛选时间
                 DateDomain: [formatDate(new Date(), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")],
                 //日期辅助功能
-                options: DateShortcuts,
+                options: null,
                 tableSize: "small",
                 //表头设置
                 taColumns: [], 
@@ -219,8 +219,8 @@
                                 on: {
                                     'click': () => {
                                         let query = {
-                                            account_id:params.row.account_id,
-                                            campaign_id:params.row.campaign_id
+                                            //account_id:params.row.account_id,
+                                            id:params.row.campaign_id
                                         };
                                         this.$router.push({
                                             name: "uc_unit",
@@ -413,7 +413,7 @@
                 orderField:'',
                 orderDirection: '',
 			};
-		},
+        },
 		methods: {	
             //筛选弹出框验证数字
             setNum(name){
@@ -719,6 +719,9 @@
             }
         },
         beforeMount(){
+            let setDate = DateShortcuts;
+            setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
+            this.options = setDate;
             this.getSpread();
         }
 	};

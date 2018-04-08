@@ -35,8 +35,13 @@
                     <!-- <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>  -->
                 </Col>
             </Row>	
-        
-            <Table :data="newList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
+
+            <div class="condition" v-show="filterShow">
+                <a href="javascript:;" @click="deleteFilterAll" style="margin-right:10px;">清空所有条件</a>
+                <Tag v-for="item in filterItem" type="border" :name="item.id" :key="item.id" closable @on-close="deleteFilter">{{item.text}}</Tag>
+            </div>
+
+            <Table :data="newList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange"  stripe></Table>
 
             <Row class="margin-top-10">
                 <Col span="10"> 表格尺寸
@@ -161,6 +166,8 @@
                 //日期辅助功能
                 options: DateShortcuts,
                 tableSize: "small",
+                //计划id
+                campaign_id:'',
                 //表头设置
                 taColumns: [], 
                 //选中账户id
@@ -378,6 +385,7 @@
                 let param={
                     action : 'ucAdPut',
                     opt : 'searchAdgroups',
+                    campaign_id:this.campaign_id,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间                    
                     keyword : this.keyword, //模糊搜索关键词(针对计划名称、后台用户名称)
@@ -414,12 +422,6 @@
                 ).catch( 
                     err=>{ console.log( err) }
                 ); 
-            },
-            //表格高亮calss
-            rowClassName(row, index) {
-                if (row._disabled) {
-                    return "table-statistics";
-                }
             },
             //获取选中的id
             taCheck(row) {
@@ -507,6 +509,11 @@
                     this.getSpread();
                 }
             },
+            deleteFilterAll(){
+                this.state = this.adResourceId=this.impression_value=this.cost_value=this.click_value=this.ctr_value='';
+                this.filterShow=false;
+                this.getUnit();
+            }
         },
         computed: {
             //获取实时投放计划
@@ -525,6 +532,10 @@
             }
         },
         beforeMount(){
+            let query = this.$route.query.id;
+            if(!!query){
+                this.campaign_id = query.toString();
+            }
             this.getUnit();
         }
 	};
