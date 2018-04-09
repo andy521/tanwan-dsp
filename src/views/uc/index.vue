@@ -136,20 +136,22 @@
             </div>
         </Modal>
 
-        <Modal v-model="dateModal" title="修改日期和时间" @on-ok="setDateOk" @on-cancel=" dateModal = false">
+        <Modal v-model="dateModal" title="修改日期和时间" @on-ok="setDateOk" @on-cancel=" dateModal = false" width="1000">
             <div class="dateModal">
                 <Form label-position="right" :label-width="100">
                     <Form-item label="开始日期：">
-                        <Date-picker  @on-change="formStartDateFun" type="date" placeholder="选择开始日期"></Date-picker>
+                        <Date-picker :options="formDisabledDate" @on-change="formStartDateFun" type="date" placeholder="选择开始日期"></Date-picker>
                     </Form-item>
                     <Form-item label="结束日期：">
-                            <Radio-group v-model="formEndDate">
-                                <Radio label="-1">不限</Radio>
-                                <Radio label="0"><Date-picker @on-change="formEndDateFun" :disabled="formEndDate == -1" type="date" placeholder="选择开始日期"></Date-picker></Radio>
-                            </Radio-group>    
+                        <Radio-group v-model="formEndDate">
+                            <Radio label="-1">不限</Radio>
+                            <Radio label="0"><Date-picker :options="formDisabledDate" @on-change="formEndDateFun" :disabled="formEndDate == -1" type="date" placeholder="选择开始日期"></Date-picker></Radio>
+                        </Radio-group>    
                     </Form-item>
                     <Form-item label="投放时段：">
-                        部分时段   （这里还没做好）
+                        <div class="week_period">
+                            <week-date :value="interval"></week-date>
+                        </div>
                     </Form-item>
                 </Form>
             </div>
@@ -162,9 +164,11 @@
     import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
     //import accountInfo from "./components/accountInfo.vue";
     import viewTip from "./components/viewPopti.vue";
+    import weekDate from "@/components/week-date/index.vue";
 	export default {
         components: {
             //accountInfo,
+            weekDate,
             viewTip
         },
 		data() {
@@ -178,6 +182,11 @@
                 //设置预算
                 setbudget:'-1',
                 //修改日期和时间
+                formDisabledDate:{
+                    disabledDate (date) {
+                        return date && date.valueOf() < Date.now() - 86400000;
+                    }
+                },
                 formStartDate:'',
                 formEndDate:'-1',
                 //操作
@@ -412,6 +421,8 @@
                 //排序
                 orderField:'',
                 orderDirection: '',
+                //投放时段
+                interval:['111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111'],
 			};
         },
 		methods: {	
@@ -578,22 +589,28 @@
                 this.dateModal = true;
             },
             setDateOk(){
-                console.log(this.formStartDate)
-                console.log(this.formEndDate)
-                // let param = {
-                //     action:'ucAdPut',
-                //     opt:'updateCampaignDate',
-                //     account_id:this.checkId[0],
-                //     campaignids:'[' + this.checkCampaign.join(',') + ']',
-
-                // }
-                // Axios.post('api.php', param).then(
-				// 	res => {
-				// 		if(res.ret == 1) {
-                //             console.log(res)
-				// 		}
-				// 	}
-                // ).catch(err => {console.log(err)});
+                let param = {
+                    action:'ucAdPut',
+                    opt:'updateCampaignDate',
+                    account_id:this.checkId[0],
+                    campaignids:'[' + this.checkCampaign.join(',') + ']',
+                    startDate:this.formStartDate,
+                    endDate:this.formEndDate,
+                    monday:this.interval[0],
+                    tuesday:this.interval[1],
+                    wednesday:this.interval[2],
+                    thursday:this.interval[3],
+                    friday:this.interval[4],
+                    saturday:this.interval[5],
+                    sunday:this.interval[6],
+                };
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            console.log(res)
+						}
+					}
+                ).catch(err => {console.log(err)});
             },
             //修改开始日期
             formStartDateFun(val){
