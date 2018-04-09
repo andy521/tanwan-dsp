@@ -1,0 +1,162 @@
+{
+  "ret": 1,
+  "msg": "succ",
+  "data": [
+      {
+          "account_id": "207326436",
+          "targeting_id": "38",
+          "targeting_name": null,
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "39",
+          "targeting_name": null,
+          "targeting": "{\"gender\":\"1\",\"age\":\"-1\",\"platform\":\"001\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"01\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "40",
+          "targeting_name": null,
+          "targeting": "{\"gender\":\"1\",\"age\":\"111111\",\"platform\":\"001\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "41",
+          "targeting_name": null,
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"010\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "42",
+          "targeting_name": null,
+          "targeting": "{\"gender\":\"1\",\"age\":\"-1\",\"platform\":\"001\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"01\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "43",
+          "targeting_name": "地方官翻到",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "44",
+          "targeting_name": "tt",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "45",
+          "targeting_name": "test",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"010\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "46",
+          "targeting_name": "534",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "47",
+          "targeting_name": "23454",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "48",
+          "targeting_name": "翻到",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "49",
+          "targeting_name": "435",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "50",
+          "targeting_name": "3454",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "51",
+          "targeting_name": "345",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "52",
+          "targeting_name": "324",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "53",
+          "targeting_name": "5445",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"0\",\"region\":[16843008,16843264],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "54",
+          "targeting_name": "3456",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "55",
+          "targeting_name": "234",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "56",
+          "targeting_name": "3454",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "57",
+          "targeting_name": "地方官",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "58",
+          "targeting_name": "龙腾ios-三连-146031-073542",
+          "targeting": "{\"gender\":\"1\",\"age\":\"-1\",\"platform\":\"001\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"01\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "59",
+          "targeting_name": "龙腾ios-三连-146031-074051",
+          "targeting": "{\"gender\":\"1\",\"age\":\"-1\",\"platform\":\"001\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"01\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "60",
+          "targeting_name": "翻到-162348",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "61",
+          "targeting_name": "翻到-163034",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "62",
+          "targeting_name": "地方官-复制",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      },
+      {
+          "account_id": "207326436",
+          "targeting_id": "63",
+          "targeting_name": "1231213123",
+          "targeting": "{\"gender\":\"-1\",\"age\":\"-1\",\"platform\":\"111\",\"word\":[],\"interest\":[],\"url\":[],\"app\":[],\"intelli_targeting\":true,\"all_region\":\"1\",\"region\":[],\"audience_targeting\":\"-1\",\"audience\":[],\"user_targeting\":\"-1\",\"network_env\":\"11\",\"appcategory\":[],\"search_word\":[],\"auto_search_word\":false,\"installed_filter\":\"0\"}"
+      }
+  ]
+}

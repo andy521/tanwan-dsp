@@ -27,6 +27,15 @@ export const newAd = {
     component: () => import('@/views/newad/index.vue')
 };
 
+export const ucNew = {
+    path: '/ucnew',
+    name: 'ucnew',
+    meta: {
+        title: '新建UC推广计划'
+    },    
+    component: () => import('@/views/ucnew/index.vue')
+};
+
 export const otherRouter = {
     path: '/user',
     name: 'otherRouter',
@@ -110,6 +119,7 @@ export const appRouter = [
 export const routers = [
     loginRouter,
     newAd,
+    ucNew,
     otherRouter,
     ...appRouter
 ];

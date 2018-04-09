@@ -4,7 +4,8 @@
 <template>
 	<div>
 		UC推广单元
-        <week-date :value="period"></week-date>
+        <!-- <week-date :value="period"></week-date> -->
+        <week-date v-model="period"></week-date>
 	</div>
 </template>
 

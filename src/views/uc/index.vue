@@ -9,7 +9,7 @@
 		<Card shadow class="margin-top-10">
             <Row>
                 <Col span="14">
-                    <Button type="ghost" icon="ios-copy">新建单元</Button>
+                    <Button type="ghost" icon="ios-copy" @click="handleNewPlan">新建单元</Button>
                     <Button type="ghost" icon="funnel" class="margin-left-5" @click=" filterModal = true">筛选</Button>
                     <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                     <Input v-model="keyword" class="inp" placeholder="请输入关键字" ></Input>
@@ -169,6 +169,7 @@
         },
 		data() {
 			return {
+                accountId: '207326436',
                 height:document.body.clientHeight - 200,
                 loading: true,
                 filterModal:false,
@@ -361,10 +362,11 @@
                                     on: {
                                         'click': () => {
                                             console.log('跳转到创建广告')
-                                            // this.$router.push({
-                                            //     name: "time_ad",
-                                            //     query: query
-                                            // });
+                                            console.log('params.row.account_id', params.row.account_id)
+                                            this.$router.push({
+                                                name: "ucnew",
+                                                query: {account_id: params.row.account_id}
+                                            });
                                         }
                                     }
                                 }),
@@ -700,6 +702,12 @@
                 this.state = this.adResourceId=this.impression_value=this.cost_value=this.click_value=this.ctr_value='';
                 this.filterShow=false;
                 this.getSpread();
+            },
+            handleNewPlan() {
+                this.$router.push({
+                    name: ucnew,
+                    query: this.accountId
+                })
             }
         },
         computed: {
