@@ -13,14 +13,17 @@
 	<div class="unit">        
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="14">
-                    <Button type="ghost" icon="ios-copy">新建单元</Button>
-                    <Button type="ghost" icon="funnel" class="margin-left-5" @click=" filterModal = true">筛选</Button>
-                    <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                <Col span="4">
+                    <search-tree @on-change="getids"></search-tree>
+                </Col>
+                <Col span="12">                    
+                    <Button type="ghost" icon="funnel" class="margin-left-10" @click=" filterModal = true">筛选</Button>
+                    <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                     <Input v-model="keyword" class="inp" placeholder="请输入关键字" ></Input>
                     <Button icon="search" @click="getUnit()">搜索</Button>
+                    <new-edit class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="10" style="text-align: right;">
+                <Col span="8" style="text-align: right;">
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
                     <Poptip placement="bottom-start" v-model="visible">
@@ -39,7 +42,7 @@
                         </div>
                     </Poptip>
                     <Button type="ghost" icon="location" @click="setRegionFun">修改地域</Button>
-                    <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>
+                    <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>                    
                     <!-- <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>  -->
                 </Col>
             </Row>	
@@ -64,19 +67,17 @@
                 </Select>
                 </Col>
                 <Col span="14" style="text-align: right;">
-                <Page :total="total_number" :current="page" :page-size="page_size" ref="pages" @on-change="getUnit" show-elevator show-total></Page>
+                    <Page :total="total_number" :current="page" :page-size="page_size" ref="pages" @on-change="getUnit" show-elevator show-total></Page>
                 </Col>
             </Row>
         </Card>
 
-        <Modal v-model="filterModal" title="筛选条件" @on-ok="filterOk" @on-cancel="modalCancel">
+        <Modal v-model="filterModal" title="筛选条件" @on-ok="filterOk" @on-cancel="filterModal = false">
             <p class="mt">推广状态</p>
             <Radio-group v-model="state">
                 <Radio label="">不限</Radio>
-                <Radio label="0">推广中</Radio>
-                <Radio label="1">推广暂停</Radio>
-                <Radio label="2">推广计划预算不足</Radio>
-                <Radio label="3">不在推广周期</Radio>
+                <Radio label="0">启动</Radio>
+                <Radio label="1">暂停</Radio>
             </Radio-group>
             <p class="mt margin-top-20">投放数据</p>
             <div class="model-col">
@@ -136,7 +137,6 @@
                 <Radio label="">不限</Radio>
                 <Radio label="1">UC头条</Radio>
                 <Radio label="2">UC精准</Radio>
-                <Radio label="4">应用商店</Radio>
             </Radio-group>
         </Modal>
 
@@ -160,18 +160,24 @@
 
         <Modal v-model="wifiModal" title="修改网络环境" @on-ok="setWifiOk" @on-cancel=" wifiModal = false ">
             <Radio-group v-model="wifi">
-                <Radio label="0">不限</Radio>
-                <Radio label="1">WIFI</Radio>
-                <Radio label="2">数据网络</Radio>
+                <Radio label="11">不限</Radio>
+                <Radio label="01">WIFI</Radio>
+                <Radio label="10">数据网络</Radio>
             </Radio-group>          
         </Modal>
  
 	</div>
 </template>
 <script>
-	import Axios from "@/api/index";
+    import Axios from "@/api/index";
+    import searchTree from '@/components/select-tree/searchTree.vue';
     import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
+    import newEdit from "./components/newEdit.vue";
 	export default {
+        components: {
+            newEdit,
+            searchTree
+        },
 		data() {
 			return {
                 loading: false,
@@ -180,7 +186,7 @@
                 dateModal:false,
                 regionModal:false,
                 bidModal:false,
-                wifiModal:true,
+                wifiModal:false,
                 //修改日期和时间
                 formStartDate:'',
                 formEndDate:'-1',
@@ -346,36 +352,37 @@
                         key: 'id',
                         render : (h, params) => {
                             return [
-                                h("i-button", {
-                                    props: {
-                                        icon: "edit",
-                                        type: "success",
-                                        size: "small"
-                                    },
+                                h("span",{
+                                    class: "edit",
                                     on: {
                                         'click': () => {
-                                            console.log('跳转到创建广告')
-                                            // this.$router.push({
-                                            //     name: "time_ad",
-                                            //     query: query
-                                            // });
+                                            let query = {
+                                                account:params.row.account_id,
+                                                adgroup:params.row.adgroup_id,
+                                            };
+                                            this.$router.push({
+                                                name: "ucnew_unit",
+                                                query: query
+                                            });
                                         }
                                     }
-                                }),
-                                h("i-button", {
-                                    props: {
-                                        icon: "trash-a",
-                                        type: "error",
-                                        size: "small"
-                                    },
-                                    class:"margin-left-10",
+                                },'编辑'),
+                                h("span",{
+                                    class: "del",
                                     on: {
-                                        'click': value => {
-                                            let account= params.row.account_id,campaign= '[' + params.row.campaign_id + ']';
-                                            this.deleteData(account,campaign)
+                                        'click': (value) => {
+                                            let account= params.row.account_id,adgroup= '[' + params.row.adgroup_id + ']';
+                                            this.$Modal.confirm({
+                                                title: '操作提示',
+                                                content: '<p>确认删除</p>',
+                                                onOk: () => {
+                                                    this.deleteData(account,adgroup)
+                                                },
+                                                onCancel: () => {}
+                                            });
                                         }
                                     }
-                                })
+                                },'删除')
                             ]
                         }
                     }
@@ -419,12 +426,25 @@
                 percentage:1,
                 percentageMax:1000,
                 //修改网络环境
-                wifi:'0'
+                wifi:'11',
+                //根据游戏ID
+                game_id:''
 			};
 		},
 		methods: {
+            //获取选中的游戏id
+            getids(gid){
+                this.game_id = '[' + gid.join(',') + ']';
+                this.getUnit();
+            }, 
             //获取推广单元		
-			getUnit(){
+			getUnit(page){
+                if (page === undefined) {
+                    //this.$refs["pages"].currentPage = 1;
+                    this.page = 1;
+                } else {
+                    this.page = page;
+                }
                 let param={
                     action : 'ucAdPut',
                     opt : 'searchAdgroups',
@@ -432,8 +452,8 @@
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间                    
                     keyword : this.keyword, //模糊搜索关键词(针对计划名称、后台用户名称)
-                    paused:'', //是否暂停中  0: 否 1: 是
-                    state : this.state,
+                    paused:this.state, //是否暂停中  0: 否 1: 是
+                    game_ids:this.game_id, //游戏ID     
                     chargeType : this.chargeType, //计费方式
                     generalizeType : this.generalizeType,
                     'impression[relation]':this.impression_relation,
@@ -507,13 +527,12 @@
             updatePaused(data){
                 let param = data;
                     param.action = 'ucAdPut';
-                    param.opt = 'updateAdgroupPaused';     
-                console.log(param)           
+                    param.opt = 'updateAdgroupPaused';
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
                             this.$Message.info(res.data);
-                            this.getSpread();
+                            this.getUnit();
 						}
 					}
                 ).catch(err => {console.log(err)});                
@@ -533,7 +552,7 @@
                     opt:'deleteAdgroup',
                     do:'del',
                     account_id:account,
-                    adgroupIds:adgroup
+                    adgroupids:adgroup
                 }
                 Axios.post('api.php', param).then(
 					res => {
@@ -565,9 +584,8 @@
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            console.log("11111111")
                             console.log(res)
-                            //this.$Message.info(res.msg);
+                            this.$Message.info(res.msg);
 						}
 					}
                 ).catch(err => {console.log(err)});
@@ -626,7 +644,21 @@
                 this.wifiModal = true;
             },
             setWifiOk(){
-
+                let param = {
+                    action:'ucAdPut',
+                    opt:'updateAdgroupNetworkEnv',
+                    account_id:this.checkId[0],
+                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    networkEnv: this.wifi
+                }
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            console.log(res)
+                            this.$Message.info(res.msg);     
+						}
+					}
+                ).catch(err => {console.log(err)});
             },
             getRegion(data){
                 var ids = [];
@@ -655,13 +687,9 @@
 					}
                 ).catch(err => {console.log(err)});
             },
-
             getuncheck(){
 
             },            
-            modalCancel(){
-                this.filterModal = false;
-            },
             //筛选条件
             filterOk(){
                 let item = [];

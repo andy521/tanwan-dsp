@@ -67,7 +67,12 @@
 
 		<Modal v-model="addBindId" title="选择媒体" @on-ok="addBindOk()" :loading="loading" ok-text="下一步">
 			<div class="padding-10">
-                <select-media  @on-change="mediaChange"></select-media>
+                <!-- <select-media  @on-change="mediaChange"></select-media> -->
+                <Select v-model="MeidaType">
+                    <Option value="Gdt">广点通</Option>
+                    <Option value="uc">UC</Option>
+                </Select>
+
 			</div>
 		</Modal>
 
@@ -83,6 +88,22 @@
 			 <div slot="footer"></div>
 		</Modal>
 
+        <Modal v-model="addUc" title="新增UC账号" @on-ok="bindUcAccount" @on-cancel=" addUc = false ">
+            <Form :model="uc" :label-width="100">
+                <Form-item label="UC账户id">
+                    <Input v-model="uc.account_id" placeholder="请输入id"></Input>
+                </Form-item>
+                <Form-item label="UC用户名">
+                    <Input v-model="uc.userName" placeholder="请输入用户名"></Input>
+                </Form-item>
+                <Form-item label="UC密码">
+                    <Input type="password" v-model="uc.password" placeholder="请输入密码"></Input>
+                </Form-item>
+                <Form-item label="UC账户token">
+                    <Input v-model="uc.token" placeholder="请输入token"></Input>
+                </Form-item>
+            </Form>
+        </Modal>
 	</div>
 </template>
 
@@ -106,7 +127,8 @@
 			return {
 				authwin: false,
 				addBindId: false,
-				loading: true,
+                loading: true,
+                addUc:false,
                 MeidaType: '',                
                 authMedia: {},
                 //抽出数据
@@ -117,6 +139,13 @@
                     total_number:0,
                     list:[]
                 },
+                //uc账号
+                uc:{
+                    account_id:'',
+                    userName:'',
+                    password:'',
+                    token:''
+                }
 			};
         },    
 		methods: {
@@ -145,7 +174,13 @@
 			//新增绑定账户
 			addBindOk() {
                 let media = this.MeidaType;
-				this.loading = true;
+                this.loading = true;
+                if(media == 'uc'){
+                    this.loading = false;
+                    this.addBindId = false;
+                    this.addUc = true;
+                    return;
+                }
 				Axios.post('api.php', {
 					action: 'sys',
 					opt: 'authMedia',
@@ -169,8 +204,25 @@
 			},
 			openAuth(i) {
 				window.open(this.authMedia[i])
-			}
-
+            },
+            //绑定UC账号
+            bindUcAccount(){
+                let param = {
+                    action:'ucAdPut',
+                    opt:'bindAccount',
+                    account_id:this.uc.account_id,
+                    userName:this.uc.userName,
+                    password:this.uc.password,
+                    token:this.uc.token,
+                };
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            this.$Message.info(res.data);
+						}
+					}
+                ).catch(err => {console.log(err)}); 
+            }
 		},
 		mounted() {
 			this.getData();

@@ -1,128 +1,170 @@
-<style scoped>
-	.bottom_line {
+<style lang="less">
+.bottom_line {
 		border-bottom: 1px solid rgb(233, 233, 233);
 		padding-bottom: 10px;
 	}
-	
-	.poptipdiv {
+	.ivu-poptip-body {
 		white-space: normal;
 		text-align: left;
 		padding: 20px;
 	}
-	
 	.checklist {
-		padding-bottom: 5px;
-		padding-top: 20px;
+        padding-bottom: 5px;
+        padding-top: 20px;
+        color: #666;
+        font-weight: bold;
 	}
 	
 	.Poptiptap .ivu-poptip-body-content {
 		overflow: inherit;
-	}
+    }
+    .foot{
+        margin-top: 15px;
+        text-align: center;
+    }
 </style>
 
 <template>
 	<div style="display: inline-block;">
-		<Poptip placement="bottom-end" width="400" class="Poptiptap" trigger="hover">
+		<Poptip placement="bottom-end" width="500" class="Poptiptap">
 			<Button type="primary">自定义指标</Button>
-			<div  slot="content" class="poptipdiv">
+			<div class="api" slot="content">
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
 				</div>
-				<!-- <div class="checklist">
-					媒体列
-				</div> -->
+				<div class="checklist">媒体列</div>
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="budget">日预算</Checkbox>
-					<Checkbox label="impression">展现量</Checkbox>
-					<Checkbox label="cost">消费</Checkbox>
-					<Checkbox label="click">点击</Checkbox>
+					<Checkbox label="paused">投放开关</Checkbox>
+					<Checkbox label="cpc">平均点击价格</Checkbox>
+					<Checkbox label="cpm">千次展现价格</Checkbox>
+					<Checkbox label="click">点击量</Checkbox>
                     <Checkbox label="ctr">点击率</Checkbox>
-                    <Checkbox label="cpc">平均点击价格</Checkbox>
-                    <Checkbox label="cpm">千次展现价格</Checkbox>
 				</CheckboxGroup>
-				<!-- <div class="margin-top-20">
-					<Button type="ghost" @click="set_user_memo">保存操作</Button>
-				</div> -->
-			</div>
+                <div class="checklist">落地页</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+					<!-- <Checkbox label="aa">展示PV</Checkbox>
+                    <Checkbox label="aa">展示IP</Checkbox>
+                    <Checkbox label="aa">下载IP</Checkbox> -->
+                    <Checkbox label="download_complete">下载数</Checkbox>
+                    <Checkbox label="download_complete_rate">下载率</Checkbox> 
+				</CheckboxGroup>
+                <div class="checklist">激活注册</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+					<Checkbox label="conversion">激活总量</Checkbox>
+                    <Checkbox label="cvr">点击激活率</Checkbox>
+                    <Checkbox label="install_per">激活安装率</Checkbox>
+                    <!-- <Checkbox label="a">下载激活率</Checkbox> -->
+                    <Checkbox label="app_reg">注册设备数</Checkbox>
+                    <Checkbox label="app_reg_cost">注册设备成本</Checkbox>
+                    <Checkbox label="reg_total">注册</Checkbox>
+                    <Checkbox label="reg_cost">注册成本</Checkbox>
+                    <Checkbox label="reg_per">注册率</Checkbox>
+                    <Checkbox label="reg_arpu">注册ARPU</Checkbox>
+				</CheckboxGroup>
+                <div class="checklist">活跃付费</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+                    <Checkbox label="active">活跃数</Checkbox>
+                    <Checkbox label="active_per">活跃率</Checkbox>
+                    <Checkbox label="pay_num">付费人数</Checkbox>
+                    <Checkbox label="pay_total">付费金额</Checkbox>
+                    <Checkbox label="pay_per">付费率</Checkbox>
+                    <Checkbox label="income_per">回本率</Checkbox>
+				</CheckboxGroup>
+                <div class="checklist">其他</div>
+                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+                    <Checkbox label="state">推广状态</Checkbox>
+                    <!-- <Checkbox label="aa">计费方式</Checkbox>
+                    <Checkbox label="aa">优化目标</Checkbox>
+                    <Checkbox label="aa">出价</Checkbox>
+                    <Checkbox label="aa">推广方式</Checkbox> -->
+                    <Checkbox label="platform">操作系统</Checkbox>
+                    <Checkbox label="adResourceId">推广资源</Checkbox>
+                    <!-- <Checkbox label="campaign_id">计划id</Checkbox> -->
+                    <Checkbox label="budget">日预算</Checkbox>
+				</CheckboxGroup>
+                <div class="foot">
+                    <Button type="success" @click="saveIndex">保存自定义指标</Button>   
+                </div>
+			</div>            
 		</Poptip>
 	</div>
 </template>
+
 <script>
-	import Axios from '@/api/index';
 	export default {
-		name: 'viewTab',
-		props: ['action', 'opt'],
+        props :{
+            check: {
+                type: Array,
+                default: []
+            }
+        },
 		data() {
 			return {
-				indeterminate: true,
-				checkAll: false,
-				checkAllGroup: ['campaign_name','paused','state','impression','click','ctr','cost','adResourceId','budget'], //默认选中
-				checkAllGroups: ['account_id', 'adResourceId', 'appId', 'budget',
-					'campaign_id', 'campaign_name', 'click',
-                    'cost', 'cpc', 'cpm', 'ctr',  'impression', 'invalidReasonList', 'paused', 'platform',
-                   'state'
-                ]
+                indeterminate: true,
+                checkAll: false,
+                checkAllGroup:[],
+                action:'api',
+                opt:'getGameTotalDay'
 			}
-		},
-		mounted() {
-            this.checkChange();
-			// Axios.get('api.php', {
-			// 	action: 'sys',
-			// 	opt: 'get_user_memo',
+        },
+        // computed: {
+		// 	//获取自定义指标
+		// 	userindex() {
+        //         let memo = this.$store.state.user.userindex;
+		// 		//this.checkAllGroup = memo;
+		// 		return memo;
+		// 	},
+		// },
+        watch:{
+            check(data){
+                this.checkAllGroup = data
+            },
+            userindex(data){
+                this.checkAllGroup = data;
+                this.$emit('on-change', this.checkAllGroup);
+            }
+        },
+        mounted(){
+            //传过来的默认选项
+            this.checkAllGroup = this.check;
+            // let param = {
 			// 	taction: this.action,
 			// 	topt: this.opt
-			// }).then(
-			// 	res => {
-			// 		if(res.ret == 1) {
-			// 			this.checkAllGroup = res.data.split(',');
-			// 			this.checkChange();
-			// 		}
-			// 	}
-			// ).catch(
-			// 	err => {
-			// 		console.log(err)
-			// 	}
-			// );
-		},
-		methods: {
-			//保存自定义指标
-			set_user_memo() {
-				Axios.get('api.php', {
-					action: 'sys',
-					opt: 'set_user_memo',
-					taction: this.action,
-					topt: this.opt,
-					memo: this.checkAllGroup.join(',')
-				}).then(
-					res => {
-						if(res.ret == 1) {
-							this.$Message.info(res.msg);
-						}
-					}
-				).catch(
-					err => {
-						console.log(err)
-					}
-				);
-			},
+			// };
+			// this.$store.dispatch('DiyIndex', param);
+        },
+		methods: {           
 			//自定义指标全选
 			handleCheckAll() {
+                //console.log(this.checkAllGroup)
 				if(this.indeterminate) {
 					this.checkAll = false;
 				} else {
 					this.checkAll = !this.checkAll;
 				}
-				this.indeterminate = false;
+                this.indeterminate = false;
+
 				if(this.checkAll) {
-					this.checkAllGroup = this.checkAllGroups;
+					this.checkAllGroup = ['paused','cpc','cpm','click','ctr','download_complete','download_complete_rate','conversion','cvr','install_per','app_reg','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget'];
 				} else {
 					this.checkAllGroup = [];
 				}
-				this.checkChange();
-			},
+				this.$emit('on-change', this.checkAllGroup);
+            },
+            //保存自定义指标
+            saveIndex(){                
+                // let param = {
+				// 	taction: this.action,
+				// 	topt: this.opt,
+				// 	memo: this.checkAllGroup.join(',')
+				// };
+                // this.$store.dispatch('SaveIndex', param);
+                // console.log('保存')
+            },
 			//自定义指标
 			checkAllGroupChange(data) {
-				if(data.length === 28) {
+                this.$emit('on-change', this.checkAllGroup);
+				if(data.length === 33) {
 					this.indeterminate = false;
 					this.checkAll = true;
 				} else if(data.length > 0) {
@@ -131,24 +173,13 @@
 				} else {
 					this.indeterminate = false;
 					this.checkAll = false;
-				}
-				this.checkChange();
+                }                
 			},
-			//点击树节点时触发
-			checkChange() {
-				let uncheck = [];
-				this.checkAllGroups.forEach(item => {
-					let is = true;
-					this.checkAllGroup.forEach(col => {
-						if(item == col) {
-							is = false;
-						}
-					});
-					if(is) {
-						uncheck.push(item)
-					}
-				});
-				this.$emit('on-change', uncheck);
+			close() {
+				this.visible = false;
+			},
+			close1() {
+				this.visible1 = false;
 			}
 		}
 	}
