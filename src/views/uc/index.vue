@@ -37,7 +37,7 @@
                             </div>
                         </div>
                     </Poptip>
-                    <view-tip @on-change="getIndex" :check="checkAllGroup"  action="gdtAdPut" opt="campaigns"></view-tip>
+                    <plan-index @on-change="getIndex" :check="checkAllGroup"  action="gdtAdPut" opt="campaigns"></plan-index>
                 </Col>
             </Row>
 
@@ -165,7 +165,7 @@
 	import Axios from "@/api/index";
     import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
     //import accountInfo from "./components/accountInfo.vue";
-    import viewTip from "./components/viewPopti.vue";
+    import planIndex from "./components/planIndex.vue";
     import newEdit from "./components/newEdit.vue";
     import weekDate from "@/components/week-date/index.vue";
     import searchTree from '@/components/select-tree/searchTree.vue';
@@ -175,7 +175,7 @@
             newEdit,
             searchTree,
             weekDate,
-            viewTip
+            planIndex
         },
 		data() {
 			return {
@@ -218,7 +218,7 @@
                 //选中计划id
                 checkCampaign:[],
                 //默认自定义指标选项
-               checkAllGroup:['paused','state','impression','click','ctr','cost','adResourceId','budget'],
+                checkAllGroup:['paused','state','impression','click','ctr','cost','adResourceId','budget'],
                 //表格头部
                 tableColumns: [],
                 //数据
@@ -361,6 +361,7 @@
             },
             //获取自定义指标
             getIndex(data){
+                //console.log(data)
                 this.checkAllGroup = data;                 
                 this.tableColumns = this.getTableColumns();
             },
@@ -633,25 +634,25 @@
                         title: "展现量",
                         sortable: "custom",
                         key: "impression",
-                        width: 120
+                        width: 100
                     },
                     click:{
                         title: "点击量",
                         sortable: "custom",
                         key: "click",
-                        width: 120
+                        width: 100
                     },
                     ctr:{
                         title: "点击率",
                         sortable: "custom",
                         key: "ctr",
-                        width: 120
+                        width: 100
                     },
                     cost:{
                         title: "消费",
                         sortable: "custom",
                         key: "cost",
-                        width: 120
+                        width: 100
                     },                    
                     adResourceId:{
                         title: "推广资源",
@@ -670,12 +671,12 @@
                     budget:{
                         title: "日预算",
                         key: "budget",
-                        width: 120
+                        width: 100
                     },
                     campaign_id:{
                         title: "计划id",
                         key: "campaign_id",
-                        width: 120
+                        width: 100
                     },
                     cpc:{
                         title: "平均点击价格",
@@ -695,107 +696,107 @@
                     platform:{
                         title: "操作系统",
                         key: "platform",
-                        width: 200
+                        width: 100
                     },
                     download_start:{
                         title: "下载开始数",
                         key: "download_start",
-                        width: 200
+                        width: 100
                     },
                     download_complete:{
                         title: "下载完成数",
                         key: "download_complete",
-                        width: 200
+                        width: 100
                     },
                     download_complete_rate:{
                         title: "下载完成率",
                         key: "download_complete_rate",
-                        width: 200
+                        width: 100
                     },
                     conversion:{
                         title: "激活总量",
                         key: "conversion",
-                        width: 200
+                        width: 100
                     },
                     cvr:{
                         title: "点击激活率",
                         key: "cvr",
-                        width: 200
+                        width: 100
                     },
                     conversion_cost:{
                         title: "转换成本",
                         key: "conversion_cost",
-                        width: 200
+                        width:100
                     },
                     active:{
                         title: "活跃数",
                         key: "active",
-                        width: 200
+                        width: 100
                     },
                     active_per:{
                         title: "活跃率",
                         key: "active_per",
-                        width: 200
+                        width: 100
                     },
                     reg_total:{
                         title: "注册数",
                         key: "reg_total",
-                        width: 200
+                        width: 100
                     },
                     install_per:{
                         title: "激活安装率",
                         key: "install_per",
-                        width: 200
+                        width: 100
                     },
                     reg_per:{
                         title: "注册率",
                         key: "reg_per",
-                        width: 200
+                        width: 100
                     },
                     reg_cost:{
                         title: "注册成本",
                         key: "reg_cost",
-                        width: 200
+                        width: 100
                     },
                     pay_num:{
                         title: "付费人数",
                         key: "pay_num",
-                        width: 200
+                        width: 100
                     },
                     pay_total:{
                         title: "付费金额",
                         key: "pay_total",
-                        width: 200
+                        width: 100
                     },
                     pay_per:{
                         title: "付费率",
                         key: "pay_per",
-                        width: 200
+                        width: 100
                     },
                     reg_arpu:{
                         title: "注册ARPU",
                         key: "reg_arpu",
-                        width: 200
+                        width: 100
                     },
                     income_per:{
                         title: "回本率",
                         key: "income_per",
-                        width: 200
+                        width: 100
                     },
                     click_installr:{
                         title: "点击激活率",
                         key: "click_installr",
-                        width: 200
+                        width: 100
                     },
                     app_reg:{
                         title: "注册设备数",
                         key: "app_reg",
-                        width: 200
+                        width: 100
                     },
                     app_reg_cost:{
                         title: "注册设备成本",
                         key: "app_reg_cost",
-                        width: 200
+                        width: 120
                     },
                     operate:{
                         title: '操作',
@@ -805,7 +806,7 @@
                         render : (h, params) => {
                             return [
                                 h("span",{
-                                    class: "edit",
+                                    class: "edit_link",
                                     on: {
                                         'click': () => {
                                             let query = { account:params.row.account_id};
@@ -817,7 +818,7 @@
                                     }
                                 },'编辑'),
                                 h("span",{
-                                    class: "del",
+                                    class: "del_link",
                                     on: {
                                         'click': (value) => {
                                             let account= params.row.account_id,campaign= '[' + params.row.campaign_id + ']';
@@ -846,7 +847,7 @@
                 return data;
             },
             changeTableColumns(){
-                console.log(this.getTableColumns())
+                //console.log(this.getTableColumns())
                 this.tableColumns = this.getTableColumns();
             }
         },

@@ -37,7 +37,7 @@
                 <a href="javascript:;" @click="deleteFilterAll" style="margin-right:10px;">清空所有条件</a>
                 <Tag v-for="item in filterItem" type="border" :name="item.id" :key="item.id" closable @on-close="deleteFilter">{{item.text}}</Tag>
             </div>
-            <Table :data="newList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
+            <Table :data="list" :height="height" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
 		</Card>
 
         <Modal v-model="filterModal" title="筛选条件" @on-ok="filterOk" @on-cancel="filterModal = false">
@@ -133,12 +133,8 @@
                 //总数量
                 total_number: 1, 
                 //总页数
-                total_page: 1,
-                //没选中的
-                uncheck: [], 
-                //表头设置
-                taColumns: [],
-                //表数据            
+                total_page: 1, 
+                //表头设置           
                 tableColumns:[
                     {
                         type: 'selection',
@@ -235,11 +231,11 @@
                         render : (h, params) => {
                             return [
                                 h("span",{
-                                    class: "edit",
+                                    class: "edit_link",
                                     on: {
                                         'click': () => {
                                             let query = { 
-                                                account:params.row.account_id,
+                                                id:params.row.id,
                                                 creative:params.row.creative_id};
                                             this.$router.push({
                                                 name: "ucnew_idea",
@@ -249,7 +245,7 @@
                                     }
                                 },'编辑'),
                                 h("span",{
-                                    class: "del",
+                                    class: "del_link",
                                     on: {
                                         'click': (value) => {
                                             let account= params.row.account_id,creative= '[' + params.row.creative_id + ']';
@@ -506,22 +502,6 @@
 					}
                 ).catch(err => {console.log(err)});
             },  
-        },
-        computed: {
-            //获取实时投放计划
-            newList() {
-                //深层复制
-                let arr = deepClone(this.tableColumns);
-                this.uncheck.forEach(item => {
-                    arr.forEach((col, i) => {
-                        if (col.key == item) {
-                            arr.splice(i, 1);
-                        }
-                    });
-                });
-                this.taColumns = arr;
-                return this.list;
-            }
         },
         beforeMount(){
             let query = this.$route.query.adgroup_id;

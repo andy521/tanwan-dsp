@@ -16,14 +16,14 @@
                 <Col span="4">
                     <search-tree @on-change="getids"></search-tree>
                 </Col>
-                <Col span="12">                    
+                <Col span="10">                    
                     <Button type="ghost" icon="funnel" class="margin-left-10" @click=" filterModal = true">筛选</Button>
                     <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                     <Input v-model="keyword" class="inp" placeholder="请输入关键字" ></Input>
                     <Button icon="search" @click="getUnit()">搜索</Button>
                     <new-edit class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="8" style="text-align: right;">
+                <Col span="10" style="text-align: right;">
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
                     <Poptip placement="bottom-start" v-model="visible">
@@ -42,8 +42,8 @@
                         </div>
                     </Poptip>
                     <Button type="ghost" icon="location" @click="setRegionFun">修改地域</Button>
-                    <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>                    
-                    <!-- <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>  -->
+                    <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>
+                    <unit-index @on-change="getIndex" :check="checkAllGroup"  action="gdtAdPut" opt="campaigns"></unit-index>
                 </Col>
             </Row>	
 
@@ -52,7 +52,7 @@
                 <Tag v-for="item in filterItem" type="border" :name="item.id" :key="item.id" closable @on-close="deleteFilter">{{item.text}}</Tag>
             </div>
 
-            <Table :data="newList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange"  stripe></Table>
+            <Table :data="list" :height="height" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange"  stripe></Table>
 
             <Row class="margin-top-10">
                 <Col span="10"> 表格尺寸
@@ -173,8 +173,10 @@
     import searchTree from '@/components/select-tree/searchTree.vue';
     import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
     import newEdit from "./components/newEdit.vue";
+    import unitIndex from "./components/unitIndex.vue";
 	export default {
         components: {
+            unitIndex,
             newEdit,
             searchTree
         },
@@ -208,189 +210,16 @@
                 tableSize: "small",
                 //计划id
                 campaign_id:'',
-                //表头设置
-                taColumns: [], 
                 //选中账户id
                 checkId: [], 
                 //选中单元id
-                adgroupids:[],
-                //表数据            
-                tableColumns:[
-                    {
-                        type: 'selection',
-                        width: 60,
-                        align: 'center'
-                    },
-                    {
-                        title: "单元名称",     
-                        key: "adgroup_name",
-                        width: 250,
-                        render: (h, params) => {
-                            return h("span",{
-                                class: "name",
-                                on: {
-                                    'click': () => {
-                                        let query = {
-                                            adgroup_id:params.row.adgroup_id
-                                        };
-                                        this.$router.push({
-                                            name: "uc_idea",
-                                            query: query
-                                        });
-                                    }
-                                }
-                            },params.row.adgroup_name)
-                        }
-                    },
-                    {
-                        title: "投放开关",
-                        align: 'center',     
-                        key: "paused",
-                        width: 90,
-                        render : (h, params) => {
-                            if (!params.row.paused) {
-                                return;
-                            } else {
-                                return h("div", [
-                                    h("i-switch", {
-                                        props: {
-                                            size: "small",
-                                            value: params.row.paused == "0" ? true : false
-                                        },
-                                        on: {
-                                            "on-change": value => {
-                                                let paused = value ? '0' : '1';
-                                                let param = {
-                                                    account_id:params.row.account_id,
-                                                    adgroupids:'['+ params.row.adgroup_id +']',
-                                                    paused : paused
-                                                };
-                                                this.updatePaused(param)
-                                            }
-                                        }
-                                    })
-                                ]);
-                            }
-                        }
-                    },
-                    {
-                        title: "推广状态",
-                        key: "state",
-                        align: 'center',
-                        width: 120,
-                        render : (h, params) => {
-                            let text = '';
-                            switch (params.row.state) {
-                                case '0': text = "推广中"; break;
-                                case '1': text = "推广暂停"; break;
-                                case '2': text = "推广计划预算不足"; break;
-                                case '3': text = "不在推广周期"; break;
-                            }
-                            return h('span', text);
-                        }
-                    },
-                    {
-                        title: "展现量",
-                        sortable: "custom",
-                        key: "impression",
-                        width: 120
-                    },
-                    {
-                        title: "点击量",
-                        sortable: "custom",
-                        key: "click",
-                        width: 120
-                    },
-                    {
-                        title: "点击率",
-                        sortable: "custom",
-                        key: "ctr",
-                        width: 120
-                    },
-                    {
-                        title: "消费",
-                        sortable: "custom",
-                        key: "cost",
-                        width: 120
-                    },
-                    {
-                        title: "计费方式",
-                        key: "chargeType",
-                        width: 120,
-                        render : (h, params) => {
-                            let text = '';
-                            switch (params.row.chargeType) {
-                                case '1': text = "CPC"; break;
-                                case '2': text = "CPM"; break;
-                            }
-                            return h('span', text);
-                        }
-                    },
-                    {
-                        title: "优化目标",
-                        key: "optimizationTarget",
-                        width: 120,
-                        render : (h, params) => {
-                            let text = '';
-                            switch (params.row.optimizationTarget) {
-                                case '1': text = "点击"; break;
-                                case '2': text = "展现"; break;
-                                case '3': text = "转化"; break;
-                            }
-                            return h('span', text);
-                        }
-                    },
-                    {
-                        title: "出价",
-                        sortable: "custom",
-                        key: "bid",
-                        width: 120
-                    },
-                    {
-                        title: '操作',
-                        align: 'center',
-                        key: 'id',
-                        render : (h, params) => {
-                            return [
-                                h("span",{
-                                    class: "edit",
-                                    on: {
-                                        'click': () => {
-                                            let query = {
-                                                account:params.row.account_id,
-                                                adgroup:params.row.adgroup_id,
-                                            };
-                                            this.$router.push({
-                                                name: "ucnew_unit",
-                                                query: query
-                                            });
-                                        }
-                                    }
-                                },'编辑'),
-                                h("span",{
-                                    class: "del",
-                                    on: {
-                                        'click': (value) => {
-                                            let account= params.row.account_id,adgroup= '[' + params.row.adgroup_id + ']';
-                                            this.$Modal.confirm({
-                                                title: '操作提示',
-                                                content: '<p>确认删除</p>',
-                                                onOk: () => {
-                                                    this.deleteData(account,adgroup)
-                                                },
-                                                onCancel: () => {}
-                                            });
-                                        }
-                                    }
-                                },'删除')
-                            ]
-                        }
-                    }
-                ],
+                adgroupids:[],       
+                //默认自定义指标选项
+                checkAllGroup:['paused','state','impression','custom','ctr','cost','chargeType','optimizationTarget','bid'],
+                //表格头部
+                tableColumns: [],
                 //数据
                 list:[],
-                //没选中的
-                uncheck: [],
                 //筛选条件显示DIV
                 filterShow:false,
                 filterItem:[],
@@ -687,9 +516,12 @@
 					}
                 ).catch(err => {console.log(err)});
             },
-            getuncheck(){
-
-            },            
+            //获取自定义指标
+            getIndex(data){
+                console.log(data)
+                this.checkAllGroup = data;                 
+                this.tableColumns = this.getTableColumns();
+            },          
             //筛选条件
             filterOk(){
                 let item = [];
@@ -797,22 +629,352 @@
                     this.ctr_value = '';
                     this.$Message.error('请输非数字');
                 };
-            }
-        },
-        computed: {
-            //获取实时投放计划
-            newList() {
-                //深层复制
-                let arr = deepClone(this.tableColumns);
-                this.uncheck.forEach(item => {
-                    arr.forEach((col, i) => {
-                        if (col.key == item) {
-                            arr.splice(i, 1);
+            },
+            getTableColumns(){
+                const tableColumnList = {
+                    selection : {type: 'selection',width: 60,align: 'center' },
+                    adgroup_name:{
+                        title: "单元名称",     
+                        key: "adgroup_name",
+                        width: 250,
+                        render: (h, params) => {
+                            return h("span",{
+                                class: "name",
+                                on: {
+                                    'click': () => {
+                                        let query = {
+                                            adgroup_id:params.row.adgroup_id
+                                        };
+                                        this.$router.push({
+                                            name: "uc_idea",
+                                            query: query
+                                        });
+                                    }
+                                }
+                            },params.row.adgroup_name)
                         }
-                    });
-                });
-                this.taColumns = arr;
-                return this.list;
+                    },
+                    paused:{
+                        title: "投放开关",
+                        align: 'center',     
+                        key: "paused",
+                        width: 90,
+                        render : (h, params) => {
+                            if (!params.row.paused) {
+                                return;
+                            } else {
+                                return h("div", [
+                                    h("i-switch", {
+                                        props: {
+                                            size: "small",
+                                            value: params.row.paused == "0" ? true : false
+                                        },
+                                        on: {
+                                            "on-change": value => {
+                                                let paused = value ? '0' : '1';
+                                                let param = {
+                                                    account_id:params.row.account_id,
+                                                    adgroupids:'['+ params.row.adgroup_id +']',
+                                                    paused : paused
+                                                };
+                                                this.updatePaused(param)
+                                            }
+                                        }
+                                    })
+                                ]);
+                            }
+                        }
+                    },
+                    state:{
+                        title: "推广状态",
+                        key: "state",
+                        align: 'center',
+                        width: 120,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.state) {
+                                case '0': text = "推广中"; break;
+                                case '1': text = "推广暂停"; break;
+                                case '2': text = "推广计划预算不足"; break;
+                                case '3': text = "不在推广周期"; break;
+                            }
+                            return h('span', text);
+                        }
+                    },
+                    impression:{
+                        title: "展现量",
+                        sortable: "custom",
+                        key: "impression",
+                        width: 100
+                    },
+                    custom:{
+                        title: "点击量",
+                        sortable: "custom",
+                        key: "click",
+                        width: 100
+                    },
+                    ctr:{
+                        title: "点击率",
+                        sortable: "custom",
+                        key: "ctr",
+                        width: 100
+                    },
+                    cost:{
+                        title: "消费",
+                        sortable: "custom",
+                        key: "cost",
+                        width: 100
+                    },
+                    chargeType:{
+                        title: "计费方式",
+                        key: "chargeType",
+                        width: 100,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.chargeType) {
+                                case '1': text = "CPC"; break;
+                                case '2': text = "CPM"; break;
+                            }
+                            return h('span', text);
+                        }
+                    },
+                    optimizationTarget:{
+                        title: "优化目标",
+                        key: "optimizationTarget",
+                        width: 100,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.optimizationTarget) {
+                                case '1': text = "点击"; break;
+                                case '2': text = "展现"; break;
+                                case '3': text = "转化"; break;
+                            }
+                            return h('span', text);
+                        }
+                    },
+                    bid:{
+                        title: "出价",
+                        sortable: "custom",
+                        key: "bid",
+                        width: 100
+                    },
+                    cpc:{
+                        title: "平均点击价格",
+                        sortable: "custom",
+                        key: "cpc",
+                        width: 130
+                    },
+                    cpm:{
+                        title: "千次展现价格",
+                        sortable: "custom",
+                        key: "cpm",
+                        width: 130
+                    },
+                    cost:{
+                        title: "展示PV",
+                        sortable: "custom",
+                        key: "cost",
+                        width: 100
+                    },
+                    download_complete:{
+                        title: "下载数",
+                        sortable: "custom",
+                        key: "download_complete",
+                        width: 100
+                    },
+                    download_complete_rate:{
+                        title: "下载率",
+                        sortable: "custom",
+                        key: "download_complete_rate",
+                        width: 100
+                    },
+                    conversion:{
+                        title: "激活总量",
+                        sortable: "custom",
+                        key: "conversion",
+                        width: 120
+                    },
+                    cvr:{
+                        title: "点击激活率",
+                        sortable: "custom",
+                        key: "cvr",
+                        width: 130
+                    },
+                    install_per:{
+                        title: "激活安装率",
+                        sortable: "custom",
+                        key: "install_per",
+                        width: 130
+                    },
+                    download_convert:{
+                        title: "下载激活率",
+                        sortable: "custom",
+                        key: "download_convert",
+                        width: 130
+                    },
+                    app_reg:{
+                        title: "注册设备数",
+                        sortable: "custom",
+                        key: "app_reg",
+                        width: 120
+                    },
+                    app_reg_cost:{
+                        title: "注册设备成本",
+                        sortable: "custom",
+                        key: "app_reg_cost",
+                        width: 130
+                    },
+                    reg_total:{
+                        title: "注册",
+                        sortable: "custom",
+                        key: "reg_total",
+                        width: 100
+                    },
+                    reg_cost:{
+                        title: "注册成本",
+                        sortable: "custom",
+                        key: "reg_cost",
+                        width: 120
+                    },
+                    reg_per:{
+                        title: "注册率",
+                        sortable: "custom",
+                        key: "reg_per",
+                        width: 100
+                    },
+                    reg_arpu:{
+                        title: "注册ARPU",
+                        sortable: "custom",
+                        key: "reg_arpu",
+                        width: 120
+                    },
+                    active:{
+                        title: "活跃数",
+                        sortable: "custom",
+                        key: "active",
+                        width: 100
+                    },
+                    active_per:{
+                        title: "活跃率",
+                        sortable: "custom",
+                        key: "active_per",
+                        width: 100
+                    },
+                    pay_num:{
+                        title: "付费人数",
+                        sortable: "custom",
+                        key: "pay_num",
+                        width: 120
+                    },
+                    pay_total:{
+                        title: "付费金额",
+                        sortable: "custom",
+                        key: "pay_total",
+                        width: 120
+                    },
+                    pay_per:{
+                        title: "付费率",
+                        sortable: "custom",
+                        key: "pay_per",
+                        width: 100
+                    },
+                    income_per:{
+                        title: "回本率",
+                        sortable: "custom",
+                        key: "income_per",
+                        width: 100
+                    },
+                    chargeType:{
+                        title: "计费方式",
+                        key: "chargeType",
+                        width: 120
+                    },
+                    generalizeType:{
+                        title: "推广方式",
+                        key: "generalizeType",
+                        width: 120
+                    },
+                    platform:{
+                        title: "操作系统",
+                        key: "platform",
+                        width: 100
+                    },
+                    adResourceId:{
+                        title: "推广资源",
+                        key: "adResourceId",
+                        width: 100
+                    },
+                    adgroup_id:{
+                        title: "单元id",
+                        key: "adgroup_id",
+                        width: 100
+                    },
+                    budget:{
+                        title: "日预算",
+                        sortable: "custom",
+                        key: "budget",
+                        width: 100
+                    },
+                    impression:{
+                        title: "展现量",
+                        sortable: "custom",
+                        key: "impression",
+                        width: 100
+                    },
+                    operate:{
+                        title: '操作',
+                        align: 'center',
+                        key: 'id',
+                        width: 100,
+                        render : (h, params) => {
+                            return [
+                                h("span",{
+                                    class: "edit_link",
+                                    on: {
+                                        'click': () => {
+                                            let query = {
+                                                account:params.row.account_id,
+                                                adgroup:params.row.adgroup_id,
+                                            };
+                                            this.$router.push({
+                                                name: "ucnew_unit",
+                                                query: query
+                                            });
+                                        }
+                                    }
+                                },'编辑'),
+                                h("span",{
+                                    class: "del_link",
+                                    on: {
+                                        'click': (value) => {
+                                            let account= params.row.account_id,adgroup= '[' + params.row.adgroup_id + ']';
+                                            this.$Modal.confirm({
+                                                title: '操作提示',
+                                                content: '<p>确认删除</p>',
+                                                onOk: () => {
+                                                    this.deleteData(account,adgroup)
+                                                },
+                                                onCancel: () => {}
+                                            });
+                                        }
+                                    }
+                                },'删除')
+                            ]
+                        }
+                    }
+                };
+                //固定选项
+                let data = [
+                    tableColumnList.selection,
+                    tableColumnList.adgroup_name
+                ];                
+                this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) ); 
+                data.push(tableColumnList.operate)
+                return data;
+            },
+            changeTableColumns(){
+                //console.log(this.getTableColumns())
+                this.tableColumns = this.getTableColumns();
             }
         },
         beforeMount(){
@@ -820,6 +982,7 @@
             if(!!query){
                 this.campaign_id = query.toString();
             }
+            this.changeTableColumns();
             this.getUnit();
         }
 	};
