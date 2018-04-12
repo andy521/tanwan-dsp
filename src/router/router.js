@@ -18,6 +18,7 @@ export const loginRouter = {
     component: () => import('@/views/login.vue')
 };
 
+//新建广告
 export const newAd = {
     path: '/newad',
     name: 'newad',
@@ -27,14 +28,6 @@ export const newAd = {
     component: () => import('@/views/newad/index.vue')
 };
 
-export const ucNew = {
-    path: '/ucnew',
-    name: 'ucnew',
-    meta: {
-        title: '新建UC推广计划'
-    },    
-    component: () => import('@/views/ucnew/index.vue')
-};
 
 export const otherRouter = {
     path: '/user',
@@ -109,6 +102,8 @@ export const appRouter = [
         access: 0,
         component: Main,
         children: [
+            { path: 'modprfpsw', title: '修改个人信息', name: 'setid_modprfpsw', icon: 'android-radio-button-off', component: () => import('@/views/setid/modPrfPsw.vue') },
+            { path: 'adduser', title: '添加账号', name: 'setid_adduser', icon: 'android-radio-button-off', component: () => import('@/views/setid/addUser.vue') },
             { path: 'principal', title: '负责人管理', name: 'setid_principal', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue') },
             { path: 'systemsetid', title: '系统账号管理', name: 'setid_systemsetid', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue') },
             { path: 'systemmsg', title: '系统消息', name: 'setid_systemmsg', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemMsg.vue') }
@@ -119,7 +114,6 @@ export const appRouter = [
 export const routers = [
     loginRouter,
     newAd,
-    ucNew,
     otherRouter,
     ...appRouter
 ];

@@ -52,6 +52,7 @@ Axios.interceptors.response.use(
                     path: '/login',
                     query: { redirect: router.currentRoute.fullPath }
                 });
+                Message.info(res.data.msg);
             } else {
                 Message.info(res.data.msg);
             }
