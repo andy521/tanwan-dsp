@@ -13,7 +13,7 @@
 	<div class="unit">        
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="4">
+                <Col span="2">
                     <search-tree @on-change="getids"></search-tree>
                 </Col>
                 <Col span="10">                    
@@ -23,7 +23,8 @@
                     <Button icon="search" @click="getUnit()">搜索</Button>
                     <new-edit class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="10" style="text-align: right;">
+                <Col span="12" style="text-align: right;">
+                    <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
                     <Poptip placement="bottom-start" v-model="visible">
@@ -165,7 +166,19 @@
                 <Radio label="10">数据网络</Radio>
             </Radio-group>          
         </Modal>
- 
+
+        <!--复制广告-->
+        <Modal v-model="copyUnitMmdal" title="复制单元" @on-ok="submitCopy">
+            <div class="margin-top-10">
+                <Form :label-width="100">
+                    <FormItem label="选择复制的计划">
+                        <Select v-model="selePlanId" filterable placeholder="请选择媒体账号">
+                            <Option v-for="item in planList" :value="item.campaign_id" :key="item.campaign_id">{{ item.campaign_name }}</Option>
+                        </Select>
+                    </FormItem>
+                </Form>
+            </div>
+        </Modal>
 	</div>
 </template>
 <script>
@@ -189,6 +202,8 @@
                 regionModal:false,
                 bidModal:false,
                 wifiModal:false,
+                copyUnitMmdal:false,
+                copyUnitLoading:false,
                 //修改日期和时间
                 formStartDate:'',
                 formEndDate:'-1',
@@ -210,6 +225,8 @@
                 tableSize: "small",
                 //计划id
                 campaign_id:'',
+                //选中的id
+                cid:[],
                 //选中账户id
                 checkId: [], 
                 //选中单元id
@@ -257,7 +274,11 @@
                 //修改网络环境
                 wifi:'11',
                 //根据游戏ID
-                game_id:''
+                game_id:'',
+                //账号列表
+                planList:[],
+                //选择计划ID
+                selePlanId:'',
 			};
 		},
 		methods: {
@@ -320,11 +341,12 @@
                 if(row.length>0){
                     this.operating = false;
                 };
-                let ids = [],adgroup=[];
+                let id=[],ids = [],adgroup=[];
                 row.forEach(item => {
                     ids.push(item.account_id);
                     adgroup.push(item.adgroup_id);
                 });
+                this.cid = id;
                 this.checkId = ids;
                 this.adgroupids = adgroup;
             },
@@ -507,7 +529,6 @@
                     allRegion: this.allRegion,
                     regions:this.regions
                 }
-                console.log(param)
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
@@ -517,8 +538,7 @@
                 ).catch(err => {console.log(err)});
             },
             //获取自定义指标
-            getIndex(data){
-                console.log(data)
+            getIndex(data){                
                 this.checkAllGroup = data;                 
                 this.tableColumns = this.getTableColumns();
             },          
@@ -636,7 +656,7 @@
                     adgroup_name:{
                         title: "单元名称",     
                         key: "adgroup_name",
-                        width: 250,
+                        width: 200,
                         render: (h, params) => {
                             return h("span",{
                                 class: "name",
@@ -653,6 +673,11 @@
                                 }
                             },params.row.adgroup_name)
                         }
+                    },
+                    account_name:{
+                        title: "账户",
+                        key: "account_name",
+                        width: 100
                     },
                     paused:{
                         title: "投放开关",
@@ -684,7 +709,7 @@
                                 ]);
                             }
                         }
-                    },
+                    },                    
                     state:{
                         title: "推广状态",
                         key: "state",
@@ -905,7 +930,7 @@
                         width: 100
                     },
                     adgroup_id:{
-                        title: "单元id",
+                        title: "单元ID",
                         key: "adgroup_id",
                         width: 100
                     },
@@ -966,7 +991,8 @@
                 //固定选项
                 let data = [
                     tableColumnList.selection,
-                    tableColumnList.adgroup_name
+                    tableColumnList.adgroup_name,
+                    tableColumnList.account_name
                 ];                
                 this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) ); 
                 data.push(tableColumnList.operate)
@@ -975,6 +1001,54 @@
             changeTableColumns(){
                 //console.log(this.getTableColumns())
                 this.tableColumns = this.getTableColumns();
+            },
+            //复制单元
+            copyUnit(){
+                if(this.checkId.length =='0'){
+                    this.$Message.info('请勾选需要复制的数据');
+                    return
+                }else{
+                    let cid = this.checkId[0],
+                    same = this.checkId.some(id=>{return id == cid;});
+                    if(!same){
+                        this.$Message.info("请选择同一帐号");
+                        return
+                    }                    
+                }
+                this.copyUnitLoading = true;                
+                //获取账号列表
+                Axios.post('api.php',{action:'ucAdPut',opt:'getCampaignNameList'}).then(
+					res => {
+						if(res.ret == 1) {
+                            this.copyUnitLoading = false;
+                            this.copyUnitMmdal = true;
+                            this.planList = res.data;
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },
+            submitCopy(){
+                if(this.selePlanId == ''){
+                    this.$Message.info('请选择复制的计划');
+                    return false;
+                };
+                let param = {
+                    action:'adData',
+                    opt:'tasck_add',
+                    type:'uc',
+                    act:'cp_campaigns',
+                    campaign_id:this.selePlanId,
+                    account_id:this.checkId[0],
+                    idArr:this.cid.join(",")
+                }
+                //console.log(param)
+                Axios.post('api.php',param).then(
+					res => {
+						if(res.ret == 1) {
+                            this.$Message.info(res.msg);
+						}
+					}
+                ).catch(err => {console.log(err)});
             }
         },
         beforeMount(){

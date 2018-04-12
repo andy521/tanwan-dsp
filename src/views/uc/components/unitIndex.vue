@@ -80,7 +80,7 @@
                     <Checkbox label="generalizeType">推广方式</Checkbox>
                     <Checkbox label="platform">操作系统</Checkbox>
                     <Checkbox label="adResourceId">推广资源</Checkbox>
-                    <Checkbox label="adgroup_id">单元id</Checkbox>
+                    <!-- <Checkbox label="adgroup_id">单元id</Checkbox> -->
                     <Checkbox label="budget">日预算</Checkbox>
                     <Checkbox label="impression">展现量</Checkbox>
 				</CheckboxGroup>
@@ -146,7 +146,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','conversion','chargeType','optimizationTarget','bid','adgroup_id','generalizeType','cost','cvr','download_convert','impression','install_per','app_reg','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
+					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','conversion','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','app_reg','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
 				} else {
 					this.checkAllGroup = [];
 				}
