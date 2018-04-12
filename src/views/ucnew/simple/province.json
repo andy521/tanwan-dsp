@@ -1,0 +1,722 @@
+{
+  "ret": 1,
+  "msg": "succ",
+  "data": {
+    "provinces": [
+      {
+        "value": 16842752,
+        "name": "\u5317\u4eac",
+        "cityList": [
+          { "value": 16843008, "name": "\u4e1c\u57ce" },
+          { "value": 16843264, "name": "\u897f\u57ce" },
+          { "value": 16844032, "name": "\u671d\u9633" },
+          { "value": 16844288, "name": "\u4e30\u53f0" },
+          { "value": 16844544, "name": "\u77f3\u666f\u5c71" },
+          { "value": 16844800, "name": "\u6d77\u6dc0" },
+          { "value": 16845056, "name": "\u95e8\u5934\u6c9f" },
+          { "value": 16845312, "name": "\u623f\u5c71" },
+          { "value": 16845568, "name": "\u901a\u5dde" },
+          { "value": 16845824, "name": "\u987a\u4e49" },
+          { "value": 16846080, "name": "\u660c\u5e73" },
+          { "value": 16846336, "name": "\u5927\u5174" },
+          { "value": 16846848, "name": "\u6000\u67d4" },
+          { "value": 16847104, "name": "\u5e73\u8c37" },
+          { "value": 16847360, "name": "\u5bc6\u4e91" },
+          { "value": 16847872, "name": "\u5ef6\u5e86" }
+        ]
+      },
+      {
+        "value": 16908288,
+        "name": "\u5929\u6d25",
+        "cityList": [
+          { "value": 16908544, "name": "\u548c\u5e73" },
+          { "value": 16908800, "name": "\u6cb3\u4e1c" },
+          { "value": 16909056, "name": "\u6cb3\u897f" },
+          { "value": 16909312, "name": "\u5357\u5f00" },
+          { "value": 16909568, "name": "\u6cb3\u5317" },
+          { "value": 16909824, "name": "\u7ea2\u6865" },
+          { "value": 16910848, "name": "\u4e1c\u4e3d" },
+          { "value": 16911104, "name": "\u897f\u9752" },
+          { "value": 16911360, "name": "\u5317\u8fb0" },
+          { "value": 16911616, "name": "\u6d25\u5357" },
+          { "value": 16911872, "name": "\u6b66\u6e05" },
+          { "value": 16912128, "name": "\u5b9d\u577b" },
+          { "value": 16912384, "name": "\u9759\u6d77" },
+          { "value": 16912640, "name": "\u5b81\u6cb3" },
+          { "value": 16912896, "name": "\u84df\u53bf" },
+          { "value": 16913152, "name": "\u6ee8\u6d77" }
+        ]
+      },
+      {
+        "value": 16973824,
+        "name": "\u6cb3\u5317",
+        "cityList": [
+          { "value": 16974080, "name": "\u77f3\u5bb6\u5e84" },
+          { "value": 16974336, "name": "\u5510\u5c71" },
+          { "value": 16974592, "name": "\u79e6\u7687\u5c9b" },
+          { "value": 16974848, "name": "\u90af\u90f8" },
+          { "value": 16975104, "name": "\u90a2\u53f0" },
+          { "value": 16975360, "name": "\u4fdd\u5b9a" },
+          { "value": 16975616, "name": "\u5f20\u5bb6\u53e3" },
+          { "value": 16975872, "name": "\u627f\u5fb7" },
+          { "value": 16976128, "name": "\u5eca\u574a" },
+          { "value": 16976384, "name": "\u8861\u6c34" },
+          { "value": 16976640, "name": "\u6ca7\u5dde" }
+        ]
+      },
+      {
+        "value": 17039360,
+        "name": "\u5c71\u897f",
+        "cityList": [
+          { "value": 17039616, "name": "\u592a\u539f" },
+          { "value": 17039872, "name": "\u5927\u540c" },
+          { "value": 17040128, "name": "\u9633\u6cc9" },
+          { "value": 17040384, "name": "\u957f\u6cbb" },
+          { "value": 17040640, "name": "\u664b\u57ce" },
+          { "value": 17040896, "name": "\u6714\u5dde" },
+          { "value": 17041152, "name": "\u664b\u4e2d" },
+          { "value": 17041408, "name": "\u8fd0\u57ce" },
+          { "value": 17041664, "name": "\u5ffb\u5dde" },
+          { "value": 17041920, "name": "\u4e34\u6c7e" },
+          { "value": 17042176, "name": "\u5415\u6881" }
+        ]
+      },
+      {
+        "value": 17104896,
+        "name": "\u5185\u8499\u53e4",
+        "cityList": [
+          { "value": 17105152, "name": "\u547c\u548c\u6d69\u7279" },
+          { "value": 17105408, "name": "\u5305\u5934" },
+          { "value": 17105664, "name": "\u4e4c\u6d77" },
+          { "value": 17105920, "name": "\u8d64\u5cf0" },
+          { "value": 17106176, "name": "\u901a\u8fbd" },
+          { "value": 17106432, "name": "\u9102\u5c14\u591a\u65af" },
+          { "value": 17106688, "name": "\u547c\u4f26\u8d1d\u5c14" },
+          { "value": 17106944, "name": "\u4e4c\u5170\u5bdf\u5e03" },
+          { "value": 17107200, "name": "\u9521\u6797\u90ed\u52d2" },
+          { "value": 17107456, "name": "\u5df4\u5f66\u6dd6\u5c14" },
+          { "value": 17107712, "name": "\u963f\u62c9\u5584" },
+          { "value": 17107968, "name": "\u5174\u5b89\u76df" }
+        ]
+      },
+      {
+        "value": 17235968,
+        "name": "\u5409\u6797",
+        "cityList": [
+          { "value": 17236224, "name": "\u957f\u6625" },
+          { "value": 17236480, "name": "\u5409\u6797" },
+          { "value": 17236736, "name": "\u56db\u5e73" },
+          { "value": 17236992, "name": "\u8fbd\u6e90" },
+          { "value": 17237248, "name": "\u901a\u5316" },
+          { "value": 17237504, "name": "\u767d\u5c71" },
+          { "value": 17237760, "name": "\u5ef6\u8fb9" },
+          { "value": 17238016, "name": "\u767d\u57ce" },
+          { "value": 17238272, "name": "\u677e\u539f" }
+        ]
+      },
+      {
+        "value": 17170432,
+        "name": "\u8fbd\u5b81",
+        "cityList": [
+          { "value": 17170688, "name": "\u6c88\u9633" },
+          { "value": 17170944, "name": "\u5927\u8fde" },
+          { "value": 17171200, "name": "\u978d\u5c71" },
+          { "value": 17171456, "name": "\u629a\u987a" },
+          { "value": 17171712, "name": "\u672c\u6eaa" },
+          { "value": 17171968, "name": "\u4e39\u4e1c" },
+          { "value": 17172224, "name": "\u9526\u5dde" },
+          { "value": 17172480, "name": "\u846b\u82a6\u5c9b" },
+          { "value": 17172736, "name": "\u8425\u53e3" },
+          { "value": 17172992, "name": "\u76d8\u9526" },
+          { "value": 17173248, "name": "\u961c\u65b0" },
+          { "value": 17173504, "name": "\u8fbd\u9633" },
+          { "value": 17173760, "name": "\u94c1\u5cad" },
+          { "value": 17174016, "name": "\u671d\u9633" }
+        ]
+      },
+      {
+        "value": 17301504,
+        "name": "\u9ed1\u9f99\u6c5f",
+        "cityList": [
+          { "value": 17301760, "name": "\u54c8\u5c14\u6ee8" },
+          { "value": 17302016, "name": "\u9f50\u9f50\u54c8\u5c14" },
+          { "value": 17302272, "name": "\u9e64\u5c97" },
+          { "value": 17302528, "name": "\u53cc\u9e2d\u5c71" },
+          { "value": 17302784, "name": "\u9e21\u897f" },
+          { "value": 17303040, "name": "\u5927\u5e86" },
+          { "value": 17303296, "name": "\u4f0a\u6625" },
+          { "value": 17303552, "name": "\u7261\u4e39\u6c5f" },
+          { "value": 17303808, "name": "\u4f73\u6728\u65af" },
+          { "value": 17304064, "name": "\u4e03\u53f0\u6cb3" },
+          { "value": 17304320, "name": "\u9ed1\u6cb3" },
+          { "value": 17304576, "name": "\u7ee5\u5316" },
+          { "value": 17304832, "name": "\u5927\u5174\u5b89\u5cad" }
+        ]
+      },
+      {
+        "value": 17367040,
+        "name": "\u4e0a\u6d77",
+        "cityList": [
+          { "value": 17367296, "name": "\u9ec4\u6d66" },
+          { "value": 17367808, "name": "\u5f90\u6c47" },
+          { "value": 17368320, "name": "\u957f\u5b81" },
+          { "value": 17368576, "name": "\u9759\u5b89" },
+          { "value": 17368832, "name": "\u666e\u9640" },
+          { "value": 17369088, "name": "\u95f8\u5317" },
+          { "value": 17369344, "name": "\u8679\u53e3" },
+          { "value": 17369600, "name": "\u6768\u6d66" },
+          { "value": 17369856, "name": "\u5b9d\u5c71" },
+          { "value": 17370112, "name": "\u95f5\u884c" },
+          { "value": 17370368, "name": "\u5609\u5b9a" },
+          { "value": 17370624, "name": "\u6d66\u4e1c" },
+          { "value": 17370880, "name": "\u677e\u6c5f" },
+          { "value": 17371136, "name": "\u91d1\u5c71" },
+          { "value": 17371392, "name": "\u9752\u6d66" },
+          { "value": 17371904, "name": "\u5949\u8d24" },
+          { "value": 17372160, "name": "\u5d07\u660e" }
+        ]
+      },
+      {
+        "value": 17629184,
+        "name": "\u798f\u5efa",
+        "cityList": [
+          { "value": 17629440, "name": "\u798f\u5dde" },
+          { "value": 17629696, "name": "\u53a6\u95e8" },
+          { "value": 17629952, "name": "\u4e09\u660e" },
+          { "value": 17630208, "name": "\u8386\u7530" },
+          { "value": 17630464, "name": "\u6cc9\u5dde" },
+          { "value": 17630720, "name": "\u6f33\u5dde" },
+          { "value": 17630976, "name": "\u5357\u5e73" },
+          { "value": 17631232, "name": "\u9f99\u5ca9" },
+          { "value": 17631488, "name": "\u5b81\u5fb7" }
+        ]
+      },
+      {
+        "value": 17563648,
+        "name": "\u5b89\u5fbd",
+        "cityList": [
+          { "value": 17563904, "name": "\u5408\u80a5" },
+          { "value": 17564160, "name": "\u829c\u6e56" },
+          { "value": 17564416, "name": "\u868c\u57e0" },
+          { "value": 17564672, "name": "\u6dee\u5357" },
+          { "value": 17564928, "name": "\u9a6c\u978d\u5c71" },
+          { "value": 17565184, "name": "\u6dee\u5317" },
+          { "value": 17565440, "name": "\u94dc\u9675" },
+          { "value": 17565696, "name": "\u5b89\u5e86" },
+          { "value": 17565952, "name": "\u9ec4\u5c71" },
+          { "value": 17566208, "name": "\u6ec1\u5dde" },
+          { "value": 17566464, "name": "\u961c\u9633" },
+          { "value": 17566720, "name": "\u5bbf\u5dde" },
+          { "value": 17567232, "name": "\u516d\u5b89" },
+          { "value": 17567488, "name": "\u4eb3\u5dde" },
+          { "value": 17567744, "name": "\u6c60\u5dde" },
+          { "value": 17568000, "name": "\u5ba3\u57ce" }
+        ]
+      },
+      {
+        "value": 17432576,
+        "name": "\u6c5f\u82cf",
+        "cityList": [
+          { "value": 17432832, "name": "\u5357\u4eac" },
+          { "value": 17433088, "name": "\u5f90\u5dde" },
+          { "value": 17433344, "name": "\u8fde\u4e91\u6e2f" },
+          { "value": 17433600, "name": "\u6dee\u5b89" },
+          { "value": 17433856, "name": "\u5bbf\u8fc1" },
+          { "value": 17434112, "name": "\u76d0\u57ce" },
+          { "value": 17434368, "name": "\u626c\u5dde" },
+          { "value": 17434624, "name": "\u6cf0\u5dde" },
+          { "value": 17434880, "name": "\u5357\u901a" },
+          { "value": 17435136, "name": "\u9547\u6c5f" },
+          { "value": 17435392, "name": "\u5e38\u5dde" },
+          { "value": 17435648, "name": "\u65e0\u9521" },
+          { "value": 17435904, "name": "\u82cf\u5dde" }
+        ]
+      },
+      {
+        "value": 17694720,
+        "name": "\u6c5f\u897f",
+        "cityList": [
+          { "value": 17694976, "name": "\u5357\u660c" },
+          { "value": 17695232, "name": "\u666f\u5fb7" },
+          { "value": 17695488, "name": "\u840d\u4e61" },
+          { "value": 17695744, "name": "\u4e5d\u6c5f" },
+          { "value": 17696000, "name": "\u65b0\u4f59" },
+          { "value": 17696256, "name": "\u9e70\u6f6d" },
+          { "value": 17696512, "name": "\u8d63\u5dde" },
+          { "value": 17696768, "name": "\u5409\u5b89" },
+          { "value": 17697024, "name": "\u5b9c\u6625" },
+          { "value": 17697280, "name": "\u629a\u5dde" },
+          { "value": 17697536, "name": "\u4e0a\u9976" }
+        ]
+      },
+      {
+        "value": 17760256,
+        "name": "\u5c71\u4e1c",
+        "cityList": [
+          { "value": 17760512, "name": "\u6d4e\u5357" },
+          { "value": 17760768, "name": "\u9752\u5c9b" },
+          { "value": 17761024, "name": "\u6dc4\u535a" },
+          { "value": 17761280, "name": "\u67a3\u5e84" },
+          { "value": 17761536, "name": "\u4e1c\u8425" },
+          { "value": 17761792, "name": "\u6f4d\u574a" },
+          { "value": 17762048, "name": "\u70df\u53f0" },
+          { "value": 17762304, "name": "\u5a01\u6d77" },
+          { "value": 17762560, "name": "\u6d4e\u5b81" },
+          { "value": 17762816, "name": "\u6cf0\u5b89" },
+          { "value": 17763072, "name": "\u65e5\u7167" },
+          { "value": 17763328, "name": "\u83b1\u829c" },
+          { "value": 17763584, "name": "\u4e34\u6c82" },
+          { "value": 17763840, "name": "\u5fb7\u5dde" },
+          { "value": 17764096, "name": "\u804a\u57ce" },
+          { "value": 17764352, "name": "\u6ee8\u5dde" },
+          { "value": 17764608, "name": "\u83cf\u6cfd" }
+        ]
+      },
+      {
+        "value": 17498112,
+        "name": "\u6d59\u6c5f",
+        "cityList": [
+          { "value": 17498368, "name": "\u676d\u5dde" },
+          { "value": 17498624, "name": "\u5b81\u6ce2" },
+          { "value": 17498880, "name": "\u6e29\u5dde" },
+          { "value": 17499136, "name": "\u5609\u5174" },
+          { "value": 17499392, "name": "\u6e56\u5dde" },
+          { "value": 17499648, "name": "\u7ecd\u5174" },
+          { "value": 17499904, "name": "\u91d1\u534e" },
+          { "value": 17500160, "name": "\u8862\u5dde" },
+          { "value": 17500416, "name": "\u821f\u5c71" },
+          { "value": 17500672, "name": "\u53f0\u5dde" },
+          { "value": 17500928, "name": "\u4e3d\u6c34" }
+        ]
+      },
+      {
+        "value": 17825792,
+        "name": "\u6cb3\u5357",
+        "cityList": [
+          { "value": 17826048, "name": "\u90d1\u5dde" },
+          { "value": 17826304, "name": "\u5f00\u5c01" },
+          { "value": 17826560, "name": "\u6d1b\u9633" },
+          { "value": 17826816, "name": "\u5e73\u9876\u5c71" },
+          { "value": 17827072, "name": "\u7126\u4f5c" },
+          { "value": 17827328, "name": "\u9e64\u58c1" },
+          { "value": 17827584, "name": "\u65b0\u4e61" },
+          { "value": 17827840, "name": "\u5b89\u9633" },
+          { "value": 17828096, "name": "\u6fee\u9633" },
+          { "value": 17828352, "name": "\u8bb8\u660c" },
+          { "value": 17828608, "name": "\u6f2f\u6cb3" },
+          { "value": 17828864, "name": "\u4e09\u95e8\u5ce1" },
+          { "value": 17829120, "name": "\u5357\u9633" },
+          { "value": 17829376, "name": "\u5546\u4e18" },
+          { "value": 17829632, "name": "\u4fe1\u9633" },
+          { "value": 17829888, "name": "\u5468\u53e3" },
+          { "value": 17830144, "name": "\u9a7b\u9a6c\u5e97" },
+          { "value": 17830400, "name": "\u6d4e\u6e90" }
+        ]
+      },
+      {
+        "value": 17891328,
+        "name": "\u6e56\u5317",
+        "cityList": [
+          { "value": 17891584, "name": "\u6b66\u6c49" },
+          { "value": 17891840, "name": "\u9ec4\u77f3" },
+          { "value": 17892096, "name": "\u8944\u9633" },
+          { "value": 17892352, "name": "\u5341\u5830" },
+          { "value": 17892608, "name": "\u8346\u5dde" },
+          { "value": 17892864, "name": "\u5b9c\u660c" },
+          { "value": 17893120, "name": "\u8346\u95e8" },
+          { "value": 17893376, "name": "\u9102\u5dde" },
+          { "value": 17893632, "name": "\u5b5d\u611f" },
+          { "value": 17893888, "name": "\u9ec4\u5188" },
+          { "value": 17894144, "name": "\u54b8\u5b81" },
+          { "value": 17894400, "name": "\u968f\u5dde" },
+          { "value": 17894656, "name": "\u6069\u65bd" },
+          { "value": 17894912, "name": "\u4ed9\u6843" },
+          { "value": 17895168, "name": "\u5929\u95e8" },
+          { "value": 17895424, "name": "\u6f5c\u6c5f" },
+          { "value": 17895680, "name": "\u795e\u519c\u67b6" }
+        ]
+      },
+      {
+        "value": 17956864,
+        "name": "\u6e56\u5357",
+        "cityList": [
+          { "value": 17957120, "name": "\u957f\u6c99" },
+          { "value": 17957376, "name": "\u682a\u6d32" },
+          { "value": 17957632, "name": "\u6e58\u6f6d" },
+          { "value": 17957888, "name": "\u8861\u9633" },
+          { "value": 17958144, "name": "\u90b5\u9633" },
+          { "value": 17958400, "name": "\u5cb3\u9633" },
+          { "value": 17958656, "name": "\u5e38\u5fb7" },
+          { "value": 17958912, "name": "\u5f20\u5bb6\u754c" },
+          { "value": 17959168, "name": "\u76ca\u9633" },
+          { "value": 17959424, "name": "\u90f4\u5dde" },
+          { "value": 17959680, "name": "\u6c38\u5dde" },
+          { "value": 17959936, "name": "\u6000\u5316" },
+          { "value": 17960192, "name": "\u5a04\u5e95" },
+          { "value": 17960448, "name": "\u6e58\u897f" }
+        ]
+      },
+      {
+        "value": 18022400,
+        "name": "\u5e7f\u4e1c",
+        "cityList": [
+          { "value": 18022656, "name": "\u5e7f\u5dde" },
+          { "value": 18022912, "name": "\u6df1\u5733" },
+          { "value": 18023168, "name": "\u73e0\u6d77" },
+          { "value": 18023424, "name": "\u6c55\u5934" },
+          { "value": 18023680, "name": "\u97f6\u5173" },
+          { "value": 18023936, "name": "\u6cb3\u6e90" },
+          { "value": 18024192, "name": "\u6885\u5dde" },
+          { "value": 18024448, "name": "\u6c55\u5c3e" },
+          { "value": 18024704, "name": "\u4e1c\u839e" },
+          { "value": 18024960, "name": "\u4e2d\u5c71" },
+          { "value": 18025216, "name": "\u6c5f\u95e8" },
+          { "value": 18025472, "name": "\u4f5b\u5c71" },
+          { "value": 18025728, "name": "\u9633\u6c5f" },
+          { "value": 18025984, "name": "\u6e5b\u6c5f" },
+          { "value": 18026240, "name": "\u8302\u540d" },
+          { "value": 18026496, "name": "\u8087\u5e86" },
+          { "value": 18026752, "name": "\u6e05\u8fdc" },
+          { "value": 18027008, "name": "\u6f6e\u5dde" },
+          { "value": 18027264, "name": "\u63ed\u9633" },
+          { "value": 18027520, "name": "\u4e91\u6d6e" },
+          { "value": 18027776, "name": "\u60e0\u5dde" }
+        ]
+      },
+      {
+        "value": 18153472,
+        "name": "\u6d77\u5357",
+        "cityList": [
+          { "value": 18153728, "name": "\u6d77\u53e3" },
+          { "value": 18153984, "name": "\u4e09\u4e9a" },
+          { "value": 18154496, "name": "\u6587\u660c" },
+          { "value": 18154752, "name": "\u743c\u6d77" },
+          { "value": 18155008, "name": "\u4e07\u5b81" },
+          { "value": 18155264, "name": "\u4e94\u6307\u5c71" },
+          { "value": 18155520, "name": "\u4e1c\u65b9" },
+          { "value": 18155776, "name": "\u510b\u5dde" },
+          { "value": 18156032, "name": "\u4e34\u9ad8" },
+          { "value": 18156288, "name": "\u6f84\u8fc8" },
+          { "value": 18156544, "name": "\u5b9a\u5b89" },
+          { "value": 18156800, "name": "\u5c6f\u660c" },
+          { "value": 18157056, "name": "\u660c\u6c5f" },
+          { "value": 18157312, "name": "\u767d\u6c99" },
+          { "value": 18157568, "name": "\u743c\u4e2d" },
+          { "value": 18157824, "name": "\u9675\u6c34" },
+          { "value": 18158080, "name": "\u4fdd\u4ead" },
+          { "value": 18158336, "name": "\u4e50\u4e1c" },
+          { "value": 18158592, "name": "\u4e09\u6c99" },
+          { "value": 18158848, "name": "\u6d0b\u6d66" }
+        ]
+      },
+      {
+        "value": 18087936,
+        "name": "\u5e7f\u897f",
+        "cityList": [
+          { "value": 18088192, "name": "\u5357\u5b81" },
+          { "value": 18088448, "name": "\u67f3\u5dde" },
+          { "value": 18088704, "name": "\u6842\u6797" },
+          { "value": 18088960, "name": "\u68a7\u5dde" },
+          { "value": 18089216, "name": "\u5317\u6d77" },
+          { "value": 18089472, "name": "\u9632\u57ce\u6e2f" },
+          { "value": 18089728, "name": "\u94a6\u5dde" },
+          { "value": 18089984, "name": "\u8d35\u6e2f" },
+          { "value": 18090240, "name": "\u7389\u6797" },
+          { "value": 18090496, "name": "\u767e\u8272" },
+          { "value": 18090752, "name": "\u8d3a\u5dde" },
+          { "value": 18091008, "name": "\u6cb3\u6c60" },
+          { "value": 18091264, "name": "\u6765\u5bbe" },
+          { "value": 18091520, "name": "\u5d07\u5de6" }
+        ]
+      },
+      {
+        "value": 18350080,
+        "name": "\u8d35\u5dde",
+        "cityList": [
+          { "value": 18350336, "name": "\u8d35\u9633" },
+          { "value": 18350592, "name": "\u516d\u76d8\u6c34" },
+          { "value": 18350848, "name": "\u9075\u4e49" },
+          { "value": 18351104, "name": "\u5b89\u987a" },
+          { "value": 18351360, "name": "\u94dc\u4ec1" },
+          { "value": 18351616, "name": "\u6bd5\u8282" },
+          { "value": 18351872, "name": "\u9ed4\u897f\u5357" },
+          { "value": 18352128, "name": "\u9ed4\u4e1c\u5357" },
+          { "value": 18352384, "name": "\u9ed4\u5357" }
+        ]
+      },
+      {
+        "value": 18284544,
+        "name": "\u56db\u5ddd",
+        "cityList": [
+          { "value": 18284800, "name": "\u6210\u90fd" },
+          { "value": 18285056, "name": "\u81ea\u8d21" },
+          { "value": 18285312, "name": "\u6500\u679d\u82b1" },
+          { "value": 18285568, "name": "\u6cf8\u5dde" },
+          { "value": 18285824, "name": "\u5fb7\u9633" },
+          { "value": 18286080, "name": "\u7ef5\u9633" },
+          { "value": 18286336, "name": "\u5e7f\u5143" },
+          { "value": 18286592, "name": "\u9042\u5b81" },
+          { "value": 18286848, "name": "\u5185\u6c5f" },
+          { "value": 18287104, "name": "\u4e50\u5c71" },
+          { "value": 18287360, "name": "\u5357\u5145" },
+          { "value": 18287616, "name": "\u5b9c\u5bbe" },
+          { "value": 18287872, "name": "\u5e7f\u5b89" },
+          { "value": 18288128, "name": "\u8fbe\u5dde" },
+          { "value": 18288384, "name": "\u7709\u5c71" },
+          { "value": 18288640, "name": "\u96c5\u5b89" },
+          { "value": 18288896, "name": "\u5df4\u4e2d" },
+          { "value": 18289152, "name": "\u8d44\u9633" },
+          { "value": 18289408, "name": "\u963f\u575d" },
+          { "value": 18289664, "name": "\u7518\u5b5c" },
+          { "value": 18289920, "name": "\u51c9\u5c71" }
+        ]
+      },
+      {
+        "value": 18481152,
+        "name": "\u897f\u85cf",
+        "cityList": [
+          { "value": 18481408, "name": "\u62c9\u8428" },
+          { "value": 18481664, "name": "\u90a3\u66f2" },
+          { "value": 18481920, "name": "\u660c\u90fd" },
+          { "value": 18482176, "name": "\u5c71\u5357" },
+          { "value": 18482432, "name": "\u65e5\u5580\u5219" },
+          { "value": 18482688, "name": "\u963f\u91cc" },
+          { "value": 18482944, "name": "\u6797\u829d" }
+        ]
+      },
+      {
+        "value": 18415616,
+        "name": "\u4e91\u5357",
+        "cityList": [
+          { "value": 18415872, "name": "\u6606\u660e" },
+          { "value": 18416128, "name": "\u66f2\u9756" },
+          { "value": 18416384, "name": "\u7389\u6eaa" },
+          { "value": 18416640, "name": "\u4fdd\u5c71" },
+          { "value": 18416896, "name": "\u662d\u901a" },
+          { "value": 18417152, "name": "\u666e\u6d31" },
+          { "value": 18417408, "name": "\u4e34\u6ca7" },
+          { "value": 18417664, "name": "\u4e3d\u6c5f" },
+          { "value": 18417920, "name": "\u6587\u5c71" },
+          { "value": 18418176, "name": "\u7ea2\u6cb3" },
+          { "value": 18418432, "name": "\u897f\u53cc\u7248\u7eb3" },
+          { "value": 18418688, "name": "\u695a\u96c4" },
+          { "value": 18418944, "name": "\u5927\u7406" },
+          { "value": 18419200, "name": "\u5fb7\u5b8f" },
+          { "value": 18419456, "name": "\u6012\u6c5f" },
+          { "value": 18419712, "name": "\u8fea\u5e86" }
+        ]
+      },
+      {
+        "value": 18219008,
+        "name": "\u91cd\u5e86",
+        "cityList": [
+          { "value": 18219264, "name": "\u6e1d\u4e2d" },
+          { "value": 18219520, "name": "\u5927\u6e21\u53e3" },
+          { "value": 18219776, "name": "\u6c5f\u5317" },
+          { "value": 18220032, "name": "\u6c99\u576a\u575d" },
+          { "value": 18220288, "name": "\u4e5d\u9f99\u5761" },
+          { "value": 18220544, "name": "\u5357\u5cb8" },
+          { "value": 18220800, "name": "\u5317\u789a" },
+          { "value": 18221568, "name": "\u6e1d\u5317" },
+          { "value": 18221824, "name": "\u5df4\u5357" },
+          { "value": 18222080, "name": "\u4e07\u5dde" },
+          { "value": 18222336, "name": "\u6daa\u9675" },
+          { "value": 18222592, "name": "\u9ed4\u6c5f" },
+          { "value": 18222848, "name": "\u957f\u5bff" },
+          { "value": 18223104, "name": "\u6c38\u5ddd" },
+          { "value": 18223360, "name": "\u5408\u5ddd" },
+          { "value": 18223616, "name": "\u6c5f\u6d25" },
+          { "value": 18223872, "name": "\u5357\u5ddd" },
+          { "value": 18224128, "name": "\u7da6\u6c5f" },
+          { "value": 18224384, "name": "\u6f7c\u5357" },
+          { "value": 18224640, "name": "\u8363\u660c" },
+          { "value": 18224896, "name": "\u74a7\u5c71" },
+          { "value": 18225152, "name": "\u5927\u8db3" },
+          { "value": 18225408, "name": "\u94dc\u6881" },
+          { "value": 18225664, "name": "\u6881\u5e73" },
+          { "value": 18225920, "name": "\u57ce\u53e3" },
+          { "value": 18226176, "name": "\u57ab\u6c5f" },
+          { "value": 18226432, "name": "\u6b66\u9686" },
+          { "value": 18226688, "name": "\u4e30\u90fd" },
+          { "value": 18226944, "name": "\u5949\u8282" },
+          { "value": 18227200, "name": "\u5f00\u53bf" },
+          { "value": 18227456, "name": "\u4e91\u9633" },
+          { "value": 18227712, "name": "\u5fe0\u53bf" },
+          { "value": 18227968, "name": "\u5deb\u6eaa" },
+          { "value": 18228224, "name": "\u5deb\u5c71" },
+          { "value": 18228480, "name": "\u77f3\u67f1" },
+          { "value": 18228736, "name": "\u79c0\u5c71" },
+          { "value": 18228992, "name": "\u9149\u9633" },
+          { "value": 18229248, "name": "\u5f6d\u6c34" }
+        ]
+      },
+      {
+        "value": 18612224,
+        "name": "\u7518\u8083",
+        "cityList": [
+          { "value": 18612480, "name": "\u5170\u5dde" },
+          { "value": 18612736, "name": "\u91d1\u660c" },
+          { "value": 18612992, "name": "\u767d\u94f6" },
+          { "value": 18613248, "name": "\u5929\u6c34" },
+          { "value": 18613504, "name": "\u5609\u5cea\u5173" },
+          { "value": 18613760, "name": "\u6b66\u5a01" },
+          { "value": 18614016, "name": "\u5f20\u6396" },
+          { "value": 18614272, "name": "\u5e73\u51c9" },
+          { "value": 18614528, "name": "\u9152\u6cc9" },
+          { "value": 18614784, "name": "\u5e86\u9633" },
+          { "value": 18615040, "name": "\u5b9a\u897f" },
+          { "value": 18615296, "name": "\u9647\u5357" },
+          { "value": 18615552, "name": "\u7518\u5357" },
+          { "value": 18615808, "name": "\u4e34\u590f" }
+        ]
+      },
+      {
+        "value": 18743296,
+        "name": "\u5b81\u590f",
+        "cityList": [
+          { "value": 18743552, "name": "\u94f6\u5ddd" },
+          { "value": 18743808, "name": "\u77f3\u5634\u5c71" },
+          { "value": 18744064, "name": "\u5434\u5fe0" },
+          { "value": 18744320, "name": "\u56fa\u539f" },
+          { "value": 18744576, "name": "\u4e2d\u536b" }
+        ]
+      },
+      {
+        "value": 18677760,
+        "name": "\u9752\u6d77",
+        "cityList": [
+          { "value": 18678016, "name": "\u897f\u5b81" },
+          { "value": 18678272, "name": "\u6d77\u4e1c" },
+          { "value": 18678528, "name": "\u6d77\u5317" },
+          { "value": 18678784, "name": "\u6d77\u5357" },
+          { "value": 18679040, "name": "\u679c\u6d1b" },
+          { "value": 18679296, "name": "\u7389\u6811" },
+          { "value": 18679552, "name": "\u6d77\u897f" },
+          { "value": 18679808, "name": "\u9ec4\u5357" }
+        ]
+      },
+      {
+        "value": 18546688,
+        "name": "\u9655\u897f",
+        "cityList": [
+          { "value": 18546944, "name": "\u897f\u5b89" },
+          { "value": 18547200, "name": "\u94dc\u5ddd" },
+          { "value": 18547456, "name": "\u5b9d\u9e21" },
+          { "value": 18547712, "name": "\u54b8\u9633" },
+          { "value": 18547968, "name": "\u6e2d\u5357" },
+          { "value": 18548224, "name": "\u5ef6\u5b89" },
+          { "value": 18548480, "name": "\u6c49\u4e2d" },
+          { "value": 18548736, "name": "\u6986\u6797" },
+          { "value": 18548992, "name": "\u5b89\u5eb7" },
+          { "value": 18549248, "name": "\u5546\u6d1b" }
+        ]
+      },
+      {
+        "value": 18808832,
+        "name": "\u65b0\u7586",
+        "cityList": [
+          { "value": 18809088, "name": "\u4e4c\u9c81\u6728\u9f50" },
+          { "value": 18809344, "name": "\u514b\u62c9\u739b\u4f9d" },
+          { "value": 18809600, "name": "\u77f3\u6cb3\u5b50" },
+          { "value": 18809856, "name": "\u963f\u62c9\u5c14" },
+          { "value": 18810112, "name": "\u56fe\u6728\u8212\u514b" },
+          { "value": 18810368, "name": "\u4e94\u5bb6\u6e20" },
+          { "value": 18810624, "name": "\u5410\u9c81\u756a" },
+          { "value": 18810880, "name": "\u54c8\u5bc6" },
+          { "value": 18811136, "name": "\u548c\u7530" },
+          { "value": 18811392, "name": "\u963f\u514b\u82cf" },
+          { "value": 18811648, "name": "\u5580\u4ec0" },
+          { "value": 18811904, "name": "\u514b\u5b5c\u52d2\u82cf\u5dde" },
+          { "value": 18812160, "name": "\u5df4\u97f3\u90ed\u695e" },
+          { "value": 18812416, "name": "\u660c\u5409" },
+          { "value": 18812672, "name": "\u535a\u5c14\u5854\u62c9" },
+          { "value": 18812928, "name": "\u4f0a\u7281" },
+          { "value": 18813184, "name": "\u5854\u57ce" },
+          { "value": 18813440, "name": "\u963f\u52d2\u6cf0" },
+          { "value": 18813696, "name": "\u5317\u5c6f" },
+          { "value": 18813952, "name": "\u53ef\u514b\u8fbe\u62c9" },
+          { "value": 18814208, "name": "\u6606\u7389" },
+          { "value": 18814464, "name": "\u53cc\u6cb3" },
+          { "value": 18814720, "name": "\u94c1\u95e8\u5173" }
+        ]
+      },
+      {
+        "value": 18874368,
+        "name": "\u9999\u6e2f",
+        "cityList": [
+          { "value": 18874624, "name": "\u4e5d\u9f99\u57ce" },
+          { "value": 18874880, "name": "\u89c2\u5858" },
+          { "value": 18875136, "name": "\u6df1\u6c34\u57d7" },
+          { "value": 18875392, "name": "\u9ec4\u5927\u4ed9" },
+          { "value": 18875648, "name": "\u6e7e\u4ed4" },
+          { "value": 18875904, "name": "\u6cb9\u5c16\u65fa" },
+          { "value": 18876160, "name": "\u79bb\u5c9b" },
+          { "value": 18876416, "name": "\u8475\u9752" },
+          { "value": 18876672, "name": "\u897f\u8d21" },
+          { "value": 18876928, "name": "\u6c99\u7530" },
+          { "value": 18877184, "name": "\u5c6f\u95e8" },
+          { "value": 18877440, "name": "\u5927\u57d4" },
+          { "value": 18877696, "name": "\u8343\u6e7e" },
+          { "value": 18877952, "name": "\u5143\u6717" },
+          { "value": 18878208, "name": "\u4e2d\u897f" },
+          { "value": 18878464, "name": "\u4e1c\u533a" },
+          { "value": 18878720, "name": "\u5357\u533a" },
+          { "value": 18878976, "name": "\u5317\u533a" }
+        ]
+      },
+      {
+        "value": 18939904,
+        "name": "\u6fb3\u95e8",
+        "cityList": [
+          { "value": 18940160, "name": "\u5927\u5802" },
+          { "value": 18940416, "name": "\u98ce\u987a\u5802" },
+          { "value": 18940672, "name": "\u82b1\u5730\u739b\u5802" },
+          { "value": 18940928, "name": "\u82b1\u738b\u5802" },
+          { "value": 18941184, "name": "\u5609\u6a21\u5802" },
+          { "value": 18941440, "name": "\u8def\u6c39\u586b\u6d77" },
+          { "value": 18941696, "name": "\u5723\u65b9\u6d4e\u5404\u5802" },
+          { "value": 18941952, "name": "\u671b\u5fb7\u5802" }
+        ]
+      },
+      {
+        "value": 19005440,
+        "name": "\u53f0\u6e7e",
+        "cityList": [
+          { "value": 19005696, "name": "\u53f0\u5317" },
+          { "value": 19005952, "name": "\u9ad8\u96c4" },
+          { "value": 19006208, "name": "\u57fa\u9686" },
+          { "value": 19006464, "name": "\u53f0\u4e2d" },
+          { "value": 19006720, "name": "\u53f0\u5357" },
+          { "value": 19006976, "name": "\u65b0\u7af9" },
+          { "value": 19007232, "name": "\u5609\u4e49" },
+          { "value": 19007488, "name": "\u5317\u53bf" },
+          { "value": 19007744, "name": "\u677f\u6865" },
+          { "value": 19008000, "name": "\u5b9c\u5170" },
+          { "value": 19008512, "name": "\u6843\u56ed" },
+          { "value": 19009024, "name": "\u65b0\u7af9" },
+          { "value": 19009280, "name": "\u7af9\u5317" },
+          { "value": 19009536, "name": "\u82d7\u6817" },
+          { "value": 19010048, "name": "\u53f0\u4e2d" },
+          { "value": 19010304, "name": "\u4e30\u539f" },
+          { "value": 19010560, "name": "\u5f70\u5316" },
+          { "value": 19011072, "name": "\u5357\u6295" },
+          { "value": 19011584, "name": "\u4e91\u6797" },
+          { "value": 19011840, "name": "\u6597\u516d" },
+          { "value": 19012096, "name": "\u5609\u4e49" },
+          { "value": 19012352, "name": "\u592a\u4fdd" },
+          { "value": 19012608, "name": "\u53f0\u5357" },
+          { "value": 19012864, "name": "\u65b0\u8425" },
+          { "value": 19013120, "name": "\u9ad8\u96c4" },
+          { "value": 19013376, "name": "\u51e4\u5c71" },
+          { "value": 19013632, "name": "\u5c4f\u4e1c" },
+          { "value": 19014144, "name": "\u6f8e\u6e56" },
+          { "value": 19014400, "name": "\u9a6c\u4e1c" },
+          { "value": 19014656, "name": "\u53f0\u4e1c" },
+          { "value": 19015168, "name": "\u82b1\u83b2" },
+          { "value": 19015680, "name": "\u91d1\u95e8" },
+          { "value": 19015936, "name": "\u8fde\u6c5f" }
+        ]
+      }
+    ]
+  }
+}

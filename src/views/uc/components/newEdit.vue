@@ -50,20 +50,20 @@ export default {
     },
     setAccount() {
       // 线上代码，上线前删掉注释
-        this.$router.push({
-          name: "ucplan",
-          query: { account: this.account }
-        });
+        // this.$router.push({
+        //   name: "ucplan",
+        //   query: { account: this.account }
+        // });
 
       // 下面为本地模拟时使用，上线前删除
-    //   let query = {
-    //     account: this.account,
-    //     campaign_id: "30414752"
-    //   };
-    //   this.$router.push({
-    //     name: "ucunit",
-    //     query: query
-    //   });
+      let query = {
+        account: this.account,
+        campaign_id: "30414752"
+      };
+      this.$router.push({
+        name: "ucunit",
+        query: query
+      });
 
       this.accountModal = false;
     }

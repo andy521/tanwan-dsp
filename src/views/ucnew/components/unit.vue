@@ -116,7 +116,6 @@
           </Select>
           </Col>
         </Row>
-        {{this.targetingSetting}}
         <Form ref="targetingSetting" :model="targetingSetting" :label-width="126" label-position="left">
           <FormItem label="自定义人群定向">
             <RadioGroup v-model="targetingSetting.audience_targeting">
@@ -199,8 +198,37 @@
           <FormItem label="兴趣与行为定向">
             <RadioGroup v-model="targetingSetting.user_targeting">
               <Radio label="-1">不限</Radio>
-              <Radio label="custom">自定义</Radio>
+              <Radio label="1">自定义</Radio>
             </RadioGroup>
+            <!-- <Tabs value="">
+              <TabPane label="标签一" name="name1">
+                <div class="interesting">
+                  <div class="interest-item">
+                    <type-tree tree-title="游戏类" :tree-data=""></type-tree>
+                  </div>
+                  <div class="interest-item">
+                    <type-tree tree-title="软件类" :tree-data=""></type-tree>
+                  </div>
+                  <div class="interest-item">
+
+                  </div>
+                </div>
+              </TabPane>
+              <TabPane label="标签二" name="name2">
+                <div class="interesting">
+                  <div class="interest-item">
+                    <type-tree tree-title="游戏类" :tree-data=""></type-tree>
+                  </div>
+                  <div class="interest-item">
+                    <type-tree tree-title="软件类" :tree-data=""></type-tree>
+                  </div>
+                  <div class="interest-item">
+
+                  </div>
+                </div>
+              </TabPane>
+            </Tabs> -->
+
             <div>
               <Checkbox v-model="targetingSetting.intelli_targeting">
                 <span>同时开启用户智能定向</span>
@@ -230,7 +258,7 @@
             </RadioGroup>
           </FormItem>
         </Form>
-
+        {{this.targetingSetting}}
         <Row class="btn-submit">
           <Col>
           <Button @click="handleTargetingSumbit" type="primary">确认</Button>
@@ -242,10 +270,18 @@
         <Form ref="priceSetting" :model="unitSetting" :label-width="126" label-position="left">
 
           <FormItem label="转化类型">
-            <Select @on-change="" class="item-width">
-              <!-- <Option v-for="" :value="" :key="">{{}}</Option> -->
+            <Select @on-change="handleChangeConvertMonitorTypes" class="item-width">
+              <Option v-for="(convertName, index) in convert.convertMonitorTypesList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
+            </Select>
+            <span class="color-red">目前仅提供Android下载完成数据</span>
+          </FormItem>
+
+          <FormItem v-if="Array.isArray(convert.convertList) && convert.convertList.length > 0 || convert.convertList === 'object' && convert.convertList.convertId" label="转化名称">
+            <Select @on-change="handleChangeConvertMonitorName" class="item-width">
+              <Option v-for="(convertName, index) in convert.convertList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
             </Select>
           </FormItem>
+          {{this.unitSetting}}
           <FormItem>
             <p slot="label">优化目标
               <Tooltip placement="top">
@@ -265,7 +301,9 @@
             <RadioGroup v-model="unitSetting.optimizationTarget">
               <Radio label="1">点击</Radio>
               <Radio label="2">展现</Radio>
+              <Radio label="3">转化</Radio>
             </RadioGroup>
+            <span class="color-red">优化目标转化仅支持Android；IOS和其他操作系统将采用第一阶段出价进行出价</span>
           </FormItem>
           <FormItem label="计费方式">
             <RadioGroup v-model="unitSetting.chargeType">
@@ -275,8 +313,38 @@
             <span class="color-red">计费方式保存后不可修改</span>
           </FormItem>
           <FormItem label="出价">
-            <InputNumber :max="101" :min="0.50" :step="10" v-model="unitSetting.bid" class="item-width"></InputNumber>元/点击
+            <InputNumber :max="101" :min="0.50" :step="10" v-model="unitSetting.bid" :precision="2" class="item-width"></InputNumber>元/点击
             <span class="color-red">请输入0.50-101之间的数字，精确到小数点后2位，单元出价需小于预算。</span>
+          </FormItem>
+          <FormItem>
+            <p slot="label">第一阶段出价
+              <Tooltip placement="top">
+                <Icon type="help-circled"></Icon>
+                <div slot="content">
+                  <p>点击出价，累计转化数小于100处于该阶段，</p>
+                  <p>与原有CPC方式一致，出价和计费方式均按</p>
+                  <p>点击。</p>
+                </div>
+              </Tooltip>
+            </p>
+            <InputNumber :max="101" :min="0.50" :step="10" v-model="unitSetting.bid" :precision="2" class="item-width"></InputNumber>元/点击
+            <span class="color-red">请输入0.50-101之间的数字，精确到小数点后2位，单元出价需小于预算。</span>
+          </FormItem>
+          <FormItem>
+            <p slot="label">第二阶段出价
+              <Tooltip placement="top">
+                <Icon type="help-circled"></Icon>
+                <div slot="content">
+                  <p>期望转化成本，累计转化数大于等于100进</p>
+                  <p>入该阶段，平台会根据出价智能竞价，计费</p>
+                  <p>方式仍按点击计费，请将该出价尽量与实际</p>
+                  <p>成本接近，出价高低会影响您获得的转化次</p>
+                  <p>数，若设置过低会减少转化次数。</p>
+                </div>
+              </Tooltip>
+            </p>
+            <InputNumber :max="999.99" :min="1" :step="10" v-model="unitSetting.secondBid" :precision="2" class="item-width"></InputNumber>元/点击
+            <span class="color-red">请输入1-999.99之间的数字，精确到小数点后2位</span>
           </FormItem>
         </Form>
         <!-- 出价设置 -->
@@ -320,19 +388,19 @@
           <h4 class="evaluate-subtitle">操作系统：</h4>
           <div class="evaluate-text">{{evaluate.platform}}</div>
         </div>
-        <div v-if="targetingSetting.all_region !== '-1'" class="evaluate-content">
+        <div v-if="targetingSetting.all_region !== '-1' && evaluate.provinceTxt.length > 0" class="evaluate-content">
           <h4 class="evaluate-subtitle">地域：</h4>
           <div class="evaluate-text">
             {{evaluate.provinceTxt}}
           </div>
         </div>
-        <div v-if="targetingSetting.gender !== '-1'" class="evaluate-content">
+        <div v-if="targetingSetting.gender !== '-1' && evaluate.genderTxt.length > 0" class="evaluate-content">
           <h4 class="evaluate-subtitle">性别：</h4>
           <div class="evaluate-text">
             {{evaluate.genderTxt}}
           </div>
         </div>
-        <div v-if="targetingSetting.age !== '-1'" class="evaluate-content">
+        <div v-if="targetingSetting.age !== '-1' && evaluate.ageTxt.length > 0" class="evaluate-content">
           <h4 class="evaluate-subtitle">年龄：</h4>
           <div class="evaluate-text">
             {{evaluate.ageTxt}}
@@ -349,13 +417,14 @@
 // import planList from "../simple/plan";
 // import unitList from "../simple/unit";
 // import targetingList from "../simple/targeting";
+import typeTree from "./typeTree";
 import Axios from "@/api/index";
 const ERR_OK = 1;
 export default {
   data() {
     return {
       isEdit: false, // 推广单页状态：true为编辑状态，false为新建状态
-      // 导入推广单元
+      // 获取同步的 导入推广数据
       importDate: {
         planlist: {}, // 推广计划数据
         unitlist: {} // 推广单元数据
@@ -372,14 +441,14 @@ export default {
         platform: "", // 操作系统
         chargeType: 1, // 计费方式
         bid: 0, // 出价
-        secondBid: "", // 第二阶段出价
+        secondBid: 0, // 第二阶段出价
         adconvertId: "", // 	转化id
         convertMonitorType: -1, // 转化监测类型
         optimizationTarget: "1", // 优化目标
         unitType: 0 // pp应用推广类型
       },
       unitAdgroupName: "", // 导入的推广单元名称
-      // 定向数据
+      // 获取同步的 定向数据
       targetingList: [],
       // 自定义定向设置数据
       targetingSetting: {
@@ -413,10 +482,17 @@ export default {
         genderTxt: "", // 性别
         ageTxt: "" // 年龄
       },
-      provinceList: [], // 省市地域列表
+      provinceList: [], // 获取同步的 省市地域列表
       provinceTreeList: [], // 省市Tree组件数据
       targetingAgeStatus: "-1", // 定向设置的年龄数据状态：-1为不限，1为自定义
-      targetingCustomAgeList: [] // 自定义定向设置的年龄数据
+      targetingCustomAgeList: [], // 自定义定向设置的年龄数据
+      interestTypesList: [], // 获取同步的 兴趣列表
+      // 转化对象
+      convert: {
+        convertMonitorTypesList: [], // 获取同步的 转化类型列表
+        currConvertMonitorTypes: {}, // 当前操作的转化类型对象数据
+        convertList: [] // 获取同步的 转化列表
+      }
     };
   },
   mounted() {
@@ -424,6 +500,8 @@ export default {
     this.UNIT_PLATFORM_NUM = [1, 10, 100];
     this.getAccountInfo();
     this.$nextTick(() => {
+      this.getInterestTypes();
+      this.getConvertMonitorTypes();
       this.getProvince();
     });
   },
@@ -463,7 +541,7 @@ export default {
           }
         }
       } else {
-        console.warn("请输入正确数据");
+        console.warn("请选择操作系统正确数据");
       }
       return retStr.substring(0, retStr.length - 1);
     },
@@ -552,6 +630,28 @@ export default {
       }
       console.log("platformStrToArray", ret, typeof ret);
       return ret;
+    },
+    // 事件：监听转化名称
+    handleChangeConvertMonitorName(convertName) {
+      let currConvertObj = this._getcurrList(
+        this.convert.convertList,
+        "name",
+        convertName
+      );
+      this.unitSetting.adconvertId = currConvertObj.convertId;
+      console.log("convertName", convertName, currConvertObj);
+    },
+    // 事件：监听转化类型
+    handleChangeConvertMonitorTypes(convertType) {
+      let currConvertObj = this._getcurrList(
+        this.convert.convertMonitorTypesList,
+        "name",
+        convertType
+      );
+      this.unitSetting.convertMonitorType = currConvertObj.objType;
+      this.convert.currConvertMonitorTypes = currConvertObj;
+      this.getAdConvert(currConvertObj.objType);
+      console.log("convertType", convertType, currConvertObj);
     },
     // 事件：监听自定义年龄数据
     handleChangeCustomAge(ageList) {
@@ -735,11 +835,12 @@ export default {
         return;
       }
       console.log("select unit", unit, currUnit);
-      // this.unitSetting.adgroup_name = unit;
       this._assignMethod(this.unitSetting, currUnit);
       this.unitSetting.bid = parseInt(this.unitSetting.bid);
+      this.unitSetting.secondBid = parseInt(this.unitSetting.secondBid);
       this.pagePlatform = this.platformStrToArray(this.unitSetting.platform);
       this.evaluate.platform = this.getPlatform(this.unitSetting.platform);
+      this.unitSetting.chargeType = currUnit.chargeType;
     },
     // 初始化省市地域列表
     normalizeProvinceList() {
@@ -760,6 +861,61 @@ export default {
         });
       });
       this.provinceTreeList = ret;
+    },
+    // 获取转化列表
+    getAdConvert(objType) {
+      Axios.post("api.php", {
+        action: "ucAdPut",
+        opt: "getAdConvert",
+        account_id: this.$route.query.account,
+        convertMonitorType: objType
+      })
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            this.convert.convertList = res.data;
+            console.log("获取转化列表", this.convert.convertList);
+          }
+        })
+        .catch(err => {
+          console.log("获取转化列表错误：" + err);
+        });
+    },
+    // 获取转化类型列表
+    getConvertMonitorTypes() {
+      Axios.post("api.php", {
+        action: "ucAdPut",
+        opt: "getConvertType",
+        account_id: this.$route.query.account
+      })
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            this.convert.convertMonitorTypesList = res.data;
+            console.log(
+              "获取转化类型列表",
+              this.convert.convertMonitorTypesList
+            );
+          }
+        })
+        .catch(err => {
+          console.log("获取转化类型列表错误：" + err);
+        });
+    },
+    // 获取兴趣列表
+    getInterestTypes() {
+      Axios.post("api.php", {
+        action: "ucAdPut",
+        opt: "getInterest",
+        account_id: this.$route.query.account
+      })
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            this.interestTypesList = res.data.interestTypes;
+            console.log("获取兴趣列表", this.interestTypesList);
+          }
+        })
+        .catch(err => {
+          console.log("获取兴趣列表错误：" + err);
+        });
     },
     // 获取省市地域列表
     getProvince() {
@@ -858,6 +1014,7 @@ export default {
         if (params && params.account_id) {
           this._assignMethod(this.unitSetting, params);
           this.unitSetting.bid = parseInt(this.unitSetting.bid);
+          this.unitSetting.secondBid = parseInt(this.unitSetting.secondBid);
           this._assignMethod(this.targetingSetting, params);
           this.isEdit = true;
         } else {
@@ -878,7 +1035,7 @@ export default {
           tar[k] = src[k];
         }
       }
-      console.log("_assignMethod", tar, src)
+      console.log("_assignMethod", tar, src);
     },
     /**
      * 返回匹配的数组
@@ -895,6 +1052,9 @@ export default {
       });
       return ret[0];
     }
+  },
+  components: {
+    typeTree
   }
 };
 </script>
