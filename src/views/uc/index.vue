@@ -830,10 +830,11 @@
                                     class: "edit_link",
                                     on: {
                                         'click': () => {
-                                            let query = { account:params.row.account_id};
+                                            let query = { account: params.row.account_id,edit:"1"};
                                             this.$router.push({
-                                                name: "ucnew_pack",
-                                                query: query
+                                                name: "ucplan",
+                                                query: query,
+                                                params: params.row
                                             });
                                         }
                                     }

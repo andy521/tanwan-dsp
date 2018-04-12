@@ -28,6 +28,19 @@ export const newAd = {
     component: () => import('@/views/newad/index.vue')
 };
 
+export const ucNew = {
+    path: '/ucnew',
+    name: 'ucnew',
+    meta: {
+        title: '新建UC推广'
+    },    
+    component: () => import('@/views/ucnew/index.vue'),
+    children: [
+        { path: 'plan', title: '新建UC推广计划', name: 'ucplan', component: () => import('@/views/ucnew/components/plan.vue') },
+        { path: 'unit', title: '新建UC推广计划', name: 'ucunit', component: () => import('@/views/ucnew/components/unit.vue') },
+        { path: 'idea', title: '新建UC推广计划', name: 'ucidea', component: () => import('@/views/ucnew/components/idea.vue') },
+    ]
+};
 
 export const otherRouter = {
     path: '/user',
@@ -114,6 +127,7 @@ export const appRouter = [
 export const routers = [
     loginRouter,
     newAd,
+    ucNew,
     otherRouter,
     ...appRouter
 ];
