@@ -104,7 +104,7 @@
 			return {
                 indeterminate: true,
                 checkAll: false,
-                checkAllGroup:this.userindex,
+                checkAllGroup:[],
                 action:'ucAdPut',
                 opt:'searchAdgroups'
 			}
@@ -112,8 +112,17 @@
         computed: {
 			//获取自定义指标
 			userindex() {
-                let memo = this.$store.state.user.userindex;
-                return memo;
+                let memo = this.$store.state.user.userindex,
+                    list = [];
+                memo.forEach(val=>{
+                    if(val != ''){
+                        list.push(val);
+                    }
+                })
+                if(list.length == '0'){
+                    list=this.check;
+                }
+                this.checkAllGroup = list;
 			},
 		},
         watch:{
@@ -122,7 +131,7 @@
             },
             userindex(data){
                 this.checkAllGroup = data;
-                this.$emit('on-change', this.checkAllGroup);
+                
             }
         },
         mounted(){
@@ -165,7 +174,7 @@
 			//自定义指标
 			checkAllGroupChange(data) {
                 this.$emit('on-change', this.checkAllGroup);
-				if(data.length === 33) {
+				if(data.length === 32) {
 					this.indeterminate = false;
 					this.checkAll = true;
 				} else if(data.length > 0) {

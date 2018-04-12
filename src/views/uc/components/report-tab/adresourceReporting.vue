@@ -1,9 +1,5 @@
 <style scoped>
 .ivu-form-item{margin-bottom: 15px;}
-.ec{ border: 1px solid #eee;}
-#echart{min-height: 550px;}
-.ec_tit{line-height: 34px; padding: 0 15px; background: #f5f5f5;}
-.view{cursor: pointer; float: right;color: #28bd8b;}
 </style>
 <template>
 	<div class="resources">
@@ -20,7 +16,7 @@
                 </Select>
             </Form-item>
             <Form-item label="选择计划：">
-                <plan-list></plan-list>
+                <plan-list @on-change="changePlan"></plan-list>
             </Form-item>
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
@@ -31,15 +27,7 @@
             </Form-item>
             <Button type="primary" @click="getReporting()">查询</Button>
         </Form>
-
-        <div class="ec">
-            <div class="ec_tit">
-                推广资源报告
-                <span class="view" @click="es = !es"><Icon type="stats-bars"></Icon> 查看趋势图</span>
-            </div>
-            <div v-show="es" id="echart"></div>
-        </div>
-
+        <line-chart :datas="echart"></line-chart>
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
@@ -64,11 +52,13 @@
     import Axios from "@/api/index";
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import planList from "../returnPlan.vue";
+    import lineChart from "../lineChart.vue";
 	export default {
         components: {
-            planList
+            planList,
+            lineChart
         },
-        name: 'reporting',        
+        name: 'adresourceReporting',        
 		data() {
 			return {
                 loading:false,
@@ -100,8 +90,7 @@
                     {title: "千次展现价格",sortable: "cost",key: "cpm"},
                 ],
                 tableSize: "small",
-                es:true,
-                echartList:[]
+                echart:[]
 			};
 		},
 		methods: {	
@@ -119,15 +108,16 @@
                     endDate: this.DateDomain[1], //结速时间
                     adresource:this.adresource,
                     orderField:this.orderField,
+                    type:this.type,
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量
                     orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 };
                 Axios.post('api.php', param).then(
 					res => {
-						if(res.ret == 1) {                            
-                            console.log(res)
-                            this.echartList = res.data.echart;
+						if(res.ret == 1) {  
+                            console.log(res);               
+                            this.echart = res.data.echart;
                             this.list = res.data.list;
                             this.page = parseInt(res.data.page);
                             this.page_size = parseInt(res.data.page_size);
@@ -137,49 +127,23 @@
 					}
                 ).catch(err => {console.log(err)});
             },
+            //选择计划
+            changePlan(val){                
+                this.adgroupids = val;
+                console.log(this.adgroupids);
+            },
             //排序
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
                 this.getSpread();
-            },
-            echart(data){
-                let xb = [],
-                    len = 5;
-                for(let i=1; i<= len; i++){
-                    xb.push( i + '小时')
-                };
-
-                const option = {
-                    tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }},                
-                    legend: {
-                        data:['点击','下载','曝光量','转化']
-                    },
-                    grid: {left: '3%',right: '4%',bottom: '3%',containLabel: true},
-                    toolbox: {feature: {saveAsImage: {}}},
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: xb
-                    },
-                    yAxis: {
-                        type: 'value'
-                    }, 
-                    series: data        
-                }; 
-
-                const serviceRequestCharts = echarts.init(document.getElementById('echart'));
-                serviceRequestCharts.setOption(option);
-                window.addEventListener('resize', function () {
-                    serviceRequestCharts.resize();
-                });
-            }
+            },            
         },
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
-            this.options = setDate;
-            this.getReporting();
+            this.options = setDate;            
+            this.getReporting(); 
         }
 	};
 </script>

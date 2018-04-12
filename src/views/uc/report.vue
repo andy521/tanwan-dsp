@@ -6,7 +6,7 @@
 		<Card shadow class="margin-top-10">
             <Tabs :animated="false">
                 <Tab-pane label="推广资源报告">
-                    <reporting></reporting>
+                    <adresource-reporting></adresource-reporting>                    
                 </Tab-pane>
                 <Tab-pane label="APP数据报表">
                     f
@@ -20,10 +20,11 @@
 </template>
 
 <script>
-    import reporting from "./components/report-tab/reporting.vue";
+    import adresourceReporting from "./components/report-tab/adresourceReporting.vue";
+
 	export default {
         components: {
-            reporting
+            adresourceReporting
         },
 		data() {
 			return {
