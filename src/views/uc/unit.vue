@@ -1,22 +1,31 @@
 <style lang="less">
 @import "../../styles/common.less";
 @import './index.less';
+.citytree{background: #fff;
+    border: solid 1px #eee;
+    padding: 15px;
+    max-height: 200px;
+    overflow: auto;
+    margin-top: 10px;
+}
 </style>
 <template>
 	<div class="unit">        
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="14">
-                    <Button type="ghost" icon="ios-copy">新建单元</Button>
-                    <Button type="ghost" icon="funnel" class="margin-left-5" @click=" filterModal = true">筛选</Button>
-                    <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                <Col span="4">
+                    <search-tree @on-change="getids"></search-tree>
+                </Col>
+                <Col span="12">                    
+                    <Button type="ghost" icon="funnel" class="margin-left-10" @click=" filterModal = true">筛选</Button>
+                    <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                     <Input v-model="keyword" class="inp" placeholder="请输入关键字" ></Input>
                     <Button icon="search" @click="getUnit()">搜索</Button>
+                    <new-edit class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="10" style="text-align: right;">
+                <Col span="8" style="text-align: right;">
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
-                    <Button type="ghost" icon="clock" @click="modifyDate">修改日期</Button>
-                    <Button type="ghost" icon="social-usd" @click="setBudget">修改预算</Button>
+                    <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
                     <Poptip placement="bottom-start" v-model="visible">
                         <Button type="ghost" icon="toggle-filled">修改状态</Button>
                         <div class="api" slot="content">
@@ -32,6 +41,8 @@
                             </div>
                         </div>
                     </Poptip>
+                    <Button type="ghost" icon="location" @click="setRegionFun">修改地域</Button>
+                    <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>                    
                     <!-- <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>  -->
                 </Col>
             </Row>	
@@ -56,19 +67,17 @@
                 </Select>
                 </Col>
                 <Col span="14" style="text-align: right;">
-                <Page :total="total_number" :current="page" :page-size="page_size" ref="pages" @on-change="getUnit" show-elevator show-total></Page>
+                    <Page :total="total_number" :current="page" :page-size="page_size" ref="pages" @on-change="getUnit" show-elevator show-total></Page>
                 </Col>
             </Row>
         </Card>
 
-        <Modal v-model="filterModal" title="筛选条件" @on-ok="filterOk" @on-cancel="modalCancel">
+        <Modal v-model="filterModal" title="筛选条件" @on-ok="filterOk" @on-cancel="filterModal = false">
             <p class="mt">推广状态</p>
             <Radio-group v-model="state">
                 <Radio label="">不限</Radio>
-                <Radio label="0">推广中</Radio>
-                <Radio label="1">推广暂停</Radio>
-                <Radio label="2">推广计划预算不足</Radio>
-                <Radio label="3">不在推广周期</Radio>
+                <Radio label="0">启动</Radio>
+                <Radio label="1">暂停</Radio>
             </Radio-group>
             <p class="mt margin-top-20">投放数据</p>
             <div class="model-col">
@@ -128,25 +137,56 @@
                 <Radio label="">不限</Radio>
                 <Radio label="1">UC头条</Radio>
                 <Radio label="2">UC精准</Radio>
-                <Radio label="4">应用商店</Radio>
             </Radio-group>
         </Modal>
+
+        <Modal v-model="bidModal" title="修改出价" @on-ok="setBid" @on-cancel=" bidModal = false ">
+            <Radio-group v-model="operateNum" @on-change="operateNumFun">
+                <Radio label="0">提高</Radio>
+                <Radio label="1">降低</Radio>
+            </Radio-group>
+            <div class="margin-top-10"><Input-number style="width:200px;" :max="percentageMax" :min="1" v-model="percentage"></Input-number> %</div>      
+        </Modal>
+
+        <Modal v-model="regionModal" title="修改地域" @on-ok="setRegion" @on-cancel=" regionModal = false ">
+            <Radio-group v-model="allRegion">
+                <Radio label="1">不限</Radio>
+                <Radio label="0">自定义</Radio>
+            </Radio-group>
+            <div v-show="allRegion == '0'" class="citytree">
+                <Tree :data="regionList" show-checkbox @on-check-change="getRegion"></Tree>
+            </div>            
+        </Modal>
+
+        <Modal v-model="wifiModal" title="修改网络环境" @on-ok="setWifiOk" @on-cancel=" wifiModal = false ">
+            <Radio-group v-model="wifi">
+                <Radio label="11">不限</Radio>
+                <Radio label="01">WIFI</Radio>
+                <Radio label="10">数据网络</Radio>
+            </Radio-group>          
+        </Modal>
+ 
 	</div>
 </template>
 <script>
-	import Axios from "@/api/index";
+    import Axios from "@/api/index";
+    import searchTree from '@/components/select-tree/searchTree.vue';
     import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
+    import newEdit from "./components/newEdit.vue";
 	export default {
+        components: {
+            newEdit,
+            searchTree
+        },
 		data() {
 			return {
                 loading: false,
                 height:document.body.clientHeight - 200,
                 filterModal:false,
-                budgetModal:false,
                 dateModal:false,
-                setbudgetNumber:100,
-                //设置预算
-                setbudget:'-1',
+                regionModal:false,
+                bidModal:false,
+                wifiModal:false,
                 //修改日期和时间
                 formStartDate:'',
                 formEndDate:'-1',
@@ -172,8 +212,8 @@
                 taColumns: [], 
                 //选中账户id
                 checkId: [], 
-                //选中计划id
-                checkCampaign:[],
+                //选中单元id
+                adgroupids:[],
                 //表数据            
                 tableColumns:[
                     {
@@ -185,23 +225,22 @@
                         title: "单元名称",     
                         key: "adgroup_name",
                         width: 250,
-                        // render: (h, params) => {
-                        //     return h("span",{
-                        //         class: "name",
-                        //         on: {
-                        //             'click': () => {
-                        //                 let query = {
-                        //                     account_id:params.row.account_id,
-                        //                     campaign_id:params.row.campaign_id
-                        //                 };
-                        //                 this.$router.push({
-                        //                     name: "uc_unit",
-                        //                     query: query
-                        //                 });
-                        //             }
-                        //         }
-                        //     },params.row.campaign_name)
-                        // }
+                        render: (h, params) => {
+                            return h("span",{
+                                class: "name",
+                                on: {
+                                    'click': () => {
+                                        let query = {
+                                            adgroup_id:params.row.adgroup_id
+                                        };
+                                        this.$router.push({
+                                            name: "uc_idea",
+                                            query: query
+                                        });
+                                    }
+                                }
+                            },params.row.adgroup_name)
+                        }
                     },
                     {
                         title: "投放开关",
@@ -223,7 +262,7 @@
                                                 let paused = value ? '0' : '1';
                                                 let param = {
                                                     account_id:params.row.account_id,
-                                                    campaignids:'['+ params.row.campaign_id +']',
+                                                    adgroupids:'['+ params.row.adgroup_id +']',
                                                     paused : paused
                                                 };
                                                 this.updatePaused(param)
@@ -313,36 +352,37 @@
                         key: 'id',
                         render : (h, params) => {
                             return [
-                                h("i-button", {
-                                    props: {
-                                        icon: "edit",
-                                        type: "success",
-                                        size: "small"
-                                    },
+                                h("span",{
+                                    class: "edit",
                                     on: {
                                         'click': () => {
-                                            console.log('跳转到创建广告')
-                                            // this.$router.push({
-                                            //     name: "time_ad",
-                                            //     query: query
-                                            // });
+                                            let query = {
+                                                account:params.row.account_id,
+                                                adgroup:params.row.adgroup_id,
+                                            };
+                                            this.$router.push({
+                                                name: "ucnew_unit",
+                                                query: query
+                                            });
                                         }
                                     }
-                                }),
-                                h("i-button", {
-                                    props: {
-                                        icon: "trash-a",
-                                        type: "error",
-                                        size: "small"
-                                    },
-                                    class:"margin-left-10",
+                                },'编辑'),
+                                h("span",{
+                                    class: "del",
                                     on: {
-                                        'click': value => {
-                                            let account= params.row.account_id,campaign= '[' + params.row.campaign_id + ']';
-                                            this.deleteData(account,campaign)
+                                        'click': (value) => {
+                                            let account= params.row.account_id,adgroup= '[' + params.row.adgroup_id + ']';
+                                            this.$Modal.confirm({
+                                                title: '操作提示',
+                                                content: '<p>确认删除</p>',
+                                                onOk: () => {
+                                                    this.deleteData(account,adgroup)
+                                                },
+                                                onCancel: () => {}
+                                            });
                                         }
                                     }
-                                })
+                                },'删除')
                             ]
                         }
                     }
@@ -377,11 +417,34 @@
                 //排序
                 orderField:'',
                 orderDirection: '',
+                //修改地域
+                regionList:[],
+                allRegion:'1',
+                regions:[],
+                //修改出价
+                operateNum:'0',
+                percentage:1,
+                percentageMax:1000,
+                //修改网络环境
+                wifi:'11',
+                //根据游戏ID
+                game_id:''
 			};
 		},
 		methods: {
+            //获取选中的游戏id
+            getids(gid){
+                this.game_id = '[' + gid.join(',') + ']';
+                this.getUnit();
+            }, 
             //获取推广单元		
-			getUnit(){
+			getUnit(page){
+                if (page === undefined) {
+                    //this.$refs["pages"].currentPage = 1;
+                    this.page = 1;
+                } else {
+                    this.page = page;
+                }
                 let param={
                     action : 'ucAdPut',
                     opt : 'searchAdgroups',
@@ -389,8 +452,8 @@
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间                    
                     keyword : this.keyword, //模糊搜索关键词(针对计划名称、后台用户名称)
-                    paused:'0', //是否暂停中  0: 否 1: 是
-                    state : this.state,
+                    paused:this.state, //是否暂停中  0: 否 1: 是
+                    game_ids:this.game_id, //游戏ID     
                     chargeType : this.chargeType, //计费方式
                     generalizeType : this.generalizeType,
                     'impression[relation]':this.impression_relation,
@@ -428,13 +491,13 @@
                 if(row.length>0){
                     this.operating = false;
                 };
-                let ids = [],campaigns=[];
+                let ids = [],adgroup=[];
                 row.forEach(item => {
                     ids.push(item.account_id);
-                    campaigns.push(item.campaign_id);
+                    adgroup.push(item.adgroup_id);
                 });
                 this.checkId = ids;
-                this.checkCampaign = campaigns;
+                this.adgroupids = adgroup;
             },
             //排序
             sortchange(column) {
@@ -447,24 +510,186 @@
                 this.DateDomain = e;
                 this.getUnit();
             },
+            //修改状态
+            setPausedFun(){
+                if(this.checkId.length =='0'){
+                    this.$Message.info('请勾选需要修改的数据');
+                    return
+                }; 
+                let param = {
+                    account_id:this.checkId[0],
+                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    paused : this.setpaused
+                };
+                this.updatePaused(param);
+            },
+            //投放开关
+            updatePaused(data){
+                let param = data;
+                    param.action = 'ucAdPut';
+                    param.opt = 'updateAdgroupPaused';
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            this.$Message.info(res.data);
+                            this.getUnit();
+						}
+					}
+                ).catch(err => {console.log(err)});                
+            },
+            //删除
             deleteFun(){
-
+                if(this.checkId.length =='0'){
+                    this.$Message.info('请勾选需要修改的数据');
+                    return
+                }; 
+                let account= this.checkId[0],adgroup= '[' + this.adgroupids.join(',') + ']';
+                this.deleteData(account,adgroup);
             },
-            modifyDate(){
-
+            deleteData(account,adgroup){
+                let param = {
+                    action:'ucAdPut',
+                    opt:'deleteAdgroup',
+                    do:'del',
+                    account_id:account,
+                    adgroupids:adgroup
+                }
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            this.$Message.info(res.msg);
+                            this.getUnit();
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },            
+            //修改出价
+            setBidFun(){
+                if(this.checkId.length =='0'){
+                    this.$Message.info('请勾选需要修改的数据');
+                    return
+                };
+                this.bidModal = true;
             },
-            setBudget(){
-
+            setBid(){  
+                let param = {
+                    action:'ucAdPut',
+                    opt:'updateAdgroupBidByPercentage',
+                    account_id:this.checkId[0],
+                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    bidStage:1,
+                    operateNum:this.operateNum,
+                    percentage:this.percentage
+                }
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            console.log(res)
+                            this.$Message.info(res.msg);
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },
+            //修改出价 - 提高/降底
+            operateNumFun(val){
+                this.percentage = 1;
+                if(val == '0'){
+                    this.percentageMax = 1000;
+                }else{
+                    this.percentageMax = 100;
+                }
+            },
+            //修改地域
+            setRegionFun(){
+                if(this.checkId.length =='0'){
+                    this.$Message.info('请勾选需要修改的数据');
+                    return
+                }; 
+                this.regionModal = true;
+                Axios.post('api.php', {action:'ucAdPut',opt:'getProvince',account_id:this.checkId[0]}).then(
+					res => {
+						if(res.ret == 1) {
+                            //console.log(res.data.provinces)
+                            let list=res.data.provinces,
+                                newlist = [];
+                            list.forEach((item, i) => {
+                                let children = [];
+                                item.cityList.forEach(item => {
+                                    let newv = {
+                                        title: item.name,
+                                        id: item.value,
+                                        expand: false
+                                    }
+                                    children.push(newv)
+                                });
+                                let newitem = {
+                                    title: item.name,
+                                    id: item.value,
+                                    expand: false,
+                                    children: children
+                                }
+                                newlist.push(newitem)
+                            }); 
+                            this.regionList = newlist;
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },
+            //修改网络环境
+            setWifi(){
+                if(this.checkId.length =='0'){
+                    this.$Message.info('请勾选需要修改的数据');
+                    return
+                }; 
+                this.wifiModal = true;
+            },
+            setWifiOk(){
+                let param = {
+                    action:'ucAdPut',
+                    opt:'updateAdgroupNetworkEnv',
+                    account_id:this.checkId[0],
+                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    networkEnv: this.wifi
+                }
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            console.log(res)
+                            this.$Message.info(res.msg);     
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },
+            getRegion(data){
+                var ids = [];
+				data.forEach(item => {
+					if(!item.children) {
+						ids.push(item.id);
+					}
+				})
+                this.regions = ids;
+            },
+            setRegion(){
+                let param = {
+                    action:'ucAdPut',
+                    opt:'updateAdgroupRegion',
+                    account_id:this.checkId[0],
+                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    allRegion: this.allRegion,
+                    regions:this.regions
+                }
+                console.log(param)
+                Axios.post('api.php', param).then(
+					res => {
+						if(res.ret == 1) {
+                            this.$Message.info(res.msg);     
+						}
+					}
+                ).catch(err => {console.log(err)});
             },
             getuncheck(){
 
-            },
-            setPausedFun(){
-
-            },
-            modalCancel(){
-                this.filterModal = false;
-            },
+            },            
             //筛选条件
             filterOk(){
                 let item = [];
@@ -503,16 +728,75 @@
                     }
                     item.push({text:t,id:'adResourceId'});
                 };
+                if(this.chargeType != ''){
+                    let t = '计费方式:'
+                    switch (this.chargeType) {
+                        case '1': t += 'CPC';break;
+                        case '2': t += 'CPM';break;
+                    }
+                    item.push({text:t,id:'chargeType'});
+                };
+                if(this.generalizeType != ''){
+                    let t = '推广方式:'
+                    switch (this.generalizeType) {
+                        case '1': t += '打开页面';break;
+                        case '2': t += 'APP下载';break;
+                    }
+                    item.push({text:t,id:'generalizeType'});
+                };
                 if(item.length > 0){
                     this.filterItem = item;
                     this.filterShow=true;
-                    this.getSpread();
+                    this.getUnit();
                 }
             },
+            deleteFilter(event, name){ 
+                switch (name) {
+                    case 'state': this.state=''; break;
+                    case 'impression': this.impression_value=''; break;
+                    case 'cost': this.cost_value=''; break;
+                    case 'click': this.click_value=''; break;
+                    case 'ctr': this.ctr_value=''; break;
+                    case 'adResourceId': this.adResourceId=''; break;
+                    case 'chargeType': this.chargeType=''; break;
+                    case 'generalizeType': this.generalizeType=''; break;
+                }
+                let fitem = [];
+                this.filterItem.forEach(item=>{
+                    if(item.id != name){
+                        fitem.push(item)
+                    }
+                });
+                this.filterItem = fitem;
+                if(fitem.length == 0){
+                    this.filterShow=false;
+                }
+                this.getUnit();
+            },
             deleteFilterAll(){
-                this.state = this.adResourceId=this.impression_value=this.cost_value=this.click_value=this.ctr_value='';
+                this.state = this.adResourceId=this.impression_value=this.cost_value=this.click_value=this.ctr_value=this.chargeType=this.generalizeType='';
                 this.filterShow=false;
                 this.getUnit();
+            },
+            //筛选弹出框验证数字
+            setNum(name){
+                let patrn = /^\d+(\.\d+)?$/;               
+                if (!patrn.exec(this.impression_value) && name == 'impression' && this.impression_value != ''){
+                    this.impression_value = '';
+                    this.$Message.error('请输非数字');
+                };
+                if (!patrn.exec(this.cost_value) && name == 'cost' && this.cost_value != ''){
+                    this.cost_value = '';
+                    this.$Message.error('请输非数字');
+                };
+                if (!patrn.exec(this.click_value) && name == 'click' && this.click_value != ''){
+                    this.click_value = '';
+                    this.$Message.error('请输非数字');
+                };
+                if (!patrn.exec(this.ctr_value) && name == 'ctr' && this.ctr_value != ''){
+                    this.ctr_value = '';
+                    this.$Message.error('请输非数字');
+                };
             }
         },
         computed: {
