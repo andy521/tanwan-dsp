@@ -104,7 +104,7 @@
 			return {
                 indeterminate: true,
                 checkAll: false,
-                checkAllGroup:[],
+                checkAllGroup:this.userindex,
                 action:'ucAdPut',
                 opt:'searchAdgroups'
 			}
@@ -122,7 +122,7 @@
                 if(list.length == '0'){
                     list=this.check;
                 }
-                this.checkAllGroup = list;
+                return list         
 			},
 		},
         watch:{
@@ -131,7 +131,7 @@
             },
             userindex(data){
                 this.checkAllGroup = data;
-                
+                this.$emit('on-change', this.checkAllGroup);
             }
         },
         mounted(){

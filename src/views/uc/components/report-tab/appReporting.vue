@@ -7,17 +7,20 @@
             <Form-item label="时间范围：">
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
             </Form-item>
-            <Form-item label="推广资源：">
-                <Select v-model="adresource" style="width:200px">
-                    <Option value="">不限</Option>
-                    <Option value="UC头条">UC头条</Option>
-                    <Option value="UC精准">UC精准</Option>
-                    <Option value="应用商店">应用商店</Option>
+            <Form-item label="操作系统：">
+                <Select v-model="platform" style="width:200px">
+                    <Option value="">全部操作系统传空值</Option>
+                    <Option value="ios">ios</Option>
+                    <Option value="android">android</Option>
+                    <Option value="其他">其他</Option>
                 </Select>
             </Form-item>
-            <Form-item label="选择计划：">
-                <plan-list @on-change="changePlan"></plan-list>
-            </Form-item>
+            <!-- <Form-item label="数据维度：">
+                <Radio-group v-model="type">
+                    <Radio label="1">按APPID</Radio>
+                    <Radio label="2">按搜索关键词</Radio>
+                </Radio-group>
+            </Form-item> -->
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
                     <Radio label="1">分日</Radio>
@@ -26,8 +29,9 @@
                 </Radio-group>
             </Form-item>
             <Button type="primary" @click="getReporting()">查询</Button>
-        </Form>
+        </Form>    
         <line-chart :datas="echart"></line-chart>
+
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
@@ -50,25 +54,22 @@
 
 <script>
     import Axios from "@/api/index";
+    import echarts from 'echarts';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-    import planList from "../returnPlan.vue";
     import lineChart from "../lineChart.vue";
 	export default {
+        name: 'appReporting',
         components: {
-            planList,
             lineChart
-        },
-        name: 'adresourceReporting',        
+        },        
 		data() {
 			return {
                 loading:false,
                 options: null,
                 //筛选时间
-                DateDomain: [formatDate(new Date(new Date().getTime()-1000*60*60*24*7), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")],                
-                //推广单元id集合
-                adgroupids:[],
-                //推广资源
-                adresource:'',
+                DateDomain: [formatDate(new Date(new Date().getTime()-1000*60*60*24*7), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")],   
+                //操作系统
+                platform:'',
                 //时间单位
                 type:'1',
                 //排序
@@ -81,13 +82,16 @@
                 list:[],
                 tableColumns:[
                     {title: "日期",key: "date",width: 200},
-                    {title: "推广资源",key: "ad_resource",width: 300},
-                    {title: "展现量",sortable: "custom",key: "impression"},
+                    {title: "用户名",key: "account_name",width: 300},
+                    {title: "操作系统",key: "platform"},
+                    {title: "APPID",key: "app_id"},
+                    {title: "APP名称",key: "app_name",width: 300},                    
+                    {title: "点击",sortable: "cost",key: "click"},
                     {title: "消费",sortable: "cost",key: "cost"},
                     {title: "点击",sortable: "cost",key: "click"},
                     {title: "点击率",sortable: "cost",key: "ctr"},
-                    {title: "平均点击价格",sortable: "cost",key: "cpc"},
-                    {title: "千次展现价格",sortable: "cost",key: "cpm"},
+                    {title: "平均点击价格",sortable: "cost",key: "cpc",width: 130},
+                    {title: "千次展现价格",sortable: "cost",key: "cpm",width: 130},
                 ],
                 tableSize: "small",
                 echart:[]
@@ -97,7 +101,6 @@
             //改变日期
             changeDate(e) {
                 this.DateDomain = e;
-                //this.getSpread();
             },	
 			getReporting(page){
                 if (page === undefined) {
@@ -105,24 +108,25 @@
                 } else {
                     this.page = page;
                 }
+                this.loading = true;
                 let param = {
                     action:'ucAdPut',
-                    opt:'getAdresourceReporting',
-                    adgroupids:this.adgroupids,
+                    opt:'getAppReporting',
+                    platform:this.platform,
                     startDate: this.DateDomain[0], //开始时间
-                    endDate: this.DateDomain[1], //结速时间
-                    adresource:this.adresource,
-                    orderField:this.orderField,
+                    endDate: this.DateDomain[1], //结速时间                    
                     type:this.type,
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量
+                    orderField:this.orderField,
                     orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 };
                 Axios.post('api.php', param).then(
 					res => {
-						if(res.ret == 1) {  
-                            console.log(res);               
-                            this.echart = res.data.echart;
+						if(res.ret == 1) {
+                            console.log(res);  
+                            this.loading = false;                      
+                            this.echart = res.data.echart; 
                             this.list = res.data.list;
                             this.page = parseInt(res.data.page);
                             this.page_size = parseInt(res.data.page_size);
@@ -132,17 +136,12 @@
 					}
                 ).catch(err => {console.log(err)});
             },
-            //选择计划
-            changePlan(val){                
-                this.adgroupids = val;
-                console.log(this.adgroupids);
-            },
             //排序
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
                 this.getSpread();
-            },            
+            },       
         },
         beforeMount(){
             let setDate = DateShortcuts;

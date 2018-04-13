@@ -4,6 +4,7 @@
 .ec_tit{line-height: 34px; padding: 0 15px; background: #f5f5f5;}
 .view{cursor: pointer; float: right;color: #28bd8b;}
 .echart_area{padding: 10px;}
+.es_select{margin-bottom: 15px;}
 </style>
 <template>
 	<div class="chart">
@@ -12,7 +13,7 @@
             <span class="view" @click="es = !es"><Icon type="stats-bars"></Icon> 查看趋势图</span>
         </div>            
         <div v-show="es" class="echart_area">
-            <div>
+            <div class="es_select">
                 <Select v-model="left" @on-change="changeChart" size="small" style="width:120px">
                     <Option v-for="item in echartData" :value="item.eng" :key="item.eng">{{ item.name }}</Option>
                 </Select>
@@ -20,9 +21,7 @@
                     <Option v-for="item in echartData" :value="item.eng" :key="item.eng">{{ item.name }}</Option>
                 </Select>
             </div>
-            <div id="echart">
-
-            </div>
+            <div id="echart"></div>
         </div>
 	</div>
 </template>
@@ -41,11 +40,13 @@
                 es:true,
                 echartData:[],
                 left:'',
-                right:''
+                right:'',
+                name:this.id
 			};
         },
         watch: {
             datas(val) {
+                console.log(val)
                 this.left = val[0].eng || '';
                 this.right = val[1].eng || '';
                 this.echartData = val;      
@@ -64,6 +65,8 @@
                     name = [];
                 d.push(this.left);
                 d.push(this.right);
+                let isData = d.some(v => v != '')
+                if(!isData) return;
                 d.forEach(val=>{
                     for(let x in list){
                         if(list[x].eng == val){
@@ -86,8 +89,22 @@
                     }
                 });
                 const option = {
+                    tooltip: {
+                        trigger: 'axis',
+                            axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
                     legend: {
                         data:name
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
                     },
                     grid: {top: '5%',left: '1.2%',right: '1%',bottom: '3%',containLabel: true},
                     xAxis: {
