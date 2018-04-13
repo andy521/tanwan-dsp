@@ -9,6 +9,15 @@ export const page404 = {
     component: () => import('@/views/error-page/404.vue')
 };
 
+export const page403 = {
+    path: '/403',
+    meta: {
+        title: '403-权限不足'
+    },
+    name: 'error-403',
+    component: () => import('@//views/error-page/403.vue')
+};
+
 export const loginRouter = {
     path: '/login',
     name: 'login',
@@ -129,5 +138,7 @@ export const routers = [
     newAd,
     ucNew,
     otherRouter,
-    ...appRouter
+    ...appRouter,
+    page403,
+    page404
 ];

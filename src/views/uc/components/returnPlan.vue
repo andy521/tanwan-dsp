@@ -4,12 +4,7 @@
 .ivu-checkbox-group-item{display: block; margin-top: 10px;}
 .plan_main{display: flex;}
 .clist{width: 50%; padding: 0 10px;}
-.name{max-width: 190px; overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    word-wrap: normal;
-    word-wrap: break-word;
-    word-break: break-all;}
+.name{max-width: 190px; overflow: hidden;text-overflow: ellipsis; white-space: nowrap; word-wrap: normal;word-wrap: break-word;word-break: break-all;}
 </style>
 <template>
 	<div class="plan">
@@ -18,7 +13,7 @@
             <div class="plan_main">
                 <div class="clist">
                     <div class="pt">
-                        全部推广计划
+                        全部计划
                         <Checkbox style="float:right" @on-change="planAll">全选</Checkbox>
                     </div>
                     <div class="plan_box">
@@ -29,7 +24,7 @@
                 </div>
                 <div class="clist">
                     <div class="pt">
-                        全部推广单元
+                        全部单元
                         <Checkbox style="float:right" @on-change="unitAll">全选</Checkbox>
                     </div>
                     <div class="plan_box">
@@ -55,7 +50,7 @@
                 adgroupList:[],
                 selePlan:[],
                 seleUnit:[],
-                ts:'全部推广计划'
+                ts:'请选择计划'
 			};
 		},
 		methods: {		

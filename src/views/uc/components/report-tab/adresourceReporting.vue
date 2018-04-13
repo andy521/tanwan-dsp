@@ -1,6 +1,3 @@
-<style scoped>
-.ivu-form-item{margin-bottom: 15px;}
-</style>
 <template>
 	<div class="resources">
         <Form :label-width="80" inline>
@@ -27,7 +24,7 @@
             </Form-item>
             <Button type="primary" @click="getReporting()">查询</Button>
         </Form>
-        <line-chart :datas="echart"></line-chart>
+        <line-chart :datas="echart" title="推广资源报告"></line-chart>
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸

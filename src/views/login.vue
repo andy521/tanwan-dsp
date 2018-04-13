@@ -62,13 +62,15 @@
                             'opt' : 'login'
                         })
                         .then((data)=>{                            
-                            if(data.ret == 1){                                 
+                            if(data.ret == 1){  
+                                console.log(data)                               
                                 //权限管理
                                 let action = data.data.data.actionid;
                                 let access = [];
                                 if(action === 'all'){
                                     access.push('all');
                                 }else{
+                                    access.push('home_index');
                                     action.forEach(item => {
                                         switch(item){
                                             case '999': 
@@ -89,14 +91,27 @@
                                             case '1038': 
                                                 access.push('setid_systemmsg');
                                             break;
+                                            case '1043': 
+                                                access.push('uc_report');
+                                            break;
+                                            case '1042': 
+                                                access.push('uc_idea');
+                                            break;
+                                            case '1041': 
+                                                access.push('uc_plan');
+                                            break;
+                                            case '1040': 
+                                                access.push('uc_unit');
+                                            break;
                                         }
                                     });
                                 };
+                                console.log(access)
                                 Util.setItem('user', this.form.userName );  
                                 Util.setItem('sessionid',data.data.sessionid);                                       
                                 Util.setItem('access', access.join(",")); 
                                 this.$store.dispatch('UserLogin', userinfo);
-                                
+                                                                
                                 var action = data.data.data.action,
 										opt = data.data.data.opt,
 										Do = data.data.data.do;

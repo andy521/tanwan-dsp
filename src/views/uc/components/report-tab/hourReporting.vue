@@ -1,6 +1,3 @@
-<style scoped>
-.ivu-form-item{margin-bottom: 15px;}
-</style>
 <template>
 	<div class="resources">
         <Form :label-width="80" inline>
@@ -8,12 +5,12 @@
                 <Tag>今天</Tag>
             </Form-item>
             <Form-item label="报表类型：">
-                <Select v-model="retype" style="width:200px">
-                    <Option value="1">账户报告 </Option>
-                    <Option value="2">计划报告</Option>
-                    <Option value="3">单元报告 </Option>
-                    <Option value="4">创意报告</Option>
-                </Select>
+                <Radio-group v-model="retype">
+                    <Radio label="1">账户报告</Radio>
+                    <Radio label="2">计划报告</Radio>
+                    <Radio label="3">单元报告 </Radio>
+                    <Radio label="4">创意报告</Radio>
+                </Radio-group>
             </Form-item>
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
@@ -24,7 +21,7 @@
             <Button type="primary" @click="getReporting()">查询</Button>
         </Form>  
 
-        <line-chart :datas="echart"></line-chart>
+        <line-chart :datas="echart" title="账户报告 (注意：当日数据仅供参考，请以隔日数据为准)"></line-chart>
 
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
@@ -52,7 +49,7 @@
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import lineChart from "../lineChart.vue";
 	export default {
-        name: 'appReporting',
+        name: 'hourReporting',
         components: {
             lineChart
         },        

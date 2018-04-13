@@ -1,30 +1,47 @@
 <style scoped>
-.ivu-form-item{margin-bottom: 15px;}
+.resources .ivu-form-item{margin-bottom: 0;}
 </style>
 <template>
 	<div class="resources">
-        <Form :label-width="80" inline>
+        <Form :label-width="100" >
             <Form-item label="时间范围：">
-                <Tag>今天</Tag>
+                <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
             </Form-item>
-            <!-- <Form-item label="报表类型：">
-                <Select v-model="retype" style="width:200px">
-                    <Option value="1">账户报告 </Option>
-                    <Option value="2">计划报告</Option>
-                    <Option value="3">单元报告 </Option>
-                    <Option value="4">创意报告</Option>
+            <!-- <Checkbox v-model="compare">比较</Checkbox> -->
+            <Form-item label="报告类型：">
+                <Radio-group v-model="retype" @on-change="retypeChange">
+                    <Radio label="1">账户报告</Radio>
+                    <Radio label="2">计划报告</Radio>
+                    <Radio label="3">单元报告 </Radio>
+                    <Radio label="4">创意报告</Radio>
+                </Radio-group>
+            </Form-item>
+            <!-- 账户报告 -->
+            <Form-item v-show="retype == 1">
+                <Select v-model="accountIds" style="width:200px" placeholder="请选择账户">
+                    <Option v-for="(item,index) in accountList" :value="item.account_id" :key="index">{{ item.account_name }}</Option>
                 </Select>
             </Form-item>
+
+            <Form-item v-show="showPlanSelect">
+                <plan-list @on-change="changePlan"></plan-list>
+            </Form-item>
+
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
                     <Radio label="0">分小时</Radio>
+                    <Radio label="1">分日</Radio>
+                    <Radio label="2">分月</Radio>
                     <Radio label="3">汇总</Radio>
                 </Radio-group>
-            </Form-item> -->
-            <Button type="primary" @click="getReporting()">查询</Button>
+            </Form-item>
+
+            <Form-item >
+                <Button type="primary" @click="getReporting()">查询</Button>
+            </Form-item>
         </Form>  
 
-        <line-chart :datas="echart"></line-chart>
+        <line-chart :datas="echart" :title="title" inside="true" style="margin-top:15px;"></line-chart>
 
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
@@ -43,6 +60,8 @@
                 <Page :total="total_number" :current="page" :page-size="page_size" ref="pages" @on-change="getReporting" show-elevator show-total></Page>
             </Col>
         </Row>
+
+ 
 	</div>
 </template>
 
@@ -50,17 +69,32 @@
     import Axios from "@/api/index";
     import echarts from 'echarts';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
+    import planList from "../returnPlan.vue";
     import lineChart from "../lineChart.vue";
 	export default {
-        name: 'appReporting',
+        name: 'gradationReporting',
         components: {
+            planList,
             lineChart
         },        
 		data() {
 			return {
                 loading:false,
-                //报表数据的时间段
-                period:'',
+                options: null,
+                title:'账户报告',
+                //是否显示选择计划按钮
+                showPlanSelect:false,
+                //账户列表
+                accountList:[],
+                accountIds:'',
+                //筛选时间
+                DateDomain: [formatDate(new Date(new Date().getTime()-1000*60*60*24*7), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")], 
+                //比较
+                compare:'',
+                //报表类型
+                retype:'1',
+                //时间单位
+                type:'0',
                 //排序
                 orderField:'',
                 orderDirection: '',
@@ -80,7 +114,8 @@
                     {title: "千次展现价格",sortable: "cost",key: "cpm"},
                 ],
                 tableSize: "small",
-                echart:[]
+                echart:[],
+                
 			};
 		},
 		methods: {	
@@ -97,9 +132,11 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getGradationReporting',
-
-
-                
+                    period: this.DateDomain.join(','),  
+                    retype:this.retype,
+                    type:this.type,
+                    accountIds:this.accountIds,
+                    adgroupIds:this.adgroupIds,
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量
                     orderField:this.orderField,
@@ -125,29 +162,44 @@
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
                 this.getSpread();
-            },       
+            },
+            getAccountList(){
+                Axios.post('api.php', {action:'ucAdPut',opt:'getAccountList'}).then(
+					res => {
+						if(res.ret == 1) {                            
+                            this.accountList = res.data;
+                            console.log(this.accountList);
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },
+            //报告类型
+            retypeChange(val){
+                switch (val) {
+                    case '1': this.title ='账户报告'; this.showPlanSelect=false; break;
+                    case '2': this.title ='计划报告'; this.showPlanSelect=true; break;
+                    case '3': this.title ='单元报告'; this.showPlanSelect=true;break;
+                    case '4': this.title ='创意报告'; this.showPlanSelect=true; break;
+                }
+            },
+            //获取所有单元ID
+            changePlan(data){
+                console.log(data)
+                this.adgroupIds = data
+            }        
         },
-        beforeMount(){          
+        beforeMount(){
+            let setDate = DateShortcuts;
+            setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
+            this.options = setDate;
+            this.getAccountList();  
             this.getReporting(); 
+            // this.$Notice.warning({
+            //     title: '提示',
+            //     desc:'请先选择报类型中的账户，不然无法加载数据'
+            // });
         }
     };
-    
-
-    // dataZoom: [
-    //     {
-    //         show: true,
-    //         realtime: true,
-    //         start: 65,
-    //         end: 85
-    //     },
-    //     {
-    //         type: 'inside',
-    //         realtime: true,
-    //         start: 65,
-    //         end: 85
-    //     }
-    // ],
-
 
 </script>
 

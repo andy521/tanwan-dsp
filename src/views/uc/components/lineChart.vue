@@ -9,7 +9,7 @@
 <template>
 	<div class="chart">
         <div class="ec_tit">
-            推广资源报告
+            {{title}}
             <span class="view" @click="es = !es"><Icon type="stats-bars"></Icon> 查看趋势图</span>
         </div>            
         <div v-show="es" class="echart_area">
@@ -29,27 +29,25 @@
     import echarts from 'echarts';
 	export default {
         name: 'lineChart',
-        props:{
-            datas: {
-                type: Array,
-                default: () => []       
-            }
-        },
+        props: ['datas','title','inside'],
 		data() {
 			return {
+                tname:this.title,
                 es:true,
-                echartData:[],
+                echartData:[],     
                 left:'',
                 right:'',
-                name:this.id
+                name:this.id,
+                x:[]
 			};
         },
         watch: {
             datas(val) {
                 console.log(val)
-                this.left = val[0].eng || '';
-                this.right = val[1].eng || '';
-                this.echartData = val;      
+                this.left = val.echartData[0].eng || '';
+                this.right = val.echartData[1].eng || '';
+                this.echartData = val.echartData; 
+                this.x= val.xAxis;
                 this.echartUpdate(val);
             }
         },
@@ -57,17 +55,18 @@
             changeChart(){
                 this.echartUpdate();
             },
-			echartUpdate(){
-                let list= this.echartData,
-                    d = [],
-                    xAxis =[],
+			echartUpdate(){    
+                let list = this.echartData,
+                    xAxis = this.x,
+                    select = [],
                     series = [],
-                    name = [];
-                d.push(this.left);
-                d.push(this.right);
-                let isData = d.some(v => v != '')
-                if(!isData) return;
-                d.forEach(val=>{
+                    name = [];   
+                select.push(this.left);
+                select.push(this.right);
+                let isData = select.some(v => v != '')
+                if(!isData) return;  
+
+                select.forEach(val=>{
                     for(let x in list){
                         if(list[x].eng == val){
                             name.push(list[x].name);
@@ -82,7 +81,6 @@
                             seriesData.type = list[x].type;
                             seriesData.data = s;
                             seriesData.name = list[x].name;
-                            xAxis = axis;
                             series.push(seriesData); 
                             return;
                         }
@@ -116,6 +114,12 @@
                         type: 'value'
                     },
                     series: series
+                };
+                if(!!this.inside){
+                        option.dataZoom = [
+                            {show: true, realtime: true,start: 0,end: 100},
+                            //{type: 'inside',realtime: true,start: 0,end: 100}
+                        ]
                 };
                 const serviceRequestCharts = echarts.init(document.getElementById('echart'));
                 serviceRequestCharts.setOption(option);

@@ -92,6 +92,7 @@
 </template>
 
 <script>
+    import Axios from "@/api/index";
 	export default {
         props :{
             check: {
@@ -103,44 +104,34 @@
 			return {
                 indeterminate: true,
                 checkAll: false,
-                checkAllGroup:this.userindex,
+                checkAllGroup:[],
                 action:'ucAdPut',
                 opt:'searchCampaigns'
 			}
         },
-        computed: {
-			//获取自定义指标
-			userindex() {
-                let memo = this.$store.state.user.userindex,
-                    list = [];
-                memo.forEach(val=>{
-                    if(val != ''){
-                        list.push(val);
-                    }
-                });
-                if(list.length == '0'){
-                    list=this.check;
-                }
-                return list;	
-			},
-		},
         watch:{
-            check(data){
-                this.checkAllGroup = data
-            },
-            userindex(data){
+            checkAllGroup(data){
                 this.checkAllGroup = data;                
                 this.$emit('on-change', this.checkAllGroup);
             }
         },
-        mounted(){
-            //传过来的默认选项
-            this.checkAllGroup = this.check;
-            let param = {
-				taction: this.action,
-				topt: this.opt
-			};
-			this.$store.dispatch('DiyIndex', param);
+        mounted(){            
+            let param = {action:'sys',opt:'get_user_memo',taction: this.action,topt: this.opt};            
+            Axios.get('api.php',param).then( 
+                res=>{
+                    if(res.ret == 1) {
+                        console.log(res.data)
+                        if(res.data != ''){
+                            this.checkAllGroup = res.data.split(',');
+                            this.$emit('on-change', this.checkAllGroup);
+                        }else{
+                            this.checkAllGroup = this.check;
+                        };
+                    }
+                }
+            ).catch( 
+                err=>{ console.log(err) }
+            );
         },
 		methods: {           
 			//自定义指标全选
@@ -161,14 +152,22 @@
 				this.$emit('on-change', this.checkAllGroup);
             },
             //保存自定义指标
-            saveIndex(){                
-                let param = {
-					taction: this.action,
-					topt: this.opt,
-					memo: this.checkAllGroup.join(',')
-				};
-                this.$store.dispatch('SaveIndex', param);
-                console.log('保存')
+            saveIndex(){
+                if(this.checkAllGroup.length == '0'){
+                    this.$Message.info('至少您得选择一个自定义指标吧');
+                    return;
+                }
+                let param = {action:'sys',opt:'set_user_memo',taction: this.action,topt: this.opt,memo:this.checkAllGroup.join(',')};            
+                Axios.get('api.php',param).then( 
+                    res=>{
+                        if(res.ret == 1) {
+                            this.$Message.info(res.data.data);
+                            return;
+                        }
+                    }
+                ).catch( 
+                    err=>{ console.log(err) }
+                );
             },
 			//自定义指标
 			checkAllGroupChange(data) {
