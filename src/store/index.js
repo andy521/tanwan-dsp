@@ -2,9 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import app from './modules/app';  //框架样式
 import user from './modules/user'; //用户信息
-import plan from './modules/plan';  //实时投放
 import newad from './modules/newad';  //新建广告
 import setid from './modules/setid';  //帐号管理
+import ucnew from './modules/ucnew';    // 新建uc广告
 Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
@@ -18,9 +18,9 @@ const store = new Vuex.Store({
     modules: {
         app, 
         user,
-        plan,
         newad,
-        setid
+        setid,
+        ucnew
     }
 });
 

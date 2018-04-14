@@ -71,8 +71,7 @@ const user = {
         SaveIndex({commit},opt){
             let param = opt;
                 param.action = 'sys';
-                param.opt = 'set_user_memo';
-            console.log(param)
+                param.opt = 'set_user_memo';            
             Axios.get('api.php',param)
             .then( 
                 res=>{ console.log(res) }

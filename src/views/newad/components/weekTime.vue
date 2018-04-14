@@ -1,4 +1,7 @@
-<style>
+<style scoped>
+	ul,li{
+		list-style: none;
+	}
 	.clear:after {
 		content: '\20';
 		display: block;

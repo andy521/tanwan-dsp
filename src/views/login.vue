@@ -62,13 +62,15 @@
                             'opt' : 'login'
                         })
                         .then((data)=>{                            
-                            if(data.ret == 1){                                 
+                            if(data.ret == 1){  
+                                console.log(data)                               
                                 //权限管理
                                 let action = data.data.data.actionid;
                                 let access = [];
                                 if(action === 'all'){
                                     access.push('all');
                                 }else{
+                                    access.push('home_index');
                                     action.forEach(item => {
                                         switch(item){
                                             case '999': 
@@ -89,14 +91,77 @@
                                             case '1038': 
                                                 access.push('setid_systemmsg');
                                             break;
+                                            case '1043': 
+                                                access.push('uc_report');
+                                            break;
+                                            case '1042': 
+                                                access.push('uc_idea');
+                                            break;
+                                            case '1041': 
+                                                access.push('uc_plan');
+                                            break;
+                                            case '1040': 
+                                                access.push('uc_unit');
+                                            break;
                                         }
                                     });
                                 };
+                                console.log(access)
                                 Util.setItem('user', this.form.userName );  
                                 Util.setItem('sessionid',data.data.sessionid);                                       
                                 Util.setItem('access', access.join(",")); 
                                 this.$store.dispatch('UserLogin', userinfo);
-                                this.$router.push({ name: 'home_index' });                                
+                                                                
+                                var action = data.data.data.action,
+										opt = data.data.data.opt,
+										Do = data.data.data.do;
+
+									if(action == 'gdtAdPut' && opt == 'campaigns') { //实时投放计划
+										this.$router.push({
+											name: 'time_plan'
+										});
+									} else if(action == 'gdtAdPut' && opt == 'adgroups') { //实时投放广告
+										this.$router.push({
+											name: 'time_ad'
+										});
+									} else if(action == 'api' && opt == 'getGameTotalDay' && Do == 'products') { //产品总览
+										this.$router.push({
+											name: 'channel_product'
+										});
+									} else if(action == 'api' && opt == 'getGameTotalDay' && Do == 'mediaOverview') { //媒体总览											
+										this.$router.push({
+											name: 'channel_media'
+										});
+									} else if(action == 'api' && opt == 'getGameTotalDay' && Do == 'accountOverview') { //账户总览								
+										this.$router.push({
+											name: 'channel_account'
+										});
+									} else if(action == 'api' && opt == 'getGameTotalDay' && Do == 'planOverview') { //计划总览							
+										this.$router.push({
+											name: 'channel_plan'
+										});
+									} else if(action == 'api' && opt == 'getGameTotalDay' && Do == 'adsOverview') { //广告总览					
+										this.$router.push({
+											name: 'channel_ad'
+										});
+									} else if(action == 'sys' && opt == 'getAdsAccount') { //负责人管理
+										this.$router.push({
+											name: 'setid_principal'
+										});
+									} else if(action == 'sys' && opt == 'getAdsAcccountJson') { //系统账号管理
+										this.$router.push({
+											name: 'setid_systemsetid'
+										});
+									} else if(action == 'sys' && opt == 'get_messages') { //系统信息列表					
+										this.$router.push({
+											name: 'setid_systemmsg'
+										});
+									} else { //账户总览						
+										this.$router.push({
+											name: 'home_index'
+										});
+                                    }   
+                                    //location.reload();                             
                             }
 
                         }).catch((err)=>{console.log(err)});
