@@ -18,6 +18,7 @@ export const loginRouter = {
     component: () => import('@/views/login.vue')
 };
 
+//新建广告
 export const newAd = {
     path: '/newad',
     name: 'newad',
@@ -26,6 +27,7 @@ export const newAd = {
     },
     component: () => import('@/views/newad/index.vue')
 };
+
 
 export const otherRouter = {
     path: '/user',

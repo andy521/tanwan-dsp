@@ -48,4 +48,3 @@ http://ads.vue.tanwan.com/   ID:sheji  psw : 123456
 http://e.qq.com/atlas/3415636/ad/create?from=listpage&id=44398031
 3273595310 Tanwan2016
 
-e.uc.cn  贪玩UC-4      tanWAN2018
