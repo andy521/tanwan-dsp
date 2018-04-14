@@ -1,0 +1,29 @@
+{
+  "ret": 1,
+  "msg": "succ",
+  "data": [
+      {
+          "id": "57",
+          "account_id": "207326436",
+          "campaign_id": "30428830",
+          "adgroup_id": "30815667",
+          "adgroup_name": "534",
+          "generalizeType": "1",
+          "chargeType": "1",
+          "bid": "1",
+          "secondBid": "0",
+          "targeting_id": "46",
+          "paused": "0",
+          "adconvertId": "0",
+          "convertMonitorType": "0",
+          "optimizationTarget": "1",
+          "bidStage": "1",
+          "state": "0",
+          "adResourceId": "1",
+          "platform": "111",
+          "unitType": "0",
+          "invalidReasonList": "[\"该单元所在计划为暂停状态。\",\"账户余额不足，请及时充值，以免影响您的正常推广。\"]",
+          "adgroup_index": "0"
+      }
+  ]
+}

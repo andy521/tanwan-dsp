@@ -1,5 +1,7 @@
 <style scoped>
-.new{display: inline-block}
+.new {
+  display: inline-block;
+}
 </style>
 <template>
     <div class="new">
@@ -15,42 +17,56 @@
     </div>
 </template>
 <script>
-    import  Axios  from "@/api/index"
-	export default {
-        name: 'newEdit',        
-		data() {
-			return {
-                loading: false,
-                accountModal:false,
-                accountList:[],
-                account:''
-			}
-        },
-		methods: {
-            newsEdit(){
-                this.loading = true;
-                Axios.post('api.php', {action:'ucAdPut',opt:'getAccountList'}).then(
-					res => {
-						if(res.ret == 1) {
-                            let list = res.data,
-                                s = [];
-                            list.forEach(item=>{
-                                s.push({value:item.account_id,label:item.account_name});
-                            });
-                            this.accountList = s;
-                            this.loading = false;
-                            this.accountModal = true;
-						}
-					}
-                ).catch(err => {console.log(err)});
-            },
-            setAccount(){                
-                this.$router.push({
-                    name: "ucnew_pack",
-                    query: {account:this.account}
-                });
-                this.accountModal = false;
-            }
-        }
-	}
+import Axios from "@/api/index";
+export default {
+  name: "newEdit",
+  data() {
+    return {
+      loading: false,
+      accountModal: false,
+      accountList: [],
+      account: ""
+    };
+  },
+  methods: {
+    newsEdit() {
+      this.loading = true;
+      Axios.post("api.php", { action: "ucAdPut", opt: "getAccountList" })
+        .then(res => {
+          if (res.ret == 1) {
+            let list = res.data,
+              s = [];
+            list.forEach(item => {
+              s.push({ value: item.account_id, label: item.account_name });
+            });
+            this.accountList = s;
+            this.loading = false;
+            this.accountModal = true;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    setAccount() {
+      // 线上代码，上线前删掉注释
+        // this.$router.push({
+        //   name: "ucplan",
+        //   query: { account: this.account }
+        // });
+
+      // 下面为本地模拟时使用，上线前删除
+      let query = {
+        account: this.account,
+        campaign_id: "30414752"
+      };
+      this.$router.push({
+        name: "ucunit",
+        query: query
+      });
+
+      this.accountModal = false;
+    }
+  }
+};
 </script>
