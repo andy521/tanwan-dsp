@@ -37,7 +37,7 @@
                 <Radio label="small">小</Radio>
             </Radio-group>
             每页显示
-            <Select v-model="pageSize" style="width:80px" placement="top" transfer @on-change="getUserList">
+            <Select v-model="pageSize" style="width:80px" placement="top" transfer @on-change="getUserList(undefined)">
                 <Option v-for="item in 100" :value="item" :key="item" v-if="item%20==0">{{ item }}</Option>
             </Select>
             </Col>
@@ -193,7 +193,8 @@
                     },
                     {
                         title: '登录时间',
-                        key: 'lastLoginDate'
+                        key: 'lastLoginDate',
+                        width: 150
                     },
                     {
                         title: '登录IP',
