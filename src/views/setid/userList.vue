@@ -101,11 +101,13 @@
                 </Form-item>
                 <Form-item label="部门：" prop="departmentSelected">
                     <Select v-model="editUserProfile.departmentSelected" placeholder="请选择" @on-change="getChangedPositions">
+                        <Option value="0">未设置</Option>
                         <Option v-for="(item,index) in editUserProfile.departmentList" :value="item.value" :key="index">{{ item.label }}</Option>
                     </Select>
                 </Form-item>
                 <Form-item label="职位：" prop="positionSelected">
                     <Select v-model="editUserProfile.positionSelected" placeholder="请选择">
+                        <Option value="0">未设置</Option>
                         <Option v-for="(item,index) in editUserProfile.positionList" :value="item.value" :key="index">{{ item.label }}</Option>
                     </Select>
                 </Form-item>
@@ -213,8 +215,6 @@
                                         },
                                         on: {
                                             'click': () => {
-                                                this.showUserListTable = false;
-                                                this.showPermissionSetting = true;
                                                 this.getPermissionTree(params.row.uid);
                                             }
                                         }
@@ -307,11 +307,11 @@
                     userName: '',
                     password: '',
                     permissionGroup: [],
-                    permissionGroupSelected: '',
+                    permissionGroupSelected: '0',
                     realName: '',
                     sex: '',
                     departmentList: [],
-                    departmentSelected: '',
+                    departmentSelected: '0',
                     positionList: [],
                     positionSelected: '',
                     dutyDescribe: '',
@@ -332,12 +332,12 @@
                     sex: [
                         { required: true, message: '性别不能为空', trigger: 'blur' },
                     ],
-                    departmentSelected: [
+                    /*departmentSelected: [
                         { required: true, message: '部门不能为空', trigger: 'change' },
                     ],
                     positionSelected: [
                         { required: true, message: '职位不能为空', trigger: 'change' },
-                    ],
+                    ]*/
                 },
                 //删除用户
                 deleteUserDialog: false,
@@ -423,40 +423,46 @@
             },
             //修改用户资料
             commitUserProfile () {
-                Axios.post('api.php?action=sys&opt=useradd', {
-                    stage: 'edit',
-                    uId: this.editUserProfile.uid,
-                    uName: this.editUserProfile.userName,
-                    uPass: this.editUserProfile.password,
-                    uGid: this.editUserProfile.permissionGroupSelected,
-                    truename: this.editUserProfile.realName,
-                    sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
-                    dept: this.editUserProfile.departmentSelected,
-                    position: this.editUserProfile.positionSelected,
-                    position_desc: this.editUserProfile.dutyDescribe,
-                    email: this.editUserProfile.eMail,
-                    office_phone: this.editUserProfile.officePhone,
-                    mobile: this.editUserProfile.mobile
-                }).then(
-                    res => {
-                        if (res.ret == 1) {
-                            this.$Message.success(res.data);
-                        } else {
-                            this.$Message.error(res.msg);
-                        }
+                this.$refs['editUserProfile'].validate((valid) => {
+                    if (valid) {
+                        Axios.post('api.php?action=sys&opt=useradd', {
+                            stage: 'edit',
+                            uId: this.editUserProfile.uid,
+                            uName: this.editUserProfile.userName,
+                            uPass: this.editUserProfile.password,
+                            uGid: this.editUserProfile.permissionGroupSelected,
+                            truename: this.editUserProfile.realName,
+                            sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
+                            dept: this.editUserProfile.departmentSelected,
+                            position: this.editUserProfile.positionSelected,
+                            position_desc: this.editUserProfile.dutyDescribe,
+                            email: this.editUserProfile.eMail,
+                            office_phone: this.editUserProfile.officePhone,
+                            mobile: this.editUserProfile.mobile
+                        }).then(
+                            res => {
+                                if (res.ret == 1) {
+                                    this.getUserList(this.page);
+                                    this.$Message.success(res.data);
+                                } else {
+                                    this.$Message.error(res.msg);
+                                }
+                            }
+                        ).catch(
+                            err => {
+                                console.log('提交失败' + err)
+                            }
+                        )
+                    } else {
+                        this.$Message.error('请填写带*号信息!');
                     }
-                ).catch(
-                    err => {
-                        console.log('提交失败' + err)
-                    }
-                )
+                });
             },
             //修改用户资料-会话框
             editUserProfileDialog (uid) {
                 Axios.get('api.php?action=sys&opt=useradd&act=edit&uid='+uid)
                 .then(
                     res => {
-                        //console.log(res);
                         if (res.ret == 1) {
                             this.editUserProfile.title = '修改['+res.data.uData.truename+']资料';
                             this.editUserProfile.uid = uid;
@@ -508,6 +514,7 @@
                     opt: 'getDepartments',
                 }).then(
                     res => {
+                        console.log()
                         if (res.ret == 1) {
                             this.editUserProfile.departmentList = [];
                             for(var i=0;i<res.data.dpData.length;i++){
@@ -522,24 +529,29 @@
                 )
             },
             getChangedPositions() {
-                Axios.post('api.php', {
-                    action: 'sys',
-                    opt: 'getPositions',
-                    dept: this.editUserProfile.departmentSelected,
-                }).then(
-                    res => {
-                        if (res.ret == 1) {
-                            this.editUserProfile.positionList = [];
-                            for(var i=0;i<res.data.posData.length;i++){
-                                this.editUserProfile.positionList.push({"value":res.data.posData[i].id,"label":res.data.posData[i].name});
+                if (this.editUserProfile.departmentSelected != "0") {
+                    Axios.post('api.php', {
+                        action: 'sys',
+                        opt: 'getPositions',
+                        dept: this.editUserProfile.departmentSelected,
+                    }).then(
+                        res => {
+                            if (res.ret == 1) {
+                                this.editUserProfile.positionList = [];
+                                for(var i=0;i<res.data.posData.length;i++){
+                                    this.editUserProfile.positionList.push({"value":res.data.posData[i].id,"label":res.data.posData[i].name});
+                                }
                             }
                         }
-                    }
-                ).catch(
-                    err => {
-                        console.log('获取失败' + err);
-                    }
-                )
+                    ).catch(
+                        err => {
+                            console.log('获取失败' + err);
+                        }
+                    )
+                } else {
+                    this.editUserProfile.positionList = [];
+                    this.editUserProfile.positionSelected = "0";
+                }
             },
             //权限修改
             commitUserPermission () {
@@ -671,24 +683,29 @@
                 Axios.get('api.php?action=sys&opt=permission&act=user&uid='+uid)
                 .then(
                     res => {
-                        //console.log(res);
-                        this.editPermission.act = res.data.gData.act;
-                        this.editPermission.uid = res.data.gData.uid;
-                        this.editPermission.pmid = res.data.gData.pmid;
-                        for (let i in res.data.menuData) {
-                            this['menu'+i] = [];
-                            this.buildPermissionTree(res.data.menuData[i], this['menu'+i], 'menu'+i);
+                        if (res.ret == 1) {
+                            //console.log(res);
+                            this.editPermission.act = res.data.gData.act;
+                            this.editPermission.uid = res.data.gData.uid;
+                            this.editPermission.pmid = res.data.gData.pmid;
+                            for (let i in res.data.menuData) {
+                                this['menu'+i] = [];
+                                this.buildPermissionTree(res.data.menuData[i], this['menu'+i], 'menu'+i);
+                            }
+                            for (let i in res.data.plat_arr) {
+                                var tmp = {
+                                    platformId: res.data.plat_arr[i].id,
+                                    platformName: res.data.plat_arr[i].plat_name,
+                                    menu: []
+                                };
+                                this.buildPermissionTree(res.data.game_arr[res.data.plat_arr[i].id], tmp.menu, {games: res.data.plat_arr[i].id});
+                                this.platformList.push(tmp);
+                            }
+                            this.showUserListTable = false;
+                            this.showPermissionSetting = true;
+                        } else {
+                            this.$Message.error(res.msg);
                         }
-                        for (let i in res.data.plat_arr) {
-                            var tmp = {
-                                platformId: res.data.plat_arr[i].id,
-                                platformName: res.data.plat_arr[i].plat_name,
-                                menu: []
-                            };
-                            this.buildPermissionTree(res.data.game_arr[res.data.plat_arr[i].id], tmp.menu, {games: res.data.plat_arr[i].id});
-                            this.platformList.push(tmp);
-                        }
-                        //console.log(this.menu1);
                     }
                 ).catch(
                     err => {

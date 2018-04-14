@@ -20,11 +20,13 @@
 			        </Form-item>
 			        <Form-item label="部门：" prop="department">
 			            <Select v-model="modProfile.departmentSelected" placeholder="请选择" @on-change="getChangedPositions">
+			                <Option value="0">未设置</Option>
 			                <Option v-for="(item,index) in modProfile.departmentList" :value="item.value" :key="index">{{ item.label }}</Option>
 			            </Select>
 			        </Form-item>
 			        <Form-item label="职位：" prop="position">
 			            <Select v-model="modProfile.positionSelected" placeholder="请选择">
+			                <Option value="0">未设置</Option>
 			                <Option v-for="(item,index) in modProfile.positionList" :value="item.value" :key="index">{{ item.label }}</Option>
 			            </Select>
 			        </Form-item>
@@ -112,9 +114,9 @@
                     realName: '',
                     sex: '',
                     departmentList: [],
-                    departmentSelected: '',
+                    departmentSelected: '0',
                     positionList: [],
-                    positionSelected: '',
+                    positionSelected: '0',
                     dutyDescribe: '',
                     eMail: '',
                     extension: '',
@@ -150,24 +152,29 @@
 		},
 		methods: {
 			getChangedPositions() {
-		    	Axios.post('api.php', {
-					action: 'sys',
-					opt: 'getPositions',
-					dept: this.modProfile.departmentSelected,
-				}).then(
-					res => {
-						if (res.ret == 1) {
-							this.modProfile.positionList = [];
-							for(var i=0;i<res.data.posData.length;i++){
-								this.modProfile.positionList.push({"value":res.data.posData[i].id,"label":res.data.posData[i].name});
+				if (this.modProfile.departmentSelected != "0") {
+					Axios.post('api.php', {
+						action: 'sys',
+						opt: 'getPositions',
+						dept: this.modProfile.departmentSelected,
+					}).then(
+						res => {
+							if (res.ret == 1) {
+								this.modProfile.positionList = [];
+								for(var i=0;i<res.data.posData.length;i++){
+									this.modProfile.positionList.push({"value":res.data.posData[i].id,"label":res.data.posData[i].name});
+								}
 							}
 						}
-					}
-				).catch(
-					err => {
-						console.log('获取失败' + err);
-					}
-				)
+					).catch(
+						err => {
+							console.log('获取失败' + err);
+						}
+					)
+				} else {
+					this.modProfile.positionList = [];
+					this.modProfile.positionSelected = "0";
+				}
 		    },
 			//获取登陆用户个人信息
 			getSelfUserInfo() {
