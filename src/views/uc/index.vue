@@ -696,8 +696,15 @@
                     },
                     budget:{
                         title: "日预算",
-                        key: "budget",
-                        width: 100
+                        key: "budget",  //不限定预算
+                        width: 100,
+                        render: (h, params) => {
+                            if(params.row.budget < 0){
+                                return h('span', '不限预算')
+                            }else{
+                               return h('span', params.row.budget) 
+                            }
+						}
                     },
                     campaign_id:{
                         title: "计划id",

@@ -249,26 +249,18 @@ export default {
                   class: "edit_link",
                   on: {
                     click: () => {
-                      let query = {
-                        id: params.row.id,
-                        creative: params.row.creative_id
-                      };
-                      this.$router.push({
-                        name: "ucnew_idea",
-                        query: query
-                      });
-                    //   let query = {
-                    //     account: params.row.account_id,
-                    //     adgroup_id: params.row.adgroup_id,
-                    //     edit: "1"
-                    //   };
-                    //   this.$router.push({
-                    //     name: "ucidea",
-                    //     query: query,
-                    //     params: {
-                    //       campaign_id: params.row.campaign_id
-                    //     }
-                    //   });
+                        let query = {
+                            id: params.row.id,
+                            creative: params.row.creative_id,
+                            account: params.row.account_id,
+                            adgroup_id: params.row.adgroup_id,
+                            campaign_id: params.row.campaign_id,
+                            edit: "1"
+                        };
+                        this.$router.push({
+                            name: "ucidea",
+                            query: query
+                        });
                     }
                   }
                 },

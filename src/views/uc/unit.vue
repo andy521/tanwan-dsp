@@ -957,16 +957,17 @@
                                     class: "edit_link",
                                     on: {
                                         'click': () => {
-                                            console.log(params.row, 'xxx')
                                             let query = {
                                                 account:params.row.account_id,
                                                 campaign_id:params.row.campaign_id,
+                                                adgroup_id: params.row.adgroup_id,
+                                                id: params.row.id,
+                                                targeting_id: params.row.targeting_id,
                                                 edit: "1",
                                             };
                                             this.$router.push({
                                                 name: "ucunit",
-                                                query: query,
-                                                params: params.row
+                                                query: query
                                             });
                                         }
                                     }
