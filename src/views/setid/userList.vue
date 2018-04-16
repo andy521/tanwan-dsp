@@ -289,7 +289,13 @@
                     menu1: {},
                     menu2: {},
                     menu5: {},
-                    games: []
+                    games: [],
+                    groupMenu: {
+                        menu1: {},
+                        menu2: {},
+                        menu5: {},
+                        games: []
+                    }
                 },
                 editPermission: {
                     act: undefined,
@@ -617,14 +623,20 @@
                 if (typeof origin == 'object') { //platform
                     this.editPermission['games'][origin.games] = [];
                     for (let i in idList) {
-                        this.editPermission['games'][origin.games].push(parseInt(i));
+                        if (this.associate.groupMenu['games'][origin.games][i]!==true) {
+                            this.editPermission['games'][origin.games].push(parseInt(i));
+                        }
                     }
                 } else { //menu
                     this.editPermission[origin] = [];
                     for (let i in idList) {
-                        this.editPermission[origin].push(parseInt(i));
+                        if (this.associate.groupMenu[origin][i]!==true) {
+                            this.editPermission[origin].push(parseInt(i));
+                        }
                     }
                 }
+                //console.log(this.associate);
+                //console.log(this.editPermission);
             },
             //返回列表
             backListPage () {
@@ -685,7 +697,7 @@
                 .then(
                     res => {
                         if (res.ret == 1) {
-                            //console.log(res);
+                            console.log(res);
                             this.editPermission.act = res.data.gData.act;
                             this.editPermission.uid = res.data.gData.uid;
                             this.editPermission.pmid = res.data.gData.pmid;
@@ -704,6 +716,7 @@
                             }
                             this.showUserListTable = false;
                             this.showPermissionSetting = true;
+                            //console.log(this.editPermission);
                         } else {
                             this.$Message.error(res.msg);
                         }
@@ -731,14 +744,14 @@
                         delete defaultSet.disabled;
                     } else if (menuData[i].acstate == 1) {
                         delete defaultSet.disabled;
-                    } else if (menuData[i].acstate == 2) {
+                    }/* else if (menuData[i].acstate == 2) {
                         delete defaultSet.checked;
                         defaultSet.title = '√ ';
-                    }
+                    }*/
                     defaultSet.title += menuData[i].name;
                     defaultSet.mark = parseInt(menuData[i].id);
-                    this.buildAssociate(origin, parseInt(menuData[i].id), father);
-                    if (defaultSet.checked) {
+                    this.buildAssociate(origin, parseInt(menuData[i].id), father, menuData[i].acstate);
+                    if (defaultSet.checked && menuData[i].acstate!=2) {
                         this.buildUserPermission(origin, parseInt(menuData[i].id));
                     }
                     list.push(defaultSet);
@@ -751,13 +764,22 @@
                 }
             },
             //创建节点联系表
-            buildAssociate (origin, curID, faterID) {
+            buildAssociate (origin, curID, faterID, type) {
                 if (typeof origin == 'object') {
+                    if (type == 2) {
+                        if (this.associate.groupMenu.games[origin.games] == undefined) {
+                            this.associate.groupMenu.games[origin.games] = {};
+                        }
+                        this.associate.groupMenu.games[origin.games][curID] = true;
+                    }
                     if (this.associate.games[origin.games] == undefined) {
                         this.associate.games[origin.games] = {};
                     }
                     this.associate.games[origin.games][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
                 } else {
+                    if (type == 2) {
+                        this.associate.groupMenu[origin][curID] = true;
+                    }
                     this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
                 }
             },
