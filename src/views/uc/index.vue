@@ -635,6 +635,11 @@
                             }
                         }
                     },
+                    // impression:{
+                    //     title: "账号",
+                    //     key: "account_name",
+                    //     width: 100
+                    // },
                     state:{
                         title: "推广状态",
                         key: "state",

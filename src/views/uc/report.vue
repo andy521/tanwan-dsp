@@ -14,7 +14,10 @@
                 <Tab-pane label="分推广层级报告"></Tab-pane>
                 <Tab-pane label="受众分析报告"></Tab-pane>
             </Tabs>
-            <component :is="curent"></component>
+            <!-- 能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。 -->
+            <keep-alive> 
+                <component :is="curent"></component>
+            </keep-alive>
         </Card>
 	</div>
 </template>
@@ -35,7 +38,7 @@
         },
 		data() {
 			return {
-                curent:'audienceReporting',
+                curent:'adresourceReporting',
 			};
 		},
 		methods: {		

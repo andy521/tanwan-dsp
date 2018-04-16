@@ -169,9 +169,8 @@
                     {title: "千次展现价格",sortable: "cost",key: "cpm"},
                 ],
                 tableSize: "small",
-                //地图数据
-                map:[],
-                echarts:[],
+                //chart数据
+                echarts:{}
 			};
         },        
 		methods: {	
@@ -196,8 +195,7 @@
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            this.map = res.data.province;
-                            this.echarts = res.data.city;
+                            this.echarts = res.data;
                             console.log(res)
                             this.mapEcharts();
                             this.cityChart();
@@ -340,43 +338,38 @@
             },
             //地图
             mapEcharts(){
-                let impression =  this.map[0],
-                    precent =   this.map[1];
+                let impression =  this.echarts.province[0],
+                    precent =   this.echarts.province[1],
+                    max = parseInt(this.echarts.max) || 0,
+                    min = parseInt(this.echarts.min) || 0;
                 let option = {
-                    title: {
-                        text: '省级地域分布',
-                        left: 'center'
-                    },
+                    title: {text: '省级地域分布', left: 'center'},     
                     tooltip: {
-                        trigger: 'item'
+                        trigger: 'item',
+                        formatter: function(params) {  
+                            var res = params.name+'<br/>';  
+                            var myseries = option.series;
+                            for (var i = 0; i < myseries.length; i++) {  
+                                for(var j=0;j<myseries[i].data.length;j++){  
+                                    if(myseries[i].data[j].name==params.name){
+                                        if( myseries[i].eng == 'precent'){
+                                            res+=myseries[i].name +' : '+ myseries[i].data[j].value[2]*100 +'%</br>';
+                                        }else{
+                                            res+=myseries[i].name +' : '+ myseries[i].data[j].value[2] +'</br>'; 
+                                        } 
+                                    }  
+                                }  
+                            }  
+                            return res;  
+                        }  
                     },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data:['impression','precent']
-                    },
-                    // visualMap: {
-                    //     min: 0,
-                    //     max: 1000000,
-                    //     left: 'left',
-                    //     top: 'bottom',
-                    //     text: ['高','低'],
-                    //     calculable: true
-                    // },
-                    toolbox: {
-                        show: true,
-                        orient: 'vertical',
-                        left: 'right',
-                        top: 'center',
-                        feature: {
-                            dataView: {readOnly: false},
-                            restore: {},
-                            saveAsImage: {}
-                        }
-                    },
+                    legend: {orient: 'vertical',left: 'left', data:['impression','precent']},
+                    visualMap: { min: min, max: max,left: 'left',top: 'bottom',text: ['高','低'],calculable: true},
+                    toolbox: {show: true,orient: 'vertical',left: 'right', top: 'center',feature: {dataView: {readOnly: false},restore: {},saveAsImage: {}}},
                     series:[
                         {
                             name: impression.name,
+                            eng : impression.eng,
                             type: 'map',
                             mapType: 'china',
                             roam: false,
@@ -385,28 +378,38 @@
                         },
                         {
                             name: precent.name,
+                            eng : precent.eng,
                             type: 'map',
                             mapType: 'china',
-                            label: {normal: {show: true}, emphasis: {show: true}},
+                            roam: false,
+                            label: {normal: {show: true},emphasis: {show: true}},
                             data:this.convertData(precent.data)
                         }
                     ]
-                };
- 
-                const serviceRequestCharts = echarts.init(document.getElementById('map'));
-                serviceRequestCharts.setOption(option);
+                }; 
+                const mapCharts = echarts.init(document.getElementById('map'));
+                mapCharts.setOption(option);
                 window.addEventListener('resize', function () {
-                    serviceRequestCharts.resize();
+                    mapCharts.resize();
                 });
             },
             cityChart(){
-                let list = this.echarts,
+                let list = this.echarts.city,
                     xAxisData = list.xAxis.data;
-                //https://segmentfault.com/q/1010000008904664
                 let option = {
                     color: ['#3398DB','#000000'],
                     title: {text: '地级市分布',left: 'left'},
-                    tooltip: {trigger: 'axis',axisPointer: {type: 'cross',crossStyle: {color: '#999'}}},
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {type: 'cross',crossStyle: {color: '#999'}},
+                        formatter: function(params) {
+                            let res = params[0].name  + '<br/>';
+                            params.forEach(e=>{
+                                e.componentSubType == 'line' ?  res +=  e.seriesName + ':' + e.data*100 +'%<br/>' : res +=  e.seriesName + ':' + e.data +'<br/>' ;
+                            }); 
+                            return res;
+                        } 
+                    },
                     grid: {top: '15%',left: '1.2%',right: '1%',bottom: '3%',containLabel: true},
                     toolbox: {feature: {saveAsImage: {}} },
                     legend: {data:['展现','占比']},
@@ -414,11 +417,9 @@
                     yAxis: [{type:'value'}],
                     series: list.series
                 };
-                const serviceRequestCharts = echarts.init(document.getElementById('lineEchart'));
-                serviceRequestCharts.setOption(option);
-                window.addEventListener('resize', function () {
-                    serviceRequestCharts.resize();
-                });
+                const charts = echarts.init(document.getElementById('lineEchart'));
+                charts.setOption(option);
+                window.addEventListener('resize',function (){ charts.resize();});
             }
         },
         beforeMount(){
