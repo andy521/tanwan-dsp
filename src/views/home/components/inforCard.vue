@@ -23,14 +23,7 @@
 </template>
 
 <script>
-
-// <infor-card
-//     id-name="user_created_count"
-//     :end-val="total.balance_4"
-//     iconType="card"
-//     color="#19be6b"
-//     intro-text="信用账户"
-// ></infor-card>
+ 
 
 import CountUp from 'countup';
 
@@ -38,7 +31,10 @@ export default {
     name: 'inforCard',
     props: {
         idName: String,
-        endVal: Number,
+        endVal:{
+            type:Number,
+            default:0,   
+        },
         color: String,
         iconType: String,
         introText: String,
@@ -95,7 +91,7 @@ export default {
     },
     mounted(){
         this.$nextTick(() => {
-            //Vue.nextTick(callback)`，当数据发生变化，更新后执行回调。
+            //Vue.nextTick(callback)  //`，当数据发生变化，更新后执行回调。
             //Vue.$nextTick(callback)`，当dom发生变化，更新后执行的回调。
             setTimeout(() => {
                 let demo = {};

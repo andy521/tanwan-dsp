@@ -218,7 +218,7 @@
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            this.$Message.info(res.data);
+                            this.$Message.info(res.msg);
 						}
 					}
                 ).catch(err => {console.log(err)}); 

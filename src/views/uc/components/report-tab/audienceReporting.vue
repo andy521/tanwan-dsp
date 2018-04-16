@@ -6,8 +6,8 @@
 .plan_box{height: 200px; overflow-y: auto; border: 1px solid #eee;  padding: 0 10px;}
 .ivu-checkbox-group-item{display: block; margin-top: 10px;}
 .name{max-width: 300px; overflow: hidden;text-overflow: ellipsis; white-space: nowrap; word-wrap: normal;word-wrap: break-word;word-break: break-all;}
-#map{height: 500px; width: 800px;}
-#lineEchart{width: 100%; height: 300px;}
+#map{height: 500px; width: 100%;}
+#lineEchart{width: 100%; height: 300px; margin-top: 10px;}
 </style>
 <template>
 	<div class="resources">
@@ -119,6 +119,8 @@
 
     import Axios from "@/api/index";
     import echarts from 'echarts';
+    //import 'echarts/lib/chart/map';
+    import 'echarts/map/js/china.js';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
 	export default {
         name: 'appReporting',     
@@ -323,37 +325,8 @@
                 ).catch(err => {console.log(err)});
             },
             convertData(data){
-                let geoCoordMap = {
-                    '新疆维吾尔自治区':[84.9023,42.148],
-                    '西藏自治区':[87.8695,31.6846],
-                    '内蒙古自治区':[112.5977,46.3408],
-                    "青海":[95.2402,35.4199],
-                    "四川":[101.9199,30.1904],
-                    "黑龙江":[126.1445,48.7156],
-                    "甘肃":[99.7129,38.166],
-                    "云南":[101.0652,25.1807],
-                    "广西壮族自治区":[107.7813,23.6426],
-                    "湖南":[111.5332,27.3779],
-                    "陕西":[109.5996,35.7396],
-                    "广东":[113.4668,22.8076],
-                    "吉林":[125.7746,43.5938],
-                    "河北":[115.4004,39.4688],
-                    "湖北":[112.2363,31.1572],
-                    "贵州":[106.6113,26.9385],
-                    "山东":[118.7402,36.4307],
-                    "江西":[116.0156,27.29],
-                    "河南":[113.0668,33.8818],
-                    "辽宁":[122.0438,41.0889],
-                    "山西":[112.4121,37.6611],
-                    "安徽":[117.2461,32.0361],
-                    "福建":[118.3008,25.9277],
-                    "浙江":[120.498,29.0918],
-                    "江苏":[118.8586,32.915],
-                    "重庆市":[107.7539,30.1904],"宁夏回族自治区":[105.9961,37.3096],"海南省":[109.9512,19.2041],
-                    "台湾":[120.0254,23.5986],"北京":[116.4551,40.2539],"天津市":[117.4219,39.4189],
-                    "上海市":[121.4648,31.2891],"香港特别行政区":[114.1178,22.3242],"澳门特别行政区":[111.5547,22.1484]
-                };
-                var res = [];
+                let geoCoordMap = {'新疆维吾尔自治区':[84.9023,42.148],'西藏自治区':[87.8695,31.6846],'内蒙古自治区':[112.5977,46.3408],"青海":[95.2402,35.4199],"四川":[101.9199,30.1904],"黑龙江":[126.1445,48.7156],"甘肃":[99.7129,38.166],"云南":[101.0652,25.1807],"广西壮族自治区":[107.7813,23.6426], "湖南":[111.5332,27.3779],"陕西":[109.5996,35.7396],"广东":[113.4668,22.8076],"吉林":[125.7746,43.5938],"河北":[115.4004,39.4688],"湖北":[112.2363,31.1572],"贵州":[106.6113,26.9385],"山东":[118.7402,36.4307],"江西":[116.0156,27.29],"河南":[113.0668,33.8818],"辽宁":[122.0438,41.0889],"山西":[112.4121,37.6611],"安徽":[117.2461,32.0361],"福建":[118.3008,25.9277],"浙江":[120.498,29.0918],"江苏":[118.8586,32.915],"重庆市":[107.7539,30.1904],"宁夏回族自治区":[105.9961,37.3096],"海南省":[109.9512,19.2041],"台湾":[120.0254,23.5986],"北京":[116.4551,40.2539],"天津市":[117.4219,39.4189],"上海市":[121.4648,31.2891],"香港特别行政区":[114.1178,22.3242],"澳门特别行政区":[111.5547,22.1484]};
+                let res = [];
                 for (var i = 0; i < data.length; i++) {
                     var geoCoord = geoCoordMap[data[i].name];
                     if (geoCoord) {
@@ -366,21 +339,9 @@
                 return res;
             },
             //地图
-            mapEcharts(){   
-                console.log(this.map)
-                let seriesDate = [];
-                this.map.forEach(e=>{
-                    let cs = {
-                        name: e.name,
-                        type: 'map',
-                        mapType: 'china',
-                        roam: false,
-                        label: {normal: {show: true},emphasis: {show: true}},
-                        data:this.convertData(e.data)
-                    }
-                    seriesDate.push(cs)
-                });
-                console.log(seriesDate)
+            mapEcharts(){
+                let impression =  this.map[0],
+                    precent =   this.map[1];
                 let option = {
                     title: {
                         text: '省级地域分布',
@@ -394,14 +355,14 @@
                         left: 'left',
                         data:['impression','precent']
                     },
-                    visualMap: {
-                        min: 0,
-                        max: 100,
-                        left: 'left',
-                        top: 'bottom',
-                        text: ['高','低'],
-                        calculable: true
-                    },
+                    // visualMap: {
+                    //     min: 0,
+                    //     max: 1000000,
+                    //     left: 'left',
+                    //     top: 'bottom',
+                    //     text: ['高','低'],
+                    //     calculable: true
+                    // },
                     toolbox: {
                         show: true,
                         orient: 'vertical',
@@ -413,8 +374,25 @@
                             saveAsImage: {}
                         }
                     },
-                    series:seriesDate
+                    series:[
+                        {
+                            name: impression.name,
+                            type: 'map',
+                            mapType: 'china',
+                            roam: false,
+                            label: {normal: {show: true},emphasis: {show: true}},
+                            data:this.convertData(impression.data)
+                        },
+                        {
+                            name: precent.name,
+                            type: 'map',
+                            mapType: 'china',
+                            label: {normal: {show: true}, emphasis: {show: true}},
+                            data:this.convertData(precent.data)
+                        }
+                    ]
                 };
+ 
                 const serviceRequestCharts = echarts.init(document.getElementById('map'));
                 serviceRequestCharts.setOption(option);
                 window.addEventListener('resize', function () {
@@ -429,7 +407,7 @@
                     color: ['#3398DB','#000000'],
                     title: {text: '地级市分布',left: 'left'},
                     tooltip: {trigger: 'axis',axisPointer: {type: 'cross',crossStyle: {color: '#999'}}},
-                    grid: {top: '8%',left: '1.2%',right: '1%',bottom: '3%',containLabel: true},
+                    grid: {top: '15%',left: '1.2%',right: '1%',bottom: '3%',containLabel: true},
                     toolbox: {feature: {saveAsImage: {}} },
                     legend: {data:['展现','占比']},
                     xAxis: [{type: 'category',data: xAxisData}],
