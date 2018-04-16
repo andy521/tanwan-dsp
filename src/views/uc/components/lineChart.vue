@@ -1,10 +1,5 @@
-<style scoped>
-.chart{ border: 1px solid #eee;}
-#echart{min-height: 550px;}
-.ec_tit{line-height: 34px; padding: 0 15px; background: #f5f5f5;}
-.view{cursor: pointer; float: right;color: #28bd8b;}
-.echart_area{padding: 10px;}
-.es_select{margin-bottom: 15px;}
+<style lang="less">
+@import "../index.less";
 </style>
 <template>
 	<div class="chart">
