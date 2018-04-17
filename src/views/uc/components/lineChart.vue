@@ -24,7 +24,19 @@
     import echarts from 'echarts';
 	export default {
         name: 'lineChart',
-        props: ['datas','title','inside'],
+        props:{
+            datas:{
+                type: [Object, Array]
+            },
+            title:{
+                type: String,
+                default: ''
+            },
+            zoom: {
+                type: [Boolean,String],
+                default: false
+            },
+        },
 		data() {
 			return {
                 tname:this.title,
@@ -110,7 +122,7 @@
                     },
                     series: series
                 };
-                if(!!this.inside){
+                if(!!this.zoom){
                         option.dataZoom = [
                             {show: true, realtime: true,start: 0,end: 100},
                             //{type: 'inside',realtime: true,start: 0,end: 100}

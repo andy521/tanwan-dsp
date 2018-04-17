@@ -5,7 +5,7 @@
                 <Tag>今天</Tag>
             </Form-item>
             <Form-item label="报表类型：">
-                <Radio-group v-model="retype">
+                <Radio-group v-model="retype" @on-change="retypeChange">
                     <Radio label="1">账户报告</Radio>
                     <Radio label="2">计划报告</Radio>
                     <Radio label="3">单元报告 </Radio>
@@ -21,7 +21,7 @@
             <Button type="primary" @click="getReporting()">查询</Button>
         </Form>  
 
-        <line-chart :datas="echart" title="账户报告 (注意：当日数据仅供参考，请以隔日数据为准)"></line-chart>
+        <line-chart :datas="echart" zoom="true" :title="title"></line-chart>
 
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
@@ -56,6 +56,7 @@
 		data() {
 			return {
                 loading:false,
+                title:'账户报告 (注意：当日数据仅供参考，请以隔日数据为准)',
                 //报表类型
                 retype:'1',
                 //时间单位
@@ -86,7 +87,16 @@
             //改变日期
             changeDate(e) {
                 this.DateDomain = e;
-            },	
+            },
+            //
+            retypeChange(val){
+                switch (val) {
+                    case '1': this.title = '账户报告'; break;
+                    case '2': this.title = '计划报告'; break;
+                    case '3': this.title = '单元报告'; break;
+                    case '4': this.title = '创意报告'; break;
+                };
+            },
 			getReporting(page){
                 if (page === undefined) {
                     this.page = 1;
@@ -102,11 +112,10 @@
                     page_size: this.page_size, //每页数量
                     orderField:this.orderField,
                     orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-                };
+                };                
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            console.log(res);  
                             this.loading = false;                      
                             this.echart = res.data.echart; 
                             this.list = res.data.list;

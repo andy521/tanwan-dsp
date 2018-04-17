@@ -41,7 +41,7 @@
             </Form-item>
         </Form>  
 
-        <line-chart :datas="echart" :title="title" inside="true" style="margin-top:15px;"></line-chart>
+        <line-chart :datas="echart" :title="title" zoom="true" style="margin-top:15px;"></line-chart>
 
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">

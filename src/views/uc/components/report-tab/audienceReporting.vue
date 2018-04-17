@@ -178,7 +178,12 @@
             changeDate(e) {
                 this.DateDomain = e;
             },	
-			getReporting(){                
+			getReporting(page){
+                if (page === undefined) {
+                    this.page = 1;
+                } else {
+                    this.page = page;
+                };
                 let param = {
                     action:'ucAdPut',
                     opt:'getProvinceReporting',
@@ -187,10 +192,10 @@
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间                
                     type:this.type,
-                    page: this.page, //页码
-                    page_size: this.page_size, //每页数量
+                    page: this.page,
+                    page_size: this.page_size,
                     orderField:this.orderField,
-                    orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+                    orderDirection: this.orderDirection
                 };
                 Axios.post('api.php', param).then(
 					res => {
