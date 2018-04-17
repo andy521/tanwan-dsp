@@ -13,6 +13,9 @@
 	<div class="unit">        
         <Card shadow class="margin-top-10">
             <Row>
+                <Col v-show="isBack" span="1">
+                    <Button type="primary" @click="back">返回</Button>
+                </Col>
                 <Col span="2">
                     <search-tree @on-change="getids"></search-tree>
                 </Col>
@@ -23,7 +26,7 @@
                     <Button icon="search" @click="getUnit()">搜索</Button>
                     <new-edit class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="12" style="text-align: right;">
+                <Col span="11" style="text-align: right;">
                     <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
@@ -196,6 +199,7 @@
 		data() {
 			return {
                 loading: false,
+                isBack : true,
                 height:document.body.clientHeight - 200,
                 filterModal:false,
                 dateModal:false,
@@ -282,6 +286,10 @@
 			};
 		},
 		methods: {
+            //返回
+            back() {
+                this.$router.go(-1);
+            },
             //获取选中的游戏id
             getids(gid){
                 this.game_id = '[' + gid.join(',') + ']';
@@ -1059,6 +1067,7 @@
             let query = this.$route.query.id;
             if(!!query){
                 this.campaign_id = query.toString();
+                this.isBack = true;
             }
             this.changeTableColumns();
             this.getUnit();

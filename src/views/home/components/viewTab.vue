@@ -162,11 +162,11 @@
                                 on: {
                                     click: () => {
                                         let query = {id: params.row.account_id};
-                                        //跳转到计划总览
-                                        this.$router.push({
-                                            name: 'time_plan',
-                                            query: query
-                                        });
+                                        if(params.row.media_name == 'UC'){
+                                            this.$router.push({name: 'uc_plan',query: query});
+                                        }else{
+                                            this.$router.push({name: 'time_plan',query: query});
+                                        }
                                     }
                                 }
                             }, params.row.account_name)

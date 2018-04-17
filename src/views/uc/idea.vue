@@ -6,14 +6,17 @@
     <div class="idea">
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="14">
-                <Button type="ghost" icon="funnel" :loading="filterLoading" class="margin-left-10" @click="setFilter">筛选</Button>
-                <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-                <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
-                <Button icon="search" @click="getIdea()">搜索</Button>
-                <new-edit class="margin-left-5"></new-edit>
+                <Col v-show="isBack" span="1">
+                    <Button type="primary" @click="back">返回</Button>
                 </Col>
-                <Col span="10" style="text-align: right;">
+                <Col span="14">
+                    <Button type="ghost" icon="funnel" :loading="filterLoading" class="margin-left-10" @click="setFilter">筛选</Button>
+                    <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                    <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
+                    <Button icon="search" @click="getIdea()">搜索</Button>
+                    <new-edit class="margin-left-5"></new-edit>
+                </Col>
+                <Col span="9" style="text-align: right;">
                 <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="toggle-filled">修改状态</Button>
@@ -113,6 +116,7 @@ export default {
   data() {
     return {
       height: document.body.clientHeight - 200,
+      isBack:false,
       filterLoading: false,
       loading: false,
       filterModal: false,
@@ -238,6 +242,18 @@ export default {
           width: 120
         },
         {
+          title: "账号",
+          sortable: "custom",
+          key: "account_name",
+          width: 120
+        },
+        {
+          title: "单元名称",
+          sortable: "custom",
+          key: "adgroup_name",
+          width: 120
+        },
+        {
           title: "操作",
           align: "center",
           key: "id",
@@ -319,6 +335,10 @@ export default {
     };
   },
   methods: {
+    //返回
+    back() {
+        this.$router.go(-1);
+    },
     //改变日期
     changeDate(e) {
       this.DateDomain = e;
@@ -569,6 +589,7 @@ export default {
     let query = this.$route.query.adgroup_id;
     if (!!query) {
       this.adgroup_id = query.toString();
+      this.isBack = true;
     }
     this.getIdea();
   }

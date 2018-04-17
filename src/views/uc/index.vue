@@ -8,7 +8,10 @@
         <!-- <account-info></account-info> -->
 		<Card shadow class="margin-top-10">
             <Row>
-                <Col span="4">
+                <Col v-show="isBack" span="1">
+                    <Button type="primary" @click="back">返回</Button>
+                </Col>
+                <Col span="4">                    
                     <search-tree @on-change="getids"></search-tree>
                 </Col>
                 <Col span="10">
@@ -18,7 +21,7 @@
                     <Button icon="search" @click="getSpread()">搜索</Button>
                     <new-edit  class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="10" style="text-align: right;">
+                <Col span="9" style="text-align: right;">
                     <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="clock" @click="modifyDate">修改日期</Button>
@@ -193,6 +196,7 @@
 		data() {
 			return {
                 height:document.body.clientHeight - 200,
+                isBack:false,
                 loading: true,
                 filterModal:false,
                 budgetModal:false,
@@ -271,6 +275,10 @@
             };
         },
 		methods: {	
+            //返回
+            back() {
+                this.$router.go(-1);
+            },
             //获取选中的游戏id
             getids(gid){
                 this.game_id = '[' + gid.join(',') + ']';
@@ -604,6 +612,11 @@
                             },params.row.campaign_name)
                         }
                     },
+                    account_name:{
+                        title: "账号",
+                        key: "account_name",
+                        width: 150
+                    },
                     paused:{
                         title: "投放开关",
                         align: 'center',     
@@ -634,12 +647,7 @@
                                 ]);
                             }
                         }
-                    },
-                    // impression:{
-                    //     title: "账号",
-                    //     key: "account_name",
-                    //     width: 100
-                    // },
+                    },                    
                     state:{
                         title: "推广状态",
                         key: "state",
@@ -874,6 +882,7 @@
                 //固定选项
                 let data = [
                     tableColumnList.selection,
+                    tableColumnList.account_name,
                     tableColumnList.campaign_name
                 ];                
                 this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) ); 
@@ -928,6 +937,11 @@
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
             this.options = setDate;
+            let query = this.$route.query.id;
+            if(!!query){
+                this.keyword = query.toString();
+                this.isBack = true;
+            }
             this.changeTableColumns();
             this.getSpread();
         }
