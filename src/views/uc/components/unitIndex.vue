@@ -51,11 +51,10 @@
 				</CheckboxGroup>
                 <div class="checklist">激活注册</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="conversion">激活总量</Checkbox>
                     <Checkbox label="cvr">点击激活率</Checkbox>
                     <Checkbox label="install_per">激活安装率</Checkbox>
                     <Checkbox label="download_convert">下载激活率</Checkbox>
-                    <Checkbox label="app_reg">注册设备数</Checkbox>
+                    <Checkbox label="conversion">注册设备数</Checkbox>
                     <Checkbox label="app_reg_cost">注册设备成本</Checkbox>
                     <Checkbox label="reg_total">注册</Checkbox>
                     <Checkbox label="reg_cost">注册成本</Checkbox>
@@ -148,7 +147,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','conversion','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','app_reg','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
+					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','conversion','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
 				} else {
 					this.checkAllGroup = [];
 				}

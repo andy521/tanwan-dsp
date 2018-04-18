@@ -73,7 +73,7 @@
                 <select-media class="smedia" @on-change="mediaChange"></select-media>
 
 				<DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime" class="margin-right-10"></DatePicker>
-
+                
 				<Button icon="document-text" @click="exportData()">下载报表</Button>
 			</div>
 		</div>
@@ -93,7 +93,7 @@
 			</Select>
 			</Col>
 			<Col span="14" style="text-align: right;">
-			<Page :total="parseInt(tdata.total_number)" :page-size="parseInt(tdata.page_size)" ref="pages" @on-change="tableData" show-elevator show-total></Page>
+			    <Page :total="parseInt(tdata.total_number)" :page-size="parseInt(tdata.page_size)" ref="pages" @on-change="tableData" show-elevator show-total></Page>
 			</Col>
 		</Row>
 	</Card>
@@ -309,8 +309,10 @@
 				}
 			}
         }, 
-		mounted() {
- 
+		beforeMount() {
+            let setDate = DateShortcuts;
+            setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
+            this.options = setDate;
 		}
 	}
 </script>

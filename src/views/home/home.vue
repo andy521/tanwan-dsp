@@ -61,7 +61,7 @@
 		</Row>
 		<!-- 按账户查看 - 按产品查看 -->
 		<view-tab :tdata="tdata"  @on-change="getData"></view-tab>
-        <div></div>
+ 
 		<!-- 线性表格 -->
 		<linear-tabel :datas="echart"></linear-tabel> 
 

@@ -187,7 +187,7 @@
 <script>
     import Axios from "@/api/index";
     import searchTree from '@/components/select-tree/searchTree.vue';
-    import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
+    import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import newEdit from "./components/newEdit.vue";
     import unitIndex from "./components/unitIndex.vue";
 	export default {
@@ -821,12 +821,6 @@
                         key: "download_complete_rate",
                         width: 100
                     },
-                    conversion:{
-                        title: "激活总量",
-                        sortable: "custom",
-                        key: "conversion",
-                        width: 120
-                    },
                     cvr:{
                         title: "点击激活率",
                         sortable: "custom",
@@ -845,10 +839,10 @@
                         key: "download_convert",
                         width: 130
                     },
-                    app_reg:{
+                    conversion:{
                         title: "注册设备数",
                         sortable: "custom",
-                        key: "app_reg",
+                        key: "conversion",
                         width: 120
                     },
                     app_reg_cost:{

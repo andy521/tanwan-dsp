@@ -754,11 +754,11 @@
                         key: "download_complete_rate",
                         width: 100
                     },
-                    conversion:{
-                        title: "激活总量",
-                        key: "conversion",
-                        width: 100
-                    },
+                    // conversion:{
+                    //     title: "激活总量",
+                    //     key: "conversion",
+                    //     width: 100
+                    // },
                     cvr:{
                         title: "点击激活率",
                         key: "cvr",
@@ -829,9 +829,9 @@
                         key: "click_installr",
                         width: 100
                     },
-                    app_reg:{
+                    conversion:{
                         title: "注册设备数",
-                        key: "app_reg",
+                        key: "conversion",
                         width: 100
                     },
                     app_reg_cost:{
