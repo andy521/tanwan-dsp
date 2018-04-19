@@ -1,37 +1,58 @@
 <style lang="less">
 @import "../../styles/common.less";
+.report .ivu-form-item{margin-bottom: 15px;}
+.report .ivu-form .ivu-form-item-label{font-weight: bold;}
 </style>
 <template>
 	<div class="report">
 		<Card shadow class="margin-top-10">
-            <Tabs :animated="false">
-                <Tab-pane label="推广资源报告">
-                    <reporting></reporting>
-                </Tab-pane>
-                <Tab-pane label="APP数据报表">
-                    f
-                </Tab-pane>
-                <Tab-pane label="实时报告">
-                    f
-                </Tab-pane>
+
+            <Tabs :animated="false" @on-click="tabsFun">
+                <Tab-pane label="推广资源报告"></Tab-pane>
+                <Tab-pane label="APP数据报表"></Tab-pane>
+                <Tab-pane label="实时报告"></Tab-pane>
+                <Tab-pane label="分推广层级报告"></Tab-pane>
+                <Tab-pane label="受众分析报告"></Tab-pane>
             </Tabs>
+            <!-- 能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。 -->
+            <keep-alive> 
+                <component :is="curent"></component>
+            </keep-alive>
         </Card>
 	</div>
 </template>
 
 <script>
-    import reporting from "./components/report-tab/reporting.vue";
+    import adresourceReporting from "./components/report-tab/adresourceReporting.vue";
+    import appReporting from "./components/report-tab/appReporting.vue";
+    import hourReporting from "./components/report-tab/hourReporting.vue";
+    import gradationReporting from "./components/report-tab/gradationReporting.vue";
+    import audienceReporting from "./components/report-tab/audienceReporting.vue";
 	export default {
         components: {
-            reporting
+            adresourceReporting,
+            appReporting,
+            hourReporting,
+            gradationReporting,
+            audienceReporting
         },
 		data() {
 			return {
-				curent:0
+                curent:'adresourceReporting',
 			};
 		},
 		methods: {		
-			
+			tabsFun(val){
+                let name = '';
+                switch (val) {
+                    case 0: name = 'adresourceReporting'; break;
+                    case 1: name = 'appReporting'; break;
+                    case 2: name = 'hourReporting'; break;
+                    case 3: name = 'gradationReporting'; break;
+                    case 4: name = 'audienceReporting'; break;
+                }
+                this.curent = name;
+            }
 		}
 	};
 </script>

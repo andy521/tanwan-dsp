@@ -13,6 +13,9 @@
 	<div class="unit">        
         <Card shadow class="margin-top-10">
             <Row>
+                <Col v-show="isBack" span="1">
+                    <Button type="primary" @click="back">返回</Button>
+                </Col>
                 <Col span="2">
                     <search-tree @on-change="getids"></search-tree>
                 </Col>
@@ -23,7 +26,7 @@
                     <Button icon="search" @click="getUnit()">搜索</Button>
                     <new-edit class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="12" style="text-align: right;">
+                <Col span="11" style="text-align: right;">
                     <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
@@ -184,7 +187,7 @@
 <script>
     import Axios from "@/api/index";
     import searchTree from '@/components/select-tree/searchTree.vue';
-    import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
+    import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import newEdit from "./components/newEdit.vue";
     import unitIndex from "./components/unitIndex.vue";
 	export default {
@@ -196,6 +199,7 @@
 		data() {
 			return {
                 loading: false,
+                isBack : true,
                 height:document.body.clientHeight - 200,
                 filterModal:false,
                 dateModal:false,
@@ -282,6 +286,10 @@
 			};
 		},
 		methods: {
+            //返回
+            back() {
+                this.$router.go(-1);
+            },
             //获取选中的游戏id
             getids(gid){
                 this.game_id = '[' + gid.join(',') + ']';
@@ -813,12 +821,6 @@
                         key: "download_complete_rate",
                         width: 100
                     },
-                    conversion:{
-                        title: "激活总量",
-                        sortable: "custom",
-                        key: "conversion",
-                        width: 120
-                    },
                     cvr:{
                         title: "点击激活率",
                         sortable: "custom",
@@ -837,10 +839,10 @@
                         key: "download_convert",
                         width: 130
                     },
-                    app_reg:{
+                    conversion:{
                         title: "注册设备数",
                         sortable: "custom",
-                        key: "app_reg",
+                        key: "conversion",
                         width: 120
                     },
                     app_reg_cost:{
@@ -959,10 +961,14 @@
                                         'click': () => {
                                             let query = {
                                                 account:params.row.account_id,
-                                                adgroup:params.row.adgroup_id,
+                                                campaign_id:params.row.campaign_id,
+                                                adgroup_id: params.row.adgroup_id,
+                                                id: params.row.id,
+                                                targeting_id: params.row.targeting_id,
+                                                edit: "1",
                                             };
                                             this.$router.push({
-                                                name: "ucnew_unit",
+                                                name: "ucunit",
                                                 query: query
                                             });
                                         }
@@ -1055,6 +1061,7 @@
             let query = this.$route.query.id;
             if(!!query){
                 this.campaign_id = query.toString();
+                this.isBack = true;
             }
             this.changeTableColumns();
             this.getUnit();

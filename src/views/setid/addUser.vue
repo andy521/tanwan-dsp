@@ -26,11 +26,13 @@
 	        </Form-item>
 	        <Form-item label="部门：" prop="departmentSelected">
 	            <Select v-model="addUser.departmentSelected" placeholder="请选择" @on-change="getChangedPositions">
+	            	<Option value="0">未设置</Option>
 	                <Option v-for="(item,index) in addUser.departmentList" :value="item.value" :key="index">{{ item.label }}</Option>
 	            </Select>
 	        </Form-item>
 	        <Form-item label="职位：" prop="positionSelected">
 	            <Select v-model="addUser.positionSelected" placeholder="请选择">
+	            	<Option value="0">未设置</Option>
 	                <Option v-for="(item,index) in addUser.positionList" :value="item.value" :key="index">{{ item.label }}</Option>
 	            </Select>
 	        </Form-item>
@@ -67,9 +69,9 @@
                     realName: '',
                     sex: '',
                     departmentList: [],
-                    departmentSelected: '',
+                    departmentSelected: "0",
                     positionList: [],
-                    positionSelected: '',
+                    positionSelected: "0",
                     dutyDescribe: '',
                     eMail: '',
                     officePhone: '',
@@ -91,12 +93,12 @@
                     sex: [
                         { required: true, message: '性别不能为空', trigger: 'blur' },
                     ],
-                    departmentSelected: [
+                    /*departmentSelected: [
                         { required: true, message: '部门不能为空', trigger: 'change' },
                     ],
                     positionSelected: [
                         { required: true, message: '职位不能为空', trigger: 'change' },
-                    ],
+                    ]*/
                 }
 			}
 		},
@@ -127,24 +129,29 @@
 		    },
 			//获取所选部门下的职位列表
 			getChangedPositions() {
-		    	Axios.post('api.php', {
-					action: 'sys',
-					opt: 'getPositions',
-					dept: this.addUser.departmentSelected,
-				}).then(
-					res => {
-						if (res.ret == 1) {
-							this.addUser.positionList = [];
-							for(var i=0;i<res.data.posData.length;i++){
-								this.addUser.positionList.push({"value":res.data.posData[i].id,"label":res.data.posData[i].name});
+				if (this.addUser.departmentSelected != "0") {
+					Axios.post('api.php', {
+						action: 'sys',
+						opt: 'getPositions',
+						dept: this.addUser.departmentSelected,
+					}).then(
+						res => {
+							if (res.ret == 1) {
+								this.addUser.positionList = [];
+								for(var i=0;i<res.data.posData.length;i++){
+									this.addUser.positionList.push({"value":res.data.posData[i].id,"label":res.data.posData[i].name});
+								}
 							}
 						}
-					}
-				).catch(
-					err => {
-						console.log('获取失败' + err);
-					}
-				)
+					).catch(
+						err => {
+							console.log('获取失败' + err);
+						}
+					)
+				} else {
+					this.addUser.positionList = [];
+					this.addUser.positionSelected = "0";
+				}
 		    },
 		    //获取权限组列表
 		    getPermissionGroup() {

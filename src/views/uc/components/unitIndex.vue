@@ -51,11 +51,10 @@
 				</CheckboxGroup>
                 <div class="checklist">激活注册</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="conversion">激活总量</Checkbox>
                     <Checkbox label="cvr">点击激活率</Checkbox>
                     <Checkbox label="install_per">激活安装率</Checkbox>
                     <Checkbox label="download_convert">下载激活率</Checkbox>
-                    <Checkbox label="app_reg">注册设备数</Checkbox>
+                    <Checkbox label="conversion">注册设备数</Checkbox>
                     <Checkbox label="app_reg_cost">注册设备成本</Checkbox>
                     <Checkbox label="reg_total">注册</Checkbox>
                     <Checkbox label="reg_cost">注册成本</Checkbox>
@@ -93,6 +92,7 @@
 </template>
 
 <script>
+    import Axios from "@/api/index";
 	export default {
         props :{
             check: {
@@ -109,30 +109,31 @@
                 opt:'searchAdgroups'
 			}
         },
-        computed: {
-			//获取自定义指标
-			userindex() {
-                let memo = this.$store.state.user.userindex;
-                return memo;
-			},
-		},
         watch:{
-            check(data){
-                this.checkAllGroup = data
-            },
-            userindex(data){
+            checkAllGroup(data){
                 this.checkAllGroup = data;
                 this.$emit('on-change', this.checkAllGroup);
             }
         },
         mounted(){
-            //传过来的默认选项
-            this.checkAllGroup = this.check;
-            let param = {
-				taction: this.action,
-				topt: this.opt
-			};
-			this.$store.dispatch('DiyIndex', param);
+            let param = {action:'sys',opt:'get_user_memo',taction: this.action,topt: this.opt};            
+            Axios.get('api.php',param).then( 
+                res=>{
+                    if(res.ret == 1) {
+                        console.log('aaaa')
+                        console.log(res.data)
+                        console.log('bbbb')
+                        if(res.data != ''){
+                            this.checkAllGroup = res.data.split(',');
+                            this.$emit('on-change', this.checkAllGroup);
+                        }else{
+                            this.checkAllGroup = this.check;
+                        };
+                    }
+                }
+            ).catch( 
+                err=>{ console.log(err) }
+            );
         },
 		methods: {           
 			//自定义指标全选
@@ -146,26 +147,34 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','conversion','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','app_reg','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
+					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','conversion','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
 				} else {
 					this.checkAllGroup = [];
 				}
 				this.$emit('on-change', this.checkAllGroup);
             },
             //保存自定义指标
-            saveIndex(){                
-                let param = {
-					taction: this.action,
-					topt: this.opt,
-					memo: this.checkAllGroup.join(',')
-				};
-                this.$store.dispatch('SaveIndex', param);
-                console.log('保存')
+            saveIndex(){
+                if(this.checkAllGroup.length == '0'){
+                    this.$Message.info('至少您得选择一个自定义指标吧');
+                    return;
+                }
+                let param = {action:'sys',opt:'set_user_memo',taction: this.action,topt: this.opt,memo:this.checkAllGroup.join(',')};            
+                Axios.get('api.php',param).then( 
+                    res=>{
+                        if(res.ret == 1) {
+                            this.$Message.info(res.data.data);
+                            return;
+                        }
+                    }
+                ).catch( 
+                    err=>{ console.log(err) }
+                );
             },
 			//自定义指标
 			checkAllGroupChange(data) {
                 this.$emit('on-change', this.checkAllGroup);
-				if(data.length === 33) {
+				if(data.length === 32) {
 					this.indeterminate = false;
 					this.checkAll = true;
 				} else if(data.length > 0) {

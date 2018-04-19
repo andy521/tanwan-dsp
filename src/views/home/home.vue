@@ -61,7 +61,7 @@
 		</Row>
 		<!-- 按账户查看 - 按产品查看 -->
 		<view-tab :tdata="tdata"  @on-change="getData"></view-tab>
-        <div></div>
+ 
 		<!-- 线性表格 -->
 		<linear-tabel :datas="echart"></linear-tabel> 
 
@@ -218,7 +218,7 @@
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            this.$Message.info(res.data);
+                            this.$Message.info(res.msg);
 						}
 					}
                 ).catch(err => {console.log(err)}); 
