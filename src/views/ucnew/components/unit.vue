@@ -1174,7 +1174,8 @@ export default {
     addTargeting() {
       let params = Object.assign({}, this.targetingSetting, {
         action: "ucAdPut",
-        opt: "addTargeting"
+        opt: "addTargeting",
+        account_id: this.$route.query.account
       });
       console.log("定向params", params);
       Axios.post("api.php", params)
