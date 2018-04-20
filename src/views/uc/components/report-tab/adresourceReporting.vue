@@ -58,7 +58,13 @@
             adgroupList,
             lineChart
         },
-        name: 'adresourceReporting',        
+        name: 'adresourceReporting',  
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },      
 		data() {
 			return {
                 loading:false,
@@ -69,6 +75,8 @@
                 adgroupids:[],
                 //推广资源
                 adresource:'',
+                //账户
+                accountIds:'',
                 //时间单位
                 type:'1',
                 //排序
@@ -94,7 +102,13 @@
                 //单元列表
                 adgroupList:[]
 			};
-		},
+        },
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },
 		methods: {	
             //改变日期
             changeDate(e) {
@@ -110,6 +124,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getAdresourceReporting',
+                    accountIds:this.accountIds,
                     adgroupids:this.adgroupids,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间
@@ -158,13 +173,14 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
+                this.getReporting();
             },            
         },
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
-            this.options = setDate;            
+            this.options = setDate; 
+            this.accountIds = this.account;         
             this.getReporting(); 
         }
 	};

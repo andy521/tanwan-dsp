@@ -205,12 +205,9 @@
 								return h('span', params.row.balance)
 							} else {
 								const text = params.row.balance;
-								const color = text < 20000 ? 'green' : 'default';
-								return h('Tag', {
-									props: {
-										type: 'border',
-										color: color
-									}
+								const color = text < 20000 ? 'green' : '';
+								return h('span', {
+									class: color
 								}, text)
 							}
 						}
@@ -221,12 +218,9 @@
 						sortable: 'custom',
                         render: (h, params) => {
 							const cost = params.row.cost;
-                            const color = cost > 20000 ? 'red' : 'default';
-                            return h('Tag', {
-                                props: {
-                                    type: 'border',
-                                    color: color
-                                }
+                            const color = cost > 20000 ? 'red' : '';
+                            return h('span', {
+                                class:color
                             }, cost)
 						}
 					},

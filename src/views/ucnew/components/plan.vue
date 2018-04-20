@@ -380,11 +380,11 @@ export default {
             } else {
               this.getAdPlan();
             }
-            this.$Message.success("推广计划数据更新成功");
+            this.$Message.success("推广计划列表数据更新成功");
           }
         })
         .catch(err => {
-          console.log("获取推广计划错误：" + err);
+          console.log("推广计划列表数据更新失败：" + err);
         });
     },
     // 返回计划列表按钮
