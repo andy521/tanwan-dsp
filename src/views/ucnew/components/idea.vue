@@ -205,7 +205,7 @@ button.ivu-btn {
     <div class="color-green border-bottom padding-tb-10">
       <Button slot="title" type="text" @click="handleGoBack" class="padding-left-0">
         <Icon type="chevron-left"></Icon>
-        返回单元列表
+        返回计划列表
       </Button>
     </div>
 
@@ -379,7 +379,6 @@ button.ivu-btn {
 <script>
 import Axios from "@/api/index";
 import { deepClone } from "@/utils/DateShortcuts.js";
-import util from '@/utils/index';
 // import unitbyid from "../simple/unitbyid";
 // import getCampaignNameList from "../simple/getCampaignNameList";
 // import creativeTemplates from "../simple/creativeTemplates";
@@ -799,14 +798,14 @@ export default {
       this.image.width = parseInt(imageSize[0]);
       this.image.height = parseInt(imageSize[1]);
       this.image.size = currTemp.image[0].size;
+
       this.actionUrl =
-        "http://ads.tanwan.com/api.php?action=ucAdPut&opt=adsimg_doadd&account_id=" +        
+        "http://ads.tanwan.com/api.php?action=ucAdPut&opt=adsimg_doadd&account_id=" +
         this.accountId +
         "&target_width=" +
         this.image.width +
         "&target_height=" +
-        this.image.height +
-        "&sessionid=" + util.getItem('sessionid');
+        this.image.height;
 
       console.log(
         "image width height",
@@ -943,8 +942,7 @@ export default {
       Axios.post("api.php", {
         action: "ucAdPut",
         opt: "getCreativeTemplates",
-        adgroup_id: parseInt(this.$route.query.adgroup_id),
-        account_id: parseInt(this.$route.query.account)
+        adgroup_id: this.adgroupId
       })
         .then(res => {
           if (ERR_OK === res.ret) {

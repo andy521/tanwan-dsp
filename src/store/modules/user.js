@@ -7,6 +7,7 @@ const user = {
         isLogin : 0,
         //用户自定义指标
         userindex:[],
+        //account:'',
     },
     mutations: {        
         USER_LOGINOUT ( state ){
@@ -21,7 +22,10 @@ const user = {
         USER_INDEX(state,data){
             let val = data ? data.split(',') : [];
             state.userindex = val
-        }
+        },
+        // SET_ACCOUNT(state,data){
+        //     state.account = data
+        // }
     },
     actions : {
         //用户登录
@@ -55,6 +59,10 @@ const user = {
             util.removeItem('sessionid');
             util.removeItem('access' );
         },
+        //用户选择账号
+        // setAccount({ commit }, data){
+        //     commit('SET_ACCOUNT',data);
+        // },
         //获取用户自定义指标
         DiyIndex({ commit },opt){
             let param = opt;

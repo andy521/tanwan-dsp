@@ -335,7 +335,7 @@
             </RadioGroup>
           </FormItem>
         </Form>
-        {{this.targetingSetting}}
+     
         <Row class="btn-submit">
           <Col>
           <Button @click="handleTargetingSumbit" type="primary">确认</Button>
@@ -360,7 +360,7 @@
             <span v-if="(convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name !== '下载' && convert.currConvertMonitorTypes.name !== '激活')" class="color-red">该账户的转化目标暂不可用,请跳转到
               <a href="#">推广工具</a> 配置转化跟踪。</span>
           </FormItem>
-          {{this.unitSetting}}
+   
           <FormItem>
             <p slot="label">优化目标
               <Tooltip placement="top">

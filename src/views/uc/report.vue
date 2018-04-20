@@ -16,10 +16,16 @@
             </Tabs>
             <!-- 能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。 -->
             <keep-alive> 
-                <component :is="curent"></component>
+                <component :is="curent" :account="account"></component>
             </keep-alive>
         </Card>
-	</div>
+
+        <Modal v-model="accountModal"  title="选择账户" @on-ok="accountOk">
+            <div class="account">
+                <get-account title="请选择用户" @on-change="accountChange"></get-account>
+            </div>
+        </Modal>
+	</div>    
 </template>
 
 <script>
@@ -28,8 +34,10 @@
     import hourReporting from "./components/report-tab/hourReporting.vue";
     import gradationReporting from "./components/report-tab/gradationReporting.vue";
     import audienceReporting from "./components/report-tab/audienceReporting.vue";
+    import getAccount from '@/components/get-account/getAccount.vue';
 	export default {
         components: {
+            getAccount,
             adresourceReporting,
             appReporting,
             hourReporting,
@@ -39,6 +47,8 @@
 		data() {
 			return {
                 curent:'adresourceReporting',
+                accountModal:true,
+                account:{}
 			};
 		},
 		methods: {		
@@ -52,7 +62,19 @@
                     case 4: name = 'audienceReporting'; break;
                 }
                 this.curent = name;
+            },
+            accountChange(data){
+                this.account = data;
+            },
+            accountOk(){
+                console.log('选择')
             }
-		}
+		},
+        beforeMount(){
+            let account = this.$store.state.user.account;
+            if(account){
+                this.accountModal = false;
+            }
+        }
 	};
 </script>
