@@ -16,11 +16,8 @@
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
             </Form-item> 
             <Form-item label="选择计划：">
-                <Button :loading="planLoading" @click="getCampaign" class="name">{{planTxt}}</Button>
-                <!-- <Select v-model="accountIds" style="width:200px" placeholder="全部推广计划" @on-change="getAdgroup()">
-                    <Option v-for="(item,index) in accountList" :value="item.campaign_id" :key="index">{{ item.campaign_name }}</Option>
-                </Select> -->
-                <Button :loading="unitLoading" @click="getAdgroup" class="name">{{unitTxt}}</Button>
+                <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
+                <adgroup-list :adgroup="adgroupList" @on-change="adgroupChange" style="display:inline-block;margin-left:5px;"></adgroup-list>
             </Form-item>
             <Form-item label="统计指标：">
                 <Radio-group v-model="type">
@@ -88,30 +85,6 @@
             </Col>
         </Row>
 
-        <Modal v-model="planModel" title="选择计划" @on-ok="setPlanOK">
-            <div class="pt">
-                全部计划
-                <Checkbox style="float:right" @on-change="planAll">全选</Checkbox>
-            </div>
-            <div class="plan_box">
-                <Checkbox-group v-model="accountIds">
-                    <Checkbox v-for="item in accountList" :label="item.campaign_id" :key="item.campaign_id">{{ item.campaign_name }}</Checkbox>
-                </Checkbox-group>
-            </div>            
-        </Modal>
-
-        <Modal v-model="unitModel" title="选择计划" @on-ok="setUnitOK">
-            <div class="pt">
-                全部单元
-                <Checkbox style="float:right" @on-change="unitAll">全选</Checkbox>
-            </div>
-            <div class="plan_box">
-                <Checkbox-group v-model="adgroupIds">
-                    <Checkbox v-for="item in adgroupList" :label="item.adgroup_id" :key="item.adgroup_id">{{ item.adgroup_name }}</Checkbox>
-                </Checkbox-group>
-            </div>            
-        </Modal>
-
 	</div>
 </template>
 
@@ -122,19 +95,19 @@
     //import 'echarts/lib/chart/map';
     import 'echarts/map/js/china.js';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
+    import getCampaign from "../getCampaign.vue";
+    import adgroupList from "../adgroupList.vue";
 	export default {
-        name: 'appReporting',     
+        name: 'appReporting',
+        components: {
+            getCampaign,
+            adgroupList
+        },   
 		data() {
 			return {
                 es:true,
-                planLoading:false,
-                unitLoading:false,
-                planModel:false,
-                unitModel:false,
                 loading:false,
                 options: null,
-                planTxt:'全部推广计划',
-                unitTxt:'全部推广单元',
                 //获取单元
                 adgroupList:[],
                 adgroupIds:[],
@@ -178,17 +151,12 @@
             changeDate(e) {
                 this.DateDomain = e;
             },	
-			getReporting(page){
-                if (page === undefined) {
-                    this.page = 1;
-                } else {
-                    this.page = page;
-                };
+			getReporting(){
                 let param = {
                     action:'ucAdPut',
                     opt:'getProvinceReporting',
                     accountIds:this.accountIds.join(','),
-                    adgroupIds:this.adgroupIds.join(','),
+                    adgroupIds:this.adgroupIds,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间                
                     type:this.type,
@@ -197,6 +165,7 @@
                     orderField:this.orderField,
                     orderDirection: this.orderDirection
                 };
+                console.log(param)
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
@@ -220,7 +189,7 @@
                     action:'ucAdPut',
                     opt:'getAudienceReporting',
                     accountIds:this.accountIds.join(','),
-                    adgroupIds:this.adgroupIds.join(','),
+                    adgroupIds:this.adgroupIds,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间   
                     retype:this.retype,             
@@ -250,82 +219,24 @@
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
                 this.getSpread();
             },  
-            //获取计划
-            getCampaign(){
-                this.planLoading = true;       
-                Axios.post('api.php',{action:'ucAdPut',opt:'getCampaignNameList'}).then(
+            //选择计划
+            campaignChange(campaign){
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
 					res => {
 						if(res.ret == 1) {
-                            console.log(res)
-                            this.planLoading = false;
-                            this.planModel = true;
-                            this.accountList = res.data;
+                            let list = this.adgroupList =  res.data,
+                                ids = '';
+                            list.forEach(e=>{
+                                ids += e.adgroup_id + ',';
+                            });
+                            this.adgroupIds = ids;
 						}
 					}
-                ).catch(err => {console.log(err)});
-            },
-            //全选计划
-            planAll(val){                
-                if(val){
-                    let s = [];
-                    this.accountList.forEach(val=>{
-                        s.push(val.campaign_id)
-                    })
-                    this.accountIds = s;
-                }else{
-                    this.accountIds = [];
-                }
-            },
-            //全选单元
-            unitAll(val){
-                if(val){
-                    let s = [];
-                    this.adgroupList.forEach(val=>{
-                        s.push(val.adgroup_id)
-                    })
-                    this.adgroupIds = s;
-                }else{
-                    this.adgroupIds = [];
-                }
-            },
-            setPlanOK(){
-                let list = this.accountList,name='';
-                this.accountIds.forEach(item=>{                    
-                    for(let x in list){
-                        console.log(list[x])
-                        if(list[x].campaign_id == item){
-                            name += list[x].campaign_name + ','
-                            return
-                        }
-                    }
-                });
-                this.planTxt = name;
-            },
-            setUnitOK(){
-                let list = this.adgroupList,name='';
-                this.adgroupIds.forEach(item=>{                    
-                    for(let x in list){
-                        console.log(list[x])
-                        if(list[x].adgroup_id == item){
-                            name += list[x].adgroup_name + ','
-                            return
-                        }
-                    }
-                });
-                this.unitTxt = name;
-            },
-            getAdgroup(){
-                this.unitLoading = true;
-                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:'['+ this.accountIds +']'}).then(
-					res => {
-						if(res.ret == 1) {
-                            //console.log(res)
-                            this.unitLoading = false;
-                            this.unitModel = true;
-                            this.adgroupList = res.data;
-						}
-					}
-                ).catch(err => {console.log(err)});
+                ).catch(err => {console.log(err)});            
+            },            
+            //选择单元
+            adgroupChange(val){
+                this.adgroupids = val;
             },
             convertData(data){
                 let geoCoordMap = {'新疆维吾尔自治区':[84.9023,42.148],'西藏自治区':[87.8695,31.6846],'内蒙古自治区':[112.5977,46.3408],"青海":[95.2402,35.4199],"四川":[101.9199,30.1904],"黑龙江":[126.1445,48.7156],"甘肃":[99.7129,38.166],"云南":[101.0652,25.1807],"广西壮族自治区":[107.7813,23.6426], "湖南":[111.5332,27.3779],"陕西":[109.5996,35.7396],"广东":[113.4668,22.8076],"吉林":[125.7746,43.5938],"河北":[115.4004,39.4688],"湖北":[112.2363,31.1572],"贵州":[106.6113,26.9385],"山东":[118.7402,36.4307],"江西":[116.0156,27.29],"河南":[113.0668,33.8818],"辽宁":[122.0438,41.0889],"山西":[112.4121,37.6611],"安徽":[117.2461,32.0361],"福建":[118.3008,25.9277],"浙江":[120.498,29.0918],"江苏":[118.8586,32.915],"重庆市":[107.7539,30.1904],"宁夏回族自治区":[105.9961,37.3096],"海南省":[109.9512,19.2041],"台湾":[120.0254,23.5986],"北京":[116.4551,40.2539],"天津市":[117.4219,39.4189],"上海市":[121.4648,31.2891],"香港特别行政区":[114.1178,22.3242],"澳门特别行政区":[111.5547,22.1484]};

@@ -119,7 +119,7 @@
             Axios.get('api.php',param).then( 
                 res=>{
                     if(res.ret == 1) {
-                        if(res.data != ''){
+                        if(res.data){
                             this.checkAllGroup = res.data.split(',');
                             this.$emit('on-change', this.checkAllGroup);
                         }else{

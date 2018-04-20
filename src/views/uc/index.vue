@@ -19,7 +19,7 @@
                     <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                     <Input v-model="keyword" class="inp" placeholder="请输入关键字" ></Input>
                     <Button icon="search" @click="getSpread()">搜索</Button>
-                    <new-edit  class="margin-left-5"></new-edit>
+                    <new-edit title="新建计划" class="margin-left-5"></new-edit>
                 </Col>
                 <Col span="9" style="text-align: right;">
                     <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
@@ -686,7 +686,17 @@
                         title: "消费",
                         sortable: "custom",
                         key: "cost",
-                        width: 100
+                        width: 100,
+                        render : (h, params) => {
+                            const cost = params.row.cost;
+                            const color = cost > 20000 ? 'red' : 'default';
+                            return h('Tag', {
+                                props: {
+                                    type: 'border',
+                                    color: color
+                                }
+                            }, cost)
+                        }
                     },                    
                     adResourceId:{
                         title: "推广资源",
@@ -721,13 +731,15 @@
                     },
                     cpc:{
                         title: "平均点击价格",
+                        sortable: "custom",
                         key: "cpc",
-                        width: 120
+                        width: 140
                     },
                     cpm:{
                         title: "千次展现价格",
+                        sortable: "custom",
                         key: "cpm",
-                        width: 120
+                        width: 140
                     },
                     invalidReasonList:{
                         title: "推广计划非启动状态原因",
@@ -737,102 +749,127 @@
                     platform:{
                         title: "操作系统",
                         key: "platform",
-                        width: 100
+                        width: 140,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.platform) {
+                                case '001': text = "IOS"; break;
+                                case '010': text = "Android"; break;
+                                case '100': text = "其他"; break;
+                                case '011': text = "Android和IOS"; break;
+                                case '110': text = "其他和安卓"; break;                                
+                                case '111': text = "不限"; break;
+                            }
+                            return h('span', text);
+                        }
                     },
                     download_start:{
                         title: "下载开始数",
                         key: "download_start",
+                        sortable: "custom",
                         width: 100
                     },
                     download_complete:{
                         title: "下载完成数",
                         key: "download_complete",
-                        width: 100
+                        sortable: "custom",
+                        width: 140
                     },
                     download_complete_rate:{
                         title: "下载完成率",
                         key: "download_complete_rate",
-                        width: 100
-                    },
-                    // conversion:{
-                    //     title: "激活总量",
-                    //     key: "conversion",
-                    //     width: 100
-                    // },
+                        sortable: "custom",
+                        width: 140
+                    }, 
                     cvr:{
                         title: "点击激活率",
                         key: "cvr",
-                        width: 100
+                        sortable: "custom",
+                        width: 140
                     },
                     conversion_cost:{
                         title: "转换成本",
                         key: "conversion_cost",
+                        sortable: "custom",
                         width:100
                     },
                     active:{
                         title: "活跃数",
+                        sortable: "custom",
                         key: "active",
                         width: 100
                     },
                     active_per:{
                         title: "活跃率",
+                        sortable: "custom",
                         key: "active_per",
                         width: 100
                     },
                     reg_total:{
                         title: "注册数",
+                        sortable: "custom",
                         key: "reg_total",
                         width: 100
                     },
                     install_per:{
                         title: "激活安装率",
+                        sortable: "custom",
                         key: "install_per",
-                        width: 100
+                        width: 140
                     },
                     reg_per:{
                         title: "注册率",
+                        sortable: "custom",
                         key: "reg_per",
                         width: 100
                     },
                     reg_cost:{
                         title: "注册成本",
+                        sortable: "custom",
                         key: "reg_cost",
-                        width: 100
+                        width: 130
                     },
                     pay_num:{
                         title: "付费人数",
+                        sortable: "custom",
                         key: "pay_num",
-                        width: 100
+                        width: 130
                     },
                     pay_total:{
                         title: "付费金额",
+                        sortable: "custom",
                         key: "pay_total",
-                        width: 100
+                        width: 130
                     },
                     pay_per:{
                         title: "付费率",
+                        sortable: "custom",
                         key: "pay_per",
                         width: 100
                     },
                     reg_arpu:{
                         title: "注册ARPU",
+                        sortable: "custom",
                         key: "reg_arpu",
-                        width: 100
+                        width: 130
                     },
                     income_per:{
                         title: "回本率",
+                        sortable: "custom",
                         key: "income_per",
                         width: 100
                     },
                     click_installr:{
                         title: "点击激活率",
                         key: "click_installr",
+                        sortable: "custom",
                         width: 100
                     },
                     conversion:{
                         title: "注册设备数",
                         key: "conversion",
-                        width: 100
+                        sortable: "custom",
+                        width: 140
                     },
                     app_reg_cost:{
                         title: "注册设备成本",
@@ -850,11 +887,10 @@
                                     class: "edit_link",
                                     on: {
                                         'click': () => {
-                                            let query = { account: params.row.account_id,edit:"1"};
+                                            let query = { id: params.row.id, account: params.row.account_id,edit:"1"};
                                             this.$router.push({
                                                 name: "ucplan",
-                                                query: query,
-                                                params: params.row
+                                                query: query
                                             });
                                         }
                                     }
