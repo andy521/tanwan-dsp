@@ -58,7 +58,12 @@
             adgroupList,
             lineChart
         },
-        name: 'adresourceReporting',        
+        name: 'adresourceReporting',  
+        props:{
+            account:{
+                type:Object
+            }
+        },      
 		data() {
 			return {
                 loading:false,
@@ -94,7 +99,12 @@
                 //单元列表
                 adgroupList:[]
 			};
-		},
+        },
+        watch:{
+            account(data){
+                console.log(data)
+            }
+        },
 		methods: {	
             //改变日期
             changeDate(e) {
