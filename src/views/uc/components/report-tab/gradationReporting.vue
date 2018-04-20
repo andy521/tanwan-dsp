@@ -22,9 +22,12 @@
                     <Option v-for="(item,index) in accountList" :value="item.account_id" :key="index">{{ item.account_name }}</Option>
                 </Select>
             </Form-item>
-
-            <Form-item v-show="showPlanSelect">
-                <plan-list @on-change="changePlan"></plan-list>
+            
+            <Form-item v-show="retype == '2' || retype == '3'" label="选择计划：">
+                <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
+                <div v-show="retype == '3'" style="display:inline-block;margin-left:5px;">
+                    <adgroup-list :adgroup="adgroupList" @on-change="adgroupChange"></adgroup-list>
+                </div>
             </Form-item>
 
             <Form-item label="时间单位：">
@@ -69,21 +72,22 @@
     import Axios from "@/api/index";
     import echarts from 'echarts';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-    import planList from "../returnPlan.vue";
     import lineChart from "../lineChart.vue";
+    import getCampaign from "../getCampaign.vue";
+    import adgroupList from "../adgroupList.vue";
 	export default {
         name: 'gradationReporting',
         components: {
-            planList,
+            getCampaign,
+            adgroupList,
             lineChart
         },        
 		data() {
 			return {
                 loading:false,
                 options: null,
-                title:'账户报告',
-                //是否显示选择计划按钮
-                showPlanSelect:false,
+                title:'账户报告', 
+                adgroupList:[],
                 //账户列表
                 accountList:[],
                 accountIds:'',
@@ -168,7 +172,7 @@
 					res => {
 						if(res.ret == 1) {                            
                             this.accountList = res.data;
-                            console.log(this.accountList);
+                            //console.log(this.accountList);
 						}
 					}
                 ).catch(err => {console.log(err)});
@@ -176,17 +180,33 @@
             //报告类型
             retypeChange(val){
                 switch (val) {
-                    case '1': this.title ='账户报告'; this.showPlanSelect=false; break;
-                    case '2': this.title ='计划报告'; this.showPlanSelect=true; break;
-                    case '3': this.title ='单元报告'; this.showPlanSelect=true;break;
-                    case '4': this.title ='创意报告'; this.showPlanSelect=true; break;
+                    case '1': this.title ='账户报告'; break;
+                    case '2': this.title ='计划报告'; break;
+                    case '3': this.title ='单元报告'; break;
+                    case '4': this.title ='创意报告'; break;
                 }
             },
-            //获取所有单元ID
-            changePlan(data){
-                console.log(data)
-                this.adgroupIds = data
-            }        
+             //选择计划
+            campaignChange(campaign){
+                console.log(campaign)
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
+					res => {
+						if(res.ret == 1) {
+                            let list = this.adgroupList =  res.data,
+                                ids = '';
+                            list.forEach(e=>{
+                                ids += e.adgroup_id + ',';
+                            });
+                            console.log(this.adgroupList)
+                            this.adgroupIds = ids;
+						}
+					}
+                ).catch(err => {console.log(err)});            
+            },
+            //选择单元
+            adgroupChange(val){
+                this.adgroupids = val;
+            }      
         },
         beforeMount(){
             let setDate = DateShortcuts;

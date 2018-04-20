@@ -24,7 +24,7 @@
                     <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                     <Input v-model="keyword" class="inp" placeholder="请输入关键字" ></Input>
                     <Button icon="search" @click="getUnit()">搜索</Button>
-                    <new-edit class="margin-left-5"></new-edit>
+                    <new-edit title="新建单元" class="margin-left-5"></new-edit>
                 </Col>
                 <Col span="11" style="text-align: right;">
                     <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
@@ -47,7 +47,7 @@
                     </Poptip>
                     <Button type="ghost" icon="location" @click="setRegionFun">修改地域</Button>
                     <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>
-                    <unit-index @on-change="getIndex" :check="checkAllGroup"  action="gdtAdPut" opt="campaigns"></unit-index>
+                    <unit-index @on-change="getIndex" :check="checkAllGroup"></unit-index>
                 </Col>
             </Row>	
 
@@ -914,22 +914,59 @@
                     chargeType:{
                         title: "计费方式",
                         key: "chargeType",
-                        width: 120
+                        width: 120,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.chargeType) {
+                                case '1': text = "CPC"; break;
+                                case '2': text = "CPM"; break;
+                            }
+                            return h('span', text);
+                        }
                     },
                     generalizeType:{
                         title: "推广方式",
                         key: "generalizeType",
-                        width: 120
+                        width: 120,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.generalizeType) {
+                                case '1': text = "打开页面"; break;
+                                case '2': text = "APP下载"; break;
+                            }
+                            return h('span', text);
+                        }
                     },
                     platform:{
                         title: "操作系统",
                         key: "platform",
-                        width: 100
+                        width: 140,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.platform) {
+                                case '001': text = "IOS"; break;
+                                case '010': text = "Android"; break;
+                                case '100': text = "其他"; break;
+                                case '011': text = "Android和IOS"; break;
+                                case '110': text = "其他和安卓"; break;                                
+                                case '111': text = "不限"; break;
+                            }
+                            return h('span', text);
+                        }
                     },
                     adResourceId:{
                         title: "推广资源",
                         key: "adResourceId",
-                        width: 100
+                        width: 100,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.adResourceId) {
+                                case '1': text = "UC头条"; break;
+                                case '2': text = "UC精准"; break;
+                                case '4': text = "应用商店"; break;
+                            }
+                            return h('span', text);
+                        }
                     },
                     adgroup_id:{
                         title: "单元ID",

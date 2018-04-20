@@ -31,58 +31,41 @@
 			<div class="api" slot="content">
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
-				</div>
+				</div>       
+                         
 				<div class="checklist">媒体列</div>
 				<CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
 					<Checkbox label="paused">投放开关</Checkbox>
-					<Checkbox label="cpc">平均点击价格</Checkbox>
-					<Checkbox label="cpm">千次展现价格</Checkbox>
-					<Checkbox label="click">点击量</Checkbox>
+                    <Checkbox label="cpc">平均点击价格</Checkbox>
+                    <Checkbox label="cpm">千次展现价格</Checkbox>
+                    <Checkbox label="click">点击量</Checkbox>
                     <Checkbox label="ctr">点击率</Checkbox>
 				</CheckboxGroup>
 
                 <div class="checklist">落地页</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="cost">展示PV</Checkbox>
-                    <!-- <Checkbox label="a">展示IP</Checkbox>
-                    <Checkbox label="a">下载IP</Checkbox> -->
+					<Checkbox label="cost">展示PV</Checkbox> 
                     <Checkbox label="download_complete">下载数</Checkbox>
                     <Checkbox label="download_complete_rate">下载率</Checkbox> 
 				</CheckboxGroup>
                 <div class="checklist">激活注册</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
                     <Checkbox label="cvr">点击激活率</Checkbox>
-                    <Checkbox label="install_per">激活安装率</Checkbox>
-                    <Checkbox label="download_convert">下载激活率</Checkbox>
-                    <Checkbox label="conversion">注册设备数</Checkbox>
-                    <Checkbox label="app_reg_cost">注册设备成本</Checkbox>
-                    <Checkbox label="reg_total">注册</Checkbox>
-                    <Checkbox label="reg_cost">注册成本</Checkbox>
-                    <Checkbox label="reg_per">注册率</Checkbox>
-                    <Checkbox label="reg_arpu">注册ARPU</Checkbox>
+                    <Checkbox label="conversion">注册设备数</Checkbox> 
 				</CheckboxGroup>
-                <div class="checklist">活跃付费</div>
-                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="active">活跃数</Checkbox>
-                    <Checkbox label="active_per">活跃率</Checkbox>
-                    <Checkbox label="pay_num">付费人数</Checkbox>
-                    <Checkbox label="pay_total">付费金额</Checkbox>
-                    <Checkbox label="pay_per">付费率</Checkbox>
-                    <Checkbox label="income_per">回本率</Checkbox>
-				</CheckboxGroup>
+
                 <div class="checklist">其他</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="state">推广状态</Checkbox>                   
-                    <Checkbox label="chargeType">计费方式</Checkbox>
-                    <Checkbox label="optimizationTarget">优化目标</Checkbox>
-                    <Checkbox label="bid">出价</Checkbox>
-                    <Checkbox label="generalizeType">推广方式</Checkbox>
-                    <Checkbox label="platform">操作系统</Checkbox>
-                    <Checkbox label="adResourceId">推广资源</Checkbox>
-                    <!-- <Checkbox label="adgroup_id">单元id</Checkbox> -->
-                    <Checkbox label="budget">日预算</Checkbox>
+                    <Checkbox label="state">推广状态</Checkbox>                 
+                    <Checkbox label="adgroup_id">单元id</Checkbox>
                     <Checkbox label="impression">展现量</Checkbox>
+                    <Checkbox label="adgroup_name">单元名称</Checkbox>
+                    <Checkbox label="activation">转化数</Checkbox>
+                    <Checkbox label="cost_per_conversion">转化成本</Checkbox>
+                   
 				</CheckboxGroup>
+
+
                 <div class="foot">
                     <Button type="success" @click="saveIndex">保存自定义指标</Button>   
                 </div>
@@ -106,7 +89,7 @@
                 checkAll: false,
                 checkAllGroup:this.userindex,
                 action:'ucAdPut',
-                opt:'searchAdgroups'
+                opt:'searchCreatives'
 			}
         },
         watch:{
@@ -119,8 +102,9 @@
             let param = {action:'sys',opt:'get_user_memo',taction: this.action,topt: this.opt};            
             Axios.get('api.php',param).then( 
                 res=>{
-                    if(res.ret == 1) {
+                    if(res.ret == 1) { 
                         if(res.data){
+                            console.log(res.data)
                             this.checkAllGroup = res.data.split(',');
                             this.$emit('on-change', this.checkAllGroup);
                         }else{
@@ -144,7 +128,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','conversion','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
+                    this.checkAllGroup = ['paused','state','impression','click',"ctr","cost","adgroup_name",'activation','cvr','cost_per_conversion','cpc','cpm','download_complete','download_complete_rate','conversion']
 				} else {
 					this.checkAllGroup = [];
 				}

@@ -12,6 +12,20 @@
                     <Radio label="4">创意报告</Radio>
                 </Radio-group>
             </Form-item>
+
+            <Form-item v-show="retype == 1" label="选择账户：">
+                <Select v-model="accountIds" style="width:200px" placeholder="请选择账户">
+                    <Option v-for="(item,index) in accountList" :value="item.account_id" :key="index">{{ item.account_name }}</Option>
+                </Select>
+            </Form-item>
+
+            <Form-item v-show="retype == '2' || retype == '3'" label="选择计划：">
+                <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
+                <div v-show="retype == '3'" style="display:inline-block;margin-left:5px;">
+                    <adgroup-list :adgroup="adgroupList" @on-change="adgroupChange"></adgroup-list>
+                </div>
+            </Form-item>
+
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
                     <Radio label="0">分小时</Radio>
@@ -48,15 +62,27 @@
     import echarts from 'echarts';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import lineChart from "../lineChart.vue";
+    import getCampaign from "../getCampaign.vue";
+    import adgroupList from "../adgroupList.vue";
 	export default {
         name: 'hourReporting',
         components: {
+            getCampaign,
+            adgroupList,
             lineChart
         },        
 		data() {
 			return {
                 loading:false,
                 title:'账户报告 (注意：当日数据仅供参考，请以隔日数据为准)',
+                //账户列表
+                accountList:[],
+                //账户id
+                accountIds:'',
+                //单元id集合
+                adgroupIds:[],
+                //单元列表
+                adgroupList:[],
                 //报表类型
                 retype:'1',
                 //时间单位
@@ -106,6 +132,8 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getHourReporting',
+                    accountIds:this.accountIds,
+                    adgroupIds:this.adgroupIds,
                     retype:this.retype,                 
                     type:this.type,
                     page: this.page, //页码
@@ -132,9 +160,41 @@
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
                 this.getSpread();
-            },       
+            },
+            getAccountList(){
+                Axios.post('api.php', {action:'ucAdPut',opt:'getAccountList'}).then(
+					res => {
+						if(res.ret == 1) {                            
+                            this.accountList = res.data;
+                            //console.log(this.accountList);
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },
+            //选择计划
+            campaignChange(campaign){
+                console.log(campaign)
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
+					res => {
+						if(res.ret == 1) {
+                            let list = this.adgroupList =  res.data,
+                                ids = '';
+                            list.forEach(e=>{
+                                ids += e.adgroup_id + ',';
+                            });
+                            console.log(this.adgroupList)
+                            this.adgroupids = ids;
+						}
+					}
+                ).catch(err => {console.log(err)});            
+            },
+            //选择单元
+            adgroupChange(val){
+                this.adgroupids = val;
+            }  
         },
-        beforeMount(){          
+        beforeMount(){
+            this.getAccountList();   
             this.getReporting(); 
         }
 	};

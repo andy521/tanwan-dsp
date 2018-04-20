@@ -50,7 +50,7 @@
         },
         watch: {
             datas(val) {
-                console.log(val)
+                //console.log(val)
                 this.left = val.echartData[0].eng || '';
                 this.right = val.echartData[1].eng || '';
                 this.echartData = val.echartData; 

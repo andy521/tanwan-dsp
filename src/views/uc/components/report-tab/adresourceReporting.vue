@@ -6,14 +6,15 @@
             </Form-item>
             <Form-item label="推广资源：">
                 <Select v-model="adresource" style="width:200px">
-                    <Option value="">不限</Option>
+                    <Option value="">全部推广资源</Option>
                     <Option value="UC头条">UC头条</Option>
                     <Option value="UC精准">UC精准</Option>
                     <Option value="应用商店">应用商店</Option>
                 </Select>
             </Form-item>
             <Form-item label="选择计划：">
-                <plan-list @on-change="changePlan"></plan-list>
+                <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
+                <adgroup-list :adgroup="adgroupList" style="display:inline-block;margin-left:5px;" @on-change="adgroupChange"></adgroup-list>
             </Form-item>
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
@@ -48,11 +49,13 @@
 <script>
     import Axios from "@/api/index";
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-    import planList from "../returnPlan.vue";
+    import getCampaign from "../getCampaign.vue";
+    import adgroupList from "../adgroupList.vue";
     import lineChart from "../lineChart.vue";
 	export default {
         components: {
-            planList,
+            getCampaign,
+            adgroupList,
             lineChart
         },
         name: 'adresourceReporting',        
@@ -87,7 +90,9 @@
                     {title: "千次展现价格",sortable: "cost",key: "cpm"},
                 ],
                 tableSize: "small",
-                echart:[]
+                echart:[],
+                //单元列表
+                adgroupList:[]
 			};
 		},
 		methods: {	
@@ -130,9 +135,24 @@
                 ).catch(err => {console.log(err)});
             },
             //选择计划
-            changePlan(val){                
+            campaignChange(campaign){
+                console.log(campaign)
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
+					res => {
+						if(res.ret == 1) {
+                            let list = this.adgroupList =  res.data,
+                                ids = '';
+                            list.forEach(e=>{
+                                ids += e.adgroup_id + ',';
+                            });
+                            this.adgroupids = ids;
+						}
+					}
+                ).catch(err => {console.log(err)});            
+            },
+            //选择单元
+            adgroupChange(val){
                 this.adgroupids = val;
-                console.log(this.adgroupids);
             },
             //排序
             sortchange(column) {
