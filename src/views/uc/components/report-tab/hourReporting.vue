@@ -13,12 +13,6 @@
                 </Radio-group>
             </Form-item>
 
-            <Form-item v-show="retype == 1" label="选择账户：">
-                <Select v-model="accountIds" style="width:200px" placeholder="请选择账户">
-                    <Option v-for="(item,index) in accountList" :value="item.account_id" :key="index">{{ item.account_name }}</Option>
-                </Select>
-            </Form-item>
-
             <Form-item v-show="retype == '2' || retype == '3'" label="选择计划：">
                 <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
                 <div v-show="retype == '3'" style="display:inline-block;margin-left:5px;">
@@ -70,13 +64,17 @@
             getCampaign,
             adgroupList,
             lineChart
-        },        
+        }, 
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },  
 		data() {
 			return {
                 loading:false,
                 title:'账户报告 (注意：当日数据仅供参考，请以隔日数据为准)',
-                //账户列表
-                accountList:[],
                 //账户id
                 accountIds:'',
                 //单元id集合
@@ -108,7 +106,13 @@
                 tableSize: "small",
                 echart:[]
 			};
-		},
+        },
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },  
 		methods: {	
             //改变日期
             changeDate(e) {
@@ -159,17 +163,7 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
-            },
-            getAccountList(){
-                Axios.post('api.php', {action:'ucAdPut',opt:'getAccountList'}).then(
-					res => {
-						if(res.ret == 1) {                            
-                            this.accountList = res.data;
-                            //console.log(this.accountList);
-						}
-					}
-                ).catch(err => {console.log(err)});
+                this.getReporting();
             },
             //选择计划
             campaignChange(campaign){
@@ -193,8 +187,8 @@
                 this.adgroupids = val;
             }  
         },
-        beforeMount(){
-            this.getAccountList();   
+        beforeMount(){ 
+            this.accountIds = this.account; 
             this.getReporting(); 
         }
 	};

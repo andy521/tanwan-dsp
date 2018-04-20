@@ -16,12 +16,6 @@
                     <Radio label="4">创意报告</Radio>
                 </Radio-group>
             </Form-item>
-            <!-- 账户报告 -->
-            <Form-item v-show="retype == 1">
-                <Select v-model="accountIds" style="width:200px" placeholder="请选择账户">
-                    <Option v-for="(item,index) in accountList" :value="item.account_id" :key="index">{{ item.account_name }}</Option>
-                </Select>
-            </Form-item>
             
             <Form-item v-show="retype == '2' || retype == '3'" label="选择计划：">
                 <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
@@ -81,15 +75,20 @@
             getCampaign,
             adgroupList,
             lineChart
-        },        
+        },
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },  
 		data() {
 			return {
                 loading:false,
                 options: null,
                 title:'账户报告', 
                 adgroupList:[],
-                //账户列表
-                accountList:[],
+                //账户
                 accountIds:'',
                 //筛选时间
                 DateDomain: [formatDate(new Date(new Date().getTime()-1000*60*60*24*7), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")], 
@@ -121,7 +120,13 @@
                 echart:[],
                 
 			};
-		},
+        },
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },  
 		methods: {	
             //改变日期
             changeDate(e) {
@@ -165,17 +170,7 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
-            },
-            getAccountList(){
-                Axios.post('api.php', {action:'ucAdPut',opt:'getAccountList'}).then(
-					res => {
-						if(res.ret == 1) {                            
-                            this.accountList = res.data;
-                            //console.log(this.accountList);
-						}
-					}
-                ).catch(err => {console.log(err)});
+                this.getReporting();
             },
             //报告类型
             retypeChange(val){
@@ -212,7 +207,7 @@
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
             this.options = setDate;
-            this.getAccountList();  
+            this.accountIds = this.account;  
             this.getReporting(); 
             // this.$Notice.warning({
             //     title: '提示',
