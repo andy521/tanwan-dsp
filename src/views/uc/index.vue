@@ -8,7 +8,10 @@
         <!-- <account-info></account-info> -->
 		<Card shadow class="margin-top-10">
             <Row>
-                <Col span="4">
+                <Col v-show="isBack" span="1">
+                    <Button type="primary" @click="back">返回</Button>
+                </Col>
+                <Col span="4">                    
                     <search-tree @on-change="getids"></search-tree>
                 </Col>
                 <Col span="10">
@@ -16,9 +19,10 @@
                     <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                     <Input v-model="keyword" class="inp" placeholder="请输入关键字" ></Input>
                     <Button icon="search" @click="getSpread()">搜索</Button>
-                    <new-edit  class="margin-left-5"></new-edit>
+                    <new-edit title="新建计划" class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="10" style="text-align: right;">
+                <Col span="9" style="text-align: right;">
+                    <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="clock" @click="modifyDate">修改日期</Button>
                     <Button type="ghost" icon="social-usd" @click="setBudget">修改预算</Button>
@@ -37,7 +41,7 @@
                             </div>
                         </div>
                     </Poptip>
-                    <view-tip @on-change="getIndex" :check="checkAllGroup"  action="gdtAdPut" opt="campaigns"></view-tip>
+                    <plan-index @on-change="getIndex" :check="checkAllGroup"  action="gdtAdPut" opt="campaigns"></plan-index>                    
                 </Col>
             </Row>
 
@@ -159,13 +163,25 @@
             </div>
         </Modal>
 
+        <Modal v-model="copyPlanMmdal" title="复制计划" @on-ok="submitCopy">
+            <div class="margin-top-10">
+                <Form :label-width="100">
+                    <FormItem label="选择复制的帐户">
+                        <Select v-model="seleId" filterable placeholder="请选择媒体账号">
+                            <Option v-for="item in accountList" :value="item.account_id" :key="item.account_id">{{ item.account_name }}</Option>
+                        </Select>
+                    </FormItem>
+                </Form>
+            </div>
+        </Modal>
+
 	</div>
 </template>
 <script>
 	import Axios from "@/api/index";
     import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
     //import accountInfo from "./components/accountInfo.vue";
-    import viewTip from "./components/viewPopti.vue";
+    import planIndex from "./components/planIndex.vue";
     import newEdit from "./components/newEdit.vue";
     import weekDate from "@/components/week-date/index.vue";
     import searchTree from '@/components/select-tree/searchTree.vue';
@@ -175,15 +191,18 @@
             newEdit,
             searchTree,
             weekDate,
-            viewTip
+            planIndex
         },
 		data() {
 			return {
                 height:document.body.clientHeight - 200,
+                isBack:false,
                 loading: true,
                 filterModal:false,
                 budgetModal:false,
                 dateModal:false,
+                copyPlanMmdal:false,
+                copyPlanLoading:false,
                 setbudgetNumber:100,
                 //设置预算
                 setbudget:'-1',
@@ -211,14 +230,14 @@
                 //日期辅助功能
                 options: null,
                 tableSize: "small",
-                //表头设置
-                //taColumns: [], 
+                //选中id
+                cid:[],
                 //选中账户id
                 checkId: [], 
                 //选中计划id
                 checkCampaign:[],
                 //默认自定义指标选项
-               checkAllGroup:['paused','state','impression','click','ctr','cost','adResourceId','budget'],
+                checkAllGroup:['paused','state','impression','click','ctr','cost','adResourceId','budget'],
                 //表格头部
                 tableColumns: [],
                 //数据
@@ -248,10 +267,18 @@
                 //投放时段
                 interval:['111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111','111111111111111111111111'],
                 //根据游戏ID
-                game_id:''
+                game_id:'',
+                //账号列表
+                accountList:[],
+                //选择账号ID
+                seleId:''
             };
         },
 		methods: {	
+            //返回
+            back() {
+                this.$router.go(-1);
+            },
             //获取选中的游戏id
             getids(gid){
                 this.game_id = '[' + gid.join(',') + ']';
@@ -291,11 +318,13 @@
                 if(row.length>0){
                     this.operating = false;
                 };
-                let ids = [],campaigns=[];
+                let id=[],ids = [],campaigns=[];
                 row.forEach(item => {
+                    id.push(item.id)
                     ids.push(item.account_id);
                     campaigns.push(item.campaign_id);
                 });
+                this.cid = id;
                 this.checkId = ids;
                 this.checkCampaign = campaigns;
             },
@@ -361,6 +390,7 @@
             },
             //获取自定义指标
             getIndex(data){
+                //console.log(data)console.log(data)
                 this.checkAllGroup = data;                 
                 this.tableColumns = this.getTableColumns();
             },
@@ -582,6 +612,11 @@
                             },params.row.campaign_name)
                         }
                     },
+                    account_name:{
+                        title: "账号",
+                        key: "account_name",
+                        width: 150
+                    },
                     paused:{
                         title: "投放开关",
                         align: 'center',     
@@ -612,7 +647,7 @@
                                 ]);
                             }
                         }
-                    },
+                    },                    
                     state:{
                         title: "推广状态",
                         key: "state",
@@ -633,25 +668,35 @@
                         title: "展现量",
                         sortable: "custom",
                         key: "impression",
-                        width: 120
+                        width: 100
                     },
                     click:{
                         title: "点击量",
                         sortable: "custom",
                         key: "click",
-                        width: 120
+                        width: 100
                     },
                     ctr:{
                         title: "点击率",
                         sortable: "custom",
                         key: "ctr",
-                        width: 120
+                        width: 100
                     },
                     cost:{
                         title: "消费",
                         sortable: "custom",
                         key: "cost",
-                        width: 120
+                        width: 100,
+                        render : (h, params) => {
+                            const cost = params.row.cost;
+                            const color = cost > 20000 ? 'red' : 'default';
+                            return h('Tag', {
+                                props: {
+                                    type: 'border',
+                                    color: color
+                                }
+                            }, cost)
+                        }
                     },                    
                     adResourceId:{
                         title: "推广资源",
@@ -669,23 +714,32 @@
                     },
                     budget:{
                         title: "日预算",
-                        key: "budget",
-                        width: 120
+                        key: "budget",  //不限定预算
+                        width: 100,
+                        render: (h, params) => {
+                            if(params.row.budget < 0){
+                                return h('span', '不限预算')
+                            }else{
+                               return h('span', params.row.budget) 
+                            }
+						}
                     },
                     campaign_id:{
                         title: "计划id",
                         key: "campaign_id",
-                        width: 120
+                        width: 100
                     },
                     cpc:{
                         title: "平均点击价格",
+                        sortable: "custom",
                         key: "cpc",
-                        width: 120
+                        width: 140
                     },
                     cpm:{
                         title: "千次展现价格",
+                        sortable: "custom",
                         key: "cpm",
-                        width: 120
+                        width: 140
                     },
                     invalidReasonList:{
                         title: "推广计划非启动状态原因",
@@ -695,107 +749,132 @@
                     platform:{
                         title: "操作系统",
                         key: "platform",
-                        width: 200
+                        width: 140,
+                        render : (h, params) => {
+                            let text = '';
+                            switch (params.row.platform) {
+                                case '001': text = "IOS"; break;
+                                case '010': text = "Android"; break;
+                                case '100': text = "其他"; break;
+                                case '011': text = "Android和IOS"; break;
+                                case '110': text = "其他和安卓"; break;                                
+                                case '111': text = "不限"; break;
+                            }
+                            return h('span', text);
+                        }
                     },
                     download_start:{
                         title: "下载开始数",
                         key: "download_start",
-                        width: 200
+                        sortable: "custom",
+                        width: 100
                     },
                     download_complete:{
                         title: "下载完成数",
                         key: "download_complete",
-                        width: 200
+                        sortable: "custom",
+                        width: 140
                     },
                     download_complete_rate:{
                         title: "下载完成率",
                         key: "download_complete_rate",
-                        width: 200
-                    },
-                    conversion:{
-                        title: "激活总量",
-                        key: "conversion",
-                        width: 200
-                    },
+                        sortable: "custom",
+                        width: 140
+                    }, 
                     cvr:{
                         title: "点击激活率",
                         key: "cvr",
-                        width: 200
+                        sortable: "custom",
+                        width: 140
                     },
                     conversion_cost:{
                         title: "转换成本",
                         key: "conversion_cost",
-                        width: 200
+                        sortable: "custom",
+                        width:100
                     },
                     active:{
                         title: "活跃数",
+                        sortable: "custom",
                         key: "active",
-                        width: 200
+                        width: 100
                     },
                     active_per:{
                         title: "活跃率",
+                        sortable: "custom",
                         key: "active_per",
-                        width: 200
+                        width: 100
                     },
                     reg_total:{
                         title: "注册数",
+                        sortable: "custom",
                         key: "reg_total",
-                        width: 200
+                        width: 100
                     },
                     install_per:{
                         title: "激活安装率",
+                        sortable: "custom",
                         key: "install_per",
-                        width: 200
+                        width: 140
                     },
                     reg_per:{
                         title: "注册率",
+                        sortable: "custom",
                         key: "reg_per",
-                        width: 200
+                        width: 100
                     },
                     reg_cost:{
                         title: "注册成本",
+                        sortable: "custom",
                         key: "reg_cost",
-                        width: 200
+                        width: 130
                     },
                     pay_num:{
                         title: "付费人数",
+                        sortable: "custom",
                         key: "pay_num",
-                        width: 200
+                        width: 130
                     },
                     pay_total:{
                         title: "付费金额",
+                        sortable: "custom",
                         key: "pay_total",
-                        width: 200
+                        width: 130
                     },
                     pay_per:{
                         title: "付费率",
+                        sortable: "custom",
                         key: "pay_per",
-                        width: 200
+                        width: 100
                     },
                     reg_arpu:{
                         title: "注册ARPU",
+                        sortable: "custom",
                         key: "reg_arpu",
-                        width: 200
+                        width: 130
                     },
                     income_per:{
                         title: "回本率",
+                        sortable: "custom",
                         key: "income_per",
-                        width: 200
+                        width: 100
                     },
                     click_installr:{
                         title: "点击激活率",
                         key: "click_installr",
-                        width: 200
+                        sortable: "custom",
+                        width: 100
                     },
-                    app_reg:{
+                    conversion:{
                         title: "注册设备数",
-                        key: "app_reg",
-                        width: 200
+                        key: "conversion",
+                        sortable: "custom",
+                        width: 140
                     },
                     app_reg_cost:{
                         title: "注册设备成本",
                         key: "app_reg_cost",
-                        width: 200
+                        width: 120
                     },
                     operate:{
                         title: '操作',
@@ -805,19 +884,19 @@
                         render : (h, params) => {
                             return [
                                 h("span",{
-                                    class: "edit",
+                                    class: "edit_link",
                                     on: {
                                         'click': () => {
-                                            let query = { account:params.row.account_id};
+                                            let query = { id: params.row.id, account: params.row.account_id,edit:"1"};
                                             this.$router.push({
-                                                name: "ucnew_pack",
+                                                name: "ucplan",
                                                 query: query
                                             });
                                         }
                                     }
                                 },'编辑'),
                                 h("span",{
-                                    class: "del",
+                                    class: "del_link",
                                     on: {
                                         'click': (value) => {
                                             let account= params.row.account_id,campaign= '[' + params.row.campaign_id + ']';
@@ -839,6 +918,7 @@
                 //固定选项
                 let data = [
                     tableColumnList.selection,
+                    tableColumnList.account_name,
                     tableColumnList.campaign_name
                 ];                
                 this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) ); 
@@ -846,14 +926,58 @@
                 return data;
             },
             changeTableColumns(){
-                console.log(this.getTableColumns())
+                //console.log(this.getTableColumns())
                 this.tableColumns = this.getTableColumns();
+            },
+            //复制计划
+            copyPlan(){
+                if(this.checkId.length =='0'){
+                    this.$Message.info('请勾选需要复制的数据');
+                    return
+                };   
+                this.copyPlanLoading = true;
+                //获取账号列表
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAccountList'}).then(
+					res => {
+						if(res.ret == 1) {
+                            this.copyPlanMmdal = true;
+                            this.copyPlanLoading = false;
+                            this.accountList = res.data;
+						}
+					}
+                ).catch(err => {console.log(err)});
+            },
+            submitCopy(){
+                if(this.seleId == ''){
+                    this.$Message.info('请选择复制的帐户');
+                    return false;
+                };
+                let param = {
+                    action:'adData',
+                    opt:'tasck_add',
+                    type:'uc',
+                    act:'cp_campaigns',
+                    account_id:this.seleId,
+                    idArr:this.cid.join(",")
+                }
+                Axios.post('api.php',param).then(
+					res => {
+						if(res.ret == 1) {
+                            this.$Message.info(res.msg);
+						}
+					}
+                ).catch(err => {console.log(err)});
             }
         },
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
             this.options = setDate;
+            let query = this.$route.query.id;
+            if(!!query){
+                this.keyword = query.toString();
+                this.isBack = true;
+            }
             this.changeTableColumns();
             this.getSpread();
         }

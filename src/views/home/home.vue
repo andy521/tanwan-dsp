@@ -47,7 +47,7 @@
 						</Col>
 
 						<Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
-						<infor-card id-name="balance_2" :end-val="total.balance_2" iconType="social-buffer" color="#ff6122" intro-text="虚拟账户"></infor-card>
+						<infor-card id-name="balance_2" :end-val="total.balance_2" iconType="social-buffer" color="#ff6122" intro-text="总消耗"></infor-card>
 						</Col>
 
 						<Col :xs="24" :sm="12" :md="5" :style="{marginBottom: '10px'}">
@@ -61,7 +61,7 @@
 		</Row>
 		<!-- 按账户查看 - 按产品查看 -->
 		<view-tab :tdata="tdata"  @on-change="getData"></view-tab>
-        <div></div>
+ 
 		<!-- 线性表格 -->
 		<linear-tabel :datas="echart"></linear-tabel> 
 
@@ -156,11 +156,19 @@
                          if(res.ret == '1'){
                             let data = res.data;
                             this.echart = data.echart;
-                             res.data.curr_page_total._disabled = true;
-				            res.data.list.push(data.curr_page_total)
-                            this.tdata =data;
-                            this.total = data.total;
-                            //console.log(res.data)
+                            this.total = {
+                                impression:data.total.impression,
+                                click:data.total.click,
+                                balance_1:data.total.balance_1,
+                                balance_2:data.total.cost,
+                                balance_4:data.total.balance_4,    
+                            };  
+                            this.tdata={
+                                page_size:data.page_size,
+                                total_number:data.total_number,
+                                list:data.list
+                            } 
+                            console.log(res.data)
                         }
                     }
                 ).catch( 
@@ -218,7 +226,7 @@
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            this.$Message.info(res.data);
+                            this.$Message.info(res.msg);
 						}
 					}
                 ).catch(err => {console.log(err)}); 

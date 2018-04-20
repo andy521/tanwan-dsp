@@ -9,6 +9,15 @@ export const page404 = {
     component: () => import('@/views/error-page/404.vue')
 };
 
+export const page403 = {
+    path: '/403',
+    meta: {
+        title: '403-权限不足'
+    },
+    name: 'error-403',
+    component: () => import('@//views/error-page/403.vue')
+};
+
 export const loginRouter = {
     path: '/login',
     name: 'login',
@@ -28,6 +37,19 @@ export const newAd = {
     component: () => import('@/views/newad/index.vue')
 };
 
+export const ucNew = {
+    path: '/ucnew',
+    name: 'ucnew',
+    meta: {
+        title: '新建UC推广'
+    },    
+    component: () => import('@/views/ucnew/index.vue'),
+    children: [
+        { path: 'plan', title: '新建UC推广计划', name: 'ucplan', component: () => import('@/views/ucnew/components/plan.vue') },
+        { path: 'unit', title: '新建UC推广计划', name: 'ucunit', component: () => import('@/views/ucnew/components/unit.vue') },
+        { path: 'idea', title: '新建UC推广计划', name: 'ucidea', component: () => import('@/views/ucnew/components/idea.vue') },
+    ]
+};
 
 export const otherRouter = {
     path: '/user',
@@ -104,6 +126,10 @@ export const appRouter = [
         children: [
             { path: 'modprfpsw', title: '修改个人信息', name: 'setid_modprfpsw', icon: 'android-radio-button-off', component: () => import('@/views/setid/modPrfPsw.vue') },
             { path: 'adduser', title: '添加账号', name: 'setid_adduser', icon: 'android-radio-button-off', component: () => import('@/views/setid/addUser.vue') },
+            { path: 'userlist', title: '账号管理', name: 'setid_userlist', icon: 'android-radio-button-off', component: () => import('@/views/setid/userList.vue') },
+            { path: 'addgroup', title: '添加权限组', name: 'setid_addgroup', icon: 'android-radio-button-off', component: () => import('@/views/setid/addGroup.vue') },
+            { path: 'grouplist', title: '权限组管理', name: 'setid_grouplist', icon: 'android-radio-button-off', component: () => import('@/views/setid/groupList.vue') },
+            { path: 'userlog', title: '账户日志', name: 'setid_userlog', icon: 'android-radio-button-off', component: () => import('@/views/setid/userLog.vue') },
             { path: 'principal', title: '负责人管理', name: 'setid_principal', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue') },
             { path: 'systemsetid', title: '系统账号管理', name: 'setid_systemsetid', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue') },
             { path: 'systemmsg', title: '系统消息', name: 'setid_systemmsg', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemMsg.vue') }
@@ -114,6 +140,9 @@ export const appRouter = [
 export const routers = [
     loginRouter,
     newAd,
+    ucNew,
     otherRouter,
-    ...appRouter
+    ...appRouter,
+    page403,
+    page404
 ];

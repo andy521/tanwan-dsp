@@ -35,7 +35,7 @@ router.beforeEach((to, from, next) => {
         // 需要判断权限的路由      
         if (curRouterObj && curRouterObj.name !== undefined) { 
             let access = Util.getItem('access');
-            if ( access.indexOf(curRouterObj.name) != -1 || access.indexOf('all') != -1 ) {
+            if ( access.indexOf(curRouterObj.name) != -1 || access == 'all' ) {
                 // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
                 Util.toDefaultPage([otherRouter, ...appRouter], to.name, router, next); 
             } else {
@@ -48,12 +48,7 @@ router.beforeEach((to, from, next) => {
             //没有配置权限的路由, 直接通过
             Util.toDefaultPage([...routers], to.name, router, next);
         }
-    }    
-    //console.log("用户名是" +  Util.getItem('user') )
-   
-  
-    
-
+    } 
 });
 router.afterEach((to) => {    
     Util.openNewPage(router.app, to.name, to.params, to.query);
