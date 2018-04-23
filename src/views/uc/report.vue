@@ -33,7 +33,7 @@
     import hourReporting from "./components/report-tab/hourReporting.vue";
     import gradationReporting from "./components/report-tab/gradationReporting.vue";
     import audienceReporting from "./components/report-tab/audienceReporting.vue";
-    import getAccount from '@/components/get-account/getAccount.vue';
+    import getAccount from './components/getAccount.vue';
 	export default {
         components: {
             getAccount,

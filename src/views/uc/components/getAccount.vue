@@ -51,7 +51,7 @@
             //获取关联账号列表            
             getAccount(){
                 this.loading= true;
-                Axios.get('api.php',{'action':'api','opt':'getAccount'})
+                Axios.get('api.php',{'action':'api','opt':'getAccount','media_type':'3'})
                 .then( 
                     res=>{ 
                         if(res.ret == '1'){
