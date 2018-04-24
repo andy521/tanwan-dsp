@@ -236,7 +236,7 @@
                 //选中单元id
                 adgroupids:[],       
                 //默认自定义指标选项
-                checkAllGroup:['paused','state','impression','custom','ctr','cost','chargeType','optimizationTarget','bid'],
+                checkAllGroup:['paused','state','impression','click','ctr','cost','chargeType','optimizationTarget','bid'],
                 //表格头部
                 tableColumns: [],
                 //数据
@@ -740,7 +740,7 @@
                         key: "impression",
                         width: 100
                     },
-                    custom:{
+                    click:{
                         title: "点击量",
                         sortable: "custom",
                         key: "click",
@@ -985,6 +985,7 @@
                         key: "impression",
                         width: 100
                     },
+                    
                     operate:{
                         title: '操作',
                         align: 'center',
