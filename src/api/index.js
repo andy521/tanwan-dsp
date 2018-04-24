@@ -50,8 +50,10 @@ Axios.interceptors.response.use(
                 util.removeItem('access');
                 router.replace({
                     path: '/login',
+                    //返回当前页面信息
                     query: { redirect: router.currentRoute.fullPath }
                 });
+                Message.info(res.data.msg);
             } else {
                 Message.info(res.data.msg);
             }
@@ -94,9 +96,9 @@ export default {
                     cancel = c
                 })
             })
-                .then(res => {
-                    resolve(res)
-                })
+            .then(res => {
+                resolve(res)
+            })
         })
     }
 };

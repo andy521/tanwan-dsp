@@ -33,6 +33,8 @@ export default {
     },
     methods : {
         echartUpdate(data){ 
+            console.log(data)
+
             let xb = [],
                 len = this.echartData[0].data.length;
             for(let i=1; i<= len; i++){
@@ -42,7 +44,7 @@ export default {
             const option = {
                 tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }},                
                 legend: {
-                    data:['点击','下载','曝光量','转化']
+                    data:['消耗','展现','点击','转化']
                 },
                 grid: {left: '3%',right: '4%',bottom: '3%',containLabel: true},
                 toolbox: {feature: {saveAsImage: {}}},

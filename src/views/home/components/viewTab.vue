@@ -60,6 +60,7 @@
         min-width: 150px;
         margin: 0 10px;
     }
+    .search_area{width:200px;display:inline-block; margin-bottom: -12px; margin-right:10px;}
 </style>
 <template>
 	<Card dis-hover shadow class="margin-top-10">
@@ -67,13 +68,17 @@
 			<Icon type="ios-paper"></Icon> 按账户查看
 
 			<div class="tr">
-
+                <div class="search_area">
+                    <Input v-model="keyword" placeholder="请输入要搜索的内容" @on-enter="tableData">
+                        <Button slot="append" icon="ios-search" @on-click="tableData"></Button>
+                    </Input>
+                </div>
                 <select-author  @on-change="authorChange"></select-author>
 
                 <select-media class="smedia" @on-change="mediaChange"></select-media>
 
 				<DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime" class="margin-right-10"></DatePicker>
-
+                
 				<Button icon="document-text" @click="exportData()">下载报表</Button>
 			</div>
 		</div>
@@ -93,7 +98,7 @@
 			</Select>
 			</Col>
 			<Col span="14" style="text-align: right;">
-			<Page :total="parseInt(tdata.total_number)" :page-size="parseInt(tdata.page_size)" ref="pages" @on-change="tableData" show-elevator show-total></Page>
+			    <Page :total="parseInt(tdata.total_number)" :page-size="parseInt(tdata.page_size)" ref="pages" @on-change="tableData" show-elevator show-total></Page>
 			</Col>
 		</Row>
 	</Card>
@@ -115,7 +120,9 @@
 		},
 		data() {
 			return {
-				num: 0,
+                num: 0,
+                //keyword
+                keyword:'',
 				//日期辅助功能
 				options: DateShortcuts,
 				//每页数量 
@@ -149,7 +156,9 @@
                     },    
                                 
                     {
-                        title: '账户名', key: 'account_name',
+                        title: '账户名', 
+                        key: 'account_name',
+                        sortable: 'custom',
                         render: (h, params) => {
                             return h('Button', {
                                 props: {
@@ -162,11 +171,11 @@
                                 on: {
                                     click: () => {
                                         let query = {id: params.row.account_id};
-                                        //跳转到计划总览
-                                        this.$router.push({
-                                            name: 'time_plan',
-                                            query: query
-                                        });
+                                        if(params.row.media_name == 'UC'){
+                                            this.$router.push({name: 'uc_plan',query: query});
+                                        }else{
+                                            this.$router.push({name: 'time_plan',query: query});
+                                        }
                                     }
                                 }
                             }, params.row.account_name)
@@ -196,12 +205,9 @@
 								return h('span', params.row.balance)
 							} else {
 								const text = params.row.balance;
-								const color = text < 2000 ? 'red' : 'default';
-								return h('Tag', {
-									props: {
-										type: 'border',
-										color: color
-									}
+								const color = text < 20000 ? 'green' : '';
+								return h('span', {
+									class: color
 								}, text)
 							}
 						}
@@ -210,6 +216,13 @@
 						title: '消耗',
 						key: 'cost',
 						sortable: 'custom',
+                        render: (h, params) => {
+							const cost = params.row.cost;
+                            const color = cost > 20000 ? 'red' : '';
+                            return h('span', {
+                                class:color
+                            }, cost)
+						}
 					},
 					{
 						title: '注册设备数',
@@ -223,7 +236,8 @@
 					},
 					{
 						title: '账户ID',
-						key: 'account_id'
+                        key: 'account_id',
+                        sortable: 'custom',
 					},
 					{
 						title: '负责人',
@@ -231,7 +245,8 @@
 					},
 					{
 						title: '日期',
-						key: 'date'
+                        key: 'date',
+                        sortable: 'custom',
 					}
 				],
 			}
@@ -246,6 +261,7 @@
 					this.page = page;
 				};
 				let param = {
+                    keyword:this.keyword,
 					media_type: this.media_type,
 					tdate: this.date[0],
 					edate: this.date[1],
@@ -281,7 +297,7 @@
 			},
 			//按媒体筛选
 			mediaChange(val) {
-				this.media_type = val;
+                this.media_type = val;
 				this.tableData();
 			},
 			//排序
@@ -307,10 +323,13 @@
 				if(row._disabled) {
 					return 'table-statistics';
 				}
-			}
+            },
+             
         }, 
-		mounted() {
- 
+		beforeMount() {
+            let setDate = DateShortcuts;
+            setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
+            this.options = setDate;
 		}
 	}
 </script>

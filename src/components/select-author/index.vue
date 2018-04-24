@@ -3,15 +3,18 @@
 .author-btn>.ivu-btn{width: 50%;}
 .author-item{display: block;padding: 10px 0;border-bottom: 1px solid #f5f5f5;}
 .author .ivu-poptip-body-content{overflow: initial;}
+.author-list{max-height: 300px; overflow-y: auto;}
 </style>
 <template>
 
   <Poptip class="author" placement="bottom-start" width="200" trigger="hover">
         <Button type="ghost"><Icon type="person-stalker"></Icon> 选择负责人</Button>
-        <div class="api" slot="content">            
-            <Checkbox-group v-model="value" @on-change="authorChange">
-                <Checkbox class="author-item" v-for="(item,index) in author" :key="index" :label="item.author"></Checkbox>
-            </Checkbox-group>
+        <div class="api" slot="content">      
+            <div class="author-list">      
+                <Checkbox-group v-model="value" @on-change="authorChange">
+                    <Checkbox class="author-item" v-for="(item,index) in author" :key="index" :label="item.author"></Checkbox>
+                </Checkbox-group>
+            </div>
             <Button-group class="author-btn" long>
                 <Button type="ghost" @click="selectAll"> 全选 </Button>
                 <Button type="ghost" @click="cancel"> 取消 </Button>

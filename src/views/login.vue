@@ -61,14 +61,16 @@
                             'action' : 'sys',
                             'opt' : 'login'
                         })
-                        .then((data)=>{                            
-                            if(data.ret == 1){                                 
+                        .then((data)=>{    
+                            if(data.ret == 1){  
+                                //console.log(data)                               
                                 //权限管理
                                 let action = data.data.data.actionid;
                                 let access = [];
                                 if(action === 'all'){
                                     access.push('all');
                                 }else{
+                                    access.push('home_index');
                                     action.forEach(item => {
                                         switch(item){
                                             case '999': 
@@ -89,14 +91,45 @@
                                             case '1038': 
                                                 access.push('setid_systemmsg');
                                             break;
+                                            case '1043': 
+                                                access.push('uc_report');
+                                            break;
+                                            case '1042': 
+                                                access.push('uc_idea');
+                                            break;
+                                            case '1041': 
+                                                access.push('uc_plan');
+                                            break;
+                                            case '1040': 
+                                                access.push('uc_unit');
+                                            break;
+                                            case '277': 
+                                                access.push('setid_modprfpsw');
+                                            break;
+                                            case '170': 
+                                                access.push('setid_adduser');
+                                            break;
+                                            case '171': 
+                                                access.push('setid_userlist');
+                                            break;
+                                            case '278': 
+                                                access.push('setid_addgroup');
+                                            break;
+                                            case '265': 
+                                                access.push('setid_grouplist');
+                                            break;
+                                            case '355': 
+                                                access.push('setid_userlog');
+                                            break;
                                         }
                                     });
                                 };
+                                //console.log(access)
                                 Util.setItem('user', this.form.userName );  
                                 Util.setItem('sessionid',data.data.sessionid);                                       
                                 Util.setItem('access', access.join(",")); 
                                 this.$store.dispatch('UserLogin', userinfo);
-                                
+                                                                
                                 var action = data.data.data.action,
 										opt = data.data.data.opt,
 										Do = data.data.data.do;
