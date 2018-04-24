@@ -772,7 +772,7 @@ export default {
             Axios.get("api.php", {
                 action: "api",
                 opt: "getAccount",
-                MeidaType: "Gdt"
+                MeidaType: "1"   //1代表广点能， 3代码UC
             })
                 .then(res => {
                     if (res.ret == 1) {
