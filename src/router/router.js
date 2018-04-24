@@ -102,6 +102,20 @@ export const appRouter = [
         ]
     },
     {
+        path: '/toutiao',
+        icon: 'ios-paper',
+        name: 'tt',
+        title: '今日头条投放',  
+        access: 0,      
+        component: Main,
+        children: [
+            
+            { path: 'ad', title: '广告组', name: 'tt_ad', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/ad.vue') },   
+            { path: 'plan', title: '广告计划', name: 'tt_plan', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/plan.vue') },  
+            { path: 'idea', title: '创意', name: 'tt_idea', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/idea.vue') },        
+        ]
+    },
+    {
         path: '/channel',
         icon: 'android-apps',
         title: '渠道信息',
