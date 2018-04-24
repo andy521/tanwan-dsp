@@ -689,12 +689,9 @@
                         width: 100,
                         render : (h, params) => {
                             const cost = params.row.cost;
-                            const color = cost > 20000 ? 'red' : 'default';
-                            return h('Tag', {
-                                props: {
-                                    type: 'border',
-                                    color: color
-                                }
+                            const color = cost > 20000 ? 'red' : '';
+                            return h('span', {
+                                class: color
                             }, cost)
                         }
                     },                    

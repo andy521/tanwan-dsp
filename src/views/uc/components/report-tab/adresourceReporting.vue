@@ -61,7 +61,8 @@
         name: 'adresourceReporting',  
         props:{
             account:{
-                type:Object
+                type:String,
+                default:''
             }
         },      
 		data() {
@@ -74,6 +75,8 @@
                 adgroupids:[],
                 //推广资源
                 adresource:'',
+                //账户
+                accountIds:'',
                 //时间单位
                 type:'1',
                 //排序
@@ -102,7 +105,8 @@
         },
         watch:{
             account(data){
-                console.log(data)
+                this.accountIds = data;
+                this.getReporting();
             }
         },
 		methods: {	
@@ -120,6 +124,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getAdresourceReporting',
+                    accountIds:this.accountIds,
                     adgroupids:this.adgroupids,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间
@@ -168,13 +173,14 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
+                this.getReporting();
             },            
         },
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
-            this.options = setDate;            
+            this.options = setDate; 
+            this.accountIds = this.account;         
             this.getReporting(); 
         }
 	};

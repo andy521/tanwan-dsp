@@ -89,10 +89,8 @@
 </template>
 
 <script>
-
     import Axios from "@/api/index";
     import echarts from 'echarts';
-    //import 'echarts/lib/chart/map';
     import 'echarts/map/js/china.js';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import getCampaign from "../getCampaign.vue";
@@ -103,6 +101,12 @@
             getCampaign,
             adgroupList
         },   
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },  
 		data() {
 			return {
                 es:true,
@@ -111,9 +115,8 @@
                 //获取单元
                 adgroupList:[],
                 adgroupIds:[],
-                //计划ID
-                accountList:{},
-                accountIds:[],
+                //账户
+                accountIds:'',
                 //统计维度
                 retype:'province',
                 //时间单位
@@ -145,7 +148,13 @@
                 //chart数据
                 echarts:{}
 			};
-        },        
+        }, 
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },       
 		methods: {	
             //改变日期
             changeDate(e) {
@@ -155,7 +164,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getProvinceReporting',
-                    accountIds:this.accountIds.join(','),
+                    accountIds:this.accountIds,
                     adgroupIds:this.adgroupIds,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间                
@@ -188,7 +197,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getAudienceReporting',
-                    accountIds:this.accountIds.join(','),
+                    accountIds:this.accountIds,
                     adgroupIds:this.adgroupIds,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间   
@@ -217,7 +226,7 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
+                this.getAudienceReporting();
             },  
             //选择计划
             campaignChange(campaign){
@@ -341,7 +350,8 @@
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
-            this.options = setDate;           
+            this.options = setDate;  
+            this.accountIds = this.account;         
             this.getReporting(); 
             this.getAudienceReporting();
         }
