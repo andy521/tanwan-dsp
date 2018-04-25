@@ -20,7 +20,7 @@
             </div>
             <div class="plan_box">
                 <Checkbox-group v-model="selePlan">
-                    <Checkbox v-for="item in planList" :label="item.campaign_id" :key="item.campaign_id">{{ item.campaign_name }}</Checkbox>
+                    <Checkbox v-for="(item, index) in planList" :label="item.campaign_id" :key="index">{{ item.campaign_name }}</Checkbox>
                 </Checkbox-group>
             </div>
         </Modal>

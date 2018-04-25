@@ -89,7 +89,6 @@
 </template>
 
 <script>
-
     import Axios from "@/api/index";
     import echarts from 'echarts';
     import 'echarts/map/js/china.js';

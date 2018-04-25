@@ -6,7 +6,7 @@
     <div class="main" :class="{'main-hide-text': shrink}">
 
         <!-- 左侧导航 -->
-        <div class="sidebar-menu-con" :style="{width: shrink?'40px':'200px', overflow: shrink ? 'visible' : 'auto'}">
+        <div class="sidebar-menu-con" :style="{width: shrink?'40px':'200px', overflowY: shrink ? 'visible' : 'auto',overflowX: shrink ? 'visible' : 'hidden'}">
             <shrinkable-menu :shrink="shrink" @on-change="handleSubmenuChange" :theme="menuTheme" :before-push="beforePush" :open-names="openedSubmenuArr" :menu-list="menuList">
                 <div slot="top" class="logo-con">
                     <img v-show="!shrink" src="../images/logo.png" key="max-logo" />

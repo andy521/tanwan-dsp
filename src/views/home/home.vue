@@ -70,7 +70,7 @@
                 <!-- <select-media  @on-change="mediaChange"></select-media> -->
                 <Select v-model="MeidaType">
                     <Option value="Gdt">广点通</Option>
-                    <Option value="uc">UC</Option>
+                    <Option value="Uc">UC</Option>
                 </Select>
 
 			</div>
