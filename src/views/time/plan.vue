@@ -96,7 +96,7 @@
                 <!--自定义指标-->
                 <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
                 <!--选择负责人-->
-                <select-author @on-change="authorChange"></select-author>
+                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author>
                 <Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="0">所有未册除</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
@@ -729,7 +729,8 @@ export default {
                     key: "author",
                     width: 110
                 }
-            ]
+            ],
+            mediaType: ''
         };
     },
     mounted() {
@@ -758,6 +759,12 @@ export default {
         this.getMedia();
     },
     methods: {
+        handleClickAuthor() {
+            if (!this.mediaType) {
+                this.$Message.warning('请先选择媒体账号');
+                return;
+            }
+        },
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");
@@ -772,7 +779,8 @@ export default {
             Axios.get("api.php", {
                 action: "api",
                 opt: "getAccount",
-                MeidaType: "1"   //1代表广点能， 3代码UC
+                // MeidaType: "1"   //1代表广点能， 3代码UC
+                media_type: 1   // 2018-04-25修改
             })
                 .then(res => {
                     if (res.ret == 1) {
@@ -794,6 +802,7 @@ export default {
                 .then(res => {
                     if (res.ret == 1) {
                         this.campaignslist = res.data;
+                        this.mediaType = "1";
                     }
                 })
                 .catch(err => {
@@ -821,6 +830,7 @@ export default {
         },
         //选择负责人
         authorChange(data) {
+            console.log('author change', data)
             this.author_model = data;
             this.getCampaignsList();
         },

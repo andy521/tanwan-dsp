@@ -151,6 +151,7 @@
 		methods: {
             //获取账户总览总数据            
 			getData(param){
+				console.log("home parma", param)
                 Axios.get('api.php',param).then( 
                     res=>{
                          if(res.ret == '1'){
