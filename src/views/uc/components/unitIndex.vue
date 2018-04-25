@@ -144,7 +144,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = ['state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','conversion','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
+					this.checkAllGroup = ['adgroup_id','author','state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','conversion','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
 				} else {
 					this.checkAllGroup = [];
 				}

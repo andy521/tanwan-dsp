@@ -27,6 +27,7 @@
                     <new-edit title="新建单元" class="margin-left-5"></new-edit>
                 </Col>
                 <Col span="11" style="text-align: right;">
+                <select-author  @on-change="authorChange"></select-author>
                     <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
@@ -186,6 +187,7 @@
 </template>
 <script>
     import Axios from "@/api/index";
+     import selectAuthor from '@/components/select-author/index.vue';
     import searchTree from '@/components/select-tree/searchTree.vue';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import newEdit from "./components/newEdit.vue";
@@ -194,7 +196,8 @@
         components: {
             unitIndex,
             newEdit,
-            searchTree
+            searchTree,
+            selectAuthor
         },
 		data() {
 			return {
@@ -236,7 +239,7 @@
                 //选中单元id
                 adgroupids:[],       
                 //默认自定义指标选项
-                checkAllGroup:['paused','state','impression','custom','ctr','cost','chargeType','optimizationTarget','bid'],
+                checkAllGroup:['paused','state','optimizationTarget','cost','impression','ctr','chargeType','bid','click'],
                 //表格头部
                 tableColumns: [],
                 //数据
@@ -286,6 +289,11 @@
 			};
 		},
 		methods: {
+            //选择负责人
+			authorChange(data) {
+				this.author_model = data;
+				this.getUnit();
+			},
             //返回
             back() {
                 this.$router.go(-1);
@@ -661,6 +669,11 @@
             getTableColumns(){
                 const tableColumnList = {
                     selection : {type: 'selection',width: 60,align: 'center' },
+                    account_name:{
+                        title: "账户",
+                        key: "account_name",
+                        width: 100
+                    },
                     adgroup_name:{
                         title: "单元名称",     
                         key: "adgroup_name",
@@ -681,11 +694,6 @@
                                 }
                             },params.row.adgroup_name)
                         }
-                    },
-                    account_name:{
-                        title: "账户",
-                        key: "account_name",
-                        width: 100
                     },
                     paused:{
                         title: "投放开关",
@@ -740,7 +748,7 @@
                         key: "impression",
                         width: 100
                     },
-                    custom:{
+                    click:{
                         title: "点击量",
                         sortable: "custom",
                         key: "click",
@@ -985,6 +993,12 @@
                         key: "impression",
                         width: 100
                     },
+                    author:{
+                        title: "负责人",
+                        sortable: "custom",
+                        key: "author",
+                        width: 100
+                    },
                     operate:{
                         title: '操作',
                         align: 'center',
@@ -1034,11 +1048,21 @@
                 //固定选项
                 let data = [
                     tableColumnList.selection,
-                    tableColumnList.adgroup_name,
-                    tableColumnList.account_name
-                ];                
-                this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) ); 
-                data.push(tableColumnList.operate)
+                    tableColumnList.account_name,
+                    tableColumnList.adgroup_name
+                ];
+                const normalizeData = ["state", "paused", "optimizationTarget", "cost", "impression", "click", "ctr", "cpc", "cpm", "bid","download_complete", "download_complete_rate", "conversion", "app_reg_cost", "reg_total", "budget", "cvr", "download_convert", "install_per", "reg_cost", "reg_per", "reg_arpu", "active", "active_per", "pay_num", "pay_total", "pay_per", "income_per", "platform", "chargeType", "generalizeType", "adResourceId"];
+                // this.checkAllGroup.forEach( col => data.push(tableColumnList[col]) );
+                if (this.checkAllGroup.length >= 1) {
+                    normalizeData.forEach( k => {
+                        this.checkAllGroup.forEach( col => {
+                            if (k === col) {
+                                data.push(tableColumnList[col]);
+                            }
+                        });
+                    });
+                }
+                data.push(tableColumnList.adgroup_id,tableColumnList.author,tableColumnList.operate)
                 return data;
             },
             changeTableColumns(){
