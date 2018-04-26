@@ -71,7 +71,7 @@
             },
             //获取全部游戏     
             getAuthor(){
-                if (!this.mediaType || this.isLinkage) {
+                if (this.isLinkage) {
                     this.$Notice.info({
                         title: '请选择媒体类型'
                     });
