@@ -3,7 +3,7 @@
 </style>
 <template>
     <Select @on-change="mediaChange" placeholder="请选择媒体" clearable>
-        <Option v-for="item in media" :value="item.en" :key="this">{{ item.cn }}</Option>
+    <Option v-for="item in media" :value="item.en" :key="this">{{ item.cn }}</Option>
     </Select>
 </template>
 <script>
