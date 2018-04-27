@@ -942,7 +942,8 @@ export default {
       Axios.post("api.php", {
         action: "ucAdPut",
         opt: "getCreativeTemplates",
-        adgroup_id: this.adgroupId
+        adgroup_id: this.adgroupId,
+        account_id: this.accountId
       })
         .then(res => {
           if (ERR_OK === res.ret) {

@@ -224,7 +224,7 @@
               <Radio label="-1">不限</Radio>
               <Radio label="1">自定义</Radio>
             </RadioGroup>
-            <Tabs v-if="targetingSetting.user_targeting === '1'" value="interestTargeting" :animated="false">
+            <Tabs v-if="targetingSetting.user_targeting === '1'" @on-click="handleInterestTab" v-model="interestTab" :animated="false">
               <TabPane label="兴趣定向" name="interestTargeting">
                 <div class="interesting">
                   <div class="interest-item">
@@ -299,7 +299,7 @@
                     </h4>
                     <div class="text-left">
                       <Input v-model="interestSearch" clearable style="width: 200px"></Input>
-                      <Button type="ghost">搜索</Button>
+                      <Button @click="handleSearchApp" type="ghost">搜索</Button>
                     </div>
                   </div>
                 </div>
@@ -633,6 +633,7 @@ export default {
       provinceTreeList: [], // 省市Tree组件数据
       targetingAgeStatus: "-1", // 定向设置的年龄数据状态：-1为不限，1为自定义
       targetingCustomAgeList: [], // 自定义定向设置的年龄数据
+      interestTab: 'interestTargeting', // 兴趣选项卡
       interestTypesList: [], // 获取同步的 兴趣列表
       interestTreeList: [], // 省市Tree组件数据
       interestCat: [
@@ -694,7 +695,6 @@ export default {
     },
     // 获取操作系统数据
     getPlatform(data) {
-      console.warn("getPlatform", data);
       const env = ["IOS", "Android", "其他系统"];
       let retStr = "";
       if (data && data.length > 0) {
@@ -897,12 +897,6 @@ export default {
         }
       });
       this.targetingSetting.interest = interest;
-      console.log(
-        "事件：监听兴趣分类",
-        list,
-        this.targetingSetting.appcategory,
-        this.targetingSetting.interest
-      );
       // 判断编辑状态下，定向更改
       if (this.isEdit) {
         this.isEditTargetingChange += 1;
@@ -970,7 +964,6 @@ export default {
         convertName
       );
       this.unitSetting.adconvertId = currConvertObj.convertId;
-      console.log("convertName", convertName, currConvertObj);
     },
     // 事件：监听转化类型
     handleChangeConvertMonitorTypes(convertType) {
@@ -1083,6 +1076,11 @@ export default {
         this.isEditTargetingChange += 1;
       }
     },
+    handleSearchApp() {
+      this.getRecommend({type: 'app',seeds: [this.interestSearch]});
+    },
+    // 事件：兴趣选项卡
+    handleInterestTab(name) {},
     // 事件：监听投放地段状态
     handleAllRegion(region) {
       switch (region) {
@@ -1439,7 +1437,7 @@ export default {
         bid: this.unitSetting.bid.toString(),
         secondBid: this.unitSetting.secondBid.toString()
       });
-      console.log("add this.unitSetting", update);
+      // console.log("add this.unitSetting", update);
       Axios.post("api.php", update)
         .then(res => {
           if (ERR_OK === res.ret) {
@@ -1733,7 +1731,7 @@ export default {
             this.evaluate.activeTxt = this.normalizeActiveTxt(
               this.evaluate.activeNum
             );
-            console.log("获取兴趣列表", this.interestTypesList);
+            // console.log("获取兴趣列表", this.interestTypesList);
           }
         })
         .catch(err => {
@@ -1762,7 +1760,7 @@ export default {
             this.evaluate.activeTxt = this.normalizeActiveTxt(
               this.evaluate.activeNum
             );
-            console.log("获取省市地域列表", this.provinceList);
+            // console.log("获取省市地域列表", this.provinceList);
           }
         })
         .catch(err => {
@@ -1773,9 +1771,30 @@ export default {
       // this.provinceTreeList = this.normalizeProvinceList(this.provinceList);
       // console.log("获取省市地域列表", this.provinceList);
     },
+    // 获取关键词推荐、站点推荐、APP 推荐结果. params包括：maxNum，excludes，seeds，type
+    // type包含：app ： app推荐 ，word ： 关键词推荐 ，url ： 站点推荐
+    getRecommend(params) {
+      console.log(params)
+      Axios.post("api.php", {
+        action: "ucAdPut",
+        opt: "getRecommend",
+        account_id: this.$route.query.account,
+        type: params.type,
+        maxNum: 200,
+        seeds: params.seeds
+      })
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            console.log("获取关键词推荐、站点推荐、APP 推荐结果", res.data);
+          }
+        })
+        .catch(err => {
+          console.log("获取省市地域列表错误：" + err);
+        });      
+    },
     // 初始化单元状态
     initUnitEditStatus(unit) {
-      console.log("initGlobalStatus");
+      // console.log("initGlobalStatus");
 
       this._assignMethod(this.unitSetting, unit);
 
@@ -1821,7 +1840,7 @@ export default {
         .then(res => {
           if (ERR_OK === res.ret) {
             const data = res.data[0];
-            console.log("编辑时根据id获取单元内容接口getAdgroupById", data);
+            // console.log("编辑时根据id获取单元内容接口getAdgroupById", data);
             this.initUnitEditStatus(data);
           }
         })
@@ -1841,7 +1860,7 @@ export default {
           if (ERR_OK === res.ret) {
             const data = res.data.length > 0 ? res.data : [];
             this.importDate.unitlist = data;
-            console.log("新建时获取单元内容接口xxx", res.data);
+            // console.log("新建时获取单元内容接口xxx", res.data);
           }
         })
         .catch(err => {
@@ -1887,7 +1906,7 @@ export default {
             if (this.isEdit) {
               this.initEditTargeting();
             }
-            console.log("获取定向设置数据", this.targetingList);
+            // console.log("获取定向设置数据", this.targetingList);
           }
         })
         .catch(err => {
@@ -1899,7 +1918,7 @@ export default {
     // 获取account信息
     getAccountInfo() {
       const query = this.$route.query;
-      console.log("router query", query)
+      // console.log("router query", query)
       this.unitSetting.account_id = query.account;
       this.unitSetting.campaign_id = query.campaign_id;
       this.targetingSetting.account_id = query.account;
