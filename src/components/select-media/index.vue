@@ -3,7 +3,8 @@
 </style>
 <template>
     <Select @on-change="mediaChange" placeholder="请选择媒体" clearable>
-        <Option v-for="item in media" :value="item.mediaId" :key="this">{{ item.name }}</Option>
+        <!-- <Option v-for="item in media" :value="item.mediaId" :key="this">{{ item.name }}</Option> -->
+        <Option v-if="item" v-for="item in media" :value="item.media_type" :key="item.media_type">{{ item.cn }}</Option>
     </Select>
 </template>
 <script>
@@ -29,7 +30,7 @@
                     res=>{ 
                         if(res.ret == '1'){
                             let list = res.data;
-                            list.unshift({MeidaType:'',mediaId:'',name:'全部'})
+                            list.unshift({MeidaType:'',mediaId:'',media_type:'',cn:'全部'})
                             this.media= list;
                         }
                     }

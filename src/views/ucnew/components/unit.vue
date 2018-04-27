@@ -627,6 +627,8 @@ export default {
         interestAPPNameTxt: "", // APP定向 APP名称
         netWorkEnvTxt: "" // 网络环境
       },
+      // seleinterestAPPGameName: [], // 选中的app定向游戏类
+      // seleinterestAPPSFName: [], // 选中的app定向软件类
       provinceList: [], // 获取同步的 省市地域列表
       provinceTreeList: [], // 省市Tree组件数据
       targetingAgeStatus: "-1", // 定向设置的年龄数据状态：-1为不限，1为自定义
@@ -817,24 +819,26 @@ export default {
       }
       return ret;
     },
-    // 事件：监听app定向的app定向， 
+    // 事件：监听app定向的app定向， 2为游戏，1为软件
     handleInterestAPP(list) {
-      if (list.value > 0) {
-        this.targetingSetting.appcategory.push(list.value);
-      }
-      const app = [];
+      console.log(
+        "事件：监听兴趣APPSF",
+        list
+      );
+      let app = [];
+      let seleinterestAPPSFName = [];
+      let seleinterestAPPGameName = [];
       list.list.forEach(inter => {
-        if (inter.value) {
-          app.push(inter.value);
+        app.push(inter.value);
+        if (list.value === 1) {
+          seleinterestAPPSFName.push(inter.title);
+          this.evaluate.interestAPPSFTxt = this.normalizeTxtShow(seleinterestAPPSFName, 12);
+        } else if (list.value === 2) {
+          seleinterestAPPGameName.push(inter.title);
+          this.evaluate.interestAPPGameTxt = this.normalizeTxtShow(seleinterestAPPGameName, 12);
         }
       });
       this.targetingSetting.app = app;
-      console.log(
-        "事件：监听兴趣APPSF",
-        list,
-        this.targetingSetting.appcategory,
-        this.targetingSetting.app
-      );
       // 判断编辑状态下，定向更改
       if (this.isEdit) {
         this.isEditTargetingChange += 1;
@@ -857,7 +861,12 @@ export default {
     },
     // 事件：监听兴趣word
     handlerInterestWord(word) {
-      this.targetingSetting.word.push(word.target.value);
+      let val = word.target.value.replace(/\n/g, '');
+      console.log(val, val.length)
+      if (!val) {
+        return;
+      }
+      this.targetingSetting.word.push(val);
       this.evaluate.interestURLTxt = this.normalizeTxtShow(
         this.targetingSetting.word,
         3
@@ -1321,7 +1330,7 @@ export default {
       );
       let catNameList = [];
       interestCatSelectedList.forEach(val => {
-        catNameList.push(val.name);
+        catNameList.push(val.title);
         this.evaluate.activeNum += val.value;
       });
       this.evaluate.interestCatTxt = this.normalizeTxtShow(catNameList, 3);
@@ -1331,7 +1340,8 @@ export default {
         targeting.word.length > 0 ? targeting.word.join("、") : "";
       this.interestURL =
         targeting.url.length > 0 ? targeting.url.join("、") : "";
-      console.log("this.evaluate.activeNum", this.evaluate.activeNum);
+      // APP定向
+
       // 活跃数
       this.evaluate.activeTxt = this.normalizeActiveTxt(
         this.evaluate.activeNum
