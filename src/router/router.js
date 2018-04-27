@@ -84,6 +84,7 @@ export const appRouter = [
         children: [
             { path: 'plan', title: '实时投放计划', name: 'time_plan', meta: { keepAlive: false}, icon: 'android-radio-button-off', component: () => import('@/views/time/plan.vue')},
             { path: 'ad', title: '实时投放广告', name: 'time_ad', icon: 'android-radio-button-off', component: () => import('@/views/time/ad.vue') },
+            { path: 'finance', title: '财务', name: 'time_finance', icon: 'android-radio-button-off', component: () => import('@/views/time/finance.vue') },
         ]
     },
     {

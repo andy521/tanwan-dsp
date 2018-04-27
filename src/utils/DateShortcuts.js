@@ -11,7 +11,7 @@ export const DateShortcuts = {
 			value() {
 				const date = new Date();
 				date.setTime(date.getTime() - 3600 * 1000 * 24);
-				return [date, date];;
+				return [date, date];
 			}
 		}, {
 			text: '过去7天',
