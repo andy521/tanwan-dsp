@@ -137,14 +137,15 @@
                     action:'ucAdPut',
                     opt:'getHourReporting',
                     accountIds:this.accountIds,
-                    adgroupIds:this.adgroupIds,
+                    adgroupIds:this.adgroupIds.join(','),
                     retype:this.retype,                 
                     type:this.type,
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量
                     orderField:this.orderField,
                     orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-                };                
+                }; 
+                console.log(param)               
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
@@ -176,15 +177,14 @@
                             list.forEach(e=>{
                                 ids += e.adgroup_id + ',';
                             });
-                            console.log(this.adgroupList)
-                            this.adgroupids = ids;
+                            this.adgroupIds = ids;
 						}
 					}
                 ).catch(err => {console.log(err)});            
             },
             //选择单元
             adgroupChange(val){
-                this.adgroupids = val;
+                this.adgroupIds = val;
             }  
         },
         beforeMount(){ 
