@@ -233,11 +233,7 @@
                 //计划id
                 campaign_id:'',
                 //选中的id
-                cid:[],
-                //选中账户id
-                checkId: [], 
-                //选中单元id
-                adgroupids:[],       
+                checkId: [],      
                 //默认自定义指标选项
                 checkAllGroup:['paused','state','optimizationTarget','cost','impression','ctr','chargeType','bid','click'],
                 //表格头部
@@ -357,14 +353,11 @@
                 if(row.length>0){
                     this.operating = false;
                 };
-                let id=[],ids = [],adgroup=[];
+                let ids = [];
                 row.forEach(item => {
-                    ids.push(item.account_id);
-                    adgroup.push(item.adgroup_id);
+                    ids.push(item.id);
                 });
-                this.cid = id;
                 this.checkId = ids;
-                this.adgroupids = adgroup;
             },
             //排序
             sortchange(column) {
@@ -384,8 +377,7 @@
                     return
                 }; 
                 let param = {
-                    account_id:this.checkId[0],
-                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    ids:this.checkId,
                     paused : this.setpaused
                 };
                 this.updatePaused(param);
@@ -410,16 +402,15 @@
                     this.$Message.info('请勾选需要修改的数据');
                     return
                 }; 
-                let account= this.checkId[0],adgroup= '[' + this.adgroupids.join(',') + ']';
-                this.deleteData(account,adgroup);
+                let ids= this.checkId;
+                this.deleteData(ids);
             },
-            deleteData(account,adgroup){
+            deleteData(id){
                 let param = {
                     action:'ucAdPut',
                     opt:'deleteAdgroup',
                     do:'del',
-                    account_id:account,
-                    adgroupids:adgroup
+                    ids:id
                 }
                 Axios.post('api.php', param).then(
 					res => {
@@ -442,8 +433,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'updateAdgroupBidByPercentage',
-                    account_id:this.checkId[0],
-                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    ids:this.checkId,
                     bidStage:1,
                     operateNum:this.operateNum,
                     percentage:this.percentage
@@ -514,8 +504,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'updateAdgroupNetworkEnv',
-                    account_id:this.checkId[0],
-                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    ids:this.checkId,
                     networkEnv: this.wifi
                 }
                 Axios.post('api.php', param).then(
@@ -540,8 +529,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'updateAdgroupRegion',
-                    account_id:this.checkId[0],
-                    adgroupids:'[' + this.adgroupids.join(',') + ']',
+                    ids:this.checkId,
                     allRegion: this.allRegion,
                     regions:this.regions
                 }
@@ -714,8 +702,7 @@
                                             "on-change": value => {
                                                 let paused = value ? '0' : '1';
                                                 let param = {
-                                                    account_id:params.row.account_id,
-                                                    adgroupids:'['+ params.row.adgroup_id +']',
+                                                    ids:params.row.id.split(','),
                                                     paused : paused
                                                 };
                                                 this.updatePaused(param)
@@ -1023,12 +1010,12 @@
                                     class: "del_link",
                                     on: {
                                         'click': (value) => {
-                                            let account= params.row.account_id,adgroup= '[' + params.row.adgroup_id + ']';
+                                            let ids= params.row.id.split(',');
                                             this.$Modal.confirm({
                                                 title: '操作提示',
                                                 content: '<p>确认删除</p>',
                                                 onOk: () => {
-                                                    this.deleteData(account,adgroup)
+                                                    this.deleteData(ids)
                                                 },
                                                 onCancel: () => {}
                                             });

@@ -163,7 +163,9 @@ export default {
             ctr_value: "",
             //广告样式列表
             adstyle: [],
-            creativeTemplate_id: ""
+            creativeTemplate_id: "",
+            //选中的ID
+            checkId:[],
         };
     },
     methods: {
@@ -232,8 +234,7 @@ export default {
             return;
             }
             let param = {
-                account_id: this.checkId[0],
-                creativeids: "[" + this.creativeids.join(",") + "]",
+                ids: this.checkId,
                 paused: this.setpaused
             };
             this.updatePaused(param);
@@ -258,14 +259,11 @@ export default {
             if (row.length > 0) {
                 this.operating = false;
             }
-            let ids = [],
-            creative = [];
+            let ids = [];
             row.forEach(item => {
-                ids.push(item.account_id);
-                creative.push(item.creative_id);
+                ids.push(item.id);
             });
             this.checkId = ids;
-            this.creativeids = creative;
         },
         setFilter() {
             this.filterLoading = true;
@@ -363,17 +361,15 @@ export default {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
-            let account = this.checkId[0],
-            creative = "[" + this.creativeids.join(",") + "]";
-            this.deleteData(account, creative);
+            let ids = this.checkId;
+            this.deleteData(ids);
         },
-        deleteData(account, creative) {
+        deleteData(id) {
             let param = {
                 action: "ucAdPut",
                 opt: "deleteCreative",
                 do: "del",
-                account_id: account,
-                creativeids: creative
+                ids:id
             };
             console.log(param);
             Axios.post("api.php", param).then(res => {
@@ -425,8 +421,7 @@ export default {
                                         "on-change": value => {
                                             let paused = value ? "0" : "1";
                                             let param = {
-                                            account_id: params.row.account_id,
-                                            creativeids: "[" + params.row.creative_id + "]",
+                                            ids: params.row.id.split(','),
                                             paused: paused
                                             };
                                             this.updatePaused(param);
@@ -573,13 +568,12 @@ export default {
                                 class: "del_link",
                                 on: {
                                     click: value => {
-                                        let account = params.row.account_id,
-                                            creative = "[" + params.row.creative_id + "]";
+                                        let id = params.row.id.split(',');
                                         this.$Modal.confirm({
                                             title: "操作提示",
                                             content: "<p>确认删除</p>",
                                             onOk: () => {
-                                                this.deleteData(account, creative);
+                                                this.deleteData(id);
                                             },
                                             onCancel: () => {}
                                         });
