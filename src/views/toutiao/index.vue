@@ -105,11 +105,11 @@
 	</div>
 </template>
 <script>
-import echartDataList from './temp/echartDataList.json';
-import Axios from '@/api/index';
-import { DateShortcuts, formatDate } from '@/utils/DateShortcuts.js';
-import infoCard from './components/infoCard';
-import linearChart from './components/linearChart';
+import echartDataList from './temp/echartDataList.json'
+import Axios from '@/api/index'
+import { DateShortcuts, formatDate } from '@/utils/DateShortcuts.js'
+import infoCard from './components/infoCard'
+import linearChart from './components/linearChart'
 export default {
 	components: {
 		infoCard,
@@ -174,18 +174,18 @@ export default {
 			// 账号消耗数据 时差。 状态：0=>今天，1=>昨天，7=>7天前，30=>30天前
 			period: 7,
 			chartData: []
-		};
+		}
 	},
 	mounted() {
-		this.getTopData();
+		this.getTopData()
 	},
 	methods: {
 		// 广告统计 跳转路由
 		handleStatistics(key) {
 		},
 		getTopData() {
-			this.chartData = echartDataList.data.echart;
+			this.chartData = echartDataList.data.echart
 		}
 	}
-};
+}
 </script>

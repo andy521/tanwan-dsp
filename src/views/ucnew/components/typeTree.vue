@@ -67,7 +67,7 @@ export default {
       if (this.interestValue > 0) {
         ret.value = this.interestValue
       }
-      this.$emit("on-change", ret);
+      this.$emit('on-change', ret);
     }
   }
 };
