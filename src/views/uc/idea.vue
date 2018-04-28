@@ -15,6 +15,7 @@
                     <new-edit title="新建单元" class="margin-left-5"></new-edit>
                 </Col>
                 <Col span="9" style="text-align: right;">
+                    <select-author :media-type="3"  @on-change="authorChange"></select-author>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Poptip placement="bottom-start" v-model="visible">
                         <Button type="ghost" icon="toggle-filled">修改状态</Button>
@@ -104,8 +105,10 @@ import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
 import createidea from "./components/createIdea.vue";
 import newEdit from "./components/newEdit.vue";
 import ideaIndex from "./components/ideaIndex.vue";
+import selectAuthor from '@/components/select-author/index.vue';
 export default {
     components: {
+        selectAuthor,
         newEdit,
         createidea,
         ideaIndex,
@@ -166,6 +169,7 @@ export default {
             creativeTemplate_id: "",
             //选中的ID
             checkId:[],
+            author: []
         };
     },
     methods: {
@@ -192,6 +196,7 @@ export default {
                 keyword: this.keyword, //模糊搜索关键词(针对计划名称、后台用户名称)
                 creativeTemplate_id: this.creativeTemplate_id, //筛选-广告样式id
                 state: this.state,
+                authors:this.author,
                 "impression[relation]": this.impression_relation,
                 "impression[value]": this.impression_value,
                 "cost[relation]": this.cost_relation,
@@ -602,6 +607,11 @@ export default {
         changeTableColumns(){
             this.tableColumns = this.getTableColumns();
         },
+        //选择负责人
+        authorChange(data){
+            this.author = data;
+            this.getIdea();
+        }
     },
     beforeMount() {
         let query = this.$route.query.adgroup_id;
