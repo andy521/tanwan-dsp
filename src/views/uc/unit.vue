@@ -811,12 +811,6 @@
                         key: "cpm",
                         width: 130
                     },
-                    cost:{
-                        title: "展示PV",
-                        sortable: "custom",
-                        key: "cost",
-                        width: 100
-                    },
                     download_complete:{
                         title: "下载数",
                         sortable: "custom",

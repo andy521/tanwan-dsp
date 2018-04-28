@@ -53,7 +53,7 @@ Axios.interceptors.response.use(
                     //返回当前页面信息
                     query: { redirect: router.currentRoute.fullPath }
                 });
-                //Message.info(res.data.msg);
+                Message.info(res.data.msg);
             } else {
                 Message.info(res.data.msg);
             }
