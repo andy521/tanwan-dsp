@@ -234,11 +234,7 @@
                 options: null,
                 tableSize: "small",
                 //选中id
-                cid:[],
-                //选中账户id
                 checkId: [], 
-                //选中计划id
-                checkCampaign:[],
                 //默认自定义指标选项
                 checkAllGroup:['paused','state','impression','click','ctr','cost','adResourceId','budget'],
                 //表格头部
@@ -328,15 +324,11 @@
                 if(row.length>0){
                     this.operating = false;
                 };
-                let id=[],ids = [],campaigns=[];
+                let ids = [];
                 row.forEach(item => {
-                    id.push(item.id)
-                    ids.push(item.account_id);
-                    campaigns.push(item.campaign_id);
+                    ids.push(item.id)
                 });
-                this.cid = id;
                 this.checkId = ids;
-                this.checkCampaign = campaigns;
             },
             //排序
             sortchange(column) {
@@ -412,8 +404,7 @@
                     return
                 }; 
                 let param = {
-                    account_id:this.checkId[0],
-                    campaignids:'[' + this.checkCampaign.join(',') + ']',
+                    ids:this.checkId,
                     paused : this.setpaused
                 };
                 this.updatePaused(param);
@@ -439,16 +430,15 @@
                     this.$Message.info('请勾选需要修改的数据');
                     return
                 }; 
-                let account= this.checkId[0],campaign= '[' + this.checkCampaign.join(',') + ']';
-                this.deleteData(account,campaign);
+                let ids= this.checkId;
+                this.deleteData(ids);
             },
-            deleteData(account,campaign){
+            deleteData(ids){
                 let param = {
                     action:'ucAdPut',
                     opt:'deleteCampaign',
                     do:'del',
-                    account_id:account,
-                    campaignids:campaign
+                    ids:ids
                 }
                 Axios.post('api.php', param).then(
 					res => {
@@ -471,8 +461,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'updateCampaignDate',
-                    account_id:this.checkId[0],
-                    campaignids:'[' + this.checkCampaign.join(',') + ']',
+                    ids:this.checkId,
                     startDate:this.formStartDate,
                     endDate:this.formEndDate,
                     monday:this.interval[0],
@@ -514,8 +503,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'updateCampaignBudget',
-                    account_id:this.checkId[0],
-                    campaignids:'[' + this.checkCampaign.join(',') + ']',
+                    ids:this.checkId,
                     budget:setbuget
                 }
                 Axios.post('api.php', param).then(
@@ -647,8 +635,7 @@
                                             "on-change": value => {
                                                 let paused = value ? '0' : '1';
                                                 let param = {
-                                                    account_id:params.row.account_id,
-                                                    campaignids:'['+ params.row.campaign_id +']',
+                                                    ids:params.row.id.split(','),
                                                     paused : paused
                                                 };
                                                 this.updatePaused(param)
@@ -907,12 +894,12 @@
                                     class: "del_link",
                                     on: {
                                         'click': (value) => {
-                                            let account= params.row.account_id,campaign= '[' + params.row.campaign_id + ']';
+                                            let id= params.row.id.split(',');
                                             this.$Modal.confirm({
                                                 title: '操作提示',
                                                 content: '<p>确认删除</p>',
                                                 onOk: () => {
-                                                    this.deleteData(account,campaign)
+                                                    this.deleteData(id)
                                                 },
                                                 onCancel: () => {}
                                             });
@@ -966,7 +953,7 @@
                     type:'uc',
                     act:'cp_campaigns',
                     account_id:this.seleId,
-                    idArr:this.cid.join(",")
+                    idArr:this.checkId.join(",")
                 }
                 Axios.post('api.php',param).then(
 					res => {
