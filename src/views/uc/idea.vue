@@ -410,7 +410,7 @@ export default {
                     title: "投放开关",
                     align: "center",
                     key: "paused",
-                    width: 90,
+                    width: 100,
                     render: (h, params) => {
                         if (!params.row.paused) {
                             return;
@@ -501,10 +501,46 @@ export default {
                     key: "cvr",
                     width: 120
                 },
+                cpc:{
+                    title: "平均点击价格",
+                    sortable: "custom",
+                    key: "cpc",
+                    width: 120
+                },
+                cpm:{
+                    title: "千次展现价格",
+                    sortable: "custom",
+                    key: "cpm",
+                    width: 120
+                },
+                download_complete:{
+                    title: "下载数",
+                    sortable: "custom",
+                    key: "download_complete",
+                    width: 120
+                },
+                download_complete_rate:{
+                    title: "下载率",
+                    sortable: "custom",
+                    key: "download_complete_rate",
+                    width: 120
+                },
+                conversion:{
+                    title: "注册设备数",
+                    sortable: "custom",
+                    key: "conversion",
+                    width: 120
+                },
                 cost_per_conversion:{
                     title: "转化成本",
                     sortable: "custom",
                     key: "cost_per_conversion",
+                    width: 120
+                },
+                adgroup_id:{
+                    title: "单元id",
+                    sortable: "custom",
+                    key: "adgroup_id",
                     width: 120
                 },
                 operate:{
