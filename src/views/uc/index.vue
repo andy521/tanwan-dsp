@@ -22,7 +22,7 @@
                     <new-edit title="新建计划" class="margin-left-5"></new-edit>
                 </Col>
                 <Col span="9" style="text-align: right;">
-                    <select-author :media-type="3"  @on-change="authorChange"></select-author>
+                    <select-author :media-type="3"  @on-change="authorChange"  style="text-align: left;"></select-author>
                     <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="clock" @click="modifyDate">修改日期</Button>

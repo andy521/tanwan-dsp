@@ -224,6 +224,11 @@
 						key: 'click_per',
 						sortable: 'custom',
                     }, 
+                    {
+                        title: 'ecpm',
+						key: 'cpm',
+						sortable: 'custom', 
+                    },
 					{
 						title: '注册设备数',
 						key: 'activation',
@@ -265,7 +270,8 @@
 					this.page = 1;
 				} else {
 					this.page = page;
-				};
+                };
+                //console.log(this.media_type)
 				let param = {
                     keyword:this.keyword,
 					media_type: this.media_type,

@@ -3,7 +3,7 @@
 <template>
 
     <Select @on-change="mediaChange" placeholder="请选择媒体" clearable>
-    <Option v-for="item in media" :value="item.en" :key="this">{{ item.cn }}</Option>
+    <Option v-for="item in media" :value="item.media_type" :key="this">{{ item.cn }}</Option>
 
     </Select>
 </template>
@@ -11,12 +11,12 @@
     import  Axios  from "@/api/index"
 	export default {
         name: 'selectMedia',
-        props: {
+        // props: {
             // placeholder: {
             //     type: String,
             //     default: ''
             // }
-        },
+        // },
 		data() {
 			return {
                 media: []
@@ -32,6 +32,7 @@
                             let list = res.data;
                             list.unshift({en:'',media_type:'',cn:'全部'});
                             this.media= list;
+                            console.log(list)
                         }
                     }
                 ).catch( 
