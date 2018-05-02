@@ -33,7 +33,7 @@ export default {
     },
     methods : {
         echartUpdate(data){ 
-            console.log(data)
+            //console.log(data)
 
             let xb = [],
                 len = this.echartData[0].data.length;

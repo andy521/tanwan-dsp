@@ -58,7 +58,7 @@
         display:inline-block;
         width: auto;
         min-width: 150px;
-        margin: 0 10px;
+        margin: 0 10px;     
     }
     .search_area{width:200px;display:inline-block; margin-bottom: -12px; margin-right:10px;}
 </style>
@@ -153,8 +153,7 @@
 								return h('span', params.row.media_name)
 							}
 						}
-                    },    
-                                
+                    },                                   
                     {
                         title: '账户名', 
                         key: 'account_name',
@@ -166,7 +165,8 @@
                                     size: 'small'
                                 },
                                 style: {
-                                    marginRight: '5px'
+                                    marginRight: '5px',
+                                    color:'#2b7ed1'
                                 },
                                 on: {
                                     click: () => {
@@ -181,6 +181,34 @@
                             }, params.row.account_name)
                         }
                     }, 
+                    {
+						title: '推广余额',
+						key: 'balance',
+						sortable: 'custom',
+						render: (h, params) => {
+							if(params.row._disabled) {
+								return h('span', params.row.balance)
+							} else {
+								const text = params.row.balance;
+								const color = text < 20000 ? 'green' : '';
+								return h('span', {
+									class: color
+								}, text)
+							}
+						}
+                    },
+                    {
+						title: '消耗',
+						key: 'cost',
+						sortable: 'custom',
+                        render: (h, params) => {
+							const cost = params.row.cost;
+                            const color = cost > 20000 ? 'red' : '';
+                            return h('span', {
+                                class:color
+                            }, cost)
+						}
+					},
 					{
 						title: '曝光',
 						key: 'impression',
@@ -196,34 +224,11 @@
 						key: 'click_per',
 						sortable: 'custom',
                     }, 
-					{
-						title: '推广余额',
-						key: 'balance',
-						sortable: 'custom',
-						render: (h, params) => {
-							if(params.row._disabled) {
-								return h('span', params.row.balance)
-							} else {
-								const text = params.row.balance;
-								const color = text < 20000 ? 'green' : '';
-								return h('span', {
-									class: color
-								}, text)
-							}
-						}
-					},
-					{
-						title: '消耗',
-						key: 'cost',
-						sortable: 'custom',
-                        render: (h, params) => {
-							const cost = params.row.cost;
-                            const color = cost > 20000 ? 'red' : '';
-                            return h('span', {
-                                class:color
-                            }, cost)
-						}
-					},
+                    {
+                        title: 'ecpm',
+						key: 'cpm',
+						sortable: 'custom', 
+                    },
 					{
 						title: '注册设备数',
 						key: 'activation',
@@ -265,7 +270,8 @@
 					this.page = 1;
 				} else {
 					this.page = page;
-				};
+                };
+                //console.log(this.media_type)
 				let param = {
                     keyword:this.keyword,
 					media_type: this.media_type,
