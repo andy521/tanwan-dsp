@@ -43,7 +43,7 @@
 
                 <div class="checklist">落地页</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-					<Checkbox label="cost">展示PV</Checkbox>
+					<Checkbox label="cost">消费</Checkbox>
                     <!-- <Checkbox label="a">展示IP</Checkbox>
                     <Checkbox label="a">下载IP</Checkbox> -->
                     <Checkbox label="download_complete">下载数</Checkbox>
@@ -144,7 +144,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-					this.checkAllGroup = ['adgroup_id','author','state','paused','cpc','cpm','ctr','download_complete','download_complete_rate','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','conversion','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
+					this.checkAllGroup = ['adgroup_id','author','state','paused','cpc','click','cpm','ctr','download_complete','download_complete_rate','chargeType','optimizationTarget','bid','generalizeType','cost','cvr','download_convert','impression','install_per','conversion','app_reg_cost','reg_total','reg_cost','reg_per','reg_arpu','active','active_per','pay_num','pay_total','pay_per','income_per','platform','adResourceId','budget']
 				} else {
 					this.checkAllGroup = [];
 				}
