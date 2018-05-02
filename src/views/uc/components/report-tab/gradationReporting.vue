@@ -129,7 +129,8 @@
                 // 显示选择账号
                 accountShow: false,
                 accountIds: [],
-                creativeId: []
+                creativeId: [],
+                adgroupIds:[]
 			};
         },
         watch:{
@@ -159,7 +160,7 @@
                     retype:this.retype,
                     type:this.type,
                     accountIds:this.accountIds,
-                    adgroupIds:this.adgroupIds,
+                    adgroupIds:this.adgroupIds.join(','),
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量
                     orderField:this.orderField,
@@ -232,8 +233,8 @@
             },
             //选择单元
             adgroupChange(val){
-                this.adgroupids = val;
-                this.adgroupids.forEach(adg => {
+                this.adgroupIds = val;
+                this.adgroupIds.forEach(adg => {
                      this.creativeData.forEach( item => {
                         if (item.adgroup_id === adg) {
                             console.log("============")

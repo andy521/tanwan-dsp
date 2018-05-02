@@ -1,9 +1,10 @@
 <style scoped>
-
 </style>
 <template>
+
     <Select @on-change="mediaChange" placeholder="请选择媒体" clearable>
-        <Option v-for="item in media" :value="item.en" :key="this">{{ item.cn }}</Option>
+    <Option v-for="item in media" :value="item.en" :key="this">{{ item.cn }}</Option>
+
     </Select>
 </template>
 <script>
@@ -28,8 +29,8 @@
                 .then( 
                     res=>{ 
                         if(res.ret == '1'){
-                            let list = res.data;    
-                            list.unshift({meida_type:'',en:'',cn:'全部'})
+                            let list = res.data;
+                            list.unshift({en:'',media_type:'',cn:'全部'});
                             this.media= list;
                         }
                     }

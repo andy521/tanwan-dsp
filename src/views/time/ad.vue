@@ -109,7 +109,7 @@
                 <!--自定义指标-->
                 <view-tip @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-tip>
                 <!--选择负责人-->
-                <select-author @on-change="authorChange"></select-author>
+                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author>
                 <Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="0">所有未册除</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
@@ -215,6 +215,7 @@ export default {
     },
     data() {
         return {
+            mediaType: '',
             params: this.$route.query,
             mediaList: [], //媒体账号列表
             campaignslist: [], //推广计划列表
@@ -871,6 +872,7 @@ export default {
                 .then(res => {
                     if (res.ret == 1) {
                         this.campaignslist = res.data;
+                        this.mediaType = 1;
                     }
                 })
                 .catch(err => {
