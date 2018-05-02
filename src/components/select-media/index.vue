@@ -1,5 +1,4 @@
 <style scoped>
-
 </style>
 <template>
     <Select @on-change="mediaChange" placeholder="请选择媒体">

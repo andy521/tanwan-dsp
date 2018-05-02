@@ -22,6 +22,7 @@
                     <new-edit title="新建计划" class="margin-left-5"></new-edit>
                 </Col>
                 <Col span="9" style="text-align: right;">
+                    <select-author :media-type="3"  @on-change="authorChange"></select-author>
                     <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="clock" @click="modifyDate">修改日期</Button>
@@ -180,6 +181,7 @@
 <script>
 	import Axios from "@/api/index";
     import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
+    import selectAuthor from '@/components/select-author/index.vue';
     //import accountInfo from "./components/accountInfo.vue";
     import planIndex from "./components/planIndex.vue";
     import newEdit from "./components/newEdit.vue";
@@ -191,7 +193,8 @@
             newEdit,
             searchTree,
             weekDate,
-            planIndex
+            planIndex,
+            selectAuthor
         },
 		data() {
 			return {
@@ -267,10 +270,17 @@
                 //账号列表
                 accountList:[],
                 //选择账号ID
-                seleId:''
+                seleId:'',
+                // 选择负责人
+                author: []
             };
         },
-		methods: {	
+		methods: {
+            //选择负责人
+			authorChange(data) {
+				this.author = data;
+				this.getSpread();
+			},
             //返回
             back() {
                 this.$router.go(-1);
@@ -338,6 +348,7 @@
                     opt : 'searchCampaigns',
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间
+                    authors: this.author,
                     keyword : this.keyword, //模糊搜索关键词(针对计划名称、后台用户名称)
                     state : this.state,
                     game_ids:this.game_id, //游戏ID

@@ -27,7 +27,7 @@
                     <new-edit title="新建单元" class="margin-left-5"></new-edit>
                 </Col>
                 <Col span="11" style="text-align: right;">
-                <select-author  @on-change="authorChange"></select-author>
+                    <select-author :media-type="3"  @on-change="authorChange"></select-author>
                     <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                     <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
                     <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
@@ -187,7 +187,7 @@
 </template>
 <script>
     import Axios from "@/api/index";
-     import selectAuthor from '@/components/select-author/index.vue';
+    import selectAuthor from '@/components/select-author/index.vue';
     import searchTree from '@/components/select-tree/searchTree.vue';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import newEdit from "./components/newEdit.vue";
@@ -282,12 +282,14 @@
                 planList:[],
                 //选择计划ID
                 selePlanId:'',
+                // 选择负责人
+                author: []
 			};
 		},
 		methods: {
             //选择负责人
 			authorChange(data) {
-				this.author_model = data;
+				this.author = data;
 				this.getUnit();
 			},
             //返回
@@ -326,6 +328,7 @@
                     'click[value]':this.click_value,
                     'ctr[relation]':this.ctr_relation,
                     'ctr[value]':this.ctr_value,
+                    authors: this.author,
                     adResourceId:this.adResourceId,                    
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量

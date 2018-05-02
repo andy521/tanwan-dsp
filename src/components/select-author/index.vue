@@ -7,7 +7,7 @@
 </style>
 <template>
 
-  <Poptip class="author" placement="bottom-start" width="200" trigger="hover">
+  <Poptip class="author" placement="bottom-start" width="200" trigger="click">
         <Button type="ghost"><Icon type="person-stalker"></Icon> 选择负责人</Button>
         <div class="api" slot="content">      
             <div class="author-list">      
@@ -33,6 +33,23 @@
                 author: []
 			}
         },
+        props: {
+            // 媒体类型 :空值：返回全部媒体账号1: 广点通媒体2: 今日头条 3: Uc媒体 
+            mediaType: {
+                type: [String, Number],
+                default: ''
+            },
+            isLinkage: {
+                type: Boolean,
+                default: false
+            }
+        },
+        watch: {
+            mediaType(val) {
+                this.isLinkage = false
+                this.getAuthor();
+            }
+        },
 		methods: {
             selectAll(){
                 if(this.value.length == this.author.length){
@@ -54,7 +71,14 @@
             },
             //获取全部游戏     
             getAuthor(){
-                Axios.get('api.php',{'action':'api','opt':'getAuthor'})
+                if (this.isLinkage) {
+                    this.$Notice.info({
+                        title: '请选择媒体类型'
+                    });
+                    return;
+                }
+                if (typeof val === 'string') this.mediaType = parseInt(this.mediaType);
+                Axios.get('api.php',{'action':'api','opt':'getAuthor','media_type':this.mediaType})
                 .then( 
                     res=>{ 
                         if(res.ret == '1'){
