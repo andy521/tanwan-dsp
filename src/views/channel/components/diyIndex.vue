@@ -26,8 +26,8 @@
 
 <template>
 	<div>
-		<Poptip placement="bottom-start" width="500" class="Poptiptap">
-			<Button type="primary">自定义指标</Button>
+		<Poptip ref="poptip" trigger="click" placement="bottom-start" width="500" class="Poptiptap">
+			<Button type="primary" @click="handleShow">自定义指标</Button>
 			<div class="api" slot="content">
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
@@ -139,6 +139,8 @@
 					topt: this.opt,
 					memo: this.checkAllGroup.join(',')
 				};
+				const poptip = this.getPoptip().querySelector('.ivu-poptip-popper')
+				poptip.style.display = 'none'
                 this.$store.dispatch('SaveIndex', param);
                 console.log('保存')
             },
@@ -156,12 +158,22 @@
 					this.checkAll = false;
                 }                
 			},
-			close() {
-				this.visible = false;
-			},
-			close1() {
-				this.visible1 = false;
-			}
-		}
+            getPoptip() {
+                return this.$refs.poptip.$el
+            },
+            handleHide() {
+                this.getPoptip().querySelector('.ivu-poptip-popper').style.display = 'none'
+            },
+            handleShow() {
+                const poptip = this.getPoptip().querySelector('.ivu-poptip-popper')
+                setTimeout(() => {
+                    poptip.style.display = 'block'
+                }, 500)
+                this.getPoptip().addEventListener('mouseleave', this.handleHide)
+            }
+        },
+        beforeDestroy() {
+            this.getPoptip().removeEventListener('mouseleave', this.handleHide)
+        }
 	}
 </script>

@@ -151,10 +151,11 @@
             },
             //选择计划
             campaignChange(campaign){
-                console.log(campaign)
+                console.log('campaign', campaign)
                 Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
 					res => {
 						if(res.ret == 1) {
+                            console.log('res', res.data)
                             let list = this.adgroupList =  res.data,
                                 ids = '';
                             list.forEach(e=>{

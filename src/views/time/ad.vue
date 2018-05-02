@@ -830,6 +830,12 @@ export default {
         this.getCampaignsList();
     },
     methods: {
+        handleClickAuthor() {
+            if (!this.mediaType) {
+                this.$Message.warning('请先选择媒体账号');
+                return;
+            }
+        },
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");
