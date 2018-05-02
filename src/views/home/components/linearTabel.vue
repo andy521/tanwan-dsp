@@ -53,6 +53,8 @@ export default {
                     boundaryGap: false,
                     data: xb
                 },
+
+                
                 yAxis: {
                     type: 'value'
                 }, 

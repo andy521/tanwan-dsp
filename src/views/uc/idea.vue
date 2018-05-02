@@ -101,18 +101,18 @@
 <script>
 import Axios from "@/api/index";
 import weekDate from "@/components/week-date/index.vue";
-import selectAuthor from '@/components/select-author/index.vue';
 import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
 import createidea from "./components/createIdea.vue";
 import newEdit from "./components/newEdit.vue";
 import ideaIndex from "./components/ideaIndex.vue";
+import selectAuthor from '@/components/select-author/index.vue';
 export default {
     components: {
+        selectAuthor,
         newEdit,
         createidea,
         ideaIndex,
-        weekDate,
-        selectAuthor
+        weekDate
     },
     data() {
         return {
@@ -167,16 +167,12 @@ export default {
             //广告样式列表
             adstyle: [],
             creativeTemplate_id: "",
-            // 选择负责人
+            //选中的ID
+            checkId:[],
             author: []
         };
     },
     methods: {
-        //选择负责人
-        authorChange(data) {
-            this.author = data;
-            this.getIdea();
-        },
         //返回
         back() {
             this.$router.go(-1);
@@ -197,10 +193,10 @@ export default {
                 opt: "searchCreatives",
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
-                authors: this.author,
                 keyword: this.keyword, //模糊搜索关键词(针对计划名称、后台用户名称)
                 creativeTemplate_id: this.creativeTemplate_id, //筛选-广告样式id
                 state: this.state,
+                authors:this.author,
                 "impression[relation]": this.impression_relation,
                 "impression[value]": this.impression_value,
                 "cost[relation]": this.cost_relation,
@@ -243,8 +239,7 @@ export default {
             return;
             }
             let param = {
-                account_id: this.checkId[0],
-                creativeids: "[" + this.creativeids.join(",") + "]",
+                ids: this.checkId,
                 paused: this.setpaused
             };
             this.updatePaused(param);
@@ -269,14 +264,11 @@ export default {
             if (row.length > 0) {
                 this.operating = false;
             }
-            let ids = [],
-            creative = [];
+            let ids = [];
             row.forEach(item => {
-                ids.push(item.account_id);
-                creative.push(item.creative_id);
+                ids.push(item.id);
             });
             this.checkId = ids;
-            this.creativeids = creative;
         },
         setFilter() {
             this.filterLoading = true;
@@ -374,17 +366,15 @@ export default {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
-            let account = this.checkId[0],
-            creative = "[" + this.creativeids.join(",") + "]";
-            this.deleteData(account, creative);
+            let ids = this.checkId;
+            this.deleteData(ids);
         },
-        deleteData(account, creative) {
+        deleteData(id) {
             let param = {
                 action: "ucAdPut",
                 opt: "deleteCreative",
                 do: "del",
-                account_id: account,
-                creativeids: creative
+                ids:id
             };
             console.log(param);
             Axios.post("api.php", param).then(res => {
@@ -421,7 +411,7 @@ export default {
                     title: "投放开关",
                     align: "center",
                     key: "paused",
-                    width: 90,
+                    width: 100,
                     render: (h, params) => {
                         if (!params.row.paused) {
                             return;
@@ -436,8 +426,7 @@ export default {
                                         "on-change": value => {
                                             let paused = value ? "0" : "1";
                                             let param = {
-                                            account_id: params.row.account_id,
-                                            creativeids: "[" + params.row.creative_id + "]",
+                                            ids: params.row.id.split(','),
                                             paused: paused
                                             };
                                             this.updatePaused(param);
@@ -512,10 +501,46 @@ export default {
                     key: "cvr",
                     width: 120
                 },
+                cpc:{
+                    title: "平均点击价格",
+                    sortable: "custom",
+                    key: "cpc",
+                    width: 120
+                },
+                cpm:{
+                    title: "千次展现价格",
+                    sortable: "custom",
+                    key: "cpm",
+                    width: 120
+                },
+                download_complete:{
+                    title: "下载数",
+                    sortable: "custom",
+                    key: "download_complete",
+                    width: 120
+                },
+                download_complete_rate:{
+                    title: "下载率",
+                    sortable: "custom",
+                    key: "download_complete_rate",
+                    width: 120
+                },
+                conversion:{
+                    title: "注册设备数",
+                    sortable: "custom",
+                    key: "conversion",
+                    width: 120
+                },
                 cost_per_conversion:{
                     title: "转化成本",
                     sortable: "custom",
                     key: "cost_per_conversion",
+                    width: 120
+                },
+                adgroup_id:{
+                    title: "单元id",
+                    sortable: "custom",
+                    key: "adgroup_id",
                     width: 120
                 },
                 operate:{
@@ -548,13 +573,12 @@ export default {
                                 class: "del_link",
                                 on: {
                                     click: value => {
-                                        let account = params.row.account_id,
-                                            creative = "[" + params.row.creative_id + "]";
+                                        let id = params.row.id.split(',');
                                         this.$Modal.confirm({
                                             title: "操作提示",
                                             content: "<p>确认删除</p>",
                                             onOk: () => {
-                                                this.deleteData(account, creative);
+                                                this.deleteData(id);
                                             },
                                             onCancel: () => {}
                                         });
@@ -583,6 +607,11 @@ export default {
         changeTableColumns(){
             this.tableColumns = this.getTableColumns();
         },
+        //选择负责人
+        authorChange(data){
+            this.author = data;
+            this.getIdea();
+        }
     },
     beforeMount() {
         let query = this.$route.query.adgroup_id;
