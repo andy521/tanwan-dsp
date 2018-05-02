@@ -32,7 +32,6 @@
                             let list = res.data;
                             list.unshift({en:'',media_type:'',cn:'全部'});
                             this.media= list;
-                            console.log(list)
                         }
                     }
                 ).catch( 
