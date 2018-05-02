@@ -9,7 +9,7 @@
   </div>
 </template>
 <script>
-import echarts from 'echarts';
+import echarts from 'echarts'
 export default {
   name: 'linearChart',
   props: {
@@ -22,8 +22,8 @@ export default {
   }),
   watch: {
     datas(val) {
-      this.echartData = val;
-      this.echartsUpdate(val);
+      this.echartData = val
+      this.echartsUpdate(val)
     }
   },
   methods: {
@@ -34,47 +34,51 @@ export default {
      * 
      * */
     getDatelist(dataLen) {
-      const y = new Date().getFullYear();
-      const m = new Date().getMonth() + 1;
-      const d = new Date().getDate();
-      const isLeapY = (y % 4 == 0) && (y % 100 != 0) ? true : false;
-      let ret = [];
-      let cy = 0;
-      let cm = 0;
-      let cd = 0;
-      let diff = 0;
+      const y = new Date().getFullYear()
+      const m = new Date().getMonth() + 1
+      const d = new Date().getDate()
+      const isLeapY = (y % 4 == 0) && (y % 100 != 0) ? true : false // 闰年？
+      const mv = {
+        1: 31,
+        2: isLeapY ? 29 : 28,
+        3: 31,
+        4: 30,
+        5: 31,
+        6: 30,
+        7: 31,
+        8: 31,
+        9: 30,
+        10: 31,
+        11: 30,
+        12: 31
+      } // 枚举月份天数
+
+      let ret = []
+      let cy = 0
+      let cm = 0
+      let cd = 0
+      let diff = 0
       for (let i = dataLen; i > 0; i--) {
-        diff = d - i;
+        diff = d - i
         switch (m) {
-          case 3:
-            if (isLeapY) {
-              cd = diff > 0 ? diff : 29 + diff;
-              cm = diff > 0 ? m : m - 1;
-              cy = y;
-            } else {
-              cd = diff > 0 ? diff : 28 + diff;
-              cm = diff > 0 ? m : m - 1;
-              cy = y;
-            }
-            break;
           case 1:
-            cd = diff > 0 ? diff : 31 + diff;
-            cm = diff > 0 ? m : 12;
-            cy = diff > 0 ? y : y - 1;
-            break;
+            cm = diff > 0 ? m : 12
+            cy = diff > 0 ? y : y - 1
+            cd = diff > 0 ? diff : mv[cm] + diff
+            break
           default:
-            cd = diff > 0 ? diff : (m % 2 == 0) ? 30 + diff : 31 + diff;
-            cm = diff > 0 ? m : m - 1;
-            cy = y;
+            cm = diff > 0 ? m : m - 1
+            cy = y
+            cd = diff > 0 ? diff : mv[cm] + diff
         }
         ret.push(
           `${cy}-${cm}-${cd}`
-        );
+        )
       }
-        return ret;
+        return ret
     },
     echartsUpdate(data) {
-      let period = this.getDatelist(7);
+      let period = this.getDatelist(7)
 
       const option = {
         tooltip: {
@@ -106,13 +110,13 @@ export default {
           type: 'value'
         },
         series: data
-      };
+      }
 
-      const topCharts = echarts.init(document.getElementById('top_chart'));
+      const topCharts = echarts.init(document.getElementById('top_chart'))
       topCharts.setOption(option);
       window.addEventListener('resize', function(){
-        topCharts.resize();
-      });
+        topCharts.resize()
+      })
     }
   }
 }

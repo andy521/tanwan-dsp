@@ -74,9 +74,11 @@
             //获取全部游戏     
             getAuthor(){
                 if (this.linkage) {
-                    this.$Notice.info({
-                        title: '请选择媒体类型'
-                    });
+
+                    // this.$Notice.info({
+                    //     title: '请选择媒体类型'
+                    // });
+
                     return;
                 }
                 if (typeof val === 'string') this.mediaType = parseInt(this.mediaType);
