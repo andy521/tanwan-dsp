@@ -1,8 +1,10 @@
 <style scoped>
 </style>
 <template>
-    <Select @on-change="mediaChange" placeholder="请选择媒体">
-        <Option v-for="(item,index) in media" :value="item.media_type" :key="index">{{ item.cn }}</Option>
+
+    <Select @on-change="mediaChange" placeholder="请选择媒体" clearable>
+    <Option v-for="item in media" :value="item.en" :key="this">{{ item.cn }}</Option>
+
     </Select>
 </template>
 <script>
