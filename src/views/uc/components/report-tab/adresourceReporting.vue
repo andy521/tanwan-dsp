@@ -72,7 +72,7 @@
                 //筛选时间
                 DateDomain: [formatDate(new Date(new Date().getTime()-1000*60*60*24*7), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")],                
                 //推广单元id集合
-                adgroupids:[],
+                adgroupIds:[],
                 //推广资源
                 adresource:'',
                 //账户
@@ -125,7 +125,7 @@
                     action:'ucAdPut',
                     opt:'getAdresourceReporting',
                     accountIds:this.accountIds,
-                    adgroupids:this.adgroupids,
+                    adgroupIds:this.adgroupIds.join(','),
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间
                     adresource:this.adresource,
@@ -161,14 +161,14 @@
                             list.forEach(e=>{
                                 ids += e.adgroup_id + ',';
                             });
-                            this.adgroupids = ids;
+                            this.adgroupIds = ids;
 						}
 					}
                 ).catch(err => {console.log(err)});            
             },
             //选择单元
             adgroupChange(val){
-                this.adgroupids = val;
+                this.adgroupIds = val;
             },
             //排序
             sortchange(column) {

@@ -128,7 +128,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-                    this.checkAllGroup = ['paused','state','impression','click',"ctr","cost","adgroup_name",'activation','cvr','cost_per_conversion','cpc','cpm','download_complete','download_complete_rate','conversion']
+                    this.checkAllGroup = ['paused','state','impression','click','adgroup_id',"ctr","cost","adgroup_name",'activation','cvr','cost_per_conversion','cpc','cpm','download_complete','download_complete_rate','conversion']
 				} else {
 					this.checkAllGroup = [];
 				}
