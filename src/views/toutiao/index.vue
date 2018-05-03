@@ -176,12 +176,27 @@ export default {
 			chartData: []
 		}
 	},
+	beforeMount() {
+		this.getAuthorizedUrl()
+	},
 	mounted() {
 		this.getTopData()
 	},
 	methods: {
 		// 广告统计 跳转路由
 		handleStatistics(key) {
+		},
+		getAuthorizedUrl() {
+			Axios.get('api.php', {
+				action: 'ttAdPut',
+				opt: 'getAuthorizedUrl'
+			}).then(res => {
+				if (res.ret === 1) {
+					console.log()
+				}
+			}).catch(err => {
+				console.error('获取授权链接失败', err)
+			})
 		},
 		getTopData() {
 			this.chartData = echartDataList.data.echart

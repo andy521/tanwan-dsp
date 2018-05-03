@@ -73,14 +73,14 @@
             },
             //获取全部游戏     
             getAuthor(){
-                if (this.linkage) {
+                // if (this.linkage) {
 
-                    // this.$Notice.info({
-                    //     title: '请选择媒体类型'
-                    // });
+                //     // this.$Notice.info({
+                //     //     title: '请选择媒体类型'
+                //     // });
 
-                    return;
-                }
+                //     return;
+                // }
                 if (typeof val === 'string') this.mediaType = parseInt(this.mediaType);
                 Axios.get('api.php',{'action':'api','opt':'getAuthor','media_type':this.mediaType})
                 .then( 
