@@ -7,6 +7,10 @@
 .spread .ivu-poptip {
     display: inline-block;
 }
+.sel_state {
+    text-align: left;
+    width: 110px;
+}
 </style>
 <template>
     <div class="spread">
@@ -17,7 +21,7 @@
                 <Col span="19">
                 <Button type="primary" @click="back" v-show="isBack">返回</Button>
                 <!--搜索游戏列表-->
-                <search-tree @on-change="getids"></search-tree>                             
+                <search-tree @on-change="getids"></search-tree>
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
                 <Button type="primary" icon="search" @click="getSpread()">搜索</Button>
                 </Col>
@@ -30,16 +34,21 @@
 
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="12">
+                <Col span="14">
                 <plan-index @on-change="getuncheck" :check="checkAllGroup" action="ucAdPut" opt="searchCampaigns"></plan-index>
-                 <Button type="ghost" icon="funnel" class="margin-left-5" @click=" filterModal = true">筛选</Button>
-                  <select-author @on-change="authorChange"></select-author>
-                   <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                <Button type="ghost" icon="funnel" @click=" filterModal = true">筛选</Button>
+                <select-author @on-change="authorChange"></select-author>
+                <Select v-model="status" class="sel_state" @on-change="getSpread()" placeholder="状态">
+                    <Option value="">不限</Option>
+                    <Option value="0">有效</Option>
+                    <Option value="1">暂停</Option>
+                </Select>
+                <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                 </Col>
-                <Col span="12" style="text-align: right;">
-                <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start"  @on-ok="deleteFun" style="text-align: left;">
+                <Col span="10" style="text-align: right;">
+                <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="deleteFun" style="text-align: left;">
                     <Button type="ghost" icon="trash-a">删除</Button>
-                </Poptip> 
+                </Poptip>
                 <Button type="ghost" icon="clock" @click="modifyDate">修改日期</Button>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="toggle-filled">修改状态</Button>
@@ -56,7 +65,7 @@
                         </div>
                     </div>
                 </Poptip>
-                <Button type="ghost" icon="social-usd" @click="setBudget">修改预算</Button>               
+                <Button type="ghost" icon="social-usd" @click="setBudget">修改预算</Button>
                 </Col>
             </Row>
 
@@ -244,6 +253,7 @@ export default {
             //关键字
             keyword: "",
             //筛选时间
+            status: "", //过滤状态
             DateDomain: [
                 formatDate(new Date(), "yyyy-MM-dd"),
                 formatDate(new Date(), "yyyy-MM-dd")
@@ -422,6 +432,7 @@ export default {
                 "ctr[value]": this.ctr_value,
                 adResourceId: this.adResourceId,
                 orderField: this.orderField,
+                paused: this.status, //过滤状态
                 page: this.page, //页码
                 page_size: this.page_size, //每页数量
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
@@ -488,14 +499,14 @@ export default {
         },
         //删除
         deleteFun() {
-            console.log(1)
+            console.log(1);
             if (this.checkId.length == "0") {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
             let account = this.checkId[0],
                 campaign = "[" + this.checkCampaign.join(",") + "]";
-                
+
             this.deleteData(account, campaign);
         },
         deleteData(account, campaign) {
@@ -930,7 +941,7 @@ export default {
                 },
                 {
                     title: "注册设备成本",
-                    key: "app_reg_cost",
+                    key: "cost_per_dev",
                     width: 120
                 },
                 {

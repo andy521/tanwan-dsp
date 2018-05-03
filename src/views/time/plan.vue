@@ -97,8 +97,8 @@
                 <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
                 <!--选择负责人-->
                 <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author>
-                <Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
-                    <Option value="0">所有未册除</Option>
+                <Select v-model="configured_status" class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
+                    <Option value="">不限</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
                 </Select>
@@ -232,7 +232,7 @@ export default {
                 formatDate(new Date(), "yyyy-MM-dd")
             ], //筛选时间
             options: DateShortcuts, //日期辅助功能
-            configured_status: "0", //过滤无数据的广告
+            configured_status: "", //过滤无数据的广告
             campaign_name: "", //关键字
             check_value: false,
             edit_status: "AD_STATUS_NORMAL", //批量状态

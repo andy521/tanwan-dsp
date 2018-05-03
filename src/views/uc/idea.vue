@@ -492,7 +492,7 @@ export default {
                 activation:{
                     title: "转化数",
                     sortable: "custom",
-                    key: "activation",
+                    key: "conversion",
                     width: 120
                 },
                 cvr:{
@@ -505,13 +505,13 @@ export default {
                     title: "平均点击价格",
                     sortable: "custom",
                     key: "cpc",
-                    width: 120
+                    width: 150
                 },
                 cpm:{
                     title: "千次展现价格",
                     sortable: "custom",
                     key: "cpm",
-                    width: 120
+                    width: 150
                 },
                 download_complete:{
                     title: "下载数",

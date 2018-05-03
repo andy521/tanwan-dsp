@@ -15,6 +15,10 @@
 .unit .ivu-poptip {
     display: inline-block;
 }
+.sel_state {
+    text-align: left;
+    width: 110px;
+}
 </style>
 <template>
     <div class="unit">
@@ -24,7 +28,7 @@
                 <Col span="19">
                 <Button type="primary" @click="back" v-show="isBack">返回</Button>
                 <!--搜索游戏列表-->
-                <search-tree @on-change="getids"></search-tree>                           
+                <search-tree @on-change="getids"></search-tree>
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
                 <Button type="primary" icon="search" @click="getUnit()">搜索</Button>
                 </Col>
@@ -37,16 +41,21 @@
 
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="12">
-               <unit-index @on-change="getIndex" :check="checkAllGroup"></unit-index>
-               <Button type="ghost" icon="funnel" class="margin-left-10" @click=" filterModal = true">筛选</Button>
-               <select-author :media-type="3" @on-change="authorChange" style="text-align: left;"></select-author>
-                <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-                </Col>              
-                <Col span="12" style="text-align: right;" > 
-                <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start"  @on-ok="deleteFun" style="text-align: left;">
+                <Col span="13">
+                <unit-index @on-change="getIndex" :check="checkAllGroup"></unit-index>
+                <Button type="ghost" icon="funnel" @click=" filterModal = true">筛选</Button>
+                <select-author :media-type="3" @on-change="authorChange" style="text-align: left;"></select-author>
+                <Select v-model="status" class="sel_state" @on-change="getUnit()" placeholder="状态">
+                    <Option value="">不限</Option>
+                    <Option value="0">有效</Option>
+                    <Option value="1">暂停</Option>
+                </Select>
+                <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                </Col>
+                <Col span="11" style="text-align: right;">
+                <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="deleteFun" style="text-align: left;">
                     <Button type="ghost" icon="trash-a">删除</Button>
-                </Poptip>                              
+                </Poptip>
                 <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="toggle-filled">修改状态</Button>
@@ -64,7 +73,7 @@
                     </div>
                 </Poptip>
                 <Button type="ghost" icon="location" @click="setRegionFun">修改地域</Button>
-                <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>                
+                <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>
                 </Col>
             </Row>
 
@@ -243,6 +252,7 @@ export default {
             //关键字
             keyword: "",
             //筛选时间
+            status: "", //过滤状态
             DateDomain: [
                 formatDate(new Date(), "yyyy-MM-dd"),
                 formatDate(new Date(), "yyyy-MM-dd")
@@ -358,6 +368,7 @@ export default {
                 "click[value]": this.click_value,
                 "ctr[relation]": this.ctr_relation,
                 "ctr[value]": this.ctr_value,
+                paused: this.status, //过滤状态
                 authors: this.author,
                 adResourceId: this.adResourceId,
                 page: this.page, //页码
@@ -980,7 +991,7 @@ export default {
                 app_reg_cost: {
                     title: "注册设备成本",
                     sortable: "custom",
-                    key: "app_reg_cost",
+                    key: "cost_per_dev",
                     width: 130
                 },
                 reg_total: {
