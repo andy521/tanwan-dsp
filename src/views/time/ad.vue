@@ -109,7 +109,8 @@
                 <!--自定义指标-->
                 <view-tip @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-tip>
                 <!--选择负责人-->
-                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author>
+                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
+                <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
                 <Select v-model="configured_status"  class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
                     <Option value="">不限</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
@@ -831,12 +832,12 @@ export default {
         this.getCampaignsList();
     },
     methods: {
-        handleClickAuthor() {
-            if (!this.mediaType) {
-                this.$Message.warning('请先选择媒体账号');
-                return;
-            }
-        },
+        // handleClickAuthor() {
+        //     if (!this.mediaType) {
+        //         this.$Message.warning('请先选择媒体账号');
+        //         return;
+        //     }
+        // },
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");

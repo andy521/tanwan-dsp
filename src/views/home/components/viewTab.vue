@@ -73,7 +73,8 @@
                         <Button slot="append" icon="ios-search" @on-click="tableData"></Button>
                     </Input>
                 </div>
-                <select-author :is-linkage="true" :media-type="media_type"  @on-change="authorChange" @click.native="handleClickAuthor"></select-author>
+                <!-- <select-author :is-linkage="true" :media-type="media_type"  @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
+                <select-author :is-linkage="true" :media-type="media_type"  @on-change="authorChange"></select-author>
 
                 <select-media class="smedia" @on-change="mediaChange"></select-media>
 
@@ -257,12 +258,12 @@
 			}
 		},
 		methods: {
-			handleClickAuthor() {
-				if (!this.media_type) {
-					this.$Message.warning('请先选择媒体账号');
-					return;
-				}
-			},
+			// handleClickAuthor() {
+			// 	if (!this.media_type) {
+			// 		this.$Message.warning('请先选择媒体账号');
+			// 		return;
+			// 	}
+			// },
 			//这里的排序没有做哈哈哈
 			tableData(page) {
 				if(page === undefined) {

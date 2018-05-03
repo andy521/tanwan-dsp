@@ -30,7 +30,7 @@
                     res=>{ 
                         if(res.ret == '1'){
                             let list = res.data;
-                            list.unshift({en:'',media_type:'',cn:'全部'});
+                            list.unshift({en:'',media_type:0,cn:'全部媒体'});
                             this.media= list;
                         }
                     }
@@ -40,6 +40,7 @@
             },
 			//点击树节点时触发
 			mediaChange(data) {
+                data = data === 0 ? '' : data
                 this.$emit('on-change', data);
 			}
         },
