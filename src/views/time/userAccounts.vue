@@ -53,7 +53,7 @@ export default {
             Axios.get("api.php", {
                 action: "api",
                 opt: "getAccount",
-                MeidaType: "Gdt"
+                media_type: 1
             })
                 .then(res => {
                     if (res.ret == 1) {

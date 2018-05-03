@@ -22,7 +22,7 @@
 
 <template>
     <div style="display: inline-block;">
-		<Poptip ref="poptip" trigger="hover" placement="bottom-end" width="500" class="Poptiptap">
+		<Poptip ref="poptip" trigger="hover" placement="bottom-start" width="500" class="Poptiptap">
 			<Button type="primary" @click="handleShow">自定义指标</Button>
             <div class="poptipdiv" slot="content">
                 <div class="bottom_line">

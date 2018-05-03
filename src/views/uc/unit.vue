@@ -9,28 +9,44 @@
     overflow: auto;
     margin-top: 10px;
 }
+.sel {
+    width: 220px;
+}
+.unit .ivu-poptip {
+    display: inline-block;
+}
 </style>
 <template>
     <div class="unit">
-        <Card shadow class="margin-top-10">
+
+        <Card shadow>
             <Row>
-                <Col v-show="isBack" span="1">
-                <Button type="primary" @click="back">返回</Button>
-                </Col>
-                <Col span="2">
-                <search-tree @on-change="getids"></search-tree>
-                </Col>
-                <Col span="10">
-                <Button type="ghost" icon="funnel" class="margin-left-10" @click=" filterModal = true">筛选</Button>
-                <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                <Col span="19">
+                <Button type="primary" @click="back" v-show="isBack">返回</Button>
+                <!--搜索游戏列表-->
+                <search-tree @on-change="getids"></search-tree>                           
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
-                <Button icon="search" @click="getUnit()">搜索</Button>
+                <Button type="primary" icon="search" @click="getUnit()">搜索</Button>
+                </Col>
+                <Col span="5" style="text-align: right;">
+                <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                 <new-edit title="新建单元" class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="11" style="text-align: right;">
-                <select-author :media-type="3" @on-change="authorChange" style="text-align: left;"></select-author>
-                <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
-                <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
+            </Row>
+        </Card>
+
+        <Card shadow class="margin-top-10">
+            <Row>
+                <Col span="12">
+               <unit-index @on-change="getIndex" :check="checkAllGroup"></unit-index>
+               <Button type="ghost" icon="funnel" class="margin-left-10" @click=" filterModal = true">筛选</Button>
+               <select-author :media-type="3" @on-change="authorChange" style="text-align: left;"></select-author>
+                <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                </Col>              
+                <Col span="12" style="text-align: right;" > 
+                <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start"  @on-ok="deleteFun" style="text-align: left;">
+                    <Button type="ghost" icon="trash-a">删除</Button>
+                </Poptip>                              
                 <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="toggle-filled">修改状态</Button>
@@ -48,8 +64,7 @@
                     </div>
                 </Poptip>
                 <Button type="ghost" icon="location" @click="setRegionFun">修改地域</Button>
-                <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>
-                <unit-index @on-change="getIndex" :check="checkAllGroup"></unit-index>
+                <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>                
                 </Col>
             </Row>
 
@@ -204,8 +219,8 @@ export default {
     data() {
         return {
             loading: false,
-            isBack: true,
-            height: document.body.clientHeight - 200,
+            isBack: false,
+            height: document.body.clientHeight - 300,
             filterModal: false,
             dateModal: false,
             regionModal: false,
@@ -353,7 +368,7 @@ export default {
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
-                        console.log(res);
+                        //console.log(res);
                         this.loading = false;
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
@@ -464,7 +479,7 @@ export default {
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == 1) {
-                        console.log(res);
+                        //console.log(res);
                         this.$Message.info(res.msg);
                     }
                 })

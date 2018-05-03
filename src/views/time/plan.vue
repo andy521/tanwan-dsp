@@ -107,7 +107,7 @@
                 </Col>
                 <Col span="8" style="text-align: right;">
                 <div class="btn-group clear">
-                    <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)">
+                    <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)" style="text-align: left;">
                         <Button type="ghost" icon="trash-a">删除</Button>
                     </Poptip>
                     <Poptip placement="bottom-start" v-model="visible">
@@ -148,7 +148,7 @@
                 </Col>
             </Row>
             <div>
-                <Table :data="newAdList" height="650" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
+                <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe ></Table>
                 <Row class="margin-top-10">
                     <Col span="10"> 表格尺寸
                     <Radio-group v-model="tableSize" type="button">
@@ -198,6 +198,7 @@ export default {
     data() {
         return {
             params: this.$route.query,
+            height: document.body.clientHeight - 300,
             mediaList: [], //媒体账号列表
             campaignslist: [], //推广计划列表
             loading: false,

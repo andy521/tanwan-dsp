@@ -5,7 +5,7 @@
 </style>
 <template>
     <div class="new">
-        <Button type="ghost" icon="ios-copy" :loading="loading" @click="newsEdit">{{title}}</Button>
+        <Button type="ghost" icon="android-add" :loading="loading" @click="newsEdit">{{title}}</Button>
 
         <Modal v-model="accountModal" title="选择新建计划帐号" @on-ok="setAccount" @on-cancel=" accountModal = false">
             <div class="select">

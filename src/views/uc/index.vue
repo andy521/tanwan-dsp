@@ -1,32 +1,46 @@
 <style lang="less">
 @import "../../styles/common.less";
 @import "./index.less";
+.sel {
+    width: 220px;
+}
+.spread .ivu-poptip {
+    display: inline-block;
+}
 </style>
 <template>
     <div class="spread">
         <!-- 查询账户信息 -->
         <!-- <account-info></account-info> -->
-        <Card shadow class="margin-top-10">
+        <Card shadow>
             <Row>
-                <Col span="1">
+                <Col span="19">
                 <Button type="primary" @click="back" v-show="isBack">返回</Button>
-                </Col>
-                <Col span="4">
-                <search-tree @on-change="getids"></search-tree>
-                </Col>
-                <Col span="9">
-                <Button type="ghost" icon="funnel" class="margin-left-5" @click=" filterModal = true">筛选</Button>
-                <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                <!--搜索游戏列表-->
+                <search-tree @on-change="getids"></search-tree>                             
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
-                <Button icon="search" @click="getSpread()">搜索</Button>
+                <Button type="primary" icon="search" @click="getSpread()">搜索</Button>
+                </Col>
+                <Col span="5" style="text-align: right;">
+                <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
                 <new-edit title="新建计划" class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="10" style="text-align: right;">
-                <select-author @on-change="authorChange"></select-author>
-                <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
-                <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
+            </Row>
+        </Card>
+
+        <Card shadow class="margin-top-10">
+            <Row>
+                <Col span="12">
+                <plan-index @on-change="getuncheck" :check="checkAllGroup" action="ucAdPut" opt="searchCampaigns"></plan-index>
+                 <Button type="ghost" icon="funnel" class="margin-left-5" @click=" filterModal = true">筛选</Button>
+                  <select-author @on-change="authorChange"></select-author>
+                   <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                </Col>
+                <Col span="12" style="text-align: right;">
+                <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start"  @on-ok="deleteFun" style="text-align: left;">
+                    <Button type="ghost" icon="trash-a">删除</Button>
+                </Poptip> 
                 <Button type="ghost" icon="clock" @click="modifyDate">修改日期</Button>
-                <Button type="ghost" icon="social-usd" @click="setBudget">修改预算</Button>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="toggle-filled">修改状态</Button>
                     <div class="api" slot="content">
@@ -42,7 +56,7 @@
                         </div>
                     </div>
                 </Poptip>
-                <plan-index @on-change="getuncheck" :check="checkAllGroup" action="ucAdPut" opt="searchCampaigns"></plan-index>
+                <Button type="ghost" icon="social-usd" @click="setBudget">修改预算</Button>               
                 </Col>
             </Row>
 
@@ -199,7 +213,7 @@ export default {
     },
     data() {
         return {
-            height: document.body.clientHeight - 200,
+            height: document.body.clientHeight - 300,
             isBack: false,
             loading: true,
             filterModal: false,
@@ -416,7 +430,7 @@ export default {
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
-                        console.log(res);
+                        //console.log(res);
                         this.loading = false;
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
@@ -460,7 +474,7 @@ export default {
             let param = data;
             param.action = "ucAdPut";
             param.opt = "updateCampaignPaused";
-            console.log(param);
+            //console.log(param);
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == 1) {
@@ -474,12 +488,14 @@ export default {
         },
         //删除
         deleteFun() {
+            console.log(1)
             if (this.checkId.length == "0") {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
             let account = this.checkId[0],
                 campaign = "[" + this.checkCampaign.join(",") + "]";
+                
             this.deleteData(account, campaign);
         },
         deleteData(account, campaign) {
