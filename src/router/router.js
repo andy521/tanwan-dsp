@@ -108,12 +108,14 @@ export const appRouter = [
         title: '今日头条投放',  
         access: 0,      
         component: Main,
-        children: [
-            
+        children: [           
             { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
-            { path: 'ad', title: '广告组', name: 'tt_ad', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/ad.vue') },   
-            { path: 'plan', title: '广告计划', name: 'tt_plan', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/plan.vue') },  
-            { path: 'idea', title: '创意', name: 'tt_idea', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/idea.vue') },        
+            { path: 'advertiser', title: '推广管理', name: 'tt_campaign', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/advertiser.vue'),
+            children: [ 
+                { path: 'campaign', title: '广告组', name: 'tt_campaign',  component: () => import('@/views/toutiao/campaign.vue')},
+                { path: 'ad', title: '广告计划', name: 'tt_ad', component: () => import('@/views/toutiao/ad.vue') },  
+                { path: 'creative', title: '创意', name: 'tt_creative', component: () => import('@/views/toutiao/creative.vue') },    
+            ]}       
         ]
     },
     {

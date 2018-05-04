@@ -21,7 +21,7 @@
                 </Col>
                 <Col span="6" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars">查看图表</Button>
-                <Button type="ghost" icon="android-add">新建广告计划</Button>
+                <Button type="ghost" icon="android-add">新建广告组</Button>
                 </Col>
             </Row>
         </Card>
@@ -29,7 +29,7 @@
             <Row>
                 <Col span="12">
                 <!--自定义指标-->
-                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchAdgroups"></view-tip>
+                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
                 <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList">
                     <Option value="">不限</Option>
                     <Option value="LINK">推广落地页</Option>
@@ -38,8 +38,8 @@
                 </Select>
                 <Select placeholder="状态" v-model="status" class="sel_state" @on-change="getCampaignsList">
                     <Option value="">不限</Option>
-                    <Option value="AD_STATUS_ENABLE">启用</Option>
-                    <Option value="AD_STATUS_DISABLE">暂停</Option>
+                    <Option value="CAMPAIGN_STATUS_ENABLE">启用</Option>
+                    <Option value="CAMPAIGN_STATUS_DISABLE">暂停</Option>
                 </Select>
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                 </Col>
@@ -166,7 +166,7 @@ export default {
         editStatus() {
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "updateAdgroupStatus",
+                opt: "updateCampaignStatus",
                 ids: this.taCheckids,
                 opt_status: this.edit_status
             })
@@ -191,7 +191,7 @@ export default {
             this.loading = true;
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "searchAdgroups",
+                opt: "searchCampaigns",
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -207,7 +207,7 @@ export default {
                 .then(res => {
                     this.loading = false;
                     if (res.ret == 1) {
-                        console.log(res.data.list);
+                        //console.log(res.data.list);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                         this.newAdList = res.data.list;
@@ -230,11 +230,11 @@ export default {
                     key: ""
                 },
                 {
-                    title: "广告计划",
-                    key: "adgroup_name",
-                    width: 250,
+                    title: "广告组名称",
+                    key: "campaign_name",
+                    width: 200,
                     render: (h, params) => {
-                        let value = params.row.adgroup_name;
+                        let value = params.row.campaign_name;
                         return [
                             h(
                                 "span",
@@ -243,7 +243,7 @@ export default {
                                     on: {
                                         click: () => {
                                             let query = {
-                                                id: params.row.adgroup_name
+                                                id: params.row.campaign_name
                                             };
                                             // this.$router.push({
                                             //     name: "uc_plan",
@@ -252,7 +252,7 @@ export default {
                                         }
                                     }
                                 },
-                                params.row.adgroup_name
+                                params.row.campaign_name
                             ),
                             h("i-button", {
                                 props: {
@@ -269,7 +269,7 @@ export default {
                                                     props: {
                                                         value:
                                                             params.row
-                                                                .adgroup_name,
+                                                                .campaign_name,
                                                         autofocus: true,
                                                         placeholder:
                                                             "请输入广告组名称"
@@ -288,30 +288,30 @@ export default {
                                                     );
                                                     return;
                                                 }
-                                                // Axios.post("api.php", {
-                                                //     action: "ttAdPut",
-                                                //     opt: "updateCampaign",
-                                                //     account_id:params.row.account_id,
-                                                //     modify_time:params.row.modify_time,
-                                                //     campaign_id:params.row.campaign_id,
-                                                //     adgroup_name:value,                                                  
-                                                // })
-                                                //     .then(res => {
-                                                //         if (res.ret == 1) {
-                                                //             this.$Message.info(
-                                                //                 res.msg
-                                                //             );
-                                                //             this.getCampaignsList(
-                                                //                 this.page
-                                                //             );
-                                                //         }
-                                                //     })
-                                                //     .catch(err => {
-                                                //         console.log(
-                                                //             "修改删除广告计划失败" +
-                                                //                 err
-                                                //         );
-                                                //     });
+                                                Axios.post("api.php", {
+                                                    action: "ttAdPut",
+                                                    opt: "updateCampaign",
+                                                    account_id:params.row.account_id,
+                                                    modify_time:params.row.modify_time,
+                                                    campaign_id:params.row.campaign_id,
+                                                    campaign_name:value,                                                  
+                                                })
+                                                    .then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(
+                                                                res.msg
+                                                            );
+                                                            this.getCampaignsList(
+                                                                this.page
+                                                            );
+                                                        }
+                                                    })
+                                                    .catch(err => {
+                                                        console.log(
+                                                            "修改删除广告计划失败" +
+                                                                err
+                                                        );
+                                                    });
                                             }
                                         });
                                     }
@@ -330,7 +330,7 @@ export default {
                     key: "status",
                     width: 100,
                     render: (h, params) => {
-                        if (!params.row.opt_status) {
+                        if (!params.row.status) {
                             return;
                         } else {
                             return h("div", [
@@ -338,8 +338,8 @@ export default {
                                     props: {
                                         size: "small",
                                         value:
-                                            params.row.opt_status ==
-                                            "AD_STATUS_ENABLE"
+                                            params.row.status ==
+                                            "CAMPAIGN_STATUS_ENABLE"
                                                 ? true
                                                 : false
                                     },
@@ -348,13 +348,13 @@ export default {
                                     },
                                     on: {
                                         "on-change": value => {
-                                            params.row.opt_status =
+                                            params.row.status =
                                                 value == true
-                                                    ? "AD_STATUS_ENABLE"
-                                                    : "AD_STATUS_DISABLE";
+                                                    ? "CAMPAIGN_STATUS_ENABLE"
+                                                    : "CAMPAIGN_STATUS_DISABLE";
                                             Axios.post("api.php", {
                                                 action: "ttAdPut",
-                                                opt: "updateAdgroupStatus",
+                                                opt: "updateCampaignStatus",
                                                 ids: params.row.id.split(","),
                                                 opt_status:
                                                     value == true
@@ -381,8 +381,8 @@ export default {
                                 }),
                                 h(
                                     "span",
-                                    params.row.opt_status ==
-                                    "AD_STATUS_ENABLE"
+                                    params.row.status ==
+                                    "CAMPAIGN_STATUS_ENABLE"
                                         ? "开启"
                                         : "关闭"
                                 )
