@@ -99,7 +99,7 @@
                 <Col span="6" style="text-align: right;">
                 <Button type="ghost" icon="log-in" @click="tologin">登陆</Button>
                 <Button type="ghost" icon="ios-copy" @click="copyAd">复制广告</Button>
-                <Button type="ghost" icon="android-add" @click="tonewadd">新建广告</Button>
+                <new-edit title="新建广告"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -208,11 +208,13 @@ import viewTip from "./components/viewPopti.vue";
 import searchTree from "@/components/select-tree/searchTree.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import creativity from "./components/creativity.vue";
+import newEdit from "./components/newEdit.vue";
 export default {
     components: {
         viewTip,
         searchTree,
-        selectAuthor
+        selectAuthor,
+        newEdit
     },
     data() {
         return {
@@ -841,12 +843,6 @@ export default {
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");
-        },
-        //新建广告
-        tonewadd() {
-            this.$router.push({
-                name: "user_accounts"
-            });
         },
         //获取选中游戏id
         getids(ids) {

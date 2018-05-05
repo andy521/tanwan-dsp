@@ -7,29 +7,25 @@
 .name_text:hover {
     text-decoration: underline;
 }
+.copy_link,
+.edit_link,
+.del_link {
+    cursor: pointer;
+    color: #2b7ed1;
+    margin-right: 5px;
+}
+.del_link {
+    color: #ff7474;
+}
 </style>
 <template>
-    <div class="ad">
+    <div>
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="18">
-                <Button type="primary">返回</Button>
+                <Col span="20">
+                <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword"></Input>
-                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
-                </Col>
-                <Col span="6" style="text-align: right;">
-                <Button type="ghost" icon="stats-bars">查看图表</Button>
-                <Button type="ghost" icon="android-add">新建广告组</Button>
-                </Col>
-            </Row>
-        </Card>
-        <Card shadow class="margin-top-10">
-            <Row>
-                <Col span="12">
-                <!--自定义指标-->
-                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
                 <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList">
                     <Option value="">不限</Option>
                     <Option value="LINK">推广落地页</Option>
@@ -42,8 +38,22 @@
                     <Option value="CAMPAIGN_STATUS_DISABLE">暂停</Option>
                 </Select>
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
-                <Col span="12" style="text-align: right;">
+                <Col span="4" style="text-align: right;">
+                <Button type="ghost" icon="stats-bars">图表</Button>
+                <new-edit title="新建广告组"></new-edit>
+                </Col>
+            </Row>
+        </Card>
+        <Card shadow class="margin-top-10">
+            <campaign-echarts></campaign-echarts>
+        </Card>
+        <Card shadow class="margin-top-10">
+            <Row>
+                <!--自定义指标-->
+                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="edit">批量修改</Button>
                     <div class="api" slot="content">
@@ -60,8 +70,6 @@
                         </div>
                     </div>
                 </Poptip>
-                <Button type="ghost">查看日志</Button>
-                </Col>
             </Row>
             <div>
                 <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
@@ -88,6 +96,7 @@
 <script>
 import Axios from "@/api/index";
 import viewTip from "./components/viewPopti.vue";
+import newEdit from "./components/newEdit.vue";
 import {
     DateShortcuts,
     formatDate,
@@ -95,10 +104,13 @@ import {
     deepClone
 } from "@/utils/DateShortcuts.js";
 import searchTree from "@/components/select-tree/searchTree.vue";
+import campaignEcharts from "./components/campaignEcharts.vue";
 export default {
     components: {
         viewTip,
-        searchTree
+        searchTree,
+        campaignEcharts,
+        newEdit
     },
     data() {
         return {
@@ -207,7 +219,7 @@ export default {
                 .then(res => {
                     this.loading = false;
                     if (res.ret == 1) {
-                        //console.log(res.data.list);
+                        console.log(res.data.list);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                         this.newAdList = res.data.list;
@@ -291,10 +303,13 @@ export default {
                                                 Axios.post("api.php", {
                                                     action: "ttAdPut",
                                                     opt: "updateCampaign",
-                                                    account_id:params.row.account_id,
-                                                    modify_time:params.row.modify_time,
-                                                    campaign_id:params.row.campaign_id,
-                                                    campaign_name:value,                                                  
+                                                    account_id:
+                                                        params.row.account_id,
+                                                    modify_time:
+                                                        params.row.modify_time,
+                                                    campaign_id:
+                                                        params.row.campaign_id,
+                                                    campaign_name: value
                                                 })
                                                     .then(res => {
                                                         if (res.ret == 1) {
@@ -398,77 +413,92 @@ export default {
                 {
                     title: "总花费",
                     key: "cost",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "展示数",
                     key: "impression",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "点击数",
                     key: "click",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "点击率",
                     key: "ctr",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "平均点击单价",
                     key: "cpc",
-                    width: 150
+                    width: 150,
+                    sortable: "custom"
                 },
                 {
                     title: "千次展现费用",
                     key: "cpm",
-                    width: 150
+                    width: 150,
+                    sortable: "custom"
                 },
                 {
                     title: "激活数",
                     key: "active",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "激活成本",
                     key: "",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "激活率",
                     key: "active_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "转化数",
                     key: "conversion",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "转化成本",
                     key: "cost_per_conversion",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "转化率",
                     key: "cvr",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "注册数",
                     key: "reg_total",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "注册成本",
                     key: "cost_per_reg",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "注册率",
                     key: "reg_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "注册ARPU",
@@ -478,17 +508,20 @@ export default {
                 {
                     title: "活跃数",
                     key: "active",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "活跃率",
                     key: "active_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "付费人数",
                     key: "pay_num",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "付费金额",
@@ -498,38 +531,35 @@ export default {
                 {
                     title: "付费率",
                     key: "pay_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "回本率",
                     key: "roi",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
-                {
-                    title: "播放数",
-                    key: "",
-                    width: 100
-                },
-                {
-                    title: "有效播放次数",
-                    key: "",
-                    width: 150
-                },
-                {
-                    title: "有效播放率",
-                    key: "",
-                    width: 100
-                },
-                {
-                    title: "已选流量",
-                    key: "",
-                    width: 100
-                },
-                {
-                    title: "操作",
-                    key: "",
-                    width: 100
-                },
+                // {
+                //     title: "播放数",
+                //     key: "",
+                //     width: 100
+                // },
+                // {
+                //     title: "有效播放次数",
+                //     key: "",
+                //     width: 150
+                // },
+                // {
+                //     title: "有效播放率",
+                //     key: "",
+                //     width: 100
+                // },
+                // {
+                //     title: "已选流量",
+                //     key: "",
+                //     width: 100
+                // },
                 {
                     title: "投放时间",
                     key: "",
@@ -540,10 +570,92 @@ export default {
                     key: "",
                     width: 100
                 },
+                // {
+                //     title: "广告质量度",
+                //     key: "",
+                //     width: 100
+                // },
                 {
-                    title: "广告质量度",
+                    title: "操作",
                     key: "",
-                    width: 100
+                    width: 130,
+                    render: (h, params) => {
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "edit_link",
+                                    on: {
+                                        click: () => {
+                                            let query = {
+                                                id: params.row.id,
+                                                account: params.row.account_id,
+                                                edit: "1"
+                                            };
+                                            this.$router.push({
+                                                name: "ucplan",
+                                                query: query
+                                            });
+                                        }
+                                    }
+                                },
+                                "编辑"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "copy_link",
+                                    on: {
+                                        click: () => {}
+                                    }
+                                },
+                                "复制"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "del_link",
+                                    on: {
+                                        click: value => {
+                                            this.$Modal.confirm({
+                                                title: "操作提示",
+                                                content: "<p>确认删除</p>",
+                                                onOk: () => {
+                                                    Axios.post("api.php", {
+                                                        action: "ttAdPut",
+                                                        opt:
+                                                            "updateCampaignStatus",
+                                                        ids: params.row.id.split(
+                                                            ","
+                                                        ),
+                                                        opt_status: "delete"
+                                                    })
+                                                        .then(res => {
+                                                            if (res.ret == 1) {
+                                                                this.$Message.info(
+                                                                    res.msg
+                                                                );
+                                                                this.getCampaignsList(
+                                                                    this.page
+                                                                );
+                                                            }
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(
+                                                                "修改状态失败" +
+                                                                    err
+                                                            );
+                                                        });
+                                                },
+                                                onCancel: () => {}
+                                            });
+                                        }
+                                    }
+                                },
+                                "删除"
+                            )
+                        ];
+                    }
                 }
             ];
             this.uncheck.forEach(item => {

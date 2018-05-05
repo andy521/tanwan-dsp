@@ -84,6 +84,7 @@ export default {
                 resolve(res)
             })
             .catch(err => {
+                reject(err)
                 console.log(err);
             });
         })
@@ -103,6 +104,7 @@ export default {
                 resolve(res)
             })
             .catch(err => {
+                reject(err)
                 console.log(err);
             });
         })

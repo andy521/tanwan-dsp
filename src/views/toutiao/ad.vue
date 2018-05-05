@@ -12,24 +12,10 @@
     <div class="ad">
         <Card shadow class="margin-top-10">
             <Row>
-                <Col span="18">
-                <Button type="primary">返回</Button>
+                <Col span="20">
+                <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword"></Input>
-                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
-                </Col>
-                <Col span="6" style="text-align: right;">
-                <Button type="ghost" icon="stats-bars">查看图表</Button>
-                <Button type="ghost" icon="android-add">新建广告计划</Button>
-                </Col>
-            </Row>
-        </Card>
-        <Card shadow class="margin-top-10">
-            <Row>
-                <Col span="12">
-                <!--自定义指标-->
-                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchAdgroups"></view-tip>
                 <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList">
                     <Option value="">不限</Option>
                     <Option value="LINK">推广落地页</Option>
@@ -42,8 +28,19 @@
                     <Option value="AD_STATUS_DISABLE">暂停</Option>
                 </Select>
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
-                <Col span="12" style="text-align: right;">
+                <Col span="4" style="text-align: right;">
+                <Button type="ghost" icon="stats-bars">图表</Button>
+                <Button type="ghost" icon="android-add">新建广告计划</Button>
+                </Col>
+            </Row>
+        </Card>
+        <Card shadow class="margin-top-10">
+            <Row>
+                <!--自定义指标-->
+                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchAdgroups"></view-tip>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="edit">批量修改</Button>
                     <div class="api" slot="content">
@@ -60,8 +57,6 @@
                         </div>
                     </div>
                 </Poptip>
-                <Button type="ghost">查看日志</Button>
-                </Col>
             </Row>
             <div>
                 <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>

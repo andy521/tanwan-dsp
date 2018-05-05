@@ -2,7 +2,7 @@
 @import "../../styles/common.less";
 </style>
 <template>
-	<div class="ad">
+	<div>
        这里做创意  ccc
 	</div>
 </template>

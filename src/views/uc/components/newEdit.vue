@@ -55,7 +55,10 @@ export default {
             });
         },
         setAccount() {
-            // 线上代码，上线前删掉注释
+            if (this.account == "") {
+                this.$Message.info("请选择帐号");
+                return;
+            }
             this.$router.push({
                 name: "ucplan",
                 query: { account: this.account }

@@ -11,6 +11,10 @@
     text-align: left;
     width: 110px;
 }
+.table-statistics {
+    color: #2b7ed1;
+    font-weight: bold;
+}
 </style>
 <template>
     <div class="spread">
@@ -443,6 +447,9 @@ export default {
                     if (res.ret == "1") {
                         //console.log(res);
                         this.loading = false;
+                         //添加统计
+                        // res.data.curr_page_total._disabled = true;
+                        // res.data.list.push(res.data.curr_page_total);
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
                         this.page_size = parseInt(res.data.page_size);
@@ -753,7 +760,14 @@ export default {
                 {
                     title: "账号",
                     key: "account_name",
-                    width: 150
+                    width: 150,
+                     render: (h, params) => {
+                        if (params.row.account_name) {
+                            return h("span", params.row.account_name);
+                        } else {
+                            return h("span", "本页统计");
+                        }
+                    }
                 },
                 {
                     title: "计划名称",

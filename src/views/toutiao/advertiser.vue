@@ -17,7 +17,7 @@
 }
 </style>
 <template>
-    <div class="ad">
+    <div>
         <Menu :active-name="activename" mode="horizontal" @on-select="changeActivename">
             <MenuItem name="1">广告组</MenuItem>
             <MenuItem name="2">广告计划</MenuItem>

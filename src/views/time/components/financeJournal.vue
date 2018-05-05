@@ -1,6 +1,10 @@
-<style scoped>
+<style>
 .mt20 {
     margin-top: 20px;
+}
+.table-statistics {
+    color: #2b7ed1;
+    font-weight: bold;
 }
 </style>
 
@@ -18,7 +22,7 @@
                 <Radio label="4">信用</Radio>
             </RadioGroup>
         </div>
-        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20"></Table>
+        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20" :row-class-name="rowClassName"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -54,7 +58,14 @@ export default {
             fundcolumns: [
                 {
                     title: "日期",
-                    key: "date"
+                    key: "date",
+                    render: (h, params) => {
+                        if (params.row.date) {
+                            return h("span", params.row.date);
+                        } else {
+                            return h("span", "本页统计");
+                        }
+                    }
                 },
                 {
                     title: "帐户id",
@@ -126,6 +137,12 @@ export default {
         this.getfund();
     },
     methods: {
+        //表格高亮calss
+        rowClassName(row, index) {
+            if (row._disabled) {
+                return "table-statistics";
+            }
+        },
         //设置筛选时间
         setDateDomain() {
             const end = new Date();
@@ -160,6 +177,9 @@ export default {
                 .then(res => {
                     this.loading = false;
                     if (res.ret == 1) {
+                         //添加统计
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.push(res.data.curr_page_total);
                         this.funddata = res.data.list;
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;

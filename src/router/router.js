@@ -50,6 +50,17 @@ export const ucNew = {
         { path: 'idea', title: '新建UC推广计划', name: 'ucidea', component: () => import('@/views/ucnew/components/idea.vue') },
     ]
 };
+export const ttNew = {
+    path: '/ttnew',
+    name: 'ttnew',
+    meta: {
+        title: '新建头条推广'
+    },    
+    component: () => import('@/views/toutiaonew/index.vue'),
+    children: [
+        { path: 'campaign', title: '新建头条广告组', name: 'ttcampaign', component: () => import('@/views/toutiaonew/components/campaign.vue') },
+    ]
+};
 
 export const otherRouter = {
     path: '/user',
@@ -57,7 +68,6 @@ export const otherRouter = {
     redirect: '/home',
     component: Main,
     children: [
-        { path: 'useraccounts', title: '获取用户帐号', name: 'user_accounts', component: () => import('@/views/time/userAccounts.vue') },
         { path: 'msgdetails', title: '系统消息详情', name: 'system_msg_details', component: () => import('@/views/setid/systemMsgDetails.vue') },
     ]
 };
@@ -158,6 +168,7 @@ export const routers = [
     loginRouter,
     newAd,
     ucNew,
+    ttNew,
     otherRouter,
     ...appRouter,
     page403,
