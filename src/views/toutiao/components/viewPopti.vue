@@ -22,8 +22,8 @@
 
 <template>
     <div style="display: inline-block;">
-			<Poptip ref="poptip" placement="bottom-start" width="500" class="Poptiptap" trigger="hover">
-				<Button type="primary" @click="handleShow">自定义指标</Button>
+        <Poptip ref="poptip" placement="bottom-start" width="500" class="Poptiptap" trigger="hover">
+            <Button type="primary" @click="handleShow">自定义指标</Button>
             <div slot="content" class="poptipdiv">
                 <div class="bottom_line">
                     <Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
@@ -32,56 +32,51 @@
                     媒体列
                 </div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="configured_status">广告开关</Checkbox>
-                    <Checkbox label="click_cost">点击均价（cpc）</Checkbox>
-                    <Checkbox label="click">点击量</Checkbox>
-                    <Checkbox label="click_per">点击率(CTR)</Checkbox>
-                </CheckboxGroup>
-                <div class="checklist">
-                    落地页
-                </div>
-                <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="fetch">到达数</Checkbox>
-                    <Checkbox label="fetch_per">到达率</Checkbox>
-                    <Checkbox label="down_ins_per">下载率</Checkbox>
-                    <Checkbox label="download">下载数</Checkbox>
+                    <Checkbox label="impression">展示数</Checkbox>
+                    <Checkbox label="click">点击数</Checkbox>
+                    <Checkbox label="ctr">点击率</Checkbox>
+                    <Checkbox label="cpc">平均点击单价</Checkbox>
+                    <Checkbox label="cpm">千次展现费用</Checkbox>
                 </CheckboxGroup>
                 <div class="checklist">
                     激活注册
                 </div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="install">激活总量</Checkbox>
-                    <Checkbox label="click_install">点击激活率</Checkbox>
-                    <Checkbox label="reg_imei">注册设备数</Checkbox>
-                    <Checkbox label="activation">注册数</Checkbox>
-                    <Checkbox label="reg_per">点击注册率</Checkbox>
-                    <Checkbox label="reg_cost">注册成本</Checkbox>
-                    <Checkbox label="reg_imei_cost">注册设备成本</Checkbox>
-                    <Checkbox label="install_per">激活安装率</Checkbox>
-                    <Checkbox label="download_per">下载激活率</Checkbox>
+                    <Checkbox label="active">激活数</Checkbox>
+                    <!-- <Checkbox label="">激活成本</Checkbox> -->
+                    <Checkbox label="active_rate">激活率</Checkbox>
+                    <Checkbox label="conversion">转化数</Checkbox>
+                    <Checkbox label="cost_per_conversion">转化成本</Checkbox>
+                    <Checkbox label="cvr">转化率</Checkbox>
+                    <Checkbox label="reg_total">注册数</Checkbox>
+                    <Checkbox label="cost_per_reg">注册成本</Checkbox>
+                    <Checkbox label="reg_rate">注册率</Checkbox>
                 </CheckboxGroup>
                 <div class="checklist">
                     活跃付费
                 </div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="login">活跃数</Checkbox>
-                    <Checkbox label="act_per">活跃率</Checkbox>
+                    <Checkbox label="reg_arpu">注册ARPU</Checkbox>
+                    <Checkbox label="active">活跃数</Checkbox>
+                    <Checkbox label="active_rate">活跃率</Checkbox>
                     <Checkbox label="pay_num">付费人数</Checkbox>
                     <Checkbox label="pay_total">付费金额</Checkbox>
-                    <Checkbox label="pay_per">付费率</Checkbox>
-                    <Checkbox label="reg_arpu">付费ARPU</Checkbox>
-                    <Checkbox label="income_per">回本率</Checkbox>
+                    <Checkbox label="pay_rate">付费率</Checkbox>
+                    <Checkbox label="roi">回本率</Checkbox>
                 </CheckboxGroup>
-                <div class="checklist">
+                <!-- <div class="checklist">
                     其他
                 </div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="show_pv">展示PV</Checkbox>
-                    <Checkbox label="show_ip">展示IP</Checkbox>
-                    <Checkbox label="down_ip">下载IP</Checkbox>
-                    <Checkbox label="campaign_id">计划</Checkbox>
-                    <Checkbox label="game_name">产品名称</Checkbox>
-                </CheckboxGroup>
+                    <Checkbox label="">播放数</Checkbox>
+                    <Checkbox label="">有效播放次数</Checkbox>
+                    <Checkbox label="">有效播放率</Checkbox>
+                    <Checkbox label="">已选流量</Checkbox>
+                    <Checkbox label="">操作</Checkbox>
+                    <Checkbox label="">投放时间</Checkbox>
+                    <Checkbox label="">转化类型</Checkbox>
+                    <Checkbox label="">广告质量度</Checkbox>
+                </CheckboxGroup> -->
                 <div class="margin-top-20">
                     <Button type="ghost" @click="set_user_memo">保存操作</Button>
                 </div>
@@ -100,35 +95,26 @@ export default {
             checkAll: false,
             checkAllGroup: [], //默认选中
             checkAllGroups: [
-                "configured_status",
-                "click_cost",
+                "impression",
                 "click",
-                "click_per",
-                "fetch",
-                "fetch_per",
-                "down_ins_per",
-                "download",
-                "install",
-                "click_install",
-                "reg_imei",
-                "activation",
-                "reg_per",
-                "reg_cost",
-                "reg_imei_cost",
-                "install_per",
-                "download_per",
-                "login",
-                "act_per",
+                "ctr",
+                "cpc",
+                "cpm",
+                "active",
+                "active_rate",
+                "conversion",
+                "cost_per_conversion",
+                "cvr",
+                "reg_total",
+                "cost_per_reg",
+                "reg_rate",
+                "reg_arpu",
+                "active",
+                "active_rate",
                 "pay_num",
                 "pay_total",
-                "pay_per",
-                "reg_arpu",
-                "income_per",
-                "show_pv",
-                "show_ip",
-                "down_ip",
-                "campaign_id",
-                "game_name"
+                "pay_rate",
+                "roi"
             ]
         };
     },
@@ -139,7 +125,7 @@ export default {
             taction: this.action,
             topt: this.opt
         })
-            .then(res => {
+            .then(res => {              
                 if (res.ret == 1) {
                     let check = res.data.split(",");
                     if (check.length == 0) {
@@ -170,8 +156,10 @@ export default {
             })
                 .then(res => {
                     if (res.ret == 1) {
-												const poptip = this.getPoptip().querySelector('.ivu-poptip-popper')
-												poptip.style.display = 'none'
+                        const poptip = this.getPoptip().querySelector(
+                            ".ivu-poptip-popper"
+                        );
+                        poptip.style.display = "none";
                         this.$Message.info(res.msg);
                     }
                 })
@@ -224,23 +212,24 @@ export default {
             });
             this.$emit("on-change", uncheck);
         },
-				getPoptip() {
-						return this.$refs.poptip.$el
-				},
-				handleHide() {
-						this.getPoptip().querySelector('.ivu-poptip-popper').style.display = 'none'
-				},
-				handleShow() {
-						const poptip = this.getPoptip().querySelector('.ivu-poptip-popper')
-						setTimeout(() => {
-								poptip.style.display = 'block'
-						}, 500)
-						this.getPoptip().addEventListener('mouseleave', this.handleHide)
-				}
-			},
-			beforeDestroy() {
-					this.getPoptip().removeEventListener('mouseleave', this.handleHide)
-			}
+        getPoptip() {
+            return this.$refs.poptip.$el;
+        },
+        handleHide() {
+            this.getPoptip().querySelector(".ivu-poptip-popper").style.display =
+                "none";
+        },
+        handleShow() {
+            const poptip = this.getPoptip().querySelector(".ivu-poptip-popper");
+            setTimeout(() => {
+                poptip.style.display = "block";
+            }, 500);
+            this.getPoptip().addEventListener("mouseleave", this.handleHide);
+        }
+    },
+    beforeDestroy() {
+        this.getPoptip().removeEventListener("mouseleave", this.handleHide);
+    }
 };
 </script>
 

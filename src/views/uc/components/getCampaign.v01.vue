@@ -1,53 +1,35 @@
-<style lang="less" scoped>
-.plan{
-    position: relative;
-    display: inline-block;
-    .choose {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: #fff;
-        padding: 10px;
-        min-width: 250px;
-        border-left: 1px solid #eee; 
-        border-right: 1px solid #eee; 
-        z-index: 11000;
-    }
-    .content{
-        display: inherit;
-        position: absolute;
-        left: 0;
-        top: 50px;
-        padding: 0 10px;
-        max-width: 300px;
-        min-width: 250px;
-        max-height: 400px;
-        overflow-y: auto;
-        border: 1px solid #eee;
-        font-size: 14px; 
-        background-color: #fff;
-        z-index: 10000;
-        .select{z-index: 10001;}
-    }
-}
-.poptip{padding:10px}
-.plan_name{width: 120px; text-align: center; max-width: 190px; overflow: hidden;text-overflow: ellipsis; white-space: nowrap; word-wrap: normal;word-wrap: break-word;word-break: break-all;}
+<style scoped>
+.plan{position: relative;}
+.pt{font-size: 14px; margin-bottom: 5px;}
+.plan_box{max-height: 400px; overflow-y: auto; border: 1px solid #eee;  padding: 0 10px;}
 .ivu-checkbox-group-item{display: block; margin-top: 10px;}
+.plan_name{width: 120px; text-align: center; max-width: 190px; overflow: hidden;text-overflow: ellipsis; white-space: nowrap; word-wrap: normal;word-wrap: break-word;word-break: break-all;}
+.search{margin-bottom: 10px;}
 </style>
 <template>
 	<div class="plan">
         <Button :loading="loading" @click="setPlan" class="plan_name">{{ts}}</Button>
-        <div ref="poptip" class="poptip">
-            <div v-if="planModel"  class="choose">
-                <Checkbox @on-change="planAll">全选</Checkbox>
-                <Button @click="handleOk" type="primary">确定</Button>
+        
+        <Checkbox style="float:right" @on-change="planAll">全选</Checkbox>
+        <Checkbox-group v-model="selePlan">
+            <Checkbox v-for="(item, index) in planList" :label="item.campaign_id" :key="index">{{ item.campaign_name }}</Checkbox>
+        </Checkbox-group>
+        <!-- <Modal v-model="planModel" title="选择计划" @on-ok="setPlanOK">
+            <div class="search">
+                <Input v-model="search" placeholder="请输入要搜索的计划..." @on-enter="getSearch">
+                    <Button slot="append" icon="ios-search"  @click="getSearch"></Button>
+                </Input>
             </div>
-            <div ref="plane" v-if="planModel" class="content">
-                <Checkbox-group v-model="selePlan" class="select">
+            <div class="pt">
+                全部计划
+                <Checkbox style="float:right" @on-change="planAll">全选</Checkbox>
+            </div>
+            <div class="plan_box">
+                <Checkbox-group v-model="selePlan">
                     <Checkbox v-for="(item, index) in planList" :label="item.campaign_id" :key="index">{{ item.campaign_name }}</Checkbox>
                 </Checkbox-group>
             </div>
-        </div>
+        </Modal> -->
 	</div>
 </template>
 
@@ -77,7 +59,6 @@
                             this.loading = false;
                             this.planModel = true;
                             this.planList = this.allPlan = res.data;
-                            this.getPoptip().addEventListener('mouseleave', this.handleHide)
 						}
 					}
                 ).catch(err => {console.log(err)});
@@ -93,11 +74,7 @@
                     this.selePlan = [];
                 }
             },
-            handleOk(){
-                if(!this.selePlan.length){
-                    this.$Message.info('没有选择任何');
-                    return
-                }  
+            setPlanOK(){
                 let name = '',
                     all = this.allPlan,
                     selePlan = this.selePlan;
@@ -109,8 +86,7 @@
                         }
                     }
                 });
-                this.ts = name.length > 0 ? name.substring(0, name.length - 1) : this.ts
-                this.planModel = false;
+                this.ts = name;
                 this.$emit('on-change', this.selePlan);
             },
             //搜索
@@ -127,16 +103,7 @@
                     } 
                 });
                 this.planList = filter;
-            },
-            getPoptip() {
-                return this.$refs.poptip
-            },
-            handleHide() {
-                this.planModel = false
-            },
-        },
-        beforeDestroy() {
-            this.getPoptip().removeEventListener('mouseleave', this.handleHide)
-        }
+            }
+		}
 	};
 </script>

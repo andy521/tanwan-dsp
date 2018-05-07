@@ -173,7 +173,7 @@
                                 total_number:data.total_number,
                                 list:data.list
                             } 
-                            console.log(res.data)
+                            //console.log(res.data)
                         }
                     }
                 ).catch( 

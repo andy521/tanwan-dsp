@@ -1,3 +1,4 @@
+
 <style>
 .name_text {
     color: #2b7ed1;
@@ -16,19 +17,9 @@
 .del_link {
     color: #ff7474;
 }
-.ivu-tooltip-inner {
-    white-space: normal;
-}
-.budget-txt {
-    margin-bottom: 10px;
-}
-.budget-txt2 {
-    color: #999;
-    margin-top: 10px;
-}
 </style>
 <template>
-    <div class="ad">
+    <div>
         <Card shadow class="margin-top-10">
             <Row>
                 <Col span="20">
@@ -43,8 +34,8 @@
                 </Select>
                 <Select placeholder="状态" v-model="status" class="sel_state" @on-change="getCampaignsList">
                     <Option value="">不限</Option>
-                    <Option value="AD_STATUS_ENABLE">启用</Option>
-                    <Option value="AD_STATUS_DISABLE">暂停</Option>
+                    <Option value="CAMPAIGN_STATUS_ENABLE">启用</Option>
+                    <Option value="CAMPAIGN_STATUS_DISABLE">暂停</Option>
                 </Select>
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                 <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
@@ -52,14 +43,17 @@
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars">图表</Button>
-                <Button type="ghost" icon="android-add">新建广告计划</Button>
+                <new-edit title="新建广告组"></new-edit>
                 </Col>
             </Row>
         </Card>
         <Card shadow class="margin-top-10">
+            <campaign-echarts></campaign-echarts>
+        </Card>
+        <Card shadow class="margin-top-10">
             <Row>
                 <!--自定义指标-->
-                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchAdgroups"></view-tip>
+                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="edit">批量修改</Button>
                     <div class="api" slot="content">
@@ -102,6 +96,7 @@
 <script>
 import Axios from "@/api/index";
 import viewTip from "./components/viewPopti.vue";
+import newEdit from "./components/newEdit.vue";
 import {
     DateShortcuts,
     formatDate,
@@ -109,10 +104,13 @@ import {
     deepClone
 } from "@/utils/DateShortcuts.js";
 import searchTree from "@/components/select-tree/searchTree.vue";
+import campaignEcharts from "./components/campaignEcharts.vue";
 export default {
     components: {
         viewTip,
-        searchTree
+        searchTree,
+        campaignEcharts,
+        newEdit
     },
     data() {
         return {
@@ -180,15 +178,15 @@ export default {
         editStatus() {
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "updateAdgroupStatus",
+                opt: "updateCampaignStatus",
                 ids: this.taCheckids,
                 opt_status: this.edit_status
             })
                 .then(res => {
                     if (res.ret == 1) {
                         this.$Message.info(res.msg);
-                        this.visible = false;
                         this.getCampaignsList(this.page);
+                        this.visible = false;
                     }
                 })
                 .catch(err => {
@@ -206,7 +204,7 @@ export default {
             this.loading = true;
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "searchAdgroups",
+                opt: "searchCampaigns",
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -223,7 +221,7 @@ export default {
                     this.loading = false;
                     if (res.ret == 1) {
                         console.log(res.data.list);
-                        //添加统计
+                         //添加统计
                         // res.data.curr_page_total._disabled = true;
                         // res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
@@ -248,11 +246,11 @@ export default {
                     key: ""
                 },
                 {
-                    title: "广告计划",
-                    key: "adgroup_name",
-                    width: 250,
+                    title: "广告组名称",
+                    key: "campaign_name",
+                    width: 200,
                     render: (h, params) => {
-                        let value = params.row.adgroup_name;
+                        let value = params.row.campaign_name;
                         return [
                             h(
                                 "span",
@@ -261,7 +259,7 @@ export default {
                                     on: {
                                         click: () => {
                                             let query = {
-                                                id: params.row.adgroup_name
+                                                id: params.row.campaign_name
                                             };
                                             // this.$router.push({
                                             //     name: "uc_plan",
@@ -270,7 +268,7 @@ export default {
                                         }
                                     }
                                 },
-                                params.row.adgroup_name
+                                params.row.campaign_name
                             ),
                             h("i-button", {
                                 props: {
@@ -287,7 +285,7 @@ export default {
                                                     props: {
                                                         value:
                                                             params.row
-                                                                .adgroup_name,
+                                                                .campaign_name,
                                                         autofocus: true,
                                                         placeholder:
                                                             "请输入广告组名称"
@@ -308,9 +306,14 @@ export default {
                                                 }
                                                 Axios.post("api.php", {
                                                     action: "ttAdPut",
-                                                    opt: "updateAdgroupName",
-                                                    id: params.row.id,
-                                                    adgroup_name: value
+                                                    opt: "updateCampaign",
+                                                    account_id:
+                                                        params.row.account_id,
+                                                    modify_time:
+                                                        params.row.modify_time,
+                                                    campaign_id:
+                                                        params.row.campaign_id,
+                                                    campaign_name: value
                                                 })
                                                     .then(res => {
                                                         if (res.ret == 1) {
@@ -324,7 +327,7 @@ export default {
                                                     })
                                                     .catch(err => {
                                                         console.log(
-                                                            "修改广告计划失败" +
+                                                            "修改广告组名失败" +
                                                                 err
                                                         );
                                                     });
@@ -346,7 +349,7 @@ export default {
                     key: "status",
                     width: 100,
                     render: (h, params) => {
-                        if (!params.row.opt_status) {
+                        if (!params.row.status) {
                             return;
                         } else {
                             return h("div", [
@@ -354,8 +357,8 @@ export default {
                                     props: {
                                         size: "small",
                                         value:
-                                            params.row.opt_status ==
-                                            "AD_STATUS_ENABLE"
+                                            params.row.status ==
+                                            "CAMPAIGN_STATUS_ENABLE"
                                                 ? true
                                                 : false
                                     },
@@ -364,13 +367,13 @@ export default {
                                     },
                                     on: {
                                         "on-change": value => {
-                                            params.row.opt_status =
+                                            params.row.status =
                                                 value == true
-                                                    ? "AD_STATUS_ENABLE"
-                                                    : "AD_STATUS_DISABLE";
+                                                    ? "CAMPAIGN_STATUS_ENABLE"
+                                                    : "CAMPAIGN_STATUS_DISABLE";
                                             Axios.post("api.php", {
                                                 action: "ttAdPut",
-                                                opt: "updateAdgroupStatus",
+                                                opt: "updateCampaignStatus",
                                                 ids: params.row.id.split(","),
                                                 opt_status:
                                                     value == true
@@ -397,7 +400,8 @@ export default {
                                 }),
                                 h(
                                     "span",
-                                    params.row.opt_status == "AD_STATUS_ENABLE"
+                                    params.row.status ==
+                                    "CAMPAIGN_STATUS_ENABLE"
                                         ? "开启"
                                         : "关闭"
                                 )
@@ -408,282 +412,97 @@ export default {
                 {
                     title: "预算",
                     key: "budget",
-                    width: 150,
-                    render: (h, params) => {
-                        let value = params.row.budget;
-                        //三位数加逗号
-                        let newvalue = value
-                            .toString()
-                            .split("")
-                            .reverse()
-                            .join("")
-                            .replace(/(\d{3})/g, "$1,")
-                            .replace(/\,$/, "")
-                            .split("")
-                            .reverse()
-                            .join("");
-                        return [
-                            h(
-                                "Tooltip",
-                                {
-                                    props: {
-                                        placement: "top",
-                                        content:
-                                            "最低预算100元,单次预算修改幅度不小于100元,日修改预算不超过20次"
-                                    }
-                                },
-                                [
-                                    h("span", newvalue + "元"),
-                                    h("i-button", {
-                                        props: {
-                                            icon: "edit",
-                                            type: "text",
-                                            size: "small"
-                                        },
-                                        class: ["edit"],
-                                        on: {
-                                            click: () => {
-                                                this.$Modal.confirm({
-                                                    render: h => {
-                                                        return [
-                                                            h(
-                                                                "div",
-                                                                {
-                                                                    class:
-                                                                        "budget-txt"
-                                                                },
-                                                                "该预算设置第2天0点后自动生效"
-                                                            ),
-                                                            h("Input", {
-                                                                props: {
-                                                                    value:
-                                                                        params
-                                                                            .row
-                                                                            .budget,
-                                                                    autofocus: true,
-                                                                    placeholder:
-                                                                        "日消耗限额"
-                                                                },
-                                                                on: {
-                                                                    input: val => {
-                                                                        value = val;
-                                                                    }
-                                                                }
-                                                            }),
-                                                            h(
-                                                                "div",
-                                                                {
-                                                                    class:
-                                                                        "budget-txt2"
-                                                                },
-                                                                "*实际生效时间可能会延迟0-5分钟左右，在此期间不建议再人工修改。"
-                                                            )
-                                                        ];
-                                                    },
-                                                    onOk: () => {
-                                                        if (value == "") {
-                                                            this.$Message.info(
-                                                                "请输入修改信息"
-                                                            );
-                                                            return;
-                                                        }
-                                                        Axios.post("api.php", {
-                                                            action: "ttAdPut",
-                                                            opt:
-                                                                "updateAdgroupBudget",
-                                                            account_id:
-                                                                params.row
-                                                                    .account_id,
-                                                            adgroup_id:
-                                                                params.row
-                                                                    .adgroup_id,
-                                                            budget: value //预算
-                                                        })
-                                                            .then(res => {
-                                                                if (
-                                                                    res.ret == 1
-                                                                ) {
-                                                                    this.$Message.info(
-                                                                        res.msg
-                                                                    );
-                                                                    this.getCampaignsList(
-                                                                        this
-                                                                            .page
-                                                                    );
-                                                                }
-                                                            })
-                                                            .catch(err => {
-                                                                console.log(
-                                                                    "修改删除投放计划失败" +
-                                                                        err
-                                                                );
-                                                            });
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    })
-                                ]
-                            )
-                        ];
-                    }
-                },
-                {
-                    title: "出价",
-                    key: "bid",
-                    width: 100,
-                    render: (h, params) => {
-                        let value = params.row.bid;
-                        //三位数加逗号
-                        let newvalue = value
-                            .toString()
-                            .split("")
-                            .reverse()
-                            .join("")
-                            .replace(/(\d{3})/g, "$1,")
-                            .replace(/\,$/, "")
-                            .split("")
-                            .reverse()
-                            .join("");
-                        return [
-                            h("span", newvalue + "元"),
-                            h("i-button", {
-                                props: {
-                                    icon: "edit",
-                                    type: "text",
-                                    size: "small"
-                                },
-                                class: ["edit"],
-                                on: {
-                                    click: () => {
-                                        this.$Modal.confirm({
-                                            render: h => {
-                                                return h("Input", {
-                                                    props: {
-                                                        value: params.row.bid,
-                                                        autofocus: true,
-                                                        placeholder: "出价"
-                                                    },
-                                                    on: {
-                                                        input: val => {
-                                                            value = val;
-                                                        }
-                                                    }
-                                                });
-                                            },
-                                            onOk: () => {
-                                                if (value == "") {
-                                                    this.$Message.info(
-                                                        "请输入修改信息"
-                                                    );
-                                                    return;
-                                                }
-                                                Axios.post("api.php", {
-                                                    action: "ttAdPut",
-                                                    opt: "updateAdgroupBid",
-                                                    ids: params.row.id.split(
-                                                        ","
-                                                    ),
-                                                    is_stage2bid: 0,
-                                                    bid: value //预算
-                                                })
-                                                    .then(res => {
-                                                        if (res.ret == 1) {
-                                                            this.$Message.info(
-                                                                res.msg
-                                                            );
-                                                            this.getCampaignsList(
-                                                                this.page
-                                                            );
-                                                        }
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(
-                                                            "修改出价失败" + err
-                                                        );
-                                                    });
-                                            }
-                                        });
-                                    }
-                                }
-                            })
-                        ];
-                    }
+                    width: 100
                 },
                 {
                     title: "总花费",
                     key: "cost",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "展示数",
                     key: "impression",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "点击数",
                     key: "click",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "点击率",
                     key: "ctr",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "平均点击单价",
                     key: "cpc",
-                    width: 150
+                    width: 150,
+                    sortable: "custom"
                 },
                 {
                     title: "千次展现费用",
                     key: "cpm",
-                    width: 150
+                    width: 150,
+                    sortable: "custom"
                 },
                 {
                     title: "激活数",
                     key: "active",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "激活成本",
                     key: "",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "激活率",
                     key: "active_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "转化数",
                     key: "conversion",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "转化成本",
                     key: "cost_per_conversion",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "转化率",
                     key: "cvr",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "注册数",
                     key: "reg_total",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "注册成本",
                     key: "cost_per_reg",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "注册率",
                     key: "reg_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "注册ARPU",
@@ -693,17 +512,20 @@ export default {
                 {
                     title: "活跃数",
                     key: "active",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "活跃率",
                     key: "active_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "付费人数",
                     key: "pay_num",
-                    width: 100
+                    width: 120,
+                    sortable: "custom"
                 },
                 {
                     title: "付费金额",
@@ -713,38 +535,35 @@ export default {
                 {
                     title: "付费率",
                     key: "pay_rate",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
                 {
                     title: "回本率",
                     key: "roi",
-                    width: 100
+                    width: 100,
+                    sortable: "custom"
                 },
-                {
-                    title: "播放数",
-                    key: "",
-                    width: 100
-                },
-                {
-                    title: "有效播放次数",
-                    key: "",
-                    width: 150
-                },
-                {
-                    title: "有效播放率",
-                    key: "",
-                    width: 100
-                },
-                {
-                    title: "已选流量",
-                    key: "",
-                    width: 100
-                },
-                {
-                    title: "操作",
-                    key: "",
-                    width: 100
-                },
+                // {
+                //     title: "播放数",
+                //     key: "",
+                //     width: 100
+                // },
+                // {
+                //     title: "有效播放次数",
+                //     key: "",
+                //     width: 150
+                // },
+                // {
+                //     title: "有效播放率",
+                //     key: "",
+                //     width: 100
+                // },
+                // {
+                //     title: "已选流量",
+                //     key: "",
+                //     width: 100
+                // },
                 {
                     title: "投放时间",
                     key: "",
@@ -755,11 +574,11 @@ export default {
                     key: "",
                     width: 100
                 },
-                {
-                    title: "广告质量度",
-                    key: "",
-                    width: 100
-                },
+                // {
+                //     title: "广告质量度",
+                //     key: "",
+                //     width: 100
+                // },
                 {
                     title: "操作",
                     key: "",
@@ -806,7 +625,7 @@ export default {
                                                     Axios.post("api.php", {
                                                         action: "ttAdPut",
                                                         opt:
-                                                            "updateAdgroupStatus",
+                                                            "updateCampaignStatus",
                                                         ids: params.row.id.split(
                                                             ","
                                                         ),
@@ -824,7 +643,8 @@ export default {
                                                         })
                                                         .catch(err => {
                                                             console.log(
-                                                                "删除失败" + err
+                                                                "修改状态失败" +
+                                                                    err
                                                             );
                                                         });
                                                 },

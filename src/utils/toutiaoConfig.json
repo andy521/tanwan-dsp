@@ -1,0 +1,28 @@
+{
+    "landing_type": [{
+            "name": "推广落地页",
+            "val_type": "LINK"
+        },
+        {
+            "name": "推广应用下载",
+            "val_type": "APP"
+        },
+        {
+            "name": "产品目录",
+            "val_type": "DPA"
+        }
+    ],
+    "budget_mode": [{
+            "name": "不限",
+            "val_type": "BUDGET_MODE_INFINITE"
+        },
+        {
+            "name": "日预算",
+            "val_type": "BUDGET_MODE_DAY"
+        },
+        {
+            "name": "总预算",
+            "val_type": "BUDGET_MODE_TOTAL"
+        }
+    ]
+}

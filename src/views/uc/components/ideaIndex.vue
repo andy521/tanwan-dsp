@@ -26,8 +26,8 @@
 
 <template>
 	<div style="display: inline-block;">
-		<Poptip placement="bottom-end" width="500" class="Poptiptap">
-			<Button type="primary">自定义指标</Button>
+		<Poptip ref="poptip" trigger="click" placement="bottom-end" width="500" class="Poptiptap">
+			<Button type="primary" @click="handleShow">自定义指标</Button>
 			<div class="api" slot="content">
 				<div class="bottom_line">
 					<Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
@@ -51,7 +51,6 @@
                 <div class="checklist">激活注册</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
                     <Checkbox label="cvr">点击激活率</Checkbox>
-                    <Checkbox label="conversion">注册设备数</Checkbox> 
 				</CheckboxGroup>
 
                 <div class="checklist">其他</div>
@@ -60,7 +59,7 @@
                     <Checkbox label="adgroup_id">单元id</Checkbox>
                     <Checkbox label="impression">展现量</Checkbox>
                     <Checkbox label="adgroup_name">单元名称</Checkbox>
-                    <Checkbox label="activation">转化数</Checkbox>
+                    <Checkbox label="conversion">转化数</Checkbox>
                     <Checkbox label="cost_per_conversion">转化成本</Checkbox>
                    
 				</CheckboxGroup>
@@ -128,7 +127,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-                    this.checkAllGroup = ['paused','state','impression','click','adgroup_id',"ctr","cost","adgroup_name",'activation','cvr','cost_per_conversion','cpc','cpm','download_complete','download_complete_rate','conversion']
+                    this.checkAllGroup = ['paused','state','impression','click','adgroup_id',"ctr","cost","adgroup_name",'cvr','cost_per_conversion','cpc','cpm','download_complete','download_complete_rate','conversion']
 				} else {
 					this.checkAllGroup = [];
 				}
@@ -144,6 +143,8 @@
                 Axios.get('api.php',param).then( 
                     res=>{
                         if(res.ret == 1) {
+                            const poptip = this.getPoptip().querySelector('.ivu-poptip-popper')
+                            poptip.style.display = 'none'
                             this.$Message.info(res.data.data);
                             return;
                         }
@@ -166,12 +167,22 @@
 					this.checkAll = false;
                 }                
 			},
-			close() {
-				this.visible = false;
-			},
-			close1() {
-				this.visible1 = false;
-			}
-		}
+            getPoptip() {
+                return this.$refs.poptip.$el
+            },
+            handleHide() {
+                this.getPoptip().querySelector('.ivu-poptip-popper').style.display = 'none'
+            },
+            handleShow() {
+                const poptip = this.getPoptip().querySelector('.ivu-poptip-popper')
+                setTimeout(() => {
+                    poptip.style.display = 'block'
+                }, 500)
+                this.getPoptip().addEventListener('mouseleave', this.handleHide)
+            }
+        },
+        beforeDestroy() {
+            this.getPoptip().removeEventListener('mouseleave', this.handleHide)
+        }
 	}
 </script>

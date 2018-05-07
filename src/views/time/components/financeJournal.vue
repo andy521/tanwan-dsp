@@ -1,12 +1,18 @@
-<style scoped>
+<style>
 .mt20 {
     margin-top: 20px;
+}
+.table-statistics {
+    color: #2b7ed1;
+    font-weight: bold;
 }
 </style>
 
 <template>
     <div>
-        <div>
+
+        <Row>
+            <Col span="18">
             <Select v-model="account_id" placeholder="请选择帐号" style="width:250px;" @on-change="getfund()">
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
@@ -17,8 +23,13 @@
                 <Radio label="3">分成账户</Radio>
                 <Radio label="4">信用</Radio>
             </RadioGroup>
-        </div>
-        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20"></Table>
+            </Col>
+            <Col span="6" style=" text-align: right;">
+            <Button type="ghost" icon="document-text" @click="exportData()">下载当前数据</Button>
+            <Button type="ghost" icon="document-text" @click="downmodal=true">下载所有数据</Button>
+            </Col>
+        </Row>
+        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20" :row-class-name="rowClassName" ref="journaltable"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -35,6 +46,10 @@
             <Page :total="total_number" :page-size="page_size" ref="pages" @on-change="getfund" show-elevator show-total></Page>
             </Col>
         </Row>
+
+        <Modal v-model="downmodal" title="选择时间" @on-ok="exportDatas" loading>
+            <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="downDateDomain" @on-change="changeDownDate"></DatePicker>
+        </Modal>
     </div>
 </template>
 <script>
@@ -49,12 +64,21 @@ export default {
             options: DateShortcuts, //日期辅助功能
             //筛选时间
             DateDomain: [],
+            downDateDomain: [],
             loading: false,
             mediaList: [],
+            downmodal: false,
             fundcolumns: [
                 {
                     title: "日期",
-                    key: "date"
+                    key: "date",
+                    render: (h, params) => {
+                        if (params.row.date) {
+                            return h("span", params.row.date);
+                        } else {
+                            return h("span", "本页统计");
+                        }
+                    }
                 },
                 {
                     title: "帐户id",
@@ -126,17 +150,73 @@ export default {
         this.getfund();
     },
     methods: {
+        //导出所有报表
+        exportDatas() {
+            Axios.get("api.php", {
+                action: "gdtaccount",
+                opt: "fund_statements_detailed_download",
+                startDate: this.downDateDomain[0],
+                endDate: this.downDateDomain[1]
+            })
+                .then(res => {
+                    this.downmodal = false;
+                    if (res.ret == 1) {
+                        this.$refs["journaltable"].exportCsv({
+                            filename: "资金流水-1现金",
+                            columns: this.fundcolumns,
+                            data: res.data[0]
+                        });
+                        this.$refs["journaltable"].exportCsv({
+                            filename: "资金流水-2虚拟金额",
+                            columns: this.fundcolumns,
+                            data: res.data[1]
+                        });
+                        this.$refs["journaltable"].exportCsv({
+                            filename: "资金流水-3分成帐户",
+                            columns: this.fundcolumns,
+                            data: res.data[2]
+                        });
+                        this.$refs["journaltable"].exportCsv({
+                            filename: "资金流水-信用",
+                            columns: this.fundcolumns,
+                            data: res.data[3]
+                        });
+                    }
+                })
+                .catch(err => {
+                    this.downmodal = false;
+                    console.log("获取所有资金流水" + err);
+                });
+        },
+        //导出报表
+        exportData(type) {
+            this.$refs["journaltable"].exportCsv({
+                filename: "资金流水",
+                original: false
+            });
+        },
+        //表格高亮calss
+        rowClassName(row, index) {
+            if (row._disabled) {
+                return "table-statistics";
+            }
+        },
         //设置筛选时间
         setDateDomain() {
             const end = new Date();
             const start = new Date();
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
             this.DateDomain = [start, end];
+            this.downDateDomain = [start, end];
         },
         //改变日期
         changeDate(e) {
             this.DateDomain = e;
             this.getfund();
+        },
+        //改变更下载日期
+        changeDownDate(e) {
+            this.downDateDomain = e;
         },
         //获取资金流水
         getfund(page) {
@@ -160,6 +240,9 @@ export default {
                 .then(res => {
                     this.loading = false;
                     if (res.ret == 1) {
+                        //添加统计
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.push(res.data.curr_page_total);
                         this.funddata = res.data.list;
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
@@ -175,7 +258,7 @@ export default {
             Axios.get("api.php", {
                 action: "api",
                 opt: "getAccount",
-                MeidaType: "Gdt"
+                media_type: 1
             })
                 .then(res => {
                     if (res.ret == 1) {

@@ -83,6 +83,10 @@ export default {
             }).then(res => {
                 resolve(res)
             })
+            .catch(err => {
+                reject(err)
+                console.log(err);
+            });
         })
     },
     post(url, opt) {
@@ -99,6 +103,10 @@ export default {
             .then(res => {
                 resolve(res)
             })
+            .catch(err => {
+                reject(err)
+                console.log(err);
+            });
         })
     }
 };

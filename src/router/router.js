@@ -50,6 +50,17 @@ export const ucNew = {
         { path: 'idea', title: '新建UC推广计划', name: 'ucidea', component: () => import('@/views/ucnew/components/idea.vue') },
     ]
 };
+export const ttNew = {
+    path: '/ttnew',
+    name: 'ttnew',
+    meta: {
+        title: '新建头条推广'
+    },    
+    component: () => import('@/views/toutiaonew/index.vue'),
+    children: [
+        { path: 'campaign', title: '新建头条广告组', name: 'ttcampaign', component: () => import('@/views/toutiaonew/components/campaign.vue') },
+    ]
+};
 
 export const otherRouter = {
     path: '/user',
@@ -57,7 +68,6 @@ export const otherRouter = {
     redirect: '/home',
     component: Main,
     children: [
-        { path: 'useraccounts', title: '获取用户帐号', name: 'user_accounts', component: () => import('@/views/time/userAccounts.vue') },
         { path: 'msgdetails', title: '系统消息详情', name: 'system_msg_details', component: () => import('@/views/setid/systemMsgDetails.vue') },
     ]
 };
@@ -108,12 +118,14 @@ export const appRouter = [
         title: '今日头条投放',  
         access: 0,      
         component: Main,
-        children: [
-            
+        children: [           
             { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
-            { path: 'ad', title: '广告组', name: 'tt_ad', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/ad.vue') },   
-            { path: 'plan', title: '广告计划', name: 'tt_plan', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/plan.vue') },  
-            { path: 'idea', title: '创意', name: 'tt_idea', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/idea.vue') },        
+            { path: 'advertiser', title: '推广管理', name: 'tt_campaign', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/advertiser.vue'),
+            children: [ 
+                { path: 'campaign', title: '广告组', name: 'tt_campaign',  component: () => import('@/views/toutiao/campaign.vue')},
+                { path: 'ad', title: '广告计划', name: 'tt_ad', component: () => import('@/views/toutiao/ad.vue') },  
+                { path: 'creative', title: '创意', name: 'tt_creative', component: () => import('@/views/toutiao/creative.vue') },    
+            ]}       
         ]
     },
     {
@@ -156,6 +168,7 @@ export const routers = [
     loginRouter,
     newAd,
     ucNew,
+    ttNew,
     otherRouter,
     ...appRouter,
     page403,

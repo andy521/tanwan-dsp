@@ -7,7 +7,7 @@
     padding-top: 20px;
     padding-bottom: 20px;
 }
-.account-table .ivu-table td, .ivu-table th{
+.account-table .ivu-table td, .account-table .ivu-table th{
     text-align:center;
 }
 .card-title{

@@ -1,6 +1,5 @@
 <style>
 	.tree .Treebox {max-height: 400px;}
-    .tree,.tree .ivu-poptip-rel{display: block}
 </style>
 <template>
 	<Poptip placement="bottom-start" class="tree" width="400">

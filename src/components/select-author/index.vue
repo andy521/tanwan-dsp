@@ -30,7 +30,8 @@
 		data() {
 			return {
                 value:[],
-                author: []
+                author: [],
+                linkage: false,
 			}
         },
         props: {
@@ -39,6 +40,7 @@
                 type: [String, Number],
                 default: ''
             },
+            // 是否与传入的mediaType联动。只有需要传入mediaType的时候才将isLinkage设置为true
             isLinkage: {
                 type: Boolean,
                 default: false
@@ -46,7 +48,7 @@
         },
         watch: {
             mediaType(val) {
-                this.isLinkage = false
+                this.linkage = false
                 this.getAuthor();
             }
         },
@@ -71,12 +73,14 @@
             },
             //获取全部游戏     
             getAuthor(){
-                if (this.isLinkage) {
-                    this.$Notice.info({
-                        title: '请选择媒体类型'
-                    });
-                    return;
-                }
+                // if (this.linkage) {
+
+                //     // this.$Notice.info({
+                //     //     title: '请选择媒体类型'
+                //     // });
+
+                //     return;
+                // }
                 if (typeof val === 'string') this.mediaType = parseInt(this.mediaType);
                 Axios.get('api.php',{'action':'api','opt':'getAuthor','media_type':this.mediaType})
                 .then( 
@@ -95,7 +99,8 @@
                 this.$emit('on-change', data);
 			}
         },
-        mounted(){       
+        mounted(){
+            this.linkage = this.isLinkage       
             this.getAuthor();
         }
 	}

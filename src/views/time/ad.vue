@@ -99,7 +99,7 @@
                 <Col span="6" style="text-align: right;">
                 <Button type="ghost" icon="log-in" @click="tologin">登陆</Button>
                 <Button type="ghost" icon="ios-copy" @click="copyAd">复制广告</Button>
-                <Button type="primary" icon="android-add" @click="tonewadd">新建广告</Button>
+                <new-edit title="新建广告"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -109,9 +109,10 @@
                 <!--自定义指标-->
                 <view-tip @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-tip>
                 <!--选择负责人-->
-                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author>
-                <Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
-                    <Option value="0">所有未册除</Option>
+                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
+                <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
+                <Select v-model="configured_status"  class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
+                    <Option value="">不限</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
                 </Select>
@@ -120,7 +121,7 @@
                 </Col>
                 <Col span="8" style="text-align: right;">
                 <div class="btn-group clear">
-                    <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)">
+                    <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)" style="text-align: left;">
                         <Button type="ghost" icon="trash-a">删除</Button>
                     </Poptip>
                     <Poptip placement="bottom-start" v-model="visible">
@@ -161,7 +162,7 @@
                 </Col>
             </Row>
             <div>
-                <Table :data="newAdList" height="650" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="adtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
+                <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="adtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
                 <Row class="margin-top-10">
                     <Col span="10"> 表格尺寸
                     <Radio-group v-model="tableSize" type="button">
@@ -207,16 +208,19 @@ import viewTip from "./components/viewPopti.vue";
 import searchTree from "@/components/select-tree/searchTree.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import creativity from "./components/creativity.vue";
+import newEdit from "./components/newEdit.vue";
 export default {
     components: {
         viewTip,
         searchTree,
-        selectAuthor
+        selectAuthor,
+        newEdit
     },
     data() {
         return {
             mediaType: '',
             params: this.$route.query,
+            height: document.body.clientHeight - 300,
             mediaList: [], //媒体账号列表
             campaignslist: [], //推广计划列表
             campaignslistform: [], //复制推广计划列表
@@ -251,7 +255,7 @@ export default {
                 formatDate(new Date(), "yyyy-MM-dd")
             ], //筛选时间
             options: DateShortcuts, //日期辅助功能
-            configured_status: "0", //过滤无数据的广告
+            configured_status: "", //过滤无数据的广告
             campaign_name: "", //关键字
             check_value: false,
             edit_status: "AD_STATUS_NORMAL", //批量状态
@@ -830,15 +834,15 @@ export default {
         this.getCampaignsList();
     },
     methods: {
+        // handleClickAuthor() {
+        //     if (!this.mediaType) {
+        //         this.$Message.warning('请先选择媒体账号');
+        //         return;
+        //     }
+        // },
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");
-        },
-        //新建广告
-        tonewadd() {
-            this.$router.push({
-                name: "user_accounts"
-            });
         },
         //获取选中游戏id
         getids(ids) {
