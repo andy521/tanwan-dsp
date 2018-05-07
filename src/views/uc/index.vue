@@ -448,8 +448,8 @@ export default {
                         //console.log(res);
                         this.loading = false;
                          //添加统计
-                        // res.data.curr_page_total._disabled = true;
-                        // res.data.list.push(res.data.curr_page_total);
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.push(res.data.curr_page_total);
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
                         this.page_size = parseInt(res.data.page_size);
@@ -1103,6 +1103,7 @@ export default {
                     key: "id",
                     width: 200,
                     render: (h, params) => {
+                        if (params.row._disabled) return;
                         return [
                             h(
                                 "span",

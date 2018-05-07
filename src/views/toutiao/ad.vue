@@ -1,11 +1,30 @@
-
-<style lang="less">
+<style>
 .name_text {
     color: #2b7ed1;
     cursor: pointer;
 }
 .name_text:hover {
     text-decoration: underline;
+}
+.copy_link,
+.edit_link,
+.del_link {
+    cursor: pointer;
+    color: #2b7ed1;
+    margin-right: 5px;
+}
+.del_link {
+    color: #ff7474;
+}
+.ivu-tooltip-inner {
+    white-space: normal;
+}
+.budget-txt {
+    margin-bottom: 10px;
+}
+.budget-txt2 {
+    color: #999;
+    margin-top: 10px;
 }
 </style>
 <template>
@@ -168,6 +187,7 @@ export default {
                 .then(res => {
                     if (res.ret == 1) {
                         this.$Message.info(res.msg);
+                        this.visible = false;
                         this.getCampaignsList(this.page);
                     }
                 })
@@ -203,6 +223,9 @@ export default {
                     this.loading = false;
                     if (res.ret == 1) {
                         console.log(res.data.list);
+                        //添加统计
+                        // res.data.curr_page_total._disabled = true;
+                        // res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                         this.newAdList = res.data.list;
@@ -283,30 +306,28 @@ export default {
                                                     );
                                                     return;
                                                 }
-                                                // Axios.post("api.php", {
-                                                //     action: "ttAdPut",
-                                                //     opt: "updateCampaign",
-                                                //     account_id:params.row.account_id,
-                                                //     modify_time:params.row.modify_time,
-                                                //     campaign_id:params.row.campaign_id,
-                                                //     adgroup_name:value,                                                  
-                                                // })
-                                                //     .then(res => {
-                                                //         if (res.ret == 1) {
-                                                //             this.$Message.info(
-                                                //                 res.msg
-                                                //             );
-                                                //             this.getCampaignsList(
-                                                //                 this.page
-                                                //             );
-                                                //         }
-                                                //     })
-                                                //     .catch(err => {
-                                                //         console.log(
-                                                //             "修改删除广告计划失败" +
-                                                //                 err
-                                                //         );
-                                                //     });
+                                                Axios.post("api.php", {
+                                                    action: "ttAdPut",
+                                                    opt: "updateAdgroupName",
+                                                    id: params.row.id,
+                                                    adgroup_name: value
+                                                })
+                                                    .then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(
+                                                                res.msg
+                                                            );
+                                                            this.getCampaignsList(
+                                                                this.page
+                                                            );
+                                                        }
+                                                    })
+                                                    .catch(err => {
+                                                        console.log(
+                                                            "修改广告计划失败" +
+                                                                err
+                                                        );
+                                                    });
                                             }
                                         });
                                     }
@@ -376,8 +397,7 @@ export default {
                                 }),
                                 h(
                                     "span",
-                                    params.row.opt_status ==
-                                    "AD_STATUS_ENABLE"
+                                    params.row.opt_status == "AD_STATUS_ENABLE"
                                         ? "开启"
                                         : "关闭"
                                 )
@@ -388,7 +408,207 @@ export default {
                 {
                     title: "预算",
                     key: "budget",
-                    width: 100
+                    width: 150,
+                    render: (h, params) => {
+                        let value = params.row.budget;
+                        //三位数加逗号
+                        let newvalue = value
+                            .toString()
+                            .split("")
+                            .reverse()
+                            .join("")
+                            .replace(/(\d{3})/g, "$1,")
+                            .replace(/\,$/, "")
+                            .split("")
+                            .reverse()
+                            .join("");
+                        return [
+                            h(
+                                "Tooltip",
+                                {
+                                    props: {
+                                        placement: "top",
+                                        content:
+                                            "最低预算100元,单次预算修改幅度不小于100元,日修改预算不超过20次"
+                                    }
+                                },
+                                [
+                                    h("span", newvalue + "元"),
+                                    h("i-button", {
+                                        props: {
+                                            icon: "edit",
+                                            type: "text",
+                                            size: "small"
+                                        },
+                                        class: ["edit"],
+                                        on: {
+                                            click: () => {
+                                                this.$Modal.confirm({
+                                                    render: h => {
+                                                        return [
+                                                            h(
+                                                                "div",
+                                                                {
+                                                                    class:
+                                                                        "budget-txt"
+                                                                },
+                                                                "该预算设置第2天0点后自动生效"
+                                                            ),
+                                                            h("Input", {
+                                                                props: {
+                                                                    value:
+                                                                        params
+                                                                            .row
+                                                                            .budget,
+                                                                    autofocus: true,
+                                                                    placeholder:
+                                                                        "日消耗限额"
+                                                                },
+                                                                on: {
+                                                                    input: val => {
+                                                                        value = val;
+                                                                    }
+                                                                }
+                                                            }),
+                                                            h(
+                                                                "div",
+                                                                {
+                                                                    class:
+                                                                        "budget-txt2"
+                                                                },
+                                                                "*实际生效时间可能会延迟0-5分钟左右，在此期间不建议再人工修改。"
+                                                            )
+                                                        ];
+                                                    },
+                                                    onOk: () => {
+                                                        if (value == "") {
+                                                            this.$Message.info(
+                                                                "请输入修改信息"
+                                                            );
+                                                            return;
+                                                        }
+                                                        Axios.post("api.php", {
+                                                            action: "ttAdPut",
+                                                            opt:
+                                                                "updateAdgroupBudget",
+                                                            account_id:
+                                                                params.row
+                                                                    .account_id,
+                                                            adgroup_id:
+                                                                params.row
+                                                                    .adgroup_id,
+                                                            budget: value //预算
+                                                        })
+                                                            .then(res => {
+                                                                if (
+                                                                    res.ret == 1
+                                                                ) {
+                                                                    this.$Message.info(
+                                                                        res.msg
+                                                                    );
+                                                                    this.getCampaignsList(
+                                                                        this
+                                                                            .page
+                                                                    );
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(
+                                                                    "修改删除投放计划失败" +
+                                                                        err
+                                                                );
+                                                            });
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    })
+                                ]
+                            )
+                        ];
+                    }
+                },
+                {
+                    title: "出价",
+                    key: "bid",
+                    width: 100,
+                    render: (h, params) => {
+                        let value = params.row.bid;
+                        //三位数加逗号
+                        let newvalue = value
+                            .toString()
+                            .split("")
+                            .reverse()
+                            .join("")
+                            .replace(/(\d{3})/g, "$1,")
+                            .replace(/\,$/, "")
+                            .split("")
+                            .reverse()
+                            .join("");
+                        return [
+                            h("span", newvalue + "元"),
+                            h("i-button", {
+                                props: {
+                                    icon: "edit",
+                                    type: "text",
+                                    size: "small"
+                                },
+                                class: ["edit"],
+                                on: {
+                                    click: () => {
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return h("Input", {
+                                                    props: {
+                                                        value: params.row.bid,
+                                                        autofocus: true,
+                                                        placeholder: "出价"
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            value = val;
+                                                        }
+                                                    }
+                                                });
+                                            },
+                                            onOk: () => {
+                                                if (value == "") {
+                                                    this.$Message.info(
+                                                        "请输入修改信息"
+                                                    );
+                                                    return;
+                                                }
+                                                Axios.post("api.php", {
+                                                    action: "ttAdPut",
+                                                    opt: "updateAdgroupBid",
+                                                    ids: params.row.id.split(
+                                                        ","
+                                                    ),
+                                                    is_stage2bid: 0,
+                                                    bid: value //预算
+                                                })
+                                                    .then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(
+                                                                res.msg
+                                                            );
+                                                            this.getCampaignsList(
+                                                                this.page
+                                                            );
+                                                        }
+                                                    })
+                                                    .catch(err => {
+                                                        console.log(
+                                                            "修改出价失败" + err
+                                                        );
+                                                    });
+                                            }
+                                        });
+                                    }
+                                }
+                            })
+                        ];
+                    }
                 },
                 {
                     title: "总花费",
@@ -539,6 +759,84 @@ export default {
                     title: "广告质量度",
                     key: "",
                     width: 100
+                },
+                {
+                    title: "操作",
+                    key: "",
+                    width: 130,
+                    render: (h, params) => {
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "edit_link",
+                                    on: {
+                                        click: () => {
+                                            this.$router.push({
+                                                name: "ttcampaign",
+                                                query: {
+                                                    id: params.row.id
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                "编辑"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "copy_link",
+                                    on: {
+                                        click: () => {}
+                                    }
+                                },
+                                "复制"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "del_link",
+                                    on: {
+                                        click: value => {
+                                            this.$Modal.confirm({
+                                                title: "操作提示",
+                                                content: "<p>确认删除</p>",
+                                                onOk: () => {
+                                                    Axios.post("api.php", {
+                                                        action: "ttAdPut",
+                                                        opt:
+                                                            "updateAdgroupStatus",
+                                                        ids: params.row.id.split(
+                                                            ","
+                                                        ),
+                                                        opt_status: "delete"
+                                                    })
+                                                        .then(res => {
+                                                            if (res.ret == 1) {
+                                                                this.$Message.info(
+                                                                    res.msg
+                                                                );
+                                                                this.getCampaignsList(
+                                                                    this.page
+                                                                );
+                                                            }
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(
+                                                                "删除失败" + err
+                                                            );
+                                                        });
+                                                },
+                                                onCancel: () => {}
+                                            });
+                                        }
+                                    }
+                                },
+                                "删除"
+                            )
+                        ];
+                    }
                 }
             ];
             this.uncheck.forEach(item => {

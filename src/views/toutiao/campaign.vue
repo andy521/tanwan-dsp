@@ -1,5 +1,5 @@
 
-<style lang="less">
+<style>
 .name_text {
     color: #2b7ed1;
     cursor: pointer;
@@ -186,6 +186,7 @@ export default {
                     if (res.ret == 1) {
                         this.$Message.info(res.msg);
                         this.getCampaignsList(this.page);
+                        this.visible = false;
                     }
                 })
                 .catch(err => {
@@ -220,6 +221,9 @@ export default {
                     this.loading = false;
                     if (res.ret == 1) {
                         console.log(res.data.list);
+                         //添加统计
+                        // res.data.curr_page_total._disabled = true;
+                        // res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                         this.newAdList = res.data.list;
@@ -323,7 +327,7 @@ export default {
                                                     })
                                                     .catch(err => {
                                                         console.log(
-                                                            "修改删除广告计划失败" +
+                                                            "修改广告组名失败" +
                                                                 err
                                                         );
                                                     });
@@ -587,14 +591,11 @@ export default {
                                     class: "edit_link",
                                     on: {
                                         click: () => {
-                                            let query = {
-                                                id: params.row.id,
-                                                account: params.row.account_id,
-                                                edit: "1"
-                                            };
                                             this.$router.push({
-                                                name: "ucplan",
-                                                query: query
+                                                name: "ttcampaign",
+                                                query: {
+                                                    id: params.row.id
+                                                }
                                             });
                                         }
                                     }
