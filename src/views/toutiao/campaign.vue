@@ -1,21 +1,21 @@
 
 <style>
 .name_text {
-    color: #2b7ed1;
-    cursor: pointer;
+  color: #2b7ed1;
+  cursor: pointer;
 }
 .name_text:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 .copy_link,
 .edit_link,
 .del_link {
-    cursor: pointer;
-    color: #2b7ed1;
-    margin-right: 5px;
+  cursor: pointer;
+  color: #2b7ed1;
+  margin-right: 5px;
 }
 .del_link {
-    color: #ff7474;
+  color: #ff7474;
 }
 </style>
 <template>
@@ -26,35 +26,40 @@
                 <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList">
+                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
+                </Col>
+                <Col span="4" style="text-align: right;">
+                <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
+                <new-edit title="新建广告组"></new-edit>
+                </Col>
+            </Row>
+        </Card>
+        <Card shadow class="margin-top-10" v-if="Echartsmodel">
+            <campaign-echarts></campaign-echarts>
+        </Card>
+        <Card shadow class="margin-top-10">
+            <Row>
+                <Col span="20">
+                <!--自定义指标-->
+                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
+                <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
                     <Option value="LINK">推广落地页</Option>
                     <Option value="APP">推广应用下载</Option>
                     <Option value="DPA">产品目录</Option>
                 </Select>
-                <Select placeholder="状态" v-model="status" class="sel_state" @on-change="getCampaignsList">
+                <Select placeholder="操作状态" v-model="status" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
                     <Option value="CAMPAIGN_STATUS_ENABLE">启用</Option>
                     <Option value="CAMPAIGN_STATUS_DISABLE">暂停</Option>
                 </Select>
+                <!--选择负责人-->
+                <select-author @on-change="authorChange"></select-author>
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
-                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
-                <Col span="4" style="text-align: right;">
-                <Button type="ghost" icon="stats-bars">图表</Button>
-                <new-edit title="新建广告组"></new-edit>
-                </Col>
-            </Row>
-        </Card>
-        <Card shadow class="margin-top-10">
-            <campaign-echarts></campaign-echarts>
-        </Card>
-        <Card shadow class="margin-top-10">
-            <Row>
-                <!--自定义指标-->
-                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
-                <Poptip placement="bottom-start" v-model="visible">
+                <Col span="4" style=" text-align: right;">
+                <Poptip placement="bottom-end" v-model="visible">
                     <Button type="ghost" icon="edit">批量修改</Button>
                     <div class="api" slot="content">
                         <div style="text-align: left;">
@@ -70,6 +75,7 @@
                         </div>
                     </div>
                 </Poptip>
+                </Col>
             </Row>
             <div>
                 <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
@@ -105,12 +111,14 @@ import {
 } from "@/utils/DateShortcuts.js";
 import searchTree from "@/components/select-tree/searchTree.vue";
 import campaignEcharts from "./components/campaignEcharts.vue";
+import selectAuthor from "@/components/select-author/index.vue";
 export default {
     components: {
         viewTip,
         searchTree,
         campaignEcharts,
-        newEdit
+        newEdit,
+        selectAuthor
     },
     data() {
         return {
@@ -118,6 +126,7 @@ export default {
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
             visible: false,
+            Echartsmodel: false,
             edit_status: "", //批量状态
             tableSize: "small",
             page: 1, //第N页
@@ -161,6 +170,11 @@ export default {
                 ids.push(item.id);
             });
             this.taCheckids = ids;
+        },
+        //选择负责人
+        authorChange(data) {
+            this.author_model = data;
+            this.getCampaignsList();
         },
         //排序
         sortchange(column) {
@@ -221,7 +235,7 @@ export default {
                     this.loading = false;
                     if (res.ret == 1) {
                         console.log(res.data.list);
-                         //添加统计
+                        //添加统计
                         // res.data.curr_page_total._disabled = true;
                         // res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
@@ -235,7 +249,7 @@ export default {
                 });
         }
     },
-    beforeMount() {},
+    beforeMount() { },
     computed: {
         //设置表格头部
         taColumns() {
@@ -283,12 +297,9 @@ export default {
                                             render: h => {
                                                 return h("Input", {
                                                     props: {
-                                                        value:
-                                                            params.row
-                                                                .campaign_name,
+                                                        value: params.row.campaign_name,
                                                         autofocus: true,
-                                                        placeholder:
-                                                            "请输入广告组名称"
+                                                        placeholder: "请输入广告组名称"
                                                     },
                                                     on: {
                                                         input: val => {
@@ -299,37 +310,25 @@ export default {
                                             },
                                             onOk: () => {
                                                 if (value == "") {
-                                                    this.$Message.info(
-                                                        "请输入修改信息"
-                                                    );
+                                                    this.$Message.info("请输入修改信息");
                                                     return;
                                                 }
                                                 Axios.post("api.php", {
                                                     action: "ttAdPut",
                                                     opt: "updateCampaign",
-                                                    account_id:
-                                                        params.row.account_id,
-                                                    modify_time:
-                                                        params.row.modify_time,
-                                                    campaign_id:
-                                                        params.row.campaign_id,
+                                                    account_id: params.row.account_id,
+                                                    modify_time: params.row.modify_time,
+                                                    campaign_id: params.row.campaign_id,
                                                     campaign_name: value
                                                 })
                                                     .then(res => {
                                                         if (res.ret == 1) {
-                                                            this.$Message.info(
-                                                                res.msg
-                                                            );
-                                                            this.getCampaignsList(
-                                                                this.page
-                                                            );
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList(this.page);
                                                         }
                                                     })
                                                     .catch(err => {
-                                                        console.log(
-                                                            "修改广告组名失败" +
-                                                                err
-                                                        );
+                                                        console.log("修改广告组名失败" + err);
                                                     });
                                             }
                                         });
@@ -356,55 +355,31 @@ export default {
                                 h("i-switch", {
                                     props: {
                                         size: "small",
-                                        value:
-                                            params.row.status ==
-                                            "CAMPAIGN_STATUS_ENABLE"
-                                                ? true
-                                                : false
+                                        value: params.row.status == "CAMPAIGN_STATUS_ENABLE" ? true : false
                                     },
                                     style: {
                                         marginRight: "10px"
                                     },
                                     on: {
                                         "on-change": value => {
-                                            params.row.status =
-                                                value == true
-                                                    ? "CAMPAIGN_STATUS_ENABLE"
-                                                    : "CAMPAIGN_STATUS_DISABLE";
+                                            params.row.status = value == true ? "CAMPAIGN_STATUS_ENABLE" : "CAMPAIGN_STATUS_DISABLE";
                                             Axios.post("api.php", {
                                                 action: "ttAdPut",
                                                 opt: "updateCampaignStatus",
                                                 ids: params.row.id.split(","),
-                                                opt_status:
-                                                    value == true
-                                                        ? "enable"
-                                                        : "disable"
-                                            })
-                                                .then(res => {
-                                                    if (res.ret == 1) {
-                                                        this.$Message.info(
-                                                            res.msg
-                                                        );
-                                                        this.getCampaignsList(
-                                                            this.page
-                                                        );
-                                                    }
-                                                })
-                                                .catch(err => {
-                                                    console.log(
-                                                        "修改状态失败" + err
-                                                    );
-                                                });
+                                                opt_status: value == true ? "enable" : "disable"
+                                            }).then(res => {
+                                                if (res.ret == 1) {
+                                                    this.$Message.info(res.msg);
+                                                    this.getCampaignsList(this.page);
+                                                }
+                                            }).catch(err => {
+                                                console.log("修改状态失败" + err);
+                                            });
                                         }
                                     }
                                 }),
-                                h(
-                                    "span",
-                                    params.row.status ==
-                                    "CAMPAIGN_STATUS_ENABLE"
-                                        ? "开启"
-                                        : "关闭"
-                                )
+                                h("span", params.row.status == "CAMPAIGN_STATUS_ENABLE" ? "开启" : "关闭")
                             ]);
                         }
                     }
@@ -574,6 +549,11 @@ export default {
                     key: "",
                     width: 100
                 },
+                {
+                    title: "负责人",
+                    key: "author",
+                    width: 100
+                },
                 // {
                 //     title: "广告质量度",
                 //     key: "",
@@ -607,7 +587,7 @@ export default {
                                 {
                                     class: "copy_link",
                                     on: {
-                                        click: () => {}
+                                        click: () => { }
                                     }
                                 },
                                 "复制"
@@ -624,31 +604,19 @@ export default {
                                                 onOk: () => {
                                                     Axios.post("api.php", {
                                                         action: "ttAdPut",
-                                                        opt:
-                                                            "updateCampaignStatus",
-                                                        ids: params.row.id.split(
-                                                            ","
-                                                        ),
+                                                        opt: "updateCampaignStatus",
+                                                        ids: params.row.id.split(","),
                                                         opt_status: "delete"
-                                                    })
-                                                        .then(res => {
-                                                            if (res.ret == 1) {
-                                                                this.$Message.info(
-                                                                    res.msg
-                                                                );
-                                                                this.getCampaignsList(
-                                                                    this.page
-                                                                );
-                                                            }
-                                                        })
-                                                        .catch(err => {
-                                                            console.log(
-                                                                "修改状态失败" +
-                                                                    err
-                                                            );
-                                                        });
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList(this.page);
+                                                        }
+                                                    }).catch(err => {
+                                                        console.log("修改状态失败" + err);
+                                                    });
                                                 },
-                                                onCancel: () => {}
+                                                onCancel: () => { }
                                             });
                                         }
                                     }
