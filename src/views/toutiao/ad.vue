@@ -1,30 +1,30 @@
 <style>
 .name_text {
-    color: #2b7ed1;
-    cursor: pointer;
+  color: #2b7ed1;
+  cursor: pointer;
 }
 .name_text:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 .copy_link,
 .edit_link,
 .del_link {
-    cursor: pointer;
-    color: #2b7ed1;
-    margin-right: 5px;
+  cursor: pointer;
+  color: #2b7ed1;
+  margin-right: 5px;
 }
 .del_link {
-    color: #ff7474;
+  color: #ff7474;
 }
 .ivu-tooltip-inner {
-    white-space: normal;
+  white-space: normal;
 }
 .budget-txt {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 .budget-txt2 {
-    color: #999;
-    margin-top: 10px;
+  color: #999;
+  margin-top: 10px;
 }
 </style>
 <template>
@@ -35,32 +35,40 @@
                 <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList">
+                <Input class="inp" placeholder="请输入广告计划ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
+                </Col>
+                <Col span="4" style="text-align: right;">
+                <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
+                <Button type="ghost" icon="android-add">新建广告计划</Button>
+                </Col>
+            </Row>
+        </Card>
+        <Card shadow class="margin-top-10" v-if="Echartsmodel">
+            <campaign-echarts></campaign-echarts>
+        </Card>
+        <Card shadow class="margin-top-10">
+            <Row>
+                <Col span="20">
+                <!--自定义指标-->
+                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchAdgroups"></view-tip>
+                <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
                     <Option value="LINK">推广落地页</Option>
                     <Option value="APP">推广应用下载</Option>
                     <Option value="DPA">产品目录</Option>
                 </Select>
-                <Select placeholder="状态" v-model="status" class="sel_state" @on-change="getCampaignsList">
+                <Select placeholder="操作状态" v-model="status" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
                     <Option value="AD_STATUS_ENABLE">启用</Option>
                     <Option value="AD_STATUS_DISABLE">暂停</Option>
                 </Select>
+                <!--选择负责人-->
+                <select-author @on-change="authorChange"></select-author>
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
-                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
-                <Col span="4" style="text-align: right;">
-                <Button type="ghost" icon="stats-bars">图表</Button>
-                <Button type="ghost" icon="android-add">新建广告计划</Button>
-                </Col>
-            </Row>
-        </Card>
-        <Card shadow class="margin-top-10">
-            <Row>
-                <!--自定义指标-->
-                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchAdgroups"></view-tip>
-                <Poptip placement="bottom-start" v-model="visible">
+                <Col span="4" style=" text-align: right;">
+                <Poptip placement="bottom-end" v-model="visible">
                     <Button type="ghost" icon="edit">批量修改</Button>
                     <div class="api" slot="content">
                         <div style="text-align: left;">
@@ -76,6 +84,7 @@
                         </div>
                     </div>
                 </Poptip>
+                </Col>
             </Row>
             <div>
                 <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
@@ -109,10 +118,14 @@ import {
     deepClone
 } from "@/utils/DateShortcuts.js";
 import searchTree from "@/components/select-tree/searchTree.vue";
+import campaignEcharts from "./components/campaignEcharts.vue";
+import selectAuthor from "@/components/select-author/index.vue";
 export default {
     components: {
         viewTip,
-        searchTree
+        searchTree,
+        campaignEcharts,
+        selectAuthor
     },
     data() {
         return {
@@ -120,6 +133,7 @@ export default {
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
             visible: false,
+            Echartsmodel: false,
             edit_status: "", //批量状态
             tableSize: "small",
             page: 1, //第N页
@@ -163,6 +177,11 @@ export default {
                 ids.push(item.id);
             });
             this.taCheckids = ids;
+        },
+        //选择负责人
+        authorChange(data) {
+            this.author_model = data;
+            this.getCampaignsList();
         },
         //排序
         sortchange(column) {
@@ -237,7 +256,7 @@ export default {
                 });
         }
     },
-    beforeMount() {},
+    beforeMount() { },
     computed: {
         //设置表格头部
         taColumns() {
@@ -325,7 +344,7 @@ export default {
                                                     .catch(err => {
                                                         console.log(
                                                             "修改广告计划失败" +
-                                                                err
+                                                            err
                                                         );
                                                     });
                                             }
@@ -355,7 +374,7 @@ export default {
                                         size: "small",
                                         value:
                                             params.row.opt_status ==
-                                            "AD_STATUS_ENABLE"
+                                                "AD_STATUS_ENABLE"
                                                 ? true
                                                 : false
                                     },
@@ -515,7 +534,7 @@ export default {
                                                             .catch(err => {
                                                                 console.log(
                                                                     "修改删除投放计划失败" +
-                                                                        err
+                                                                    err
                                                                 );
                                                             });
                                                     }
@@ -534,6 +553,7 @@ export default {
                     width: 100,
                     render: (h, params) => {
                         let value = params.row.bid;
+                        let is_stage2bid = "0";
                         //三位数加逗号
                         let newvalue = value
                             .toString()
@@ -558,18 +578,84 @@ export default {
                                     click: () => {
                                         this.$Modal.confirm({
                                             render: h => {
-                                                return h("Input", {
-                                                    props: {
-                                                        value: params.row.bid,
-                                                        autofocus: true,
-                                                        placeholder: "出价"
-                                                    },
-                                                    on: {
-                                                        input: val => {
-                                                            value = val;
+                                                if (
+                                                    params.row
+                                                        .cpa_skip_first_phrase ==
+                                                    1
+                                                ) {
+                                                    return [
+                                                        h(
+                                                            "Select",
+                                                            {
+                                                                props: {
+                                                                    value: is_stage2bid,
+                                                                    placeholder:
+                                                                        "出价"
+                                                                },
+                                                                style: {
+                                                                    marginBottom:
+                                                                        "10px"
+                                                                },
+                                                                on: {
+                                                                    "on-change": val => {
+                                                                        is_stage2bid = val;
+                                                                    }
+                                                                }
+                                                            },
+                                                            [
+                                                                h(
+                                                                    "Option",
+                                                                    {
+                                                                        props: {
+                                                                            value:
+                                                                                "0"
+                                                                        }
+                                                                    },
+                                                                    "不修改第二阶段出价"
+                                                                ),
+                                                                h(
+                                                                    "Option",
+                                                                    {
+                                                                        props: {
+                                                                            value:
+                                                                                "1"
+                                                                        }
+                                                                    },
+                                                                    "修改第二阶段出价"
+                                                                )
+                                                            ]
+                                                        ),
+                                                        h("Input", {
+                                                            props: {
+                                                                value:
+                                                                    params.row
+                                                                        .bid,
+                                                                autofocus: true,
+                                                                placeholder:
+                                                                    "出价"
+                                                            },
+                                                            on: {
+                                                                input: val => {
+                                                                    value = val;
+                                                                }
+                                                            }
+                                                        })
+                                                    ];
+                                                } else {
+                                                    return h("Input", {
+                                                        props: {
+                                                            value:
+                                                                params.row.bid,
+                                                            autofocus: true,
+                                                            placeholder: "出价"
+                                                        },
+                                                        on: {
+                                                            input: val => {
+                                                                value = val;
+                                                            }
                                                         }
-                                                    }
-                                                });
+                                                    });
+                                                }
                                             },
                                             onOk: () => {
                                                 if (value == "") {
@@ -584,7 +670,7 @@ export default {
                                                     ids: params.row.id.split(
                                                         ","
                                                     ),
-                                                    is_stage2bid: 0,
+                                                    is_stage2bid: is_stage2bid,
                                                     bid: value //预算
                                                 })
                                                     .then(res => {
@@ -761,6 +847,11 @@ export default {
                     width: 100
                 },
                 {
+                    title: "负责人",
+                    key: "author",
+                    width: 100
+                },
+                {
                     title: "操作",
                     key: "",
                     width: 130,
@@ -788,7 +879,7 @@ export default {
                                 {
                                     class: "copy_link",
                                     on: {
-                                        click: () => {}
+                                        click: () => { }
                                     }
                                 },
                                 "复制"
@@ -828,7 +919,7 @@ export default {
                                                             );
                                                         });
                                                 },
-                                                onCancel: () => {}
+                                                onCancel: () => { }
                                             });
                                         }
                                     }
