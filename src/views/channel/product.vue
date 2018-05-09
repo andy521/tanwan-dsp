@@ -61,7 +61,7 @@
             </Radio-group>
               每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getTableData()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">

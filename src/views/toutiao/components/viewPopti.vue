@@ -44,7 +44,7 @@
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
                     <Checkbox label="active">激活数</Checkbox>
                     <!-- <Checkbox label="">激活成本</Checkbox> -->
-                    <Checkbox label="active_rate">激活率</Checkbox>
+                    <!-- <Checkbox label="active_rate">激活率</Checkbox> -->
                     <Checkbox label="conversion">转化数</Checkbox>
                     <Checkbox label="cost_per_conversion">转化成本</Checkbox>
                     <Checkbox label="cvr">转化率</Checkbox>
@@ -58,10 +58,10 @@
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
                     <Checkbox label="reg_arpu">注册ARPU</Checkbox>
                     <Checkbox label="active">活跃数</Checkbox>
-                    <Checkbox label="active_rate">活跃率</Checkbox>
+                    <Checkbox label="active_per_reg">活跃率</Checkbox>
                     <Checkbox label="pay_num">付费人数</Checkbox>
                     <Checkbox label="pay_total">付费金额</Checkbox>
-                    <Checkbox label="pay_rate">付费率</Checkbox>
+                    <Checkbox label="pay_per_reg">付费率</Checkbox>
                     <Checkbox label="roi">回本率</Checkbox>
                 </CheckboxGroup>
                 <!-- <div class="checklist">
@@ -101,7 +101,7 @@ export default {
                 "cpc",
                 "cpm",
                 "active",
-                "active_rate",
+                "active_per_reg",
                 "conversion",
                 "cost_per_conversion",
                 "cvr",
@@ -110,10 +110,9 @@ export default {
                 "reg_rate",
                 "reg_arpu",
                 "active",
-                "active_rate",
                 "pay_num",
                 "pay_total",
-                "pay_rate",
+                "pay_per_reg",
                 "roi"
             ]
         };

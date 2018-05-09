@@ -172,7 +172,7 @@
                     </Radio-group>
                     每页显示
                     <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-                        <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                        <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                     </Select>
                     </Col>
                     <Col span="14" style="text-align: right;">
@@ -421,13 +421,13 @@ export default {
                 {
                     title: "点击率",
                     sortable: "custom",
-                    key: "click_per",
+                    key: "ctr",
                     width: 100
                 },
                 {
                     title: "点击均价",
                     sortable: "custom",
-                    key: "click_cost",
+                    key: "cpc",
                     width: 110
                 },
                 {
@@ -485,21 +485,21 @@ export default {
                     width: 110
                 },
                 {
-                    title: "点击激活率",
+                    title: "点击注册率",
                     sortable: "custom",
-                    key: "click_install",
+                    key: "reg_per_click",
                     width: 120
                 },
                 {
                     title: "激活安装率",
                     sortable: "custom",
-                    key: "install_per",
+                    key: "reg_per_activation",
                     width: 120
                 },
                 {
                     title: "下载激活率",
                     sortable: "custom",
-                    key: "download_per",
+                    key: "activation_per_download",
                     width: 120
                 },
                 {
@@ -511,6 +511,12 @@ export default {
                     }
                 },
                 {
+                    title: "注册数",
+                    sortable: "custom",
+                    key: "activation",
+                    width: 100
+                },
+                {
                     title: "注册",
                     sortable: "custom",
                     key: "reg_imei",
@@ -519,19 +525,19 @@ export default {
                 {
                     title: "注册设备数",
                     sortable: "custom",
-                    key: "activation",
+                    key: "reg_dev",
                     width: 120
                 },
                 {
                     title: "注册设备成本",
                     sortable: "custom",
-                    key: "reg_imei_cost",
+                    key: "cost_per_dev",
                     width: 130
                 },
                 {
                     title: "注册成本",
                     sortable: "custom",
-                    key: "reg_cost",
+                    key: "cost_per_reg",
                     width: 110
                 },
                 {
@@ -555,7 +561,7 @@ export default {
                 {
                     title: "活跃率",
                     sortable: "custom",
-                    key: "act_per",
+                    key: "active_per_reg",
                     width: 100
                 },
                 {
@@ -573,13 +579,13 @@ export default {
                 {
                     title: "付费率",
                     sortable: "custom",
-                    key: "pay_per",
+                    key: "pay_per_reg",
                     width: 100
                 },
                 {
                     title: "回本率",
                     sortable: "custom",
-                    key: "income_per",
+                    key: "roi",
                     width: 100
                 },
                 {
@@ -958,6 +964,7 @@ export default {
                         //添加统计
                         res.data.curr_page_total._disabled = true;
                         res.data.curr_page_total._disableExpand = true;
+                        res.data.list.unshift(res.data.curr_page_total);
                         res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;

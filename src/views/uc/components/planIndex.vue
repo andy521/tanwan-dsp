@@ -1,29 +1,29 @@
 <style scoped>
 .bottom_line {
-    border-bottom: 1px solid rgb(233, 233, 233);
-    padding-bottom: 10px;
+  border-bottom: 1px solid rgb(233, 233, 233);
+  padding-bottom: 10px;
 }
 
 .poptipdiv {
-    white-space: normal;
-    text-align: left;
-    padding: 20px;
+  white-space: normal;
+  text-align: left;
+  padding: 20px;
 }
 
 .checklist {
-    padding-bottom: 5px;
-    padding-top: 20px;
+  padding-bottom: 5px;
+  padding-top: 20px;
 }
 
 .Poptiptap .ivu-poptip-body-content {
-    overflow: inherit;
+  overflow: inherit;
 }
 </style>
 
 <template>
     <div style="display: inline-block;">
-		<Poptip ref="poptip" trigger="hover" placement="bottom-start" width="500" class="Poptiptap">
-			<Button type="primary" @click="handleShow">自定义指标</Button>
+        <Poptip ref="poptip" trigger="hover" placement="bottom-start" width="500" class="Poptiptap">
+            <Button type="primary" @click="handleShow">自定义指标</Button>
             <div class="poptipdiv" slot="content">
                 <div class="bottom_line">
                     <Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
@@ -31,14 +31,14 @@
                 <div class="checklist">媒体列</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
                     <Checkbox label="paused">投放开关</Checkbox>
-                    <Checkbox label="cpc">平均点击价格</Checkbox>
+                    <Checkbox label="cpc">平均点击成本</Checkbox>
                     <Checkbox label="cpm">千次展现价格</Checkbox>
-                    <Checkbox label="click">点击量</Checkbox>
+                    <Checkbox label="click">点击</Checkbox>
                     <Checkbox label="ctr">点击率</Checkbox>
                 </CheckboxGroup>
                 <div class="checklist">落地页</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="cost">展示PV</Checkbox>
+                    <Checkbox label="cost">消费</Checkbox>
                     <!-- <Checkbox label="aa">展示IP</Checkbox>
                     <Checkbox label="aa">下载IP</Checkbox> -->
                     <Checkbox label="download_complete">下载数</Checkbox>
@@ -46,24 +46,24 @@
                 </CheckboxGroup>
                 <div class="checklist">激活注册</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="cvr">点击激活率</Checkbox>
-                    <Checkbox label="install_per">激活安装率</Checkbox>
+                    <Checkbox label="cvr">转化率</Checkbox>
+                    <Checkbox label="reg_per_activation">激活安装率</Checkbox>
                     <!-- <Checkbox label="a">下载激活率</Checkbox> -->
-                    <Checkbox label="conversion">注册设备数</Checkbox>
-                    <Checkbox label="app_reg_cost">注册设备成本</Checkbox>
-                    <Checkbox label="reg_total">注册</Checkbox>
-                    <Checkbox label="reg_cost">注册成本</Checkbox>
-                    <Checkbox label="reg_per">注册率</Checkbox>
+                    <Checkbox label="reg_dev">注册设备数</Checkbox>
+                    <Checkbox label="cost_per_dev">注册设备成本</Checkbox>
+                    <Checkbox label="reg_total">注册数</Checkbox>
+                    <Checkbox label="cost_per_reg">注册成本</Checkbox>
+                    <Checkbox label="reg_per_click">点击注册率</Checkbox>
                     <Checkbox label="reg_arpu">注册ARPU</Checkbox>
                 </CheckboxGroup>
                 <div class="checklist">活跃付费</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
                     <Checkbox label="active">活跃数</Checkbox>
-                    <Checkbox label="active_per">活跃率</Checkbox>
-                    <Checkbox label="pay_num">付费人数</Checkbox>
-                    <Checkbox label="pay_total">付费金额</Checkbox>
-                    <Checkbox label="pay_per">付费率</Checkbox>
-                    <Checkbox label="income_per">回本率</Checkbox>
+                    <Checkbox label="active_per_reg">活跃率</Checkbox>
+                    <Checkbox label="pay_num">注册后付费金额</Checkbox>
+                    <Checkbox label="pay_total">注册后付费人数</Checkbox>
+                    <Checkbox label="pay_per_reg">付费率</Checkbox>
+                    <Checkbox label="roi">回本率</Checkbox>
                 </CheckboxGroup>
                 <div class="checklist">其他</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
@@ -96,33 +96,33 @@ export default {
             checkAll: false,
             checkAllGroup: [], //默认选中
             checkAllGroups: [
-                "state",
                 "paused",
                 "cpc",
                 "cpm",
                 "click",
                 "ctr",
+                "cost",
                 "download_complete",
                 "download_complete_rate",
-                "cost",
                 "cvr",
-                "impression",
-                "install_per",
-                "conversion",
-                "app_reg_cost",
+                "reg_per_activation",
+                "reg_dev",
+                "cost_per_dev",
                 "reg_total",
-                "reg_cost",
-                "reg_per",
+                "cost_per_reg",
+                "reg_per_click",
                 "reg_arpu",
                 "active",
-                "active_per",
+                "active_per_reg",
                 "pay_num",
                 "pay_total",
-                "pay_per",
-                "income_per",
+                "pay_per_reg",
+                "roi",
+                "state",
                 "platform",
                 "adResourceId",
-                "budget"
+                "budget",
+                "impression"
             ]
         };
     },

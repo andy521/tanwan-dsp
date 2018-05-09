@@ -42,6 +42,22 @@
                 <Tag v-for="item in filterItem" type="border" :name="item.id" :key="item.id" closable @on-close="deleteFilter">{{item.text}}</Tag>
             </div>
             <Table :data="list" :height="height" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
+             <Row class="margin-top-10">
+                <Col span="10"> 表格尺寸
+                <Radio-group v-model="tableSize" type="button">
+                    <Radio label="large">大</Radio>
+                    <Radio label="default">中</Radio>
+                    <Radio label="small">小</Radio>
+                </Radio-group>
+                每页显示
+                <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getIdea()">
+                    <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
+                </Select>
+                </Col>
+                <Col span="14" style="text-align: right;">
+                <Page :total="total_number" :current="page" :page-size="page_size" ref="pages" @on-change="getIdea" show-elevator show-total></Page>
+                </Col>
+            </Row>
         </Card>
 
         <Modal v-model="filterModal" title="筛选条件" @on-ok="filterOk" @on-cancel="filterModal = false">
@@ -230,10 +246,11 @@ export default {
                 orderField: this.orderField,
                 orderDirection: this.orderDirection
             };
+            this.loading = true;
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
-                        console.log(res);
+                        //console.log(res);
                         this.loading = false;
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);

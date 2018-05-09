@@ -96,7 +96,7 @@
             </div>
         </div>
 
-        <Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397">
+        <Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397" >
             <!-- <div slot="footer"></div> -->
         </Table>
         <Row class="margin-top-10">
@@ -107,7 +107,7 @@
                 <Radio label="small">小</Radio>
             </Radio-group>
             <Select v-model="page_size" style="width:100px" placeholder="请选择" placement="top" transfer @on-change="tableData()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -280,7 +280,13 @@ export default {
                     title: "日期",
                     key: "date",
                     sortable: "custom"
+                },
+                 {
+                    title: "消耗预估天数",
+                    key: "over_day",
+                    sortable: "custom"
                 }
+                
             ]
         };
     },

@@ -125,7 +125,8 @@ export const appRouter = [
                 { path: 'campaign', title: '广告组', name: 'tt_campaign',  component: () => import('@/views/toutiao/campaign.vue')},
                 { path: 'ad', title: '广告计划', name: 'tt_ad', component: () => import('@/views/toutiao/ad.vue') },  
                 { path: 'creative', title: '创意', name: 'tt_creative', component: () => import('@/views/toutiao/creative.vue') },    
-            ]}       
+            ]},
+            { path: 'report', title: '数据报告', name: 'tt_report', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/report.vue')}
         ]
     },
     {

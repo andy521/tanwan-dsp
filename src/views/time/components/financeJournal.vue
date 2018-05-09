@@ -39,7 +39,7 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getfund()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -54,7 +54,7 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import { DateShortcuts } from "@/utils/DateShortcuts.js";
+import { DateShortcuts,formatDate } from "@/utils/DateShortcuts.js";
 export default {
     name: "financeJournal",
     data() {
@@ -63,7 +63,7 @@ export default {
             fundType: "1",
             options: DateShortcuts, //日期辅助功能
             //筛选时间
-            DateDomain: [],
+            DateDomain: [formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"), formatDate(new Date(), "yyyy-MM-dd")],
             downDateDomain: [],
             loading: false,
             mediaList: [],
@@ -145,7 +145,6 @@ export default {
         };
     },
     mounted() {
-        this.setDateDomain();
         this.getMedia();
         this.getfund();
     },
@@ -201,14 +200,6 @@ export default {
                 return "table-statistics";
             }
         },
-        //设置筛选时间
-        setDateDomain() {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            this.DateDomain = [start, end];
-            this.downDateDomain = [start, end];
-        },
         //改变日期
         changeDate(e) {
             this.DateDomain = e;
@@ -242,6 +233,7 @@ export default {
                     if (res.ret == 1) {
                         //添加统计
                         res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
                         res.data.list.push(res.data.curr_page_total);
                         this.funddata = res.data.list;
                         this.total_number = res.data.total_number;

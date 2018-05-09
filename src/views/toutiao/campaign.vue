@@ -88,7 +88,7 @@
                     </Radio-group>
                     每页显示
                     <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-                        <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                        <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                     </Select>
                     </Col>
                     <Col span="14" style="text-align: right;">
@@ -437,12 +437,12 @@ export default {
                     width: 120,
                     sortable: "custom"
                 },
-                {
-                    title: "激活率",
-                    key: "active_rate",
-                    width: 100,
-                    sortable: "custom"
-                },
+                // {
+                //     title: "激活率",
+                //     key: "active_rate",
+                //     width: 100,
+                //     sortable: "custom"
+                // },
                 {
                     title: "转化数",
                     key: "conversion",
@@ -492,7 +492,7 @@ export default {
                 },
                 {
                     title: "活跃率",
-                    key: "active_rate",
+                    key: "active_per_reg",
                     width: 100,
                     sortable: "custom"
                 },
@@ -509,7 +509,7 @@ export default {
                 },
                 {
                     title: "付费率",
-                    key: "pay_rate",
+                    key: "pay_per_reg",
                     width: 100,
                     sortable: "custom"
                 },
