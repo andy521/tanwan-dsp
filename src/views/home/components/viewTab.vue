@@ -4,6 +4,7 @@
     border: none !important;
     background: transparent !important;
 }
+
 .tab {
     border-bottom: 1px solid #dddee1;
     margin-bottom: 16px;
@@ -11,6 +12,7 @@
     line-height: 38px;
     position: relative;
 }
+
 .tab-item li {
     float: left;
     padding: 0 15px;
@@ -18,6 +20,7 @@
     position: relative;
     cursor: pointer;
 }
+
 .tab-item li::after {
     content: "";
     position: absolute;
@@ -28,20 +31,25 @@
     left: 0;
     background-color: transparent;
 }
+
 .tab-item li.cur {
     color: #2d8cf0;
 }
+
 .tab-item li.cur::after {
     background-color: #2d8cf0;
 }
+
 .tr {
     float: right;
     margin-top: -8px;
 }
+
 .sel_state1.ivu-select-multiple .ivu-select-selection {
     overflow: auto;
     height: 32px;
 }
+
 .table-statistics {
     color: #2b7ed1;
     font-weight: bold;
