@@ -1,77 +1,77 @@
 <style>
 .ivu-tag-border,
 .ivu-tag-border.ivu-tag-red {
-    border: none !important;
-    background: transparent !important;
+  border: none !important;
+  background: transparent !important;
 }
 
 .tab {
-    border-bottom: 1px solid #dddee1;
-    margin-bottom: 16px;
-    height: 38px;
-    line-height: 38px;
-    position: relative;
+  border-bottom: 1px solid #dddee1;
+  margin-bottom: 16px;
+  height: 38px;
+  line-height: 38px;
+  position: relative;
 }
 
 .tab-item li {
-    float: left;
-    padding: 0 15px;
-    margin-right: 16px;
-    position: relative;
-    cursor: pointer;
+  float: left;
+  padding: 0 15px;
+  margin-right: 16px;
+  position: relative;
+  cursor: pointer;
 }
 
 .tab-item li::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    display: block;
-    height: 2px;
-    width: 100%;
-    left: 0;
-    background-color: transparent;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  display: block;
+  height: 2px;
+  width: 100%;
+  left: 0;
+  background-color: transparent;
 }
 
 .tab-item li.cur {
-    color: #2d8cf0;
+  color: #2d8cf0;
 }
 
 .tab-item li.cur::after {
-    background-color: #2d8cf0;
+  background-color: #2d8cf0;
 }
 
 .tr {
-    float: right;
-    margin-top: -8px;
+  float: right;
+  margin-top: -8px;
 }
 
 .sel_state1.ivu-select-multiple .ivu-select-selection {
-    overflow: auto;
-    height: 32px;
+  overflow: auto;
+  height: 32px;
 }
 
 .table-statistics {
-    color: #2b7ed1;
-    font-weight: bold;
+  color: #2b7ed1;
+  font-weight: bold;
 }
 .smedia {
-    display: inline-block;
-    width: auto;
-    min-width: 150px;
-    margin: 0 10px;
+  display: inline-block;
+  width: auto;
+  min-width: 150px;
+  margin: 0 10px;
 }
 .search_area {
-    width: 200px;
-    display: inline-block;
-    margin-bottom: -12px;
-    margin-right: 10px;
+  width: 200px;
+  display: inline-block;
+  margin-bottom: -12px;
+  margin-right: 10px;
 }
 .name_text {
-    color: #2b7ed1;
-    cursor: pointer;
+  color: #2b7ed1;
+  cursor: pointer;
 }
-.name_text:hover{
-    text-decoration: underline;
+.name_text:hover {
+  text-decoration: underline;
 }
 </style>
 <template>
@@ -96,7 +96,7 @@
             </div>
         </div>
 
-        <Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397" >
+        <Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397">
             <!-- <div slot="footer"></div> -->
         </Table>
         <Row class="margin-top-10">
@@ -177,7 +177,7 @@ export default {
                         return h(
                             "span",
                             {
-                                class: "name_text",                              
+                                class: "name_text",
                                 on: {
                                     click: () => {
                                         let query = {
@@ -260,6 +260,7 @@ export default {
                 {
                     title: "注册设备数",
                     key: "activation",
+                    width: 120,
                     sortable: "custom"
                 },
                 {
@@ -281,12 +282,54 @@ export default {
                     key: "date",
                     sortable: "custom"
                 },
-                 {
+                {
                     title: "消耗预估天数",
+                    width: 125,
                     key: "over_day",
-                    sortable: "custom"
+                    sortable: "custom",
+                    render: (h, params) => {
+                        let color = "";
+                        if (params.row.over_day < 5) {
+                            color = "red";
+                        } else if (params.row.over_day <= 10) {
+                        } else {
+                            color = "green"
+                        }
+                        return h(
+                            "span",
+                            {
+                                class: color
+                            },
+                            params.row.over_day
+                        );
+                    }
+                },
+                {
+                    title: "充值",
+                    key: "platform",
+                    width: 60,
+                    render: (h, params) => {
+                        if (params.row._disabled) return;
+                        return h(
+                            "span",
+                            {
+                                class: "name_text",
+                                on: {
+                                    click: () => {
+                                        this.$Message.info('敬请期待');
+                                        // this.$router.push({
+                                        //     name: "ttcampaign",
+                                        //     query: {
+                                        //         id: params.row.id
+                                        //     }
+                                        // });
+                                    }
+                                }
+                            },
+                            "充值"
+                        )
+                    }
                 }
-                
             ]
         };
     },

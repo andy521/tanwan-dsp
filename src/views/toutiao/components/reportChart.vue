@@ -43,7 +43,7 @@
 <script>  
 import echarts from 'echarts';
 export default {
-    name: 'lineChart',
+    name: 'reportChart',
     props: {
         datas: {
             type: [Object, Array]

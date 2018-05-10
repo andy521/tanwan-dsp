@@ -1,15 +1,18 @@
 <style scoped>
-.mt20 {
-    margin-top: 20px;
+.mt10 {
+    margin-top: 10px;
 }
-</style><template>
-    <div>
+</style>
+
+<template>
+    <Card shadow>
         <div>
             <Select v-model="account_id" placeholder="请选择帐号" style="width:250px;" @on-change="getfund()">
+                <Option value="">全部帐号</Option>
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
         </div>
-        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20"></Table>
+        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="mt10"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -26,12 +29,11 @@
             <Page :total="total_number" :page-size="page_size" ref="fundpage" @on-change="getfund" show-elevator show-total></Page>
             </Col>
         </Row>
-    </div>
+    </Card>
 </template>
 <script>
 import Axios from "@/api/index";
 export default {
-    name: "financeFunds",
     data() {
         return {
             account_id: "",

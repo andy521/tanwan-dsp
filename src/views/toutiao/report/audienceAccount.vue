@@ -1,16 +1,37 @@
+<style scoped>
+.sel {
+  width: 220px;
+}
+.inp {
+  display: inline-block;
+  width: 150px;
+}
+.ad .ivu-poptip {
+  display: inline-block;
+}
+.sel_state {
+  text-align: left;
+  width: 110px;
+}
+.select_account {
+  float: right;
+}
+</style>
 <template>
     <div>
-        <span>时间范围</span>
-        <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-        <span>汇总方式</span>
-        <Select v-model="type" class="sel_state" placeholder="汇总方式" @on-change="getHourReporting()">
-            <Option value="province">省级地域</Option>
-            <Option value="city">地级市</Option>
-            <Option value="gender">性别</Option>
-            <Option value="tag">兴趣分类</Option>
-            <Option value="age">年龄</Option>
-        </Select>
-        <line-chart :datas="echart" title="数据趋势" class="margin-top-20"></line-chart>
+        <div>
+            <span>时间范围</span>
+            <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+            <span>汇总方式</span>
+            <Select v-model="type" class="sel_state" placeholder="汇总方式" @on-change="getHourReporting()">
+                <Option value="province">省级地域</Option>
+                <Option value="city">地级市</Option>
+                <Option value="gender">性别</Option>
+                <Option value="tag">兴趣分类</Option>
+                <Option value="age">年龄</Option>
+            </Select>
+        </div>
+        <report-chart :datas="echart" title="数据趋势" class="margin-top-10"></report-chart>
 
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
@@ -30,18 +51,17 @@
             </Col>
         </Row>
     </div>
-
 </template>
 <script>
 import Axios from "@/api/index";
 import echarts from "echarts";
 import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-import lineChart from "./lineChart.vue";
+import reportChart from "../components/reportChart.vue";
+
 export default {
-    name: 'advertiser',
-    props: ["account"],
+    name: "audienceAccount",
     components: {
-        lineChart
+        reportChart
     },
     data() {
         return {
@@ -74,11 +94,6 @@ export default {
     mounted() {
         this.getHourReporting();
     },
-    watch: {
-        account() {
-            this.getHourReporting();
-        }
-    },
     methods: {
         //获取列表
         getHourReporting(page) {
@@ -87,10 +102,11 @@ export default {
             } else {
                 this.page = page;
             }
+            if (this.get_account_id == "") return;
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "audienceAccountReporting",
-                account_id: this.account,
+                account_id: this.get_account_id,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 orderField: this.orderField,
@@ -122,6 +138,16 @@ export default {
             this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getHourReporting();
         },
-    }
+    },
+    watch: {
+        get_account_id() {
+            this.getHourReporting();
+        }
+    },
+    computed: {
+        get_account_id() {
+            return this.$store.state.user.report_account_id;
+        }
+    },
 };
 </script>

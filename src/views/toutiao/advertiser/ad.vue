@@ -1,4 +1,18 @@
-<style>
+<style scoped>
+.sel {
+  width: 220px;
+}
+.inp {
+  display: inline-block;
+  width: 150px;
+}
+.ad .ivu-poptip {
+  display: inline-block;
+}
+.sel_state {
+  text-align: left;
+  width: 110px;
+}
 .name_text {
   color: #2b7ed1;
   cursor: pointer;
@@ -110,7 +124,7 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import viewTip from "./components/viewPopti.vue";
+import viewTip from "../components/viewPopti.vue";
 import {
     DateShortcuts,
     formatDate,
@@ -118,7 +132,7 @@ import {
     deepClone
 } from "@/utils/DateShortcuts.js";
 import searchTree from "@/components/select-tree/searchTree.vue";
-import campaignEcharts from "./components/campaignEcharts.vue";
+import campaignEcharts from "../components/campaignEcharts.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 export default {
     components: {
@@ -129,7 +143,7 @@ export default {
     },
     data() {
         return {
-            height: document.body.clientHeight - 360,
+            height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
             visible: false,

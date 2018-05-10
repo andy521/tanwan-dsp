@@ -1,6 +1,6 @@
 <style>
-.mt20 {
-    margin-top: 20px;
+.mt10 {
+    margin-top: 10px;
 }
 .table-statistics {
     color: #2b7ed1;
@@ -9,11 +9,12 @@
 </style>
 
 <template>
-    <div>
+    <Card shadow>
 
         <Row>
             <Col span="18">
             <Select v-model="account_id" placeholder="请选择帐号" style="width:250px;" @on-change="getfund()">
+                <Option value="">全部帐号</Option>
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
@@ -29,7 +30,7 @@
             <Button type="ghost" icon="document-text" @click="downmodal=true">下载所有数据</Button>
             </Col>
         </Row>
-        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20" :row-class-name="rowClassName" ref="journaltable"></Table>
+        <Table :columns="fundcolumns" :data="funddata"  :loading="loading" :size="tableSize" class="mt10" :row-class-name="rowClassName" ref="journaltable"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -50,13 +51,12 @@
         <Modal v-model="downmodal" title="选择时间" @on-ok="exportDatas" loading>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="downDateDomain" @on-change="changeDownDate"></DatePicker>
         </Modal>
-    </div>
+    </Card>
 </template>
 <script>
 import Axios from "@/api/index";
 import { DateShortcuts,formatDate } from "@/utils/DateShortcuts.js";
 export default {
-    name: "financeJournal",
     data() {
         return {
             account_id: "",
