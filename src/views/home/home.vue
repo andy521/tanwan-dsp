@@ -167,7 +167,7 @@
                              //添加统计
                             data.curr_page_total._disabled = true;
                             data.list.push(data.curr_page_total);
-
+                            data.list.unshift(data.curr_page_total);
                             this.tdata={
                                 page_size:data.page_size,
                                 total_number:data.total_number,

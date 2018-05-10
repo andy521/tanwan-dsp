@@ -51,7 +51,6 @@
                 <div class="checklist">激活注册</div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
                     <Checkbox label="cvr">点击激活率</Checkbox>
-                    <Checkbox label="conversion">注册设备数</Checkbox> 
 				</CheckboxGroup>
 
                 <div class="checklist">其他</div>
@@ -60,7 +59,7 @@
                     <Checkbox label="adgroup_id">单元id</Checkbox>
                     <Checkbox label="impression">展现量</Checkbox>
                     <Checkbox label="adgroup_name">单元名称</Checkbox>
-                    <Checkbox label="activation">转化数</Checkbox>
+                    <Checkbox label="conversion">转化数</Checkbox>
                     <Checkbox label="cost_per_conversion">转化成本</Checkbox>
                    
 				</CheckboxGroup>
@@ -128,7 +127,7 @@
                 this.indeterminate = false;
 
 				if(this.checkAll) {
-                    this.checkAllGroup = ['paused','state','impression','click','adgroup_id',"ctr","cost","adgroup_name",'activation','cvr','cost_per_conversion','cpc','cpm','download_complete','download_complete_rate','conversion']
+                    this.checkAllGroup = ['paused','state','impression','click','adgroup_id',"ctr","cost","adgroup_name",'cvr','cost_per_conversion','cpc','cpm','download_complete','download_complete_rate','conversion']
 				} else {
 					this.checkAllGroup = [];
 				}

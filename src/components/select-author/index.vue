@@ -7,7 +7,7 @@
 </style>
 <template>
 
-  <Poptip class="author" placement="bottom-start" width="200" trigger="click">
+  <Poptip class="author" placement="bottom-start" width="200" trigger="hover">
         <Button type="ghost"><Icon type="person-stalker"></Icon> 选择负责人</Button>
         <div class="api" slot="content">      
             <div class="author-list">      

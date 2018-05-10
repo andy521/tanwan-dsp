@@ -9,28 +9,57 @@
     overflow: auto;
     margin-top: 10px;
 }
+.sel {
+    width: 220px;
+}
+.unit .ivu-poptip {
+    display: inline-block;
+}
+.sel_state {
+    text-align: left;
+    width: 110px;
+}
+.table-statistics {
+    color: #2b7ed1;
+    font-weight: bold;
+}
 </style>
 <template>
     <div class="unit">
-        <Card shadow class="margin-top-10">
+
+        <Card shadow>
             <Row>
-                <Col v-show="isBack" span="1">
-                <Button type="primary" @click="back">返回</Button>
-                </Col>
-                <Col span="2">
+                <Col span="19">
+                <Button type="primary" @click="back" v-show="isBack">返回</Button>
+                <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                </Col>
-                <Col span="10">
-                <Button type="ghost" icon="funnel" class="margin-left-10" @click=" filterModal = true">筛选</Button>
-                <DatePicker type="daterange" class="margin-left-10" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
-                <Button icon="search" @click="getUnit()">搜索</Button>
+                <Button type="primary" icon="search" @click="getUnit()">搜索</Button>
+                </Col>
+                <Col span="5" style="text-align: right;">
+                <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                 <new-edit title="新建单元" class="margin-left-5"></new-edit>
                 </Col>
-                <Col span="11" style="text-align: right;">
+            </Row>
+        </Card>
+
+        <Card shadow class="margin-top-10">
+            <Row>
+                <Col span="13">
+                <unit-index @on-change="getIndex" :check="checkAllGroup"></unit-index>
+                <Button type="ghost" icon="funnel" @click=" filterModal = true">筛选</Button>
                 <select-author :media-type="3" @on-change="authorChange" style="text-align: left;"></select-author>
-                <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
-                <Button type="ghost" icon="trash-a" @click="deleteFun">删除</Button>
+                <Select v-model="status" class="sel_state" @on-change="getUnit()" placeholder="状态">
+                    <Option value="">不限</Option>
+                    <Option value="0">有效</Option>
+                    <Option value="1">暂停</Option>
+                </Select>
+                <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
+                </Col>
+                <Col span="11" style="text-align: right;">
+                <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="deleteFun" style="text-align: left;">
+                    <Button type="ghost" icon="trash-a">删除</Button>
+                </Poptip>
                 <Button type="ghost" icon="social-usd" @click="setBidFun">修改出价</Button>
                 <Poptip placement="bottom-start" v-model="visible">
                     <Button type="ghost" icon="toggle-filled">修改状态</Button>
@@ -49,7 +78,6 @@
                 </Poptip>
                 <Button type="ghost" icon="location" @click="setRegionFun">修改地域</Button>
                 <Button type="ghost" icon="wifi" @click="setWifi">修改网络环境</Button>
-                <unit-index @on-change="getIndex" :check="checkAllGroup"></unit-index>
                 </Col>
             </Row>
 
@@ -58,7 +86,7 @@
                 <Tag v-for="item in filterItem" type="border" :name="item.id" :key="item.id" closable @on-close="deleteFilter">{{item.text}}</Tag>
             </div>
 
-            <Table :data="list" :height="height" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
+            <Table :data="list" :height="height" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe :row-class-name="rowClassName"></Table>
 
             <Row class="margin-top-10">
                 <Col span="10"> 表格尺寸
@@ -69,7 +97,7 @@
                 </Radio-group>
                 每页显示
                 <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getUnit()">
-                    <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                    <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                 </Select>
                 </Col>
                 <Col span="14" style="text-align: right;">
@@ -204,8 +232,8 @@ export default {
     data() {
         return {
             loading: false,
-            isBack: true,
-            height: document.body.clientHeight - 200,
+            isBack: false,
+            height: document.body.clientHeight - 300,
             filterModal: false,
             dateModal: false,
             regionModal: false,
@@ -228,6 +256,7 @@ export default {
             //关键字
             keyword: "",
             //筛选时间
+            status: "", //过滤状态
             DateDomain: [
                 formatDate(new Date(), "yyyy-MM-dd"),
                 formatDate(new Date(), "yyyy-MM-dd")
@@ -316,6 +345,12 @@ export default {
             this.game_id = "[" + gid.join(",") + "]";
             this.getUnit();
         },
+         //表格高亮calss
+        rowClassName(row, index) {
+            if (row._disabled) {
+                return "table-statistics";
+            }
+        },
         //获取推广单元
         getUnit(page) {
             if (page === undefined) {
@@ -343,6 +378,7 @@ export default {
                 "click[value]": this.click_value,
                 "ctr[relation]": this.ctr_relation,
                 "ctr[value]": this.ctr_value,
+                paused: this.status, //过滤状态
                 authors: this.author,
                 adResourceId: this.adResourceId,
                 page: this.page, //页码
@@ -350,11 +386,16 @@ export default {
                 orderField: this.orderField,
                 orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
             };
+            this.loading=true;
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
-                        console.log(res);
+                        //console.log(res);
                         this.loading = false;
+                         //添加统计
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
+                        res.data.list.push(res.data.curr_page_total);
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
                         this.page_size = parseInt(res.data.page_size);
@@ -464,7 +505,7 @@ export default {
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == 1) {
-                        console.log(res);
+                        //console.log(res);
                         this.$Message.info(res.msg);
                     }
                 })
@@ -753,7 +794,14 @@ export default {
                 account_name: {
                     title: "账户",
                     key: "account_name",
-                    width: 100
+                    width: 100,
+                    render: (h, params) => {
+                        if (params.row.account_name) {
+                            return h("span", params.row.account_name);
+                        } else {
+                            return h("span", "本页统计");
+                        }
+                    }
                 },
                 adgroup_name: {
                     title: "单元名称",
@@ -953,19 +1001,19 @@ export default {
                 download_convert: {
                     title: "下载激活率",
                     sortable: "custom",
-                    key: "download_convert",
+                    key: "activation_per_download",
                     width: 130
                 },
                 conversion: {
                     title: "注册设备数",
                     sortable: "custom",
-                    key: "conversion",
+                    key: "reg_dev",
                     width: 120
                 },
                 app_reg_cost: {
                     title: "注册设备成本",
                     sortable: "custom",
-                    key: "app_reg_cost",
+                    key: "cost_per_dev",
                     width: 130
                 },
                 reg_total: {
@@ -977,7 +1025,7 @@ export default {
                 reg_cost: {
                     title: "注册成本",
                     sortable: "custom",
-                    key: "reg_cost",
+                    key: "cost_per_reg",
                     width: 120
                 },
                 reg_per: {
@@ -1001,7 +1049,7 @@ export default {
                 active_per: {
                     title: "活跃率",
                     sortable: "custom",
-                    key: "active_per",
+                    key: "active_per_reg",
                     width: 100
                 },
                 pay_num: {
@@ -1019,13 +1067,13 @@ export default {
                 pay_per: {
                     title: "付费率",
                     sortable: "custom",
-                    key: "pay_per",
+                    key: "pay_per_reg",
                     width: 100
                 },
                 income_per: {
                     title: "回本率",
                     sortable: "custom",
-                    key: "income_per",
+                    key: "roi",
                     width: 100
                 },
                 chargeType: {
@@ -1140,6 +1188,7 @@ export default {
                     key: "id",
                     width: 100,
                     render: (h, params) => {
+                        if (params.row._disabled) return;
                         return [
                             h(
                                 "span",
