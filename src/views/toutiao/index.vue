@@ -120,13 +120,13 @@ export default {
             // 账号数据
             count: {
                 cost: 1000000, // 今日账号消耗
-                costUse: 10, // 今日账号消耗 可用
+                costUse: 0, // 今日账号消耗 可用
                 total: 1000000, // 账户总余额
-                totalUse: 10, // 账户总余额 可用
+                totalUse: 0, // 账户总余额 可用
                 crash: 1000000, // 账户总余额
-                crashUse: 10, // 账户总余额 可用
+                crashUse: 0, // 账户总余额 可用
                 donate: 100000, // 赠款
-                donateUse: 10, // 赠款可用
+                donateUse: 0, // 赠款可用
             },
             // 广告统计 数据
             statistics: {

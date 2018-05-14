@@ -6,7 +6,7 @@
             <Form :label-width="100">
                 <FormItem label="选择推广目的">
                     <RadioGroup v-model="landing_type" type="button" size="large">
-                        <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Radio>
+                        <Radio :disabled="id && item.val_type !== landing_type" :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Radio>
                     </RadioGroup>
                 </FormItem>
                 <FormItem label="预算">
@@ -15,7 +15,7 @@
                     </RadioGroup>
                 </FormItem>
                 <FormItem v-show="budget_mode!='BUDGET_MODE_INFINITE'">
-                    <Input v-model="budget" placeholder="RMB"></Input>
+                    <Input @on-blur="handleBudget" v-model="budget" placeholder="RMB"></Input>
                 </FormItem>
                 <Row>
                 </Row>
@@ -44,6 +44,10 @@ export default {
             landing_type: "LINK", //广告组推广目的
             budget_mode: "BUDGET_MODE_INFINITE", //广告组预算类型
             budget: "", //广告组预算
+            budgetTip: {
+                isSubmit: true,
+                tip: '日预算不少于1000元'
+            }, // 日预算规则
             campaign_name: "", //广告组名称
             modify_time: "" //时间戳
         };
@@ -54,6 +58,22 @@ export default {
         }
     },
     methods: {
+        // 监听日预算
+        handleBudget() {
+            let budget = this.budget = parseInt(this.budget)
+            if (isNaN(budget)) {
+                this.budget = 1000
+            }
+            if (this.budget_mode === 'BUDGET_MODE_DAY' && this.budget < 1000) {
+                this.budgetTip.isSubmit = false
+                this.$Notice.warning({
+                    title: this.budgetTip.tip
+                });
+                return
+            } else {
+                this.budgetTip.isSubmit = true
+            }
+        },
         //广告组获取详情
         getCampaigns() {
             Axios.post("api.php", {
@@ -79,6 +99,7 @@ export default {
         },
         //广告组修改
         updateCampaign() {
+            this.handleBudget()
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "updateCampaign",
@@ -88,7 +109,7 @@ export default {
                 campaign_name: this.campaign_name,
                 landing_type: this.landing_type,
                 budget_mode: this.budget_mode,
-                budget: this.budget
+                budget: this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budget
             })
                 .then(res => {
                     if (res.ret == 1) {
@@ -109,6 +130,10 @@ export default {
         },
         //添加广告组
         addCampaign() {
+            // 次account_id 只在开发时使用，上线前删掉
+            this.account_id = '93949559469'
+
+            this.handleBudget()
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "addCampaign",
@@ -116,7 +141,7 @@ export default {
                 campaign_name: this.campaign_name,
                 landing_type: this.landing_type,
                 budget_mode: this.budget_mode,
-                budget:this.formItem.budget_mode=="BUDGET_MODE_INFINITE"?"": this.formItem.budget,
+                budget:this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budget
           
             })
                 .then(res => {

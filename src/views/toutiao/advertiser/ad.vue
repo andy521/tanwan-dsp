@@ -294,12 +294,12 @@ export default {
                                     on: {
                                         click: () => {
                                             let query = {
-                                                id: params.row.adgroup_name
+                                                id: params.row.id
                                             };
-                                            // this.$router.push({
-                                            //     name: "uc_plan",
-                                            //     query: query
-                                            // });
+                                            this.$router.push({
+                                                name: "tt_creative",
+                                                query: query
+                                            });
                                         }
                                     }
                                 },
