@@ -8,7 +8,7 @@
 <template>
     <Card shadow class="margin-top-10">
         <span class="red">选择账户:</span>
-        <Select v-model="account_id" placeholder="请选择帐号" class="sel" @on-change="setAccount();">
+        <Select v-model="account_id" filterable placeholder="请选择帐号" class="sel" @on-change="setAccount();">
             <Option v-for="item in accountList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
         </Select>
 

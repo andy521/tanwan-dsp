@@ -53,10 +53,6 @@
     color: #57a3f3;
 }
 
-.table-statistics {
-    color: #2b7ed1;
-    font-weight: bold;
-}
 
 .campaign_name {
     font-size: 18px;

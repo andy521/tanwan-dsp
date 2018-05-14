@@ -13,23 +13,6 @@
   text-align: left;
   width: 110px;
 }
-.name_text {
-  color: #2b7ed1;
-  cursor: pointer;
-}
-.name_text:hover {
-  text-decoration: underline;
-}
-.copy_link,
-.edit_link,
-.del_link {
-  cursor: pointer;
-  color: #2b7ed1;
-  margin-right: 5px;
-}
-.del_link {
-  color: #ff7474;
-}
 .ivu-tooltip-inner {
   white-space: normal;
 }
@@ -101,7 +84,7 @@
                 </Col>
             </Row>
             <div>
-                <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
+                <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe :row-class-name="rowClassName"></Table>
                 <Row class="margin-top-10">
                     <Col span="10"> 表格尺寸
                     <Radio-group v-model="tableSize" type="button">
@@ -204,6 +187,12 @@ export default {
                 column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
         },
+         //表格高亮calss
+        rowClassName(row, index) {
+            if (row._disabled) {
+                return "table-statistics";
+            }
+        },
         //改变日期
         changeDate(e) {
             this.DateDomain = e;
@@ -257,8 +246,8 @@ export default {
                     if (res.ret == 1) {
                         console.log(res.data.list);
                         //添加统计
-                        // res.data.curr_page_total._disabled = true;
-                        // res.data.list.push(res.data.curr_page_total);
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                         this.newAdList = res.data.list;
@@ -278,13 +267,17 @@ export default {
                 {
                     type: "selection",
                     width: 58,
-                    key: ""
+                    key: ""  
                 },
                 {
                     title: "广告计划",
                     key: "adgroup_name",
                     width: 250,
                     render: (h, params) => {
+                    if (params.row._disabled) {
+                        return h("span", "本页统计");
+                    }
+                    else{
                         let value = params.row.adgroup_name;
                         return [
                             h(
@@ -367,6 +360,7 @@ export default {
                                 }
                             })
                         ];
+                    } 
                     }
                 },
                 {
@@ -444,6 +438,7 @@ export default {
                     width: 150,
                     render: (h, params) => {
                         let value = params.row.budget;
+                        if(!value)return;
                         //三位数加逗号
                         let newvalue = value
                             .toString()
@@ -567,6 +562,7 @@ export default {
                     width: 100,
                     render: (h, params) => {
                         let value = params.row.bid;
+                        if(!value)return;
                         let is_stage2bid = "0";
                         //三位数加逗号
                         let newvalue = value
@@ -870,6 +866,7 @@ export default {
                     key: "",
                     width: 130,
                     render: (h, params) => {
+                        if(params.row._disabled)return;
                         return [
                             h(
                                 "span",
