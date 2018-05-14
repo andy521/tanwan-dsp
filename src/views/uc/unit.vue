@@ -97,7 +97,7 @@
                 </Radio-group>
                 每页显示
                 <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getUnit()">
-                    <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                    <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                 </Select>
                 </Col>
                 <Col span="14" style="text-align: right;">
@@ -386,6 +386,7 @@ export default {
                 orderField: this.orderField,
                 orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
             };
+            this.loading=true;
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
@@ -393,6 +394,7 @@ export default {
                         this.loading = false;
                          //添加统计
                         res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
                         res.data.list.push(res.data.curr_page_total);
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
@@ -999,13 +1001,13 @@ export default {
                 download_convert: {
                     title: "下载激活率",
                     sortable: "custom",
-                    key: "download_convert",
+                    key: "activation_per_download",
                     width: 130
                 },
                 conversion: {
                     title: "注册设备数",
                     sortable: "custom",
-                    key: "conversion",
+                    key: "reg_dev",
                     width: 120
                 },
                 app_reg_cost: {
@@ -1023,7 +1025,7 @@ export default {
                 reg_cost: {
                     title: "注册成本",
                     sortable: "custom",
-                    key: "reg_cost",
+                    key: "cost_per_reg",
                     width: 120
                 },
                 reg_per: {
@@ -1047,7 +1049,7 @@ export default {
                 active_per: {
                     title: "活跃率",
                     sortable: "custom",
-                    key: "active_per",
+                    key: "active_per_reg",
                     width: 100
                 },
                 pay_num: {
@@ -1065,13 +1067,13 @@ export default {
                 pay_per: {
                     title: "付费率",
                     sortable: "custom",
-                    key: "pay_per",
+                    key: "pay_per_reg",
                     width: 100
                 },
                 income_per: {
                     title: "回本率",
                     sortable: "custom",
-                    key: "income_per",
+                    key: "roi",
                     width: 100
                 },
                 chargeType: {

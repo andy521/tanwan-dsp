@@ -1,4 +1,18 @@
-<style>
+<style scoped>
+.sel {
+  width: 220px;
+}
+.inp {
+  display: inline-block;
+  width: 150px;
+}
+.ad .ivu-poptip {
+  display: inline-block;
+}
+.sel_state {
+  text-align: left;
+  width: 110px;
+}
 .name_text {
   color: #2b7ed1;
   cursor: pointer;
@@ -97,7 +111,7 @@
                     </Radio-group>
                     每页显示
                     <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-                        <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                        <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                     </Select>
                     </Col>
                     <Col span="14" style="text-align: right;">
@@ -110,7 +124,7 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import viewTip from "./components/viewPopti.vue";
+import viewTip from "../components/viewPopti.vue";
 import {
     DateShortcuts,
     formatDate,
@@ -118,7 +132,7 @@ import {
     deepClone
 } from "@/utils/DateShortcuts.js";
 import searchTree from "@/components/select-tree/searchTree.vue";
-import campaignEcharts from "./components/campaignEcharts.vue";
+import campaignEcharts from "../components/campaignEcharts.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 export default {
     components: {
@@ -129,7 +143,7 @@ export default {
     },
     data() {
         return {
-            height: document.body.clientHeight - 360,
+            height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
             visible: false,
@@ -736,11 +750,11 @@ export default {
                     key: "",
                     width: 100
                 },
-                {
-                    title: "激活率",
-                    key: "active_rate",
-                    width: 100
-                },
+                // {
+                //     title: "激活率",
+                //     key: "active_rate",
+                //     width: 100
+                // },
                 {
                     title: "转化数",
                     key: "conversion",
@@ -783,7 +797,7 @@ export default {
                 },
                 {
                     title: "活跃率",
-                    key: "active_rate",
+                    key: "active_per_reg",
                     width: 100
                 },
                 {
@@ -798,7 +812,7 @@ export default {
                 },
                 {
                     title: "付费率",
-                    key: "pay_rate",
+                    key: "pay_per_reg",
                     width: 100
                 },
                 {

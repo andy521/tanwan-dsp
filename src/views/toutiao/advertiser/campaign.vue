@@ -1,5 +1,19 @@
 
-<style>
+<style scoped>
+.sel {
+  width: 220px;
+}
+.inp {
+  display: inline-block;
+  width: 150px;
+}
+.ad .ivu-poptip {
+  display: inline-block;
+}
+.sel_state {
+  text-align: left;
+  width: 110px;
+}
 .name_text {
   color: #2b7ed1;
   cursor: pointer;
@@ -26,7 +40,7 @@
                 <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Input class="inp" placeholder="请输入创意ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
                 <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
                 <Col span="4" style="text-align: right;">
@@ -42,21 +56,17 @@
             <Row>
                 <Col span="20">
                 <!--自定义指标-->
-                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCreatives"></view-tip>
+                <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
                 <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
                     <Option value="LINK">推广落地页</Option>
                     <Option value="APP">推广应用下载</Option>
                     <Option value="DPA">产品目录</Option>
                 </Select>
-                <Select placeholder="操作状态" v-model="opt_status" class="sel_state" @on-change="getCampaignsList()">
+                <Select placeholder="操作状态" v-model="status" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
-                    <Option value="CREATIVE_STATUS_ENABLE">启用</Option>
-                    <Option value="CREATIVE_STATUS_DISABLE">暂停</Option>
-                </Select>
-                <Select placeholder="审核状态" v-model="status" class="sel_state" @on-change="getCampaignsList()" style="width:120px">
-                    <Option value="">不限</Option>
-                    <Option :value="item.val_type" v-for="item in toutiaoConfig.creative_status" :key="this">{{item.name}}</Option>
+                    <Option value="CAMPAIGN_STATUS_ENABLE">启用</Option>
+                    <Option value="CAMPAIGN_STATUS_DISABLE">暂停</Option>
                 </Select>
                 <!--选择负责人-->
                 <select-author @on-change="authorChange"></select-author>
@@ -92,7 +102,7 @@
                     </Radio-group>
                     每页显示
                     <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-                        <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                        <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                     </Select>
                     </Col>
                     <Col span="14" style="text-align: right;">
@@ -105,8 +115,8 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import viewTip from "./components/viewPopti.vue";
-import newEdit from "./components/newEdit.vue";
+import viewTip from "../components/viewPopti.vue";
+import newEdit from "../components/newEdit.vue";
 import {
     DateShortcuts,
     formatDate,
@@ -114,23 +124,19 @@ import {
     deepClone
 } from "@/utils/DateShortcuts.js";
 import searchTree from "@/components/select-tree/searchTree.vue";
-import campaignEcharts from "./components/campaignEcharts.vue";
+import campaignEcharts from "../components/campaignEcharts.vue";
 import selectAuthor from "@/components/select-author/index.vue";
-import toutiaoConfig from "@/utils/toutiaoConfig.json";
-import createidea from "./components/createIdea.vue";
 export default {
     components: {
         viewTip,
         searchTree,
         campaignEcharts,
         newEdit,
-        selectAuthor,
-        createidea
+        selectAuthor
     },
     data() {
         return {
-            toutiaoConfig: toutiaoConfig,
-            height: document.body.clientHeight - 360,
+            height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
             visible: false,
@@ -144,8 +150,7 @@ export default {
             loading: false,
             taCheckids: [], //选中ids
             options: DateShortcuts, //日期辅助功能
-            status: "",//审核状态
-            opt_status: "", //操作状态
+            status: "", //状态
             landing_type: "", //推广目的
             keyword: "", //关键字
             orderField: "", //排序参数名
@@ -188,7 +193,8 @@ export default {
         //排序
         sortchange(column) {
             this.orderField = column.key;
-            this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
+            this.orderDirection =
+                column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
         },
         //改变日期
@@ -200,7 +206,7 @@ export default {
         editStatus() {
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "updateCreativeStatus",
+                opt: "updateCampaignStatus",
                 ids: this.taCheckids,
                 opt_status: this.edit_status
             })
@@ -215,7 +221,7 @@ export default {
                     console.log("修改状态失败" + err);
                 });
         },
-        //获取广告创意
+        //获取实时投放计划
         getCampaignsList(page) {
             if (page === undefined) {
                 this.$refs["pages"].currentPage = 1;
@@ -226,13 +232,12 @@ export default {
             this.loading = true;
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "searchCreatives",
+                opt: "searchCampaigns",
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
                 keyword: this.keyword, //关键字
-                status: this.status,//审核状态
-                opt_status: this.opt_status, //操作状态
+                status: this.status, //状态
                 game_ids: this.game_id, //游戏id数组
                 landing_type: this.landing_type, //推广目的
                 orderField: this.orderField, //排序的orderField参数名
@@ -269,78 +274,112 @@ export default {
                     key: ""
                 },
                 {
-                    title: "创意",
-                    key: "content",
-                    width: 250,
+                    title: "广告组名称",
+                    key: "campaign_name",
+                    width: 200,
                     render: (h, params) => {
-                        return h(createidea, {
-                            props: {
-                                title: params.row.title,
-                                image_info: params.row.image_info,
-                                // source:params.row.source
-                            }
-                        });
+                        let value = params.row.campaign_name;
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "name_text",
+                                    on: {
+                                        click: () => {
+                                            let query = {
+                                                id: params.row.campaign_name
+                                            };
+                                            // this.$router.push({
+                                            //     name: "uc_plan",
+                                            //     query: query
+                                            // });
+                                        }
+                                    }
+                                },
+                                params.row.campaign_name
+                            ),
+                            h("i-button", {
+                                props: {
+                                    icon: "edit",
+                                    type: "text",
+                                    size: "small"
+                                },
+                                class: ["edit"],
+                                on: {
+                                    click: () => {
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return h("Input", {
+                                                    props: {
+                                                        value: params.row.campaign_name,
+                                                        autofocus: true,
+                                                        placeholder: "请输入广告组名称"
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            value = val;
+                                                        }
+                                                    }
+                                                });
+                                            },
+                                            onOk: () => {
+                                                if (value == "") {
+                                                    this.$Message.info("请输入修改信息");
+                                                    return;
+                                                }
+                                                Axios.post("api.php", {
+                                                    action: "ttAdPut",
+                                                    opt: "updateCampaign",
+                                                    account_id: params.row.account_id,
+                                                    modify_time: params.row.modify_time,
+                                                    campaign_id: params.row.campaign_id,
+                                                    campaign_name: value
+                                                })
+                                                    .then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList(this.page);
+                                                        }
+                                                    })
+                                                    .catch(err => {
+                                                        console.log("修改广告组名失败" + err);
+                                                    });
+                                            }
+                                        });
+                                    }
+                                }
+                            })
+                        ];
                     }
                 },
-                {
-                    title: "创意ID",
-                    key: "adcreative_id",
-                    width: 150
-                },
-                {
-                    title: "广告计划",
-                    key: "adgroup_name",
-                    width: 200
-                },
-                {
-                    title: "广告组",
-                    key: "campaign_name",
-                    width: 200
-                },
-
                 {
                     title: "账户名",
                     key: "account_id",
                     width: 120
                 },
                 {
-                    title: "状态",
+                    title: "开关/状态",
                     key: "status",
-                    width: 120,
-                    render: (h, params) => {
-                        let creative_status;
-                        this.toutiaoConfig.creative_status.forEach(v => {
-                            if (params.row.status == v.val_type) {
-                                creative_status = v.name;
-                            }
-                        });
-                        return h("span", creative_status);
-                    }
-                },
-                {
-                    title: "开关",
-                    key: "opt_status",
                     width: 100,
                     render: (h, params) => {
-                        console.log(params.row.opt_status)
-                        if (!params.row.opt_status) {
+                        if (!params.row.status) {
                             return;
                         } else {
                             return h("div", [
                                 h("i-switch", {
                                     props: {
                                         size: "small",
-                                        value: params.row.opt_status == "CREATIVE_STATUS_ENABLE" ? true : false
+                                        value: params.row.status == "CAMPAIGN_STATUS_ENABLE" ? true : false
                                     },
                                     style: {
                                         marginRight: "10px"
                                     },
                                     on: {
                                         "on-change": value => {
-                                            params.row.opt_status = value == true ? "CREATIVE_STATUS_ENABLE" : "CREATIVE_STATUS_DISABLE";
+                                            params.row.status = value == true ? "CAMPAIGN_STATUS_ENABLE" : "CAMPAIGN_STATUS_DISABLE";
                                             Axios.post("api.php", {
                                                 action: "ttAdPut",
-                                                opt: "updateCreativeStatus",
+                                                opt: "updateCampaignStatus",
                                                 ids: params.row.id.split(","),
                                                 opt_status: value == true ? "enable" : "disable"
                                             }).then(res => {
@@ -354,7 +393,7 @@ export default {
                                         }
                                     }
                                 }),
-                                h("span", params.row.opt_status == "CREATIVE_STATUS_ENABLE" ? "开启" : "关闭")
+                                h("span", params.row.status == "CAMPAIGN_STATUS_ENABLE" ? "开启" : "关闭")
                             ]);
                         }
                     }
@@ -412,12 +451,12 @@ export default {
                     width: 120,
                     sortable: "custom"
                 },
-                {
-                    title: "激活率",
-                    key: "active_rate",
-                    width: 100,
-                    sortable: "custom"
-                },
+                // {
+                //     title: "激活率",
+                //     key: "active_rate",
+                //     width: 100,
+                //     sortable: "custom"
+                // },
                 {
                     title: "转化数",
                     key: "conversion",
@@ -467,7 +506,7 @@ export default {
                 },
                 {
                     title: "活跃率",
-                    key: "active_rate",
+                    key: "active_per_reg",
                     width: 100,
                     sortable: "custom"
                 },
@@ -484,7 +523,7 @@ export default {
                 },
                 {
                     title: "付费率",
-                    key: "pay_rate",
+                    key: "pay_per_reg",
                     width: 100,
                     sortable: "custom"
                 },
@@ -524,37 +563,81 @@ export default {
                     key: "",
                     width: 100
                 },
+                {
+                    title: "负责人",
+                    key: "author",
+                    width: 100
+                },
                 // {
                 //     title: "广告质量度",
                 //     key: "",
                 //     width: 100
                 // },
                 {
-                    title: "负责人",
-                    key: "author",
-                    width: 100
-                },
-                {
                     title: "操作",
                     key: "",
                     width: 130,
                     render: (h, params) => {
-                        return h("span",
-                            {
-                                class: "edit_link",
-                                on: {
-                                    click: () => {
-                                        this.$router.push({
-                                            name: "ttcampaign",
-                                            query: {
-                                                id: params.row.id
-                                            }
-                                        });
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "edit_link",
+                                    on: {
+                                        click: () => {
+                                            this.$router.push({
+                                                name: "ttcampaign",
+                                                query: {
+                                                    id: params.row.id
+                                                }
+                                            });
+                                        }
                                     }
-                                }
-                            },
-                            "编辑"
-                        );
+                                },
+                                "编辑"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "copy_link",
+                                    on: {
+                                        click: () => { }
+                                    }
+                                },
+                                "复制"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "del_link",
+                                    on: {
+                                        click: value => {
+                                            this.$Modal.confirm({
+                                                title: "操作提示",
+                                                content: "<p>确认删除</p>",
+                                                onOk: () => {
+                                                    Axios.post("api.php", {
+                                                        action: "ttAdPut",
+                                                        opt: "updateCampaignStatus",
+                                                        ids: params.row.id.split(","),
+                                                        opt_status: "delete"
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList(this.page);
+                                                        }
+                                                    }).catch(err => {
+                                                        console.log("修改状态失败" + err);
+                                                    });
+                                                },
+                                                onCancel: () => { }
+                                            });
+                                        }
+                                    }
+                                },
+                                "删除"
+                            )
+                        ];
                     }
                 }
             ];

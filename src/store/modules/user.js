@@ -8,8 +8,12 @@ const user = {
         //用户自定义指标
         userindex:[],
         //account:'',
+        report_account_id:""
     },
-    mutations: {        
+    mutations: {   
+        REPORT_ACCOUNT_ID(state,id){
+            state.report_account_id=id;
+        },
         USER_LOGINOUT ( state ){
             state.username = ''
             state.isLogin = 0 

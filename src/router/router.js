@@ -75,13 +75,14 @@ export const otherRouter = {
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
     {
-        path: '/',
+        path: '/index',
         icon: 'ios-home',
         name: 'overview',
-        title: '账户总览',
+        redirect: '/home',
+        title: '账户总览1',
         component: Main,
         children: [
-            { path: 'index', title: '账户总览', name: 'home_index', component: () => import('@/views/home/home.vue') }
+            { path: '/', title: '账户总览', name: 'home_index', icon: 'ios-home', component: () => import('@/views/home/home.vue') }
         ]
     },
     {
@@ -94,7 +95,11 @@ export const appRouter = [
         children: [
             { path: 'plan', title: '实时投放计划', name: 'time_plan', meta: { keepAlive: false}, icon: 'android-radio-button-off', component: () => import('@/views/time/plan.vue')},
             { path: 'ad', title: '实时投放广告', name: 'time_ad', icon: 'android-radio-button-off', component: () => import('@/views/time/ad.vue') },
-            { path: 'finance', title: '财务', name: 'time_finance', icon: 'android-radio-button-off', component: () => import('@/views/time/finance.vue') },
+            { path: 'finance', title: '财务', name: 'time_finance', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
+            children: [ 
+                { path: 'journal', title: '资金流水', name: 'time_journal',  component: () => import('@/views/time/finance/journal.vue')},
+                { path: 'funds', title: '财务信息', name: 'time_funds', component: () => import('@/views/time/finance/funds.vue') },  
+            ]},
         ]
     },
     {
@@ -120,12 +125,18 @@ export const appRouter = [
         component: Main,
         children: [           
             { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
-            { path: 'advertiser', title: '推广管理', name: 'tt_campaign', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/advertiser.vue'),
+            { path: 'advertiser', title: '推广管理', name: 'tt_advertiser', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
-                { path: 'campaign', title: '广告组', name: 'tt_campaign',  component: () => import('@/views/toutiao/campaign.vue')},
-                { path: 'ad', title: '广告计划', name: 'tt_ad', component: () => import('@/views/toutiao/ad.vue') },  
-                { path: 'creative', title: '创意', name: 'tt_creative', component: () => import('@/views/toutiao/creative.vue') },    
-            ]}       
+                { path: 'campaign', title: '广告组', name: 'tt_campaign',  component: () => import('@/views/toutiao/advertiser/campaign.vue')},
+                { path: 'ad', title: '广告计划', name: 'tt_ad', component: () => import('@/views/toutiao/advertiser/ad.vue') },  
+                { path: 'creative', title: '创意', name: 'tt_creative', component: () => import('@/views/toutiao/advertiser/creative.vue') },    
+            ]},
+            { path: 'report', title: '数据报告', name: 'tt_report', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
+            children: [ 
+                { path: 'statement', title: '账户报表', name: 'tt_statement',  component: () => import('@/views/toutiao/report/statement.vue')},
+                { path: 'audience', title: '受众分析', name: 'tt_audience', component: () => import('@/views/toutiao/report/audience.vue') },  
+                // { path: 'bid', title: '效果广告报告', name: 'tt_bid', component: () => import('@/views/toutiao/report/bid.vue') }   
+            ]}
         ]
     },
     {

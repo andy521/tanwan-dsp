@@ -89,7 +89,7 @@
                 </Radio-group>
                 每页显示
                 <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getSpread()">
-                    <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                    <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                 </Select>
                 </Col>
                 <Col span="14" style="text-align: right;">
@@ -203,7 +203,6 @@
                 </Form>
             </div>
         </Modal>
-
     </div>
 </template>
 <script>
@@ -449,6 +448,7 @@ export default {
                         this.loading = false;
                          //添加统计
                         res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
                         res.data.list.push(res.data.curr_page_total);
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
@@ -894,7 +894,7 @@ export default {
                     width: 100
                 },
                 {
-                    title: "点击量",
+                    title: "点击",
                     sortable: "custom",
                     key: "click",
                     width: 100
@@ -906,7 +906,7 @@ export default {
                     width: 100
                 },
                 {
-                    title: "平均点击价格",
+                    title: "平均点击成本",
                     sortable: "custom",
                     key: "cpc",
                     width: 140
@@ -930,7 +930,7 @@ export default {
                     width: 140
                 },
                 {
-                    title: "点击激活率",
+                    title: "转化率",
                     key: "cvr",
                     sortable: "custom",
                     width: 140
@@ -944,12 +944,12 @@ export default {
                 {
                     title: "激活安装率",
                     sortable: "custom",
-                    key: "install_per",
+                    key: "reg_per_activation",
                     width: 140
                 },
                 {
                     title: "注册设备数",
-                    key: "conversion",
+                    key: "reg_dev",
                     sortable: "custom",
                     width: 140
                 },
@@ -967,14 +967,14 @@ export default {
                 {
                     title: "注册成本",
                     sortable: "custom",
-                    key: "reg_cost",
+                    key: "cost_per_reg",
                     width: 130
                 },
                 {
-                    title: "注册率",
+                    title: "点击注册率",
                     sortable: "custom",
-                    key: "reg_per",
-                    width: 100
+                    key: "reg_per_click",
+                    width: 120
                 },
                 {
                     title: "注册ARPU",
@@ -991,32 +991,32 @@ export default {
                 {
                     title: "活跃率",
                     sortable: "custom",
-                    key: "active_per",
+                    key: "active_per_reg",
                     width: 100
                 },
                 {
-                    title: "付费人数",
-                    sortable: "custom",
-                    key: "pay_num",
-                    width: 130
-                },
-                {
-                    title: "付费金额",
+                    title: "注册后付费人数",
                     sortable: "custom",
                     key: "pay_total",
-                    width: 130
+                    width: 140
+                },
+                {
+                    title: "注册后付费金额",
+                    sortable: "custom",
+                    key: "pay_num",
+                    width: 140
                 },
                 {
                     title: "付费率",
                     sortable: "custom",
-                    key: "pay_per",
+                    key: "pay_per_reg",
                     width: 100
                 },
 
                 {
                     title: "回本率",
                     sortable: "custom",
-                    key: "income_per",
+                    key: "roi",
                     width: 100
                 },
                 {
@@ -1091,12 +1091,12 @@ export default {
                 //     sortable: "custom",
                 //     width: 100
                 // },
-                // {
-                //     title: "转换成本",
-                //     key: "conversion_cost",
-                //     sortable: "custom",
-                //     width: 100
-                // },
+                {
+                    title: "转换成本",
+                    key: "cost_per_conversion",
+                    sortable: "custom",
+                    width: 100
+                },
                 {
                     title: "操作",
                     align: "center",

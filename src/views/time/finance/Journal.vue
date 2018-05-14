@@ -1,6 +1,6 @@
 <style>
-.mt20 {
-    margin-top: 20px;
+.mt10 {
+    margin-top: 10px;
 }
 .table-statistics {
     color: #2b7ed1;
@@ -9,11 +9,12 @@
 </style>
 
 <template>
-    <div>
+    <Card shadow>
 
         <Row>
             <Col span="18">
             <Select v-model="account_id" placeholder="请选择帐号" style="width:250px;" @on-change="getfund()">
+                <Option value="">全部帐号</Option>
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
@@ -29,7 +30,7 @@
             <Button type="ghost" icon="document-text" @click="downmodal=true">下载所有数据</Button>
             </Col>
         </Row>
-        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20" :row-class-name="rowClassName" ref="journaltable"></Table>
+        <Table :columns="fundcolumns" :data="funddata"  :loading="loading" :size="tableSize" class="mt10" :row-class-name="rowClassName" ref="journaltable"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -39,7 +40,7 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getfund()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -50,20 +51,19 @@
         <Modal v-model="downmodal" title="选择时间" @on-ok="exportDatas" loading>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="downDateDomain" @on-change="changeDownDate"></DatePicker>
         </Modal>
-    </div>
+    </Card>
 </template>
 <script>
 import Axios from "@/api/index";
-import { DateShortcuts } from "@/utils/DateShortcuts.js";
+import { DateShortcuts,formatDate } from "@/utils/DateShortcuts.js";
 export default {
-    name: "financeJournal",
     data() {
         return {
             account_id: "",
             fundType: "1",
             options: DateShortcuts, //日期辅助功能
             //筛选时间
-            DateDomain: [],
+            DateDomain: [formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"), formatDate(new Date(), "yyyy-MM-dd")],
             downDateDomain: [],
             loading: false,
             mediaList: [],
@@ -145,7 +145,6 @@ export default {
         };
     },
     mounted() {
-        this.setDateDomain();
         this.getMedia();
         this.getfund();
     },
@@ -201,14 +200,6 @@ export default {
                 return "table-statistics";
             }
         },
-        //设置筛选时间
-        setDateDomain() {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            this.DateDomain = [start, end];
-            this.downDateDomain = [start, end];
-        },
         //改变日期
         changeDate(e) {
             this.DateDomain = e;
@@ -242,6 +233,7 @@ export default {
                     if (res.ret == 1) {
                         //添加统计
                         res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
                         res.data.list.push(res.data.curr_page_total);
                         this.funddata = res.data.list;
                         this.total_number = res.data.total_number;
