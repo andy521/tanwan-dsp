@@ -32,7 +32,6 @@
                     <Option value="age">年龄</Option>
                 </Select>
             </div>
-            <report-chart :datas="echart" title="数据趋势" class="margin-top-10"></report-chart>
 
             <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-sort-change="sortchange" stripe></Table>
             <Row class="margin-top-10">
@@ -56,14 +55,13 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import echarts from "echarts";
 import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-import reportChart from "../components/reportChart.vue";
+// import reportChart from "../components/reportChart.vue";
 
 export default {
     name:"audienceAccount",
     components: {
-        reportChart
+        // reportChart
     },
     data() {
         return {

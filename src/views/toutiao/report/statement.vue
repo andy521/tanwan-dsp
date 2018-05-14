@@ -24,13 +24,13 @@
         <Card shadow class="margin-top-10">
             <span>时间范围</span>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-            <span>汇总方式</span>
-            <Select v-model="type" class="sel_state" placeholder="汇总方式" @on-change="getHourReporting()">
-                <Option value="Day">分日</Option>
-                <Option value="Hour">分时</Option>
-            </Select>
-            <report-chart :datas="echart" title="数据趋势" class="margin-top-10"></report-chart>
+            <span class="margin-left-10">汇总方式</span>
+            <RadioGroup v-model="type" @on-change="getHourReporting()">
+                <Radio label="Day">分日</Radio>
+                <Radio label="Hour">分时</Radio>
+            </RadioGroup>
 
+            <report-echarts :datas="echart" title="数据趋势" class="margin-top-10"></report-echarts>
             <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-sort-change="sortchange" stripe></Table>
             <Row class="margin-top-10">
                 <Col span="10"> 表格尺寸
@@ -53,14 +53,13 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import echarts from "echarts";
 import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-import reportChart from "../components/reportChart.vue";
 import accountId from "../components/accountId.vue";
+import reportEcharts from "../components/reportEcharts.vue";
 export default {
     components: {
-        reportChart,
-        accountId
+        accountId,
+        reportEcharts
     },
     data() {
         return {

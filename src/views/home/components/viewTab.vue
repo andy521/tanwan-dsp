@@ -81,8 +81,8 @@
 
             <div class="tr">
                 <div class="search_area">
-                    <Input v-model="keyword" placeholder="请输入要搜索的内容" @on-enter="tableData">
-                    <Button slot="append" icon="ios-search" @on-click="tableData"></Button>
+                    <Input v-model="keyword" placeholder="请输入要搜索的内容" @on-enter="tableData()">
+                    <Button slot="append" icon="ios-search" @click="tableData()"></Button>
                     </Input>
                 </div>
                 <!-- <select-author :is-linkage="true" :media-type="media_type"  @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->

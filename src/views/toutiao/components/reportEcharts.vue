@@ -43,7 +43,7 @@
 <script>  
 import echarts from 'echarts';
 export default {
-    name: 'reportChart',
+    name: 'reportEcharts',
     props: {
         datas: {
             type: [Object, Array]
@@ -108,6 +108,7 @@ export default {
                         seriesData.type = list[x].type;
                         seriesData.data = s;
                         seriesData.name = list[x].name;
+                        seriesData.smooth=true;
                         series.push(seriesData);
                         return;
                     }
@@ -126,11 +127,6 @@ export default {
                 legend: {
                     data: name
                 },
-                // toolbox: {
-                //     feature: {
-                //         saveAsImage: {}
-                //     }
-                // },
                 grid: { left: '2%', right: '3%', bottom: '2%', containLabel: true },
                 xAxis: {
                     type: 'category',
