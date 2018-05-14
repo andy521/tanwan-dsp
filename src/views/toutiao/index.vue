@@ -7,6 +7,7 @@
 .account-table .ivu-table th {
   text-align: center;
 }
+
 .g-flex {
   display: flex;
   justify-content: space-between;
