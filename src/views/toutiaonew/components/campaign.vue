@@ -1,40 +1,62 @@
 
+<style>
+.formitem {
+    background-color: #fff;
+    padding: 10px;
+}
+.formitem .ivu-tabs-bar {
+  border-bottom: none;
+  margin-bottom: 38px;
+}
+</style>
+
 <template>
     <div class="formitem">
-        <Row>
-            <Col span="12">
-            <Form :label-width="100">
-                <FormItem label="选择推广目的">
-                    <RadioGroup v-model="landing_type" type="button" size="large">
-                        <Radio :disabled="id && item.val_type !== landing_type" :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Radio>
-                    </RadioGroup>
-                </FormItem>
-                <FormItem label="预算">
-                    <RadioGroup v-model="budget_mode" key="*this" type="button" size="large">
-                        <Radio :label="item.val_type" v-for="item in toutiaoConfig.budget_mode" :key="this" :disabled="item.val_type=='BUDGET_MODE_TOTAL'?true:false">{{item.name}}</Radio>
-                    </RadioGroup>
-                </FormItem>
-                <FormItem v-show="budget_mode!='BUDGET_MODE_INFINITE'">
-                    <Input @on-blur="handleBudget" v-model="budget" placeholder="RMB"></Input>
-                </FormItem>
+
+        <Tabs :animated="false">
+            <TabPane label="创建新广告组">
                 <Row>
+                    <Col span="12">
+                        <Form :label-width="100">
+                            <FormItem label="选择推广目的">
+                                <RadioGroup v-model="landing_type" type="button" size="large">
+                                    <Radio :disabled="id && item.val_type !== landing_type" :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Radio>
+                                </RadioGroup>
+                            </FormItem>
+                            <FormItem label="预算">
+                                <RadioGroup v-model="budget_mode" key="*this" type="button" size="large">
+                                    <Radio :label="item.val_type" v-for="item in toutiaoConfig.budget_mode" :key="this" :disabled="item.val_type=='BUDGET_MODE_TOTAL'?true:false">{{item.name}}</Radio>
+                                </RadioGroup>
+                            </FormItem>
+                            <FormItem v-show="budget_mode!='BUDGET_MODE_INFINITE'">
+                                <Input @on-blur="handleBudget" v-model="budget" placeholder="RMB"></Input>
+                            </FormItem>
+                            <FormItem label="广告组名称">
+                                <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
+                            </FormItem>
+                            <FormItem>
+                                <Button type="primary" @click="submitCampaign()">保存并继续</Button>
+                            </FormItem>
+                        </Form>
+                    </Col>
                 </Row>
-                <FormItem label="广告组名称">
-                    <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
-                </FormItem>
-                <FormItem>
-                    <Button type="primary" @click="submitCampaign()">保存并继续</Button>
-                </FormItem>
-            </Form>
-            </Col>
-        </Row>
+            </TabPane>
+            <TabPane label="选择已有广告组">
+                <cho-list @on-change="handleSeleCampaign"></cho-list>
+            </TabPane>
+        </Tabs>
+
     </div>
 </template>
 
 <script>
 import Axios from "@/api/index";
 import toutiaoConfig from "@/utils/toutiaoConfig.json";
+import choList from './choseList'
 export default {
+    components: {
+        choList
+    },
     data() {
         return {
             toutiaoConfig: toutiaoConfig,
@@ -58,6 +80,13 @@ export default {
         }
     },
     methods: {
+        // 监听所选广告组
+        handleSeleCampaign(campaign) {
+            this.$router.push({
+                name: 'ttad',
+                query:  campaign
+            })
+        },
         // 监听日预算
         handleBudget() {
             let budget = this.budget = parseInt(this.budget)
@@ -114,6 +143,9 @@ export default {
                 .then(res => {
                     if (res.ret == 1) {
                         this.$Message.info(res.msg);
+                        this.$router.push({
+                            name: 'tt_campaign'
+                        })
                     }
                 })
                 .catch(err => {
@@ -141,12 +173,15 @@ export default {
                 campaign_name: this.campaign_name,
                 landing_type: this.landing_type,
                 budget_mode: this.budget_mode,
-                budget:this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budget
-          
+                budget:this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budge
             })
                 .then(res => {
                     if (res.ret == 1) {
                         this.$Message.info(res.msg);
+                        this.$router.push({
+                            name: 'ttad',
+                            query:  res.data.campaign_id
+                        })
                     }
                 })
                 .catch(err => {

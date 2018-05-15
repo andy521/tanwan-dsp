@@ -1,7 +1,8 @@
 
 <template>
     <div class="formitem">
-        <Row>
+        几乎
+        <!-- <Row>
             <Col span="12">
             <Form :label-width="100">
                 <FormItem label="选择推广目的">
@@ -27,7 +28,7 @@
                 </FormItem>
             </Form>
             </Col>
-        </Row>
+        </Row> -->
     </div>
 </template>
 

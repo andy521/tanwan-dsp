@@ -59,6 +59,7 @@ export const ttNew = {
     component: () => import('@/views/toutiaonew/index.vue'),
     children: [
         { path: 'campaign', title: '新建头条广告组', name: 'ttcampaign', component: () => import('@/views/toutiaonew/components/campaign.vue') },
+        { path: 'campaign', title: '新建头条广告计划', name: 'ttad', component: () => import('@/views/toutiaonew/components/ad.vue') },
     ]
 };
 
