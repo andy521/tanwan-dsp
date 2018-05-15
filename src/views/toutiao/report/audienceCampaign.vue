@@ -6,6 +6,10 @@
   display: inline-block;
   width: 150px;
 }
+.cascader {
+  display: inline-block;
+  width: 400px;
+}
 .ad .ivu-poptip {
   display: inline-block;
 }
@@ -20,9 +24,7 @@
 <template>
     <div>
         <span>选择计划</span>
-        <Select v-model="adgroup_id" style="width:300px" filterable @on-change="getHourReporting();getaudienceReportingChart()">
-            <Option v-for="item in adgroup_list" :value="item.adgroup_id" :key="this">{{ item.adgroup_name }}</Option>
-        </Select>
+        <Cascader :data="campaign_list" :load-data="getAdgroups" class="cascader" @on-change="changeCascader"></Cascader>
         <div v-show="adgroup_id!=''" class="margin-top-10">
             <span>时间范围</span>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
@@ -103,8 +105,9 @@ export default {
     },
     data() {
         return {
+            campaign_id: "",
+            campaign_list: [],
             adgroup_id: "",
-            adgroup_list: [],
             options: DateShortcuts,
             //筛选时间
             DateDomain: [formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"), formatDate(new Date(), "yyyy-MM-dd")],
@@ -129,22 +132,53 @@ export default {
         }
     },
     mounted() {
-        this.getHourReporting();
-        this.getaudienceReportingChart();
         this.getCampaigns();
     },
     methods: {
+        //获取广告组
         getCampaigns() {
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "getAdgroups"
+                opt: "getCampaigns",
+                account_id: this.get_account_id
             }).then(
                 res => {
                     if (res.ret == 1) {
-                        this.adgroup_list = res.data;
+                        let campaign_list = [];
+                        res.data.forEach(v => {
+                            campaign_list.push({
+                                value: v.campaign_id,
+                                label: v.campaign_name,
+                                children: [],
+                                loading: false
+                            })
+                        });
+                        this.campaign_list = campaign_list;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
+        },
+        //获取计划
+        getAdgroups(item, callback) {
+            item.loading = true;
+            Axios.post("api.php", {
+                action: "ttAdPut",
+                opt: "getAdgroups",
+                campaign_id: item.value
+            }).then(
+                res => {
+                    if (res.ret == 1) {
+                        res.data.forEach(v => {
+                            item.children.push({
+                                value: v.adgroup_id,
+                                label: v.adgroup_name
+                            })
+                        });
+                        item.loading = false;
+                        callback();
+                    }
+                }
+            ).catch(err => { console.log(err) });
         },
         //获取列表
         getHourReporting(page) {
@@ -175,7 +209,7 @@ export default {
                         this.total_page = res.data.total_page;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
         },
         //获取图表列表
         getaudienceReportingChart() {
@@ -196,7 +230,17 @@ export default {
                         this.echart = res.data;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
+        },
+        //修改级联返回
+        changeCascader(labels, selectedData) {
+            const index = labels.length - 1;
+            const data = selectedData[index] || false;
+            if (data && data.value) {
+                this.adgroup_id = data.value;
+                this.getHourReporting();
+                this.getaudienceReportingChart();
+            }
         },
         //改变日期
         changeDate(e) {
@@ -220,8 +264,7 @@ export default {
     },
     watch: {
         get_account_id() {
-            this.getHourReporting();
-            this.getaudienceReportingChart();
+            this.getCampaigns();
         }
     },
     computed: {

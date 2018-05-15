@@ -18,7 +18,7 @@
 }
 </style>
 <template>
-    <div v-show="get_account_id!=''">
+    <div>
         <span>时间范围</span>
         <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
         <RadioGroup v-model="type_echart" @on-change="getaudienceReportingChart()">

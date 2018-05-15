@@ -21,7 +21,7 @@
     <div>
         <!-- 获取帐号 -->
         <account-id></account-id>
-        <Card shadow class="margin-top-10">
+        <Card shadow class="margin-top-10" v-if="get_account_id">
             <Menu mode="horizontal" active-name="bidcampaign" @on-select="totab">
                 <MenuItem name="bidcampaign">广告组</MenuItem>
                 <MenuItem name="bidad">广告计划</MenuItem>
@@ -58,6 +58,10 @@ export default {
             this.curent = val;
         }
     },
-
+    computed: {
+        get_account_id() {
+            return this.$store.state.user.report_account_id;
+        }
+    }
 };
 </script>

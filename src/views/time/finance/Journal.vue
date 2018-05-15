@@ -1,13 +1,3 @@
-<style>
-.mt10 {
-    margin-top: 10px;
-}
-.table-statistics {
-    color: #2b7ed1;
-    font-weight: bold;
-}
-</style>
-
 <template>
     <Card shadow>
 
@@ -30,7 +20,7 @@
             <Button type="ghost" icon="document-text" @click="downmodal=true">下载所有数据</Button>
             </Col>
         </Row>
-        <Table :columns="fundcolumns" :data="funddata"  :loading="loading" :size="tableSize" class="mt10" :row-class-name="rowClassName" ref="journaltable"></Table>
+        <Table :columns="fundcolumns" :data="funddata"  :loading="loading" :size="tableSize" class="margin-top-10" :row-class-name="rowClassName" ref="journaltable"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">

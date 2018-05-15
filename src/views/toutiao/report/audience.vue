@@ -21,7 +21,7 @@
     <div>
         <!-- 获取帐号 -->
         <account-id></account-id>
-        <Card shadow class="margin-top-10">
+        <Card shadow class="margin-top-10" v-if="get_account_id">
             <Menu mode="horizontal" active-name="audienceAccount" @on-select="totab">
                 <MenuItem name="audienceAccount">帐户</MenuItem>
                 <MenuItem name="audienceAd">广告组</MenuItem>
@@ -29,7 +29,7 @@
             </Menu>
             <!-- 能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。 -->
             <!-- <keep-alive> -->
-                <component :is="curent" class="margin-top-20"></component>
+            <component :is="curent" class="margin-top-20"></component>
             <!-- </keep-alive> -->
         </Card>
     </div>
@@ -58,6 +58,10 @@ export default {
             this.curent = val;
         }
     },
-
+    computed: {
+        get_account_id() {
+            return this.$store.state.user.report_account_id;
+        }
+    }
 };
 </script>
