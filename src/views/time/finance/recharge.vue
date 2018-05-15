@@ -1,156 +1,125 @@
-<style scoped>
-.smedia {
-  display: inline-block;
-  width: auto;
-  min-width: 150px;
-}</style>
 <template>
-    <Card shadow>
-        <div>
-            <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-            <!-- <select-media class="smedia" @on-change="mediaChange"></select-media> -->
-        </div>
-        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10"></Table>
-        <Row class="margin-top-10">
-            <Col span="10"> 表格尺寸
-            <Radio-group v-model="tableSize" type="button">
-                <Radio label="large">大</Radio>
-                <Radio label="default">中</Radio>
-                <Radio label="small">小</Radio>
-            </Radio-group>
-            每页显示
-            <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getfund()">
-                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
-            </Select>
-            </Col>
-            <Col span="14" style="text-align: right;">
-            <Page :total="total_number" :page-size="page_size" ref="fundpage" @on-change="getfund" show-elevator show-total></Page>
-            </Col>
-        </Row>
+    <Card dis-hover>
+        <Form ref="recharge" :model="recharge" :rules="rechargeRule" label-position="right" :label-width="110" style="width:500px">
+            <Form-item label="账户id" prop="account_id">
+                <Select v-model="recharge.account_id" placeholder="请选择帐号">
+                    <Option v-for="item in accountList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
+                </Select>
+            </Form-item>
+            
+            <Form-item label="充值金额" prop="money">
+                <Input v-model="recharge.money" placeholder="请输入"></Input>
+            </Form-item>
+            <Form-item label="备注" prop="mark">
+                <Input v-model="recharge.mark" placeholder="请输入"></Input>
+            </Form-item>
+            <Form-item>
+                <Button type="primary" @click="handleSubmit('addUser')">提交</Button>
+            </Form-item>
+        </Form>
     </Card>
 </template>
 <script>
-import Axios from "@/api/index";
-import {
-    DateShortcuts,
-    formatDate,
-    changetime,
-    deepClone
-} from "@/utils/DateShortcuts.js";
-import selectMedia from "@/components/select-media/index.vue";
+import Axios from '@/api/index';
 export default {
-    components: {
-        selectMedia
-    },
     data() {
         return {
-            loading: false,
-            options: DateShortcuts, //日期辅助功能
-            media_type:"",
-            DateDomain: [
-                formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"),
-                formatDate(new Date(), "yyyy-MM-dd")
-            ], //筛选时间
-            fundcolumns: [
-                {
-                    title: "帐户名",
-                    key: "account_name"
-                },
-                {
-                    title: "代理商",
-                    key: "agent"
-                },
-                {
-                    title: "充值返点比例",
-                    key: "rebate"
-                },
-                {
-                    title: "充值账户币",
-                    key: "recharge_money"
-                },
-                {
-                    title: "充值人民币（元）",
-                    key: "money",
-                     render: (h, params) => {
-                        var re = /^[0-9]+.?[0-9]*$/;
-                        if (re.test(params.row.money)) {
-                            //三位数加逗号
-                            let newvalue = (params.row.money)
-                                .toString()
-                                .split("")
-                                .reverse()
-                                .join("")
-                                .replace(/(\d{3})/g, "$1,")
-                                .replace(/\,$/, "")
-                                .split("")
-                                .reverse()
-                                .join("");
-                            return [h("span", newvalue)];
-                        } else {
-                            return [h("span", params.row.recharge_money)];
-                        }
-                    }
-                },
-                {
-                    title: "负责人",
-                    key: "author"
-                },
-                {
-                    title: "备注",
-                    key: "mark"
-                }
-            ],
-            funddata: [],
-            tableSize: "small",
-            page: 1, //第N页
-            page_size: 50, //每页数量
-            total_number: 1, //总数量
-            total_page: 1 //总页数
-        };
+            accountList: [],
+            media_type: "",
+            recharge: {
+                account_id: "",
+                money: "",
+                mark: ""
+            },
+            rechargeRule: {
+                account_id: [
+                    { required: true, message: '请选择账户id', trigger: 'change' },
+                ],
+                money: [
+                    { required: true, message: '充值金额不能为空', trigger: 'blur' },
+                ],
+                mark: [
+                    { required: true, message: '备注不能为空', trigger: 'blur' },
+                ]
+            }
+        }
     },
     mounted() {
-        this.getfund();
+        this.getAccount();
+        this.getMedia();
     },
     methods: {
-        //获取充值列表
-        getfund(page) {
-            if (page === undefined) {
-                this.$refs["fundpage"].currentPage = 1;
-                this.page = 1;
-            } else {
-                this.page = page;
-            }
-            this.loading = true;
-            Axios.post("api.php", {
-                action: "sys",
-                opt: "accountRechargeData",
-                media_type: 1,//this.media_type,
-                start_date: this.DateDomain[0], //开始时间
-                end_date: this.DateDomain[1], //结速时间
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        this.funddata = res.data;
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
+        //获取媒体类别
+        getMedia() {
+            Axios.get('api.php', {
+                'action': 'api',
+                'opt': 'getMedia'
+            }).then(
+                res => {
+                    if (res.ret == '1') {
+                        this.media = res.data;
                     }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("获取充值列表" + err);
-                });
+                }
+            ).catch(
+                err => { "获取帐号id" + console.log(err) }
+            );
         },
-        //改变日期
-        changeDate(e) {
-            this.DateDomain = e;
-            this.getfund();
+        //获取帐号id
+        getAccount() {
+            Axios.get("api.php", {
+                action: "api",
+                opt: "getAccount",
+                media_type: 1
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.accountList = res.data;
+                }
+            }).catch(err => {
+                console.log("获取帐号id" + err);
+            });
         },
-         //按媒体筛选
-        mediaChange(val) {
-            this.media_type = val;
-            this.getfund();
-        },
+        //提交
+        handleSubmit(name) {
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    Axios.post('api.php', {
+                        action: 'sys',
+                        opt: 'useradd',
+                        stage: 'add',
+                        uName: this.addUser.userName,
+                        uPass: this.addUser.password,
+                        uGid: this.addUser.permissionGroupSelected,
+                        truename: this.addUser.realName,
+                        sex: (this.addUser.sex == 'female') ? '女' : ((this.addUser.sex == 'male') ? '男' : ''),
+                        dept: this.addUser.departmentSelected,
+                        position: this.addUser.positionSelected,
+                        position_desc: this.addUser.dutyDescribe,
+                        email: this.addUser.eMail,
+                        extension: 0,
+                        office_phone: this.addUser.officePhone,
+                        mobile: this.addUser.mobile,
+                        actionid: '',
+                        gamelist: '',
+                        accountList: '',
+                    }).then(
+                        res => {
+                            if (res.ret == 1) {
+                                this.$Message.success(res.data);
+                            } else {
+                                this.$Message.error(res.msg);
+                            }
+                        }
+                    ).catch(
+                        err => {
+                            console.log('提交失败' + err);
+                            this.$Message.error('提交失败！');
+                        }
+                    )
+                } else {
+                    this.$Message.error('表单验证失败!');
+                }
+            });
+        }
     }
 };
 </script>

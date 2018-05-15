@@ -83,7 +83,7 @@
 
                 <select-media class="smedia" @on-change="mediaChange"></select-media>
 
-                <DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime" ></DatePicker>
+                <DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime"></DatePicker>
 
                 <Button icon="document-text" @click="exportData()">下载报表</Button>
             </div>
@@ -303,20 +303,81 @@ export default {
                     width: 60,
                     render: (h, params) => {
                         if (params.row._disabled) return;
+                        let money = "", mark = "";
                         return h(
                             "span",
                             {
                                 class: "name_text",
                                 on: {
                                     click: () => {
-                                        
-                                        this.$Message.info('敬请期待');
-                                        // this.$router.push({
-                                        //     name: "ttcampaign",
-                                        //     query: {
-                                        //         id: params.row.id
-                                        //     }
-                                        // });
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return [h("Input", {
+                                                    props: {
+                                                        value: money,
+                                                        autofocus: true,
+                                                        placeholder: "请输入充值金额"
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            money = val;
+                                                        }
+                                                    }
+                                                }), h("Input", {
+                                                    props: {
+                                                        value: mark,
+                                                        placeholder: "请输入备注"
+                                                    },
+                                                    style: {
+                                                        marginTop: "10px"
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            mark = val;
+                                                        }
+                                                    }
+                                                })];
+                                            },
+                                            onOk: () => {
+                                                if (money == "") {
+                                                    this.$Message.info("请输入充值金额");
+                                                    return;
+                                                }
+                                                if (mark == "") {
+                                                    this.$Message.info("请输入备注");
+                                                    return;
+                                                }
+                                                Axios.post("api.php", {
+                                                    action: "sys",
+                                                    opt: "accountRecharge",
+                                                    account_id: params.row.account_id,
+                                                    media_type: params.row.media_type,
+                                                    money: money,
+                                                    mark: mark
+                                                }).then(res => {
+                                                    if (res.ret == 1) {
+                                                        this.$Message.info(res.msg);
+                                                        if (params.row.media_type == 1) {
+                                                            this.$router.push({
+                                                                name: "time_rechargerecord"
+                                                            });
+                                                        }
+                                                        if (params.row.media_type == 3) {
+                                                            this.$router.push({
+                                                                name: "uc_rechargerecord"
+                                                            });
+                                                        }
+                                                        if (params.row.media_type == 4) {
+                                                            this.$router.push({
+                                                                name: "tt_rechargerecord"
+                                                            });
+                                                        }
+                                                    }
+                                                }).catch(err => {
+                                                    console.log("充值失败" + err);
+                                                });
+                                            }
+                                        });
                                     }
                                 }
                             },
