@@ -1,187 +1,294 @@
 {
-    "landing_type": [{
-            "name": "推广落地页",
-            "val_type": "LINK"
-        },
-        {
-            "name": "推广应用下载",
-            "val_type": "APP"
-        },
-        {
-            "name": "产品目录",
-            "val_type": "DPA"
-        }
-    ],
-    "budget_mode": [{
-            "name": "不限",
-            "val_type": "BUDGET_MODE_INFINITE"
-        },
-        {
-            "name": "日预算",
-            "val_type": "BUDGET_MODE_DAY"
-        },
-        {
-            "name": "总预算",
-            "val_type": "BUDGET_MODE_TOTAL"
-        }
-    ],
-    "creative_opt_status": [{
-            "name": "启用",
-            "val_type": "CREATIVE_STATUS_ENABLE"
-        },
-        {
-            "name": "暂停",
-            "val_type": "CREATIVE_STATUS_DISABLE"
-        }, {
-            "name": "删除",
-            "val_type": "CREATIVE_STATUS_DELETE"
-        }
-    ],
-    "creative_status": [{
-            "name": "投放中",
-            "val_type": "CREATIVE_STATUS_DELIVERY_OK"
-        },
-        {
-            "name": "未到达投放时间",
-            "val_type": "CREATIVE_STATUS_NOT_START"
-        },
-        {
-            "name": "不在投放时段",
-            "val_type": "CREATIVE_STATUS_NO_SCHEDULE"
-        },
-        {
-            "name": "暂停",
-            "val_type": "CREATIVE_STATUS_DISABLE"
-        },
-        {
-            "name": "已被广告组暂停",
-            "val_type": "CREATIVE_STATUS_CAMPAIGN_DISABLE"
-        },
-        {
-            "name": "广告组超出预算",
-            "val_type": "CREATIVE_STATUS_CAMPAIGN_EXCEED"
-        },
-        {
-            "name": "新建审核中",
-            "val_type": "CREATIVE_STATUS_AUDIT"
-        },
-        {
-            "name": "修改审核中",
-            "val_type": "CREATIVE_STATUS_REAUDIT"
-        },
-        {
-            "name": "已删除",
-            "val_type": "CREATIVE_STATUS_DELETE"
-        },
-        {
-            "name": "已完成",
-            "val_type": "CREATIVE_STATUS_DONE"
-        },
-        {
-            "name": "广告计划暂停",
-            "val_type": "CREATIVE_STATUS_AD_DISABLE"
-        },
-        {
-            "name": "审核不通过",
-            "val_type": "CREATIVE_STATUS_AUDIT_DENY"
-        },
-        {
-            "name": "账户余额不足",
-            "val_type": "CREATIVE_STATUS_BALANCE_EXCEED"
-        },
-        {
-            "name": "超出预算",
-            "val_type": "CREATIVE_STATUS_BUDGET_EXCEED"
-        },
-        {
-            "name": "数据错误",
-            "val_type": "CREATIVE_STATUS_DATA_ERROR"
-        },
-        {
-            "name": "预上线",
-            "val_type": "CREATIVE_STATUS_PRE_ONLINE"
-        }
-    ],
-    "ad_campaign_status": [{
-            "name": "启用",
-            "val_type": "CAMPAIGN_STATUS_ENABLE：启用"
-        },
-        {
-            "name": "暂停",
-            "val_type": "CAMPAIGN_STATUS_DISABLE：暂停"
-        }
-    ],
-    "ad_opt_status": [{
-            "name": "启用",
-            "val_type": "AD_STATUS_ENABLE"
-        },
-        {
-            "name": "暂停",
-            "val_type": "AD_STATUS_DISABLE"
-        }, {
-            "name": "删除",
-            "val_type": "AD_STATUS_DELETE"
-        }
-    ],
-    "ad_status": [{
-            "name": "投放中",
-            "val_type": "AD_STATUS_DELIVERY_OK"
-        },
-        {
-            "name": "启用",
-            "val_type": "AD_STATUS_ENABLE"
-        },
-        {
-            "name": "暂停",
-            "val_type": "AD_STATUS_DISABLE"
-        },
-        {
-            "name": "新建审核中",
-            "val_type": "AD_STATUS_AUDIT"
-        },
-        {
-            "name": "修改审核中",
-            "val_type": "AD_STATUS_REAUDIT"
-        },
-        {
-            "name": "已完成",
-            "val_type": "AD_STATUS_DONE"
-        },
-        {
-            "name": "计划新建",
-            "val_type": "AD_STATUS_CREATE"
-        },
-        {
-            "name": "审核不通过",
-            "val_type": "AD_STATUS_AUDIT_DENY"
-        },
-        {
-            "name": "账户余额不足",
-            "val_type": "AD_STATUS_BALANCE_EXCEED"
-        },
-        {
-            "name": "超出预算",
-            "val_type": "AD_STATUS_BUDGET_EXCEED"
-        },
-        {
-            "name": "未到达投放时间",
-            "val_type": "AD_STATUS_NOT_START"
-        },
-        {
-            "name": "不在投放时段",
-            "val_type": "AD_STATUS_NO_SCHEDULE"
-        },
-        {
-            "name": "已被广告组暂停",
-            "val_type": "AD_STATUS_CAMPAIGN_DISABLE"
-        },
-        {
-            "name": "广告组超出预算",
-            "val_type": "AD_STATUS_CAMPAIGN_EXCEED"
-        },
-        {
-            "name": "已删除",
-            "val_type": "AD_STATUS_DELETE"
-        }
-    ]
+  "landing_type": [
+    {
+      "name": "推广落地页",
+      "val_type": "LINK"
+    },
+    {
+      "name": "推广应用下载",
+      "val_type": "APP"
+    },
+    {
+      "name": "产品目录",
+      "val_type": "DPA"
+    }
+  ],
+  "budget_mode": [
+    {
+      "name": "不限",
+      "val_type": "BUDGET_MODE_INFINITE"
+    },
+    {
+      "name": "日预算",
+      "val_type": "BUDGET_MODE_DAY"
+    },
+    {
+      "name": "总预算",
+      "val_type": "BUDGET_MODE_TOTAL"
+    }
+  ],
+  "creative_opt_status": [
+    {
+      "name": "启用",
+      "val_type": "CREATIVE_STATUS_ENABLE"
+    },
+    {
+      "name": "暂停",
+      "val_type": "CREATIVE_STATUS_DISABLE"
+    },
+    {
+      "name": "删除",
+      "val_type": "CREATIVE_STATUS_DELETE"
+    }
+  ],
+  "creative_status": [
+    {
+      "name": "投放中",
+      "val_type": "CREATIVE_STATUS_DELIVERY_OK"
+    },
+    {
+      "name": "未到达投放时间",
+      "val_type": "CREATIVE_STATUS_NOT_START"
+    },
+    {
+      "name": "不在投放时段",
+      "val_type": "CREATIVE_STATUS_NO_SCHEDULE"
+    },
+    {
+      "name": "暂停",
+      "val_type": "CREATIVE_STATUS_DISABLE"
+    },
+    {
+      "name": "已被广告组暂停",
+      "val_type": "CREATIVE_STATUS_CAMPAIGN_DISABLE"
+    },
+    {
+      "name": "广告组超出预算",
+      "val_type": "CREATIVE_STATUS_CAMPAIGN_EXCEED"
+    },
+    {
+      "name": "新建审核中",
+      "val_type": "CREATIVE_STATUS_AUDIT"
+    },
+    {
+      "name": "修改审核中",
+      "val_type": "CREATIVE_STATUS_REAUDIT"
+    },
+    {
+      "name": "已删除",
+      "val_type": "CREATIVE_STATUS_DELETE"
+    },
+    {
+      "name": "已完成",
+      "val_type": "CREATIVE_STATUS_DONE"
+    },
+    {
+      "name": "广告计划暂停",
+      "val_type": "CREATIVE_STATUS_AD_DISABLE"
+    },
+    {
+      "name": "审核不通过",
+      "val_type": "CREATIVE_STATUS_AUDIT_DENY"
+    },
+    {
+      "name": "账户余额不足",
+      "val_type": "CREATIVE_STATUS_BALANCE_EXCEED"
+    },
+    {
+      "name": "超出预算",
+      "val_type": "CREATIVE_STATUS_BUDGET_EXCEED"
+    },
+    {
+      "name": "数据错误",
+      "val_type": "CREATIVE_STATUS_DATA_ERROR"
+    },
+    {
+      "name": "预上线",
+      "val_type": "CREATIVE_STATUS_PRE_ONLINE"
+    }
+  ],
+  "ad_campaign_status": [
+    {
+      "name": "启用",
+      "val_type": "CAMPAIGN_STATUS_ENABLE：启用"
+    },
+    {
+      "name": "暂停",
+      "val_type": "CAMPAIGN_STATUS_DISABLE：暂停"
+    }
+  ],
+  "ad_opt_status": [
+    {
+      "name": "启用",
+      "val_type": "AD_STATUS_ENABLE"
+    },
+    {
+      "name": "暂停",
+      "val_type": "AD_STATUS_DISABLE"
+    },
+    {
+      "name": "删除",
+      "val_type": "AD_STATUS_DELETE"
+    }
+  ],
+  "ad_status": [
+    {
+      "name": "投放中",
+      "val_type": "AD_STATUS_DELIVERY_OK"
+    },
+    {
+      "name": "启用",
+      "val_type": "AD_STATUS_ENABLE"
+    },
+    {
+      "name": "暂停",
+      "val_type": "AD_STATUS_DISABLE"
+    },
+    {
+      "name": "新建审核中",
+      "val_type": "AD_STATUS_AUDIT"
+    },
+    {
+      "name": "修改审核中",
+      "val_type": "AD_STATUS_REAUDIT"
+    },
+    {
+      "name": "已完成",
+      "val_type": "AD_STATUS_DONE"
+    },
+    {
+      "name": "计划新建",
+      "val_type": "AD_STATUS_CREATE"
+    },
+    {
+      "name": "审核不通过",
+      "val_type": "AD_STATUS_AUDIT_DENY"
+    },
+    {
+      "name": "账户余额不足",
+      "val_type": "AD_STATUS_BALANCE_EXCEED"
+    },
+    {
+      "name": "超出预算",
+      "val_type": "AD_STATUS_BUDGET_EXCEED"
+    },
+    {
+      "name": "未到达投放时间",
+      "val_type": "AD_STATUS_NOT_START"
+    },
+    {
+      "name": "不在投放时段",
+      "val_type": "AD_STATUS_NO_SCHEDULE"
+    },
+    {
+      "name": "已被广告组暂停",
+      "val_type": "AD_STATUS_CAMPAIGN_DISABLE"
+    },
+    {
+      "name": "广告组超出预算",
+      "val_type": "AD_STATUS_CAMPAIGN_EXCEED"
+    },
+    {
+      "name": "已删除",
+      "val_type": "AD_STATUS_DELETE"
+    }
+  ],
+  "gender": [
+    {
+      "type": "GENDER_UNLIMITED",
+      "name": "不限"
+    },
+    {
+      "type": "GENDER_MALE",
+      "name": "男"
+    },
+    {
+      "type": "GENDER_FEMALE",
+      "name": "女"
+    }
+  ],
+  "age": [
+    {
+      "type": "AGE_BELOW_18",
+      "name": "<18"
+    },
+    {
+      "type": "AGE_BETWEEN_18_23",
+      "name": "18-23"
+    },
+    {
+      "type": "AGE_BETWEEN_24_30",
+      "name": "24-30"
+    },
+    {
+      "type": "AGE_BETWEEN_31_40",
+      "name": "31-40"
+    },
+    {
+      "type": "AGE_BETWEEN_41_49",
+      "name": "41-49"
+    },
+    {
+      "type": "AGE_ABOVE_50",
+      "name": ">=50"
+    }
+  ],
+  "platform": [
+    {
+      "type": "",
+      "name": "不限"
+    },
+    {
+      "type": "IOS",
+      "name": "IOS"
+    },
+    {
+      "type": "Android",
+      "name": "ANDROID"
+    },
+    {
+      "type": "PC",
+      "name": "PC"
+    }
+  ],
+  "ac": [
+    {
+      "type": "",
+      "name": "不限"
+    },
+    {
+      "type": "WIFI",
+      "name": "WIFI"
+    },
+    {
+      "type": "2G",
+      "name": "2G"
+    },
+    {
+      "type": "3G",
+      "name": "3G"
+    },
+    {
+      "type": "4G",
+      "name": "4G"
+    }
+  ],
+  "carrier": [
+    {
+      "type": "",
+      "name": "不限"
+    },
+    {
+      "type": "移动",
+      "name": "MOBILE"
+    },
+    {
+      "type": "联通",
+      "name": "UNICOM"
+    },
+    {
+      "type": "电信",
+      "name": "UNICOM"
+    }
+  ]
 }
