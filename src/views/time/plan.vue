@@ -45,10 +45,6 @@
 .namediv:hover {
   color: #57a3f3;
 }
-.table-statistics {
-  color: #2b7ed1;
-  font-weight: bold;
-}
 </style>
 
 <template>
