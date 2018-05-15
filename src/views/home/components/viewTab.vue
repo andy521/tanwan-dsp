@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 .ivu-tag-border,
 .ivu-tag-border.ivu-tag-red {
   border: none !important;
@@ -53,13 +53,11 @@
   display: inline-block;
   width: auto;
   min-width: 150px;
-  margin: 0 10px;
 }
 .search_area {
   width: 200px;
   display: inline-block;
   margin-bottom: -12px;
-  margin-right: 10px;
 }
 .name_text {
   color: #2b7ed1;
@@ -85,7 +83,7 @@
 
                 <select-media class="smedia" @on-change="mediaChange"></select-media>
 
-                <DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime" class="margin-right-10"></DatePicker>
+                <DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime" ></DatePicker>
 
                 <Button icon="document-text" @click="exportData()">下载报表</Button>
             </div>
@@ -311,6 +309,7 @@ export default {
                                 class: "name_text",
                                 on: {
                                     click: () => {
+                                        
                                         this.$Message.info('敬请期待');
                                         // this.$router.push({
                                         //     name: "ttcampaign",

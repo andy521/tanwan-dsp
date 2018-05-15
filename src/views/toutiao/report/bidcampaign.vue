@@ -34,10 +34,12 @@
             <Option value="APP">推广应用下载</Option>
             <Option value="DPA">产品目录</Option>
         </Select>
-        <span class="margin-left-10">选择广告组</span>
+        <!-- <span class="margin-left-10">选择广告组</span>
         <Select v-model="campaign_ids" style="width:300px;" filterable multiple @on-change="getHourReporting()">
             <Option v-for="item in campaign_list" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
-        </Select>
+        </Select> -->
+
+        <campaign-id @on-change="get_campaign_id"></campaign-id>
 
         <report-echarts :datas="echart" title="数据趋势" class="margin-top-10"></report-echarts>
 
@@ -68,10 +70,12 @@
 <script>
 import Axios from "@/api/index";
 import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
+import campaignId from "../components/campaignId.vue";
 import reportEcharts from "../components/reportEcharts.vue";
 export default {
     name: "bidcampaign",
     components: {
+        campaignId,
         reportEcharts
     },
     data() {
@@ -166,6 +170,11 @@ export default {
                     }
                 }
                 ).catch(err => { console.log(err) });
+        },
+        //回调campaign_ids
+        get_campaign_id(ids) {
+            this.campaign_ids = ids;
+            this.getHourReporting();
         },
         //改变日期
         changeDate(e) {

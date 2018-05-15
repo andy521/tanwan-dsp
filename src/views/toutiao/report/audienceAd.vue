@@ -130,23 +130,24 @@ export default {
         }
     },
     mounted() {
+        this.getCampaigns();
         this.getHourReporting();
         this.getaudienceReportingChart();
-        this.getCampaigns();
     },
     methods: {
         //获取广告组
         getCampaigns() {
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "getCampaigns"
+                opt: "getCampaigns",
+                account_id: this.get_account_id
             }).then(
                 res => {
                     if (res.ret == 1) {
                         this.campaign_list = res.data;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
         },
         //获取列表
         getHourReporting(page) {
@@ -177,7 +178,7 @@ export default {
                         this.total_page = res.data.total_page;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
         },
         //获取图表列表
         getaudienceReportingChart() {
@@ -198,7 +199,7 @@ export default {
                         this.echart = res.data;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
         },
         //改变日期
         changeDate(e) {
@@ -222,6 +223,7 @@ export default {
     },
     watch: {
         get_account_id() {
+            this.getCampaigns();
             this.getHourReporting();
             this.getaudienceReportingChart();
         }

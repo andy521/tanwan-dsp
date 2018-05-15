@@ -98,7 +98,9 @@ export const appRouter = [
             { path: 'finance', title: '财务', name: 'time_finance', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'journal', title: '资金流水', name: 'time_journal',  component: () => import('@/views/time/finance/journal.vue')},
-                { path: 'funds', title: '财务信息', name: 'time_funds', component: () => import('@/views/time/finance/funds.vue') },  
+                { path: 'funds', title: '财务信息', name: 'time_funds', component: () => import('@/views/time/finance/funds.vue') }, 
+                { path: 'recharge', title: '充值记录', name: 'time_recharge', component: () => import('@/views/time/finance/recharge.vue') }, 
+                 
             ]},
         ]
     },
@@ -135,7 +137,7 @@ export const appRouter = [
             children: [ 
                 { path: 'statement', title: '账户报表', name: 'tt_statement',  component: () => import('@/views/toutiao/report/statement.vue')},
                 { path: 'audience', title: '受众分析', name: 'tt_audience', component: () => import('@/views/toutiao/report/audience.vue') },  
-                { path: 'bid', title: '效果广告报告', name: 'tt_bid', component: () => import('@/views/toutiao/report/bid.vue') }   
+                { path: 'bid', title: '效果广告报表', name: 'tt_bid', component: () => import('@/views/toutiao/report/bid.vue') }   
             ]}
         ]
     },

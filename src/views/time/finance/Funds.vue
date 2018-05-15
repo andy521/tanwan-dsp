@@ -1,9 +1,3 @@
-<style scoped>
-.mt10 {
-    margin-top: 10px;
-}
-</style>
-
 <template>
     <Card shadow>
         <div>
@@ -12,7 +6,7 @@
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
         </div>
-        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="mt10"></Table>
+        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
