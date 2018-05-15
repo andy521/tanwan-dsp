@@ -4,12 +4,15 @@
 .sel {
   width: 220px;
 }
+
 .time .ivu-poptip {
   display: inline-block;
 }
+
 .tipbtn {
   text-align: right;
 }
+
 .clear:after {
   content: "\20";
   display: block;
@@ -17,34 +20,43 @@
   clear: both;
   visibility: hidden;
 }
+
 .ivu-table .ivu-col span {
   line-height: 24px;
 }
+
 .inp {
   display: inline-block;
   width: 150px;
 }
+
 .sel_state {
   text-align: left;
   width: 100px;
 }
+
 .sel_state1 {
   text-align: left;
   width: 300px;
 }
+
 .demo-carousel {
   width: 300px;
 }
+
 .sel_state1.ivu-select-multiple .ivu-select-selection {
   overflow: auto;
   height: 32px;
 }
+
 .namediv {
   cursor: pointer;
 }
+
 .namediv:hover {
   color: #57a3f3;
 }
+
 </style>
 
 <template>
@@ -173,6 +185,7 @@ import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
 import viewTip from "./components/viewPopti.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import searchTree from "@/components/select-tree/searchTree.vue";
+
 export default {
     components: {
         viewTip,
@@ -269,6 +282,7 @@ export default {
                                                 campaign_name:
                                                     params.row.campaign_name
                                             };
+
                                             this.$router.push({
                                                 name: "time_ad",
                                                 query: query
@@ -663,6 +677,7 @@ export default {
                                                             );
                                                             return;
                                                         }
+
                                                         Axios.post("api.php", {
                                                             action: "gdtAdPut",
                                                             opt:

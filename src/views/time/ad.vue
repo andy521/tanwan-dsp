@@ -4,12 +4,15 @@
 .sel {
     width: 220px;
 }
+
 .time .ivu-poptip {
     display: inline-block;
 }
+
 .tipbtn {
     text-align: right;
 }
+
 .clear:after {
     content: "\20";
     display: block;
@@ -17,31 +20,40 @@
     clear: both;
     visibility: hidden;
 }
+
 .ivu-table .ivu-col span {
     line-height: 24px;
 }
+
 .inp {
     display: inline-block;
     width: 150px;
 }
+
 .sel_state {
     text-align: left;
     width: 110px;
 }
+
 .sel_state1 {
     text-align: left;
     width: 300px;
 }
+
 .sel_state1.ivu-select-multiple .ivu-select-selection {
     overflow: auto;
     height: 32px;
 }
+
 .namediv {
     cursor: pointer;
 }
+
 .namediv:hover {
     color: #57a3f3;
 }
+
+
 .campaign_name {
     font-size: 18px;
     margin-left: 20px;
