@@ -25,7 +25,6 @@ export default {
     },
     methods: {
         echartUpdate(data) {
-            console.log(data)
             let option = {
                 color: ['#3398DB', '#000000'],
                 title: { text: this.title, x: 'center', top: '20' },
@@ -35,7 +34,7 @@ export default {
                     formatter: function (params) {
                         let res = params[0].name + '<br/>';
                         params.forEach(e => {
-                            e.componentSubType == 'line' ? res += e.seriesName + ':' + e.data * 100 + '%<br/>' : res += e.seriesName + ':' + e.data + '<br/>';
+                            e.componentSubType == 'line' ? res += e.seriesName + ':' + (e.data * 100).toFixed(2) + '%<br/>' : res += e.seriesName + ':' + e.data + '<br/>';
                         });
                         return res;
                     }

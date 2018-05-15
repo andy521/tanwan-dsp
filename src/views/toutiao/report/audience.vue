@@ -28,9 +28,9 @@
                 <MenuItem name="audienceCampaign">广告计划</MenuItem>
             </Menu>
             <!-- 能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。 -->
-            <keep-alive>
+            <!-- <keep-alive> -->
                 <component :is="curent" class="margin-top-20"></component>
-            </keep-alive>
+            <!-- </keep-alive> -->
         </Card>
     </div>
 </template>

@@ -49,11 +49,6 @@
   overflow: auto;
   height: 32px;
 }
-
-.table-statistics {
-  color: #2b7ed1;
-  font-weight: bold;
-}
 .smedia {
   display: inline-block;
   width: auto;

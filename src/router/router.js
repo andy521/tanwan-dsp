@@ -136,7 +136,7 @@ export const appRouter = [
             children: [ 
                 { path: 'statement', title: '账户报表', name: 'tt_statement',  component: () => import('@/views/toutiao/report/statement.vue')},
                 { path: 'audience', title: '受众分析', name: 'tt_audience', component: () => import('@/views/toutiao/report/audience.vue') },  
-                // { path: 'bid', title: '效果广告报告', name: 'tt_bid', component: () => import('@/views/toutiao/report/bid.vue') }   
+                { path: 'bid', title: '效果广告报告', name: 'tt_bid', component: () => import('@/views/toutiao/report/bid.vue') }   
             ]}
         ]
     },

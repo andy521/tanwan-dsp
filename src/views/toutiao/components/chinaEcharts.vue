@@ -42,7 +42,7 @@ export default {
             let impression = data[0],
                 precent = data[1],
                 min = 1,
-                max = 50000;
+                max = 200000;
             // max = parseInt(data.max) || 0,
             // min = parseInt(data.min) || 0;
 
@@ -61,7 +61,7 @@ export default {
                             for (var j = 0; j < myseries[i].data.length; j++) {
                                 if (myseries[i].data[j].name == params.name) {
                                     if (myseries[i].eng == 'precent') {
-                                        res += myseries[i].name + ' : ' + myseries[i].data[j].value[2] * 100 + '%</br>';
+                                        res += myseries[i].name + ' : ' + (myseries[i].data[j].value[2] * 100).toFixed(2) + '%</br>';
                                     } else {
                                         res += myseries[i].name + ' : ' + myseries[i].data[j].value[2] + '</br>';
                                     }
@@ -72,7 +72,7 @@ export default {
                     }
                 },
                 legend: { orient: 'vertical', left: 'left', data: ['impression', 'precent'] },
-                visualMap: { min: min, max: max, left: 'left', top: 'bottom', text: ['高', '低'], calculable: true, color: ['#37a2da', '#32c5e9', '#67e0e3', '#9fe6b8', '#ffdb5c'] },
+                visualMap: { min: min, max: max, left: 'left', top: 'bottom', text: ['高', '低'], calculable: true, color: ['#37a2da', '#32c5e9', '#67e0e3', '#9fe6b8', '#ffdb5c']},
                 
                 series: [
                     {
@@ -80,7 +80,7 @@ export default {
                         eng: impression.eng,
                         type: 'map',
                         mapType: 'china',
-                        roam: false,
+                        roam: true,
                         label: { normal: { show: true }, emphasis: { show: true } },
                         data:impression.data? this.convertData(impression.data):""
                     },
@@ -89,7 +89,7 @@ export default {
                         eng: precent.eng,
                         type: 'map',
                         mapType: 'china',
-                        roam: false,
+                        roam: true,
                         label: { normal: { show: true }, emphasis: { show: true } },
                         data: precent.data?this.convertData(precent.data):""
                     }

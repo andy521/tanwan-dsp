@@ -18,7 +18,7 @@
 }
 </style>
 <template>
-    <div>
+    <div v-show="get_account_id!=''">
         <span>时间范围</span>
         <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
         <RadioGroup v-model="type_echart" @on-change="getaudienceReportingChart()">
@@ -48,14 +48,9 @@
             <bar-echarts :datas="echart.tag" title="兴趣分布" class="margin-left-10"></bar-echarts>
             </Col>
         </Row>
-        <Row class="margin-top-10">
-            <Col span="16">45
-            </Col>
-            <Col span="8">
-            </Col>
-        </Row>
 
-        <div class="margin-top-20">
+        <Row class="margin-top-20">
+            <Col span="18">
             <span>汇总方式</span>
             <RadioGroup v-model="type" @on-change="getHourReporting()">
                 <Radio label="province">省级地域</Radio>
@@ -64,8 +59,12 @@
                 <Radio label="tag">兴趣分类</Radio>
                 <Radio label="age">年龄</Radio>
             </RadioGroup>
-        </div>
-        <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-sort-change="sortchange" stripe></Table>
+            </Col>
+            <Col span="6" style="text-align: right;">
+            <Button type="ghost" icon="document-text" @click="exportData()">下载当前数据</Button>
+            </Col>
+        </Row>
+        <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="accounttable" @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -99,7 +98,6 @@ export default {
     },
     data() {
         return {
-            adgroupIds: [],
             options: DateShortcuts,
             //筛选时间
             DateDomain: [formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"), formatDate(new Date(), "yyyy-MM-dd")],
@@ -188,7 +186,13 @@ export default {
             this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getHourReporting();
         },
-
+        //导出报表
+        exportData(type) {
+            this.$refs["accounttable"].exportCsv({
+                filename: "帐户",
+                original: false
+            });
+        }
     },
     watch: {
         get_account_id() {
