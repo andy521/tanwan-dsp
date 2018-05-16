@@ -1,15 +1,43 @@
 <style scoped>
-.smedia {
+.inp {
   display: inline-block;
-  width: auto;
-  min-width: 150px;
-}</style>
+  width: 150px;
+}
+</style>
 <template>
     <Card shadow>
-        <div>
+        <Row>
+            <Col span="12">
+            <!--选择负责人-->
+            <select-author :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-        </div>
-        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10"></Table>
+            <Input v-model="keywords" class="inp" placeholder="请输入帐户名" clearable></Input>
+            <Button type="primary" icon="search" @click="getfund()">搜索</Button>
+            </Col>
+            <Col span="12" style="text-align: right;">
+            <Poptip placement="bottom-start" v-model="visible">
+                <Button type="ghost" icon="edit">审核</Button>
+                <div class="api" slot="content">
+                    <div style="text-align: left;">
+                        <Select v-model="edit_status">
+                            <Option value="AD_STATUS_NORMAL">通过</Option>
+                            <Option value="AD_STATUS_SUSPEND">不通过</Option>
+                        </Select>
+                    </div>
+                    <div class="tipbtn margin-top-10">
+                        <Button type="text" size="small" @click="visible=false">取消</Button>
+                        <Button type="primary" size="small" @click="removeRecharge()">确定</Button>
+                    </div>
+                </div>
+            </Poptip>
+            <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-end" @on-ok="removeRecharge()" style="text-align: left;">
+                <Button type="ghost" icon="trash-a">删除</Button>
+            </Poptip>
+            <Button type="ghost" icon="document-text" @click="exportData()">下载报表</Button>
+            </Col>
+        </Row>
+
+        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10" ref="rechargetable" @on-selection-change="taCheck"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -36,17 +64,31 @@ import {
     changetime,
     deepClone
 } from "@/utils/DateShortcuts.js";
+import selectAuthor from "@/components/select-author/index.vue";
 export default {
+    components: {
+        selectAuthor
+    },
     data() {
         return {
             loading: false,
+            visible: false,
             options: DateShortcuts, //日期辅助功能
-            media_type:"",
+            mediaType: 4,
+            edit_status: "",
+            author_model: [],
+            keywords: "",
             DateDomain: [
                 formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"),
                 formatDate(new Date(), "yyyy-MM-dd")
             ], //筛选时间
+            taCheckids: [], //选中ids
             fundcolumns: [
+                {
+                    type: "selection",
+                    width: 58,
+                    key: ""
+                },
                 {
                     title: "帐户名",
                     key: "account_name"
@@ -66,7 +108,7 @@ export default {
                 {
                     title: "充值人民币（元）",
                     key: "money",
-                     render: (h, params) => {
+                    render: (h, params) => {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.money)) {
                             //三位数加逗号
@@ -93,6 +135,10 @@ export default {
                 {
                     title: "备注",
                     key: "mark"
+                },
+                {
+                    title: "状态",
+                    key: "status"
                 }
             ],
             funddata: [],
@@ -119,7 +165,7 @@ export default {
             Axios.post("api.php", {
                 action: "sys",
                 opt: "accountRechargeData",
-                media_type: 4,//this.media_type,
+                media_type: this.mediaType,
                 start_date: this.DateDomain[0], //开始时间
                 end_date: this.DateDomain[1], //结速时间
             })
@@ -136,15 +182,39 @@ export default {
                     console.log("获取充值列表" + err);
                 });
         },
+        //删除
+        removeRecharge() {
+
+        },
         //改变日期
         changeDate(e) {
             this.DateDomain = e;
             this.getfund();
         },
-         //按媒体筛选
+        //按媒体筛选
         mediaChange(val) {
             this.media_type = val;
             this.getfund();
+        },
+        //选择负责人
+        authorChange(data) {
+            this.author_model = data;
+            this.getfund();
+        },
+        //获取选中的id
+        taCheck(row) {
+            let ids = [];
+            row.forEach(item => {
+                ids.push(item.id);
+            });
+            this.taCheckids = ids;
+        },
+        //导出报表
+        exportData(type) {
+            this.$refs["rechargetable"].exportCsv({
+                filename: "充值记录",
+                original: false
+            });
         },
     }
 };

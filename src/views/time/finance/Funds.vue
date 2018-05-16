@@ -131,7 +131,7 @@ export default {
                 this.page = page;
             }
             this.loading = true;
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtaccount",
                 opt: "funds_get",
                 account_id: this.account_id
@@ -151,7 +151,7 @@ export default {
         },
         //获取媒体账号
         getMedia() {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "api",
                 opt: "getAccount",
                 media_type: 1

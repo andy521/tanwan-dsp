@@ -24,21 +24,13 @@
         <span class="margin-left-10">汇总方式</span>
         <Select v-model="type" class="sel" placeholder="汇总方式" @on-change="getHourReporting()">
             <Option value="">合计</Option>
-            <Option value="Day">分日</Option>
-            <Option value="Hour">分时</Option>
+            <Option :value="item.val_type" v-for="item in toutiaoConfig.type" :key="this">{{item.name}}</Option>
         </Select>
         <span class="margin-left-10">投放目的</span>
         <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getHourReporting()">
             <Option value="">不限</Option>
-            <Option value="LINK">推广落地页</Option>
-            <Option value="APP">推广应用下载</Option>
-            <Option value="DPA">产品目录</Option>
+            <Option :value="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Option>
         </Select>
-        <!-- <span class="margin-left-10">选择广告组</span>
-        <Select v-model="campaign_ids" style="width:300px;" filterable multiple @on-change="getHourReporting()">
-            <Option v-for="item in campaign_list" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
-        </Select> -->
-
         <campaign-id @on-change="get_campaign_id"></campaign-id>
 
         <report-echarts :datas="echart" title="数据趋势" class="margin-top-10"></report-echarts>
@@ -72,6 +64,7 @@ import Axios from "@/api/index";
 import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
 import campaignId from "../components/campaignId.vue";
 import reportEcharts from "../components/reportEcharts.vue";
+import toutiaoConfig from "@/utils/toutiaoConfig.json";
 export default {
     name: "bidcampaign",
     components: {
@@ -80,8 +73,8 @@ export default {
     },
     data() {
         return {
+            toutiaoConfig: toutiaoConfig,
             campaign_ids: [],
-            campaign_list: [],
             options: DateShortcuts,
             //筛选时间
             DateDomain: [formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"), formatDate(new Date(), "yyyy-MM-dd")],
@@ -118,22 +111,8 @@ export default {
     },
     mounted() {
         this.getHourReporting();
-        this.getCampaigns();
     },
     methods: {
-        //获取广告组
-        getCampaigns() {
-            Axios.post("api.php", {
-                action: "ttAdPut",
-                opt: "getCampaigns"
-            }).then(
-                res => {
-                    if (res.ret == 1) {
-                        this.campaign_list = res.data;
-                    }
-                }
-                ).catch(err => { console.log(err) });
-        },
         //获取列表
         getHourReporting(page) {
             if (page === undefined) {
@@ -169,7 +148,7 @@ export default {
                         this.total_page = res.data.total_page;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
         },
         //回调campaign_ids
         get_campaign_id(ids) {

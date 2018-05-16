@@ -195,6 +195,11 @@ export default {
                     }
                 },
                 {
+                    title: "代理",
+                    key: "agent",
+                    sortable: "custom"
+                },
+                {
                     title: "推广余额",
                     key: "balance",
                     sortable: "custom",
@@ -316,7 +321,7 @@ export default {
                                                     props: {
                                                         value: money,
                                                         autofocus: true,
-                                                        placeholder: "请输入充值金额"
+                                                        placeholder: "请输入充值金额（元）"
                                                     },
                                                     on: {
                                                         input: val => {
@@ -341,10 +346,6 @@ export default {
                                             onOk: () => {
                                                 if (money == "") {
                                                     this.$Message.info("请输入充值金额");
-                                                    return;
-                                                }
-                                                if (mark == "") {
-                                                    this.$Message.info("请输入备注");
                                                     return;
                                                 }
                                                 Axios.post("api.php", {

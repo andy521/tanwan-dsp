@@ -8,7 +8,7 @@
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
-            <RadioGroup v-model="fundType" @on-change="getfund">
+            <RadioGroup v-model="fundType" @on-change="getfund()">
                 <Radio label="1">现金</Radio>
                 <Radio label="2">虚拟金额</Radio>
                 <Radio label="3">分成账户</Radio>
@@ -20,7 +20,7 @@
             <Button type="ghost" icon="document-text" @click="downmodal=true">下载所有数据</Button>
             </Col>
         </Row>
-        <Table :columns="fundcolumns" :data="funddata"  :loading="loading" :size="tableSize" class="margin-top-10" :row-class-name="rowClassName" ref="journaltable"></Table>
+        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10" :row-class-name="rowClassName" ref="journaltable"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -45,7 +45,7 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import { DateShortcuts,formatDate } from "@/utils/DateShortcuts.js";
+import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
 export default {
     data() {
         return {
@@ -141,7 +141,7 @@ export default {
     methods: {
         //导出所有报表
         exportDatas() {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtaccount",
                 opt: "fund_statements_detailed_download",
                 startDate: this.downDateDomain[0],
@@ -208,7 +208,7 @@ export default {
                 this.page = page;
             }
             this.loading = true;
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtaccount",
                 opt: "fund_statements_detailed",
                 account_id: this.account_id,
@@ -222,9 +222,11 @@ export default {
                     this.loading = false;
                     if (res.ret == 1) {
                         //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.unshift(res.data.curr_page_total);
-                        res.data.list.push(res.data.curr_page_total);
+                        if (res.data.curr_page_total) {
+                            res.data.curr_page_total._disabled = true;
+                            res.data.list.unshift(res.data.curr_page_total);
+                            res.data.list.push(res.data.curr_page_total);
+                        }
                         this.funddata = res.data.list;
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
@@ -237,7 +239,7 @@ export default {
         },
         //获取媒体账号
         getMedia() {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "api",
                 opt: "getAccount",
                 media_type: 1

@@ -24,22 +24,16 @@
         <span class="margin-left-10">汇总方式</span>
         <Select v-model="type" class="sel" placeholder="汇总方式" @on-change="getHourReporting()">
             <Option value="">合计</Option>
-            <Option value="Day">分日</Option>
-            <Option value="Hour">分时</Option>
+            <Option :value="item.val_type" v-for="item in toutiaoConfig.type" :key="this">{{item.name}}</Option>
         </Select>
         <span class="margin-left-10">出价方式</span>
-        <Select placeholder="投放目的" v-model="pricing" class="sel_state" @on-change="getHourReporting()">
+        <Select placeholder="出价方式" v-model="pricing" class="sel_state" @on-change="getHourReporting()">
             <Option value="">不限</Option>
-            <Option value="PRICING_CPC">CPC</Option>
-            <Option value="PRICING_OCPC">OCPC</Option>
-            <Option value="PRICING_CPA">CPA</Option>
-            <Option value="PRICING_CPV">CPV</Option>
-            <Option value="PRICING_OCPM">OCPM</Option>
+            <Option :value="item.val_type" v-for="item in toutiaoConfig.pricing" :key="this">{{item.name}}</Option>
         </Select>
         <span class="margin-left-10">选择广告计划</span>
-        <Select v-model="adgroup_ids" style="width:300px;" filterable multiple @on-change="getHourReporting()">
-            <Option v-for="item in adgroup_list" :value="item.adgroup_id" :key="this">{{ item.adgroup_name }}</Option>
-        </Select>
+
+        <adgroup-id @on-change="get_adgroup_id"></adgroup-id>
 
         <report-echarts :datas="echart" title="数据趋势" class="margin-top-10"></report-echarts>
 
@@ -71,15 +65,18 @@
 import Axios from "@/api/index";
 import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
 import reportEcharts from "../components/reportEcharts.vue";
+import toutiaoConfig from "@/utils/toutiaoConfig.json";
+import adgroupId from "../components/adgroupId.vue";
 export default {
     name: "bidad",
     components: {
-        reportEcharts
+        reportEcharts,
+        adgroupId
     },
     data() {
         return {
+            toutiaoConfig: toutiaoConfig,
             adgroup_ids: [],
-            adgroup_list: [],
             options: DateShortcuts,
             //筛选时间
             DateDomain: [formatDate(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd"), formatDate(new Date(), "yyyy-MM-dd")],
@@ -116,22 +113,8 @@ export default {
     },
     mounted() {
         this.getHourReporting();
-        this.getCampaigns();
     },
     methods: {
-        //获取广告组
-        getCampaigns() {
-            Axios.post("api.php", {
-                action: "ttAdPut",
-                opt: "getAdgroups"
-            }).then(
-                res => {
-                    if (res.ret == 1) {
-                        this.adgroup_list = res.data;
-                    }
-                }
-                ).catch(err => { console.log(err) });
-        },
         //获取列表
         getHourReporting(page) {
             if (page === undefined) {
@@ -167,7 +150,12 @@ export default {
                         this.total_page = res.data.total_page;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => { console.log(err) });
+        },
+        //回调adgroup_ids
+        get_adgroup_id(ids) {
+            this.adgroup_ids = ids;
+            this.getHourReporting();
         },
         //改变日期
         changeDate(e) {
