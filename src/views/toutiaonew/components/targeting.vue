@@ -24,9 +24,9 @@
           <RadioGroup @on-change="handleDistrict" v-model="targetSetting.district" type="button" size="large">
             <Radio label="">不限</Radio>
             <Radio label="CITY">按省市</Radio>
-            <transfer-tree></transfer-tree>
             <Radio label="COUNTY">按区县</Radio>
           </RadioGroup>
+          <transfer-tree :data="provinceList"></transfer-tree>
         </FormItem>
 
         <FormItem label="性别">
@@ -212,6 +212,76 @@ methods: {
       this.budgetTip.isSubmit = true
     }
   },
+  normalizeAddProvince(list) {
+    if (list.length < 1) {
+      return
+    }
+
+    const provinceCity = ['北京', '上海', '天津', '重庆', '台湾', '香港', '澳门'] // 备份
+    const ret = []
+
+    list.forEach((province, ip) => {
+      ret.push({
+        title: province.name,
+        value: province.value,
+        expand: false,
+        selected: false,
+        type: 'province',
+        children: []
+      })
+
+      // 普通省市
+      if (province.cityList){
+        province.cityList.forEach((city, ici) => {
+          ret[ip].children.push({
+            title: city.name,
+            value: city.value,
+            expand: false,
+            selected: false,
+            type: 'city',
+            children: []
+          })
+
+          // 普通省市-县
+          if (city.countyList) {
+            city.countyList.forEach((country, ico) => {
+              ret[ip].children[ici].children.push({
+                title: country.name,
+                value: country.value,
+                expand: false,
+                selected: false,
+                type: 'country',
+                children: []            
+              })
+            })        
+          }
+        })
+      } else if (province.countyList) {
+        ret[ip].children.push({
+          title: province.name,
+          value: province.value,
+          expand: false,
+          selected: false,
+          type: 'province',
+          children: []
+        })
+
+        // 特区省市-县
+        province.countyList.forEach((country, ic) => {
+          ret[ip].children[0].children.push({
+            title: country.name,
+            value: country.value,
+            expand: false,
+            selected: false,
+            type: 'country',
+            children: []            
+          })
+        })
+      }
+
+    })
+    return ret
+  },
   // 获取地域列表
   getProvince() {
     Axios.post("api.php", {
@@ -220,8 +290,8 @@ methods: {
     })
       .then(res => {
         if (res.ret == 1) {
-          let data = res.data[0]
-          this.provinceList = data
+          let data = res.data
+          this.provinceList = this.normalizeAddProvince(data)
         }
       })
       .catch(err => {
