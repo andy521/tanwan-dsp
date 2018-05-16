@@ -9,17 +9,16 @@
 </style>
 <template>
     <Poptip content="content" placement="bottom-start" trigger="hover">
-        <Button type="ghost">选择广告计划({{adgroup_ids.length==0?"不限":adgroup_ids.length}})
-        </Button>
+        <Button type="ghost">选择代理商</Button>
         <div slot="content">
             <Card dis-hover :bordered="false">
                 <div slot="title">
                     <Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
                 </div>
                 <div class="campaign">
-                    <CheckboxGroup v-model="adgroup_ids" @on-change="checkAllGroupChange">
-                        <div v-for="item in adgroup_list" :key="this" class="select-list">
-                            <Checkbox :label="item.adgroup_id">{{item.adgroup_name}}</Checkbox>
+                    <CheckboxGroup v-model="agent_ids" @on-change="checkAllGroupChange">
+                        <div v-for="item in agent_list" :key="this" class="select-list">
+                            <Checkbox :label="item.agent">{{item.agent}}</Checkbox>
                         </div>
                     </CheckboxGroup>
                 </div>
@@ -30,11 +29,11 @@
 <script>
 import Axios from "@/api/index";
 export default {
-    name: "adgroupId",
+    name: "selectAgent",
     data() {
         return {
-            adgroup_ids: [],
-            adgroup_list: [],
+            agent_ids: [],
+            agent_list: [],
             indeterminate: false,
             checkAll: false,
         };
@@ -46,21 +45,19 @@ export default {
         //获取广告计划
         getadgroups() {
             Axios.post("api.php", {
-                action: "ttAdPut",
-                opt: "getAdgroups",
-                account_id: this.get_account_id
+                action: "sys",
+                opt: "getAgent",
             }).then(
                 res => {
                     if (res.ret == 1) {
-                        this.adgroup_list = res.data;
-                        this.adgroup_ids = [];
+                        this.agent_list = res.data;
                         this.indeterminate = false;
                     }
                 }
             ).catch(err => { console.log(err) });
         },
         confirmids() {
-            this.$emit("on-change", this.adgroup_ids);
+            this.$emit("on-change", this.agent_ids);
         },
         handleCheckAll() {
             if (this.indeterminate) {
@@ -71,17 +68,18 @@ export default {
             this.indeterminate = false;
             if (this.checkAll) {
                 let ids = [];
-                this.adgroup_list.forEach(v => {
-                    ids.push(v.adgroup_id)
+                this.agent_list.forEach(v => {
+                    ids.push(v.agent)
                 });
-                this.adgroup_ids = ids;
+                this.agent_ids = ids;
             } else {
-                this.adgroup_ids = [];
+                this.agent_ids = [];
             }
             this.confirmids();
         },
-        checkAllGroupChange(data) {
-            if (data.length === this.adgroup_list.length) {
+        checkAllGroupChange() {
+            let data=this.agent_list;
+            if (data.length === this.agent_ids.length) {
                 this.indeterminate = false;
                 this.checkAll = true;
             } else if (data.length > 0) {
@@ -93,17 +91,6 @@ export default {
             }
             this.confirmids();
         }
-    },
-    watch: {
-        get_account_id() {
-            this.getadgroups();
-        }
-    },
-    computed: {
-        get_account_id() {
-
-            return this.$store.state.user.report_account_id;
-        }
-    },
+    }
 };
 </script>

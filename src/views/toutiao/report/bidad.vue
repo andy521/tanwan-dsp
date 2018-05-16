@@ -31,7 +31,7 @@
             <Option value="">不限</Option>
             <Option :value="item.val_type" v-for="item in toutiaoConfig.pricing" :key="this">{{item.name}}</Option>
         </Select>
-        <span class="margin-left-10">选择广告计划</span>
+       
 
         <adgroup-id @on-change="get_adgroup_id"></adgroup-id>
 
