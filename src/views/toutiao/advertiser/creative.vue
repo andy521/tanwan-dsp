@@ -23,7 +23,7 @@
                 <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Input class="inp" placeholder="请输入创意ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Input class="inp" clearable placeholder="请输入创意ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
                 <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
                 <Col span="4" style="text-align: right;">
@@ -162,7 +162,7 @@ export default {
     methods: {
         //获取选中的游戏id
         getids(gid) {
-            this.game_id = "[" + gid.join(",") + "]";
+            this.game_id = gid.join(",");
             this.getCampaignsList();
         },
         //返回没有选中的

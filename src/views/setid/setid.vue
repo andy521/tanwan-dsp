@@ -1,7 +1,3 @@
-<style>
-@import "../../styles/common.less";
-@import "../../styles/table.less";
-</style>
 <template>
     <div class="ad">
         <Card shadow>
@@ -46,6 +42,8 @@ export default {
             total_number: 1, //总数量
             total_page: 1, //总页数
             tableSize: 'small',
+            AdsAthour: [],
+            AdsAccount: [],
             columns: [{
                 title: 'ID',
                 key: 'id'
@@ -221,15 +219,35 @@ export default {
             } else {
                 this.page = page;
             }
-            var data = {
+            Axios.get('api.php', {
+                action: 'sys',
+                opt: 'getAdsAccount',
                 page: this.page,
                 page_size: this.page_size
-            }
-            this.$store.dispatch('getAdsAccount', data);
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.AdsAccount = res.data.list;
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                }
+            }).catch(
+                err => {
+                    console.log('帐号列表' + err)
+                }
+            )
         },
         //获取管理员
         getAdsAthour() {
-            this.$store.dispatch('getAdsAthour');
+            Axios.post('api.php', {
+                action: 'sys',
+                opt: 'getAdsAthour'
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.AdsAthour = res.data;
+                }
+            }).catch(err => {
+                console.log('获取管理员' + err)
+            })
         },
         //修改管理员
         changeauthor() {
@@ -254,22 +272,6 @@ export default {
                     console.log('修改帐户失败' + err)
                 }
             )
-        }
-    },
-    computed: {
-        //获取账号
-        AdsAccount() {
-            let adList = this.$store.state.setid.AdsAccount
-            this.total_number = adList.total_number;
-            this.total_page = adList.total_page;
-            return adList.list;
-        },
-        //获取管理员
-        AdsAthour() {
-            let AdsAthour = this.$store.state.setid.AdsAthour;
-            if (!AdsAthour[0]) return;
-            this.uId = AdsAthour[0].uId;
-            return AdsAthour;
         }
     }
 };

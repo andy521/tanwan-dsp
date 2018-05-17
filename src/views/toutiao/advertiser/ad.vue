@@ -9,6 +9,7 @@
 .ad .ivu-poptip {
   display: inline-block;
 }
+
 .sel_state {
   text-align: left;
   width: 110px;
@@ -23,17 +24,31 @@
   color: #999;
   margin-top: 10px;
 }
+.campaign_name {
+  font-size: 18px;
+  margin-left: 20px;
+}
+</style>
+<style>
+.ivu-tooltip-inner {
+  white-space: normal;
+}
 </style>
 <template>
     <div class="ad">
         <Card shadow class="margin-top-10">
             <Row>
                 <Col span="20">
-                <!-- <Button type="primary">返回</Button> -->
-                <!--搜索游戏列表-->
-                <search-tree @on-change="getids"></search-tree>
-                <Input class="inp" placeholder="请输入广告计划ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
-                <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
+                <template v-if="query.campaign_id">
+                    <Button type="primary" @click="back">返回</Button>
+                    <span class="campaign_name">{{query.campaign_name}}</span>
+                </template>
+                <template v-else>
+                    <!--搜索游戏列表-->
+                    <search-tree @on-change="getids"></search-tree>
+                    <Input class="inp" placeholder="请输入广告计划ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                    <Button type="primary" icon="search" clearable @click="getCampaignsList()">搜索</Button>
+                </template>
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
@@ -126,6 +141,7 @@ export default {
     },
     data() {
         return {
+            query: this.$route.query,
             height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
@@ -160,7 +176,7 @@ export default {
     methods: {
         //获取选中的游戏id
         getids(gid) {
-            this.game_id = "[" + gid.join(",") + "]";
+            this.game_id = gid.join(",");
             this.getCampaignsList();
         },
         //返回没有选中的
@@ -187,7 +203,7 @@ export default {
                 column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
         },
-         //表格高亮calss
+        //表格高亮calss
         rowClassName(row, index) {
             if (row._disabled) {
                 return "table-statistics";
@@ -205,20 +221,19 @@ export default {
                 opt: "updateAdgroupStatus",
                 ids: this.taCheckids,
                 opt_status: this.edit_status
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.visible = false;
-                        this.getCampaignsList(this.page);
-                    }
-                })
-                .catch(err => {
-                    console.log("修改状态失败" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.visible = false;
+                    this.getCampaignsList(this.page);
+                }
+            }).catch(err => {
+                console.log("修改状态失败" + err);
+            });
         },
         //获取实时投放计划
         getCampaignsList(page) {
+            console.log(this.query)
             if (page === undefined) {
                 this.$refs["pages"].currentPage = 1;
                 this.page = 1;
@@ -240,23 +255,25 @@ export default {
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 page: this.page, //页码
                 page_size: this.page_size //每页数量
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        console.log(res.data.list);
-                        //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.push(res.data.curr_page_total);
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
-                        this.newAdList = res.data.list;
-                    }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("今日头条广告组" + err);
-                });
+            }).then(res => {
+                this.loading = false;
+                if (res.ret == 1) {
+                    console.log(res.data.list);
+                    //添加统计
+                    res.data.curr_page_total._disabled = true;
+                    res.data.list.push(res.data.curr_page_total);
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                    this.newAdList = res.data.list;
+                }
+            }).catch(err => {
+                this.loading = false;
+                console.log("今日头条广告组" + err);
+            });
+        },
+        //返回
+        back() {
+            this.$router.go(-1);
         }
     },
     beforeMount() { },
@@ -267,23 +284,43 @@ export default {
                 {
                     type: "selection",
                     width: 58,
-                    key: ""  
+                    key: ""
                 },
                 {
                     title: "广告计划",
                     key: "adgroup_name",
                     width: 250,
                     render: (h, params) => {
-                    if (params.row._disabled) {
-                        return h("span", "本页统计");
-                    }
-                    else{
-                        let value = params.row.adgroup_name;
-                        return [
-                            h(
-                                "span",
-                                {
-                                    class: "name_text",
+                        if (params.row._disabled) {
+                            return h("span", "本页统计");
+                        }
+                        else {
+                            let value = params.row.adgroup_name;
+                            return [
+                                h(
+                                    "span",
+                                    {
+                                        class: "name_text",
+                                        on: {
+                                            click: () => {
+                                                this.$router.push({
+                                                    name: "tt_creative",
+                                                    query: {
+                                                        adgroup_id: params.row.adgroup_id
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    },
+                                    params.row.adgroup_name
+                                ),
+                                h("i-button", {
+                                    props: {
+                                        icon: "edit",
+                                        type: "text",
+                                        size: "small"
+                                    },
+                                    class: ["edit"],
                                     on: {
                                         click: () => {
                                             let query = {
@@ -322,45 +359,33 @@ export default {
                                                         input: val => {
                                                             value = val;
                                                         }
-                                                    }
-                                                });
-                                            },
-                                            onOk: () => {
-                                                if (value == "") {
-                                                    this.$Message.info(
-                                                        "请输入修改信息"
-                                                    );
-                                                    return;
-                                                }
-                                                Axios.post("api.php", {
-                                                    action: "ttAdPut",
-                                                    opt: "updateAdgroupName",
-                                                    id: params.row.id,
-                                                    adgroup_name: value
-                                                })
-                                                    .then(res => {
-                                                        if (res.ret == 1) {
-                                                            this.$Message.info(
-                                                                res.msg
-                                                            );
-                                                            this.getCampaignsList(
-                                                                this.page
-                                                            );
-                                                        }
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(
-                                                            "修改广告计划失败" +
-                                                            err
-                                                        );
                                                     });
-                                            }
-                                        });
+                                                },
+                                                onOk: () => {
+                                                    if (value == "") {
+                                                        this.$Message.info("请输入修改信息");
+                                                        return;
+                                                    }
+                                                    Axios.post("api.php", {
+                                                        action: "ttAdPut",
+                                                        opt: "updateAdgroupName",
+                                                        id: params.row.id,
+                                                        adgroup_name: value
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList(this.page);
+                                                        }
+                                                    }).catch(err => {
+                                                        console.log("修改广告计划失败" + err);
+                                                    });
+                                                }
+                                            });
+                                        }
                                     }
-                                }
-                            })
-                        ];
-                    } 
+                                })
+                            ];
+                        }
                     }
                 },
                 {
@@ -380,54 +405,31 @@ export default {
                                 h("i-switch", {
                                     props: {
                                         size: "small",
-                                        value:
-                                            params.row.opt_status ==
-                                                "AD_STATUS_ENABLE"
-                                                ? true
-                                                : false
+                                        value: params.row.opt_status == "AD_STATUS_ENABLE" ? true : false
                                     },
                                     style: {
                                         marginRight: "10px"
                                     },
                                     on: {
                                         "on-change": value => {
-                                            params.row.opt_status =
-                                                value == true
-                                                    ? "AD_STATUS_ENABLE"
-                                                    : "AD_STATUS_DISABLE";
+                                            params.row.opt_status = value == true ? "AD_STATUS_ENABLE" : "AD_STATUS_DISABLE";
                                             Axios.post("api.php", {
                                                 action: "ttAdPut",
                                                 opt: "updateAdgroupStatus",
                                                 ids: params.row.id.split(","),
-                                                opt_status:
-                                                    value == true
-                                                        ? "enable"
-                                                        : "disable"
-                                            })
-                                                .then(res => {
-                                                    if (res.ret == 1) {
-                                                        this.$Message.info(
-                                                            res.msg
-                                                        );
-                                                        this.getCampaignsList(
-                                                            this.page
-                                                        );
-                                                    }
-                                                })
-                                                .catch(err => {
-                                                    console.log(
-                                                        "修改状态失败" + err
-                                                    );
-                                                });
+                                                opt_status: value == true ? "enable" : "disable"
+                                            }).then(res => {
+                                                if (res.ret == 1) {
+                                                    this.$Message.info(res.msg);
+                                                    this.getCampaignsList(this.page);
+                                                }
+                                            }).catch(err => {
+                                                console.log("修改状态失败" + err);
+                                            });
                                         }
                                     }
                                 }),
-                                h(
-                                    "span",
-                                    params.row.opt_status == "AD_STATUS_ENABLE"
-                                        ? "开启"
-                                        : "关闭"
-                                )
+                                h("span", params.row.opt_status == "AD_STATUS_ENABLE" ? "开启" : "关闭")
                             ]);
                         }
                     }
@@ -438,7 +440,7 @@ export default {
                     width: 150,
                     render: (h, params) => {
                         let value = params.row.budget;
-                        if(!value)return;
+                        if (!value) return;
                         //三位数加逗号
                         let newvalue = value
                             .toString()
@@ -456,8 +458,7 @@ export default {
                                 {
                                     props: {
                                         placement: "top",
-                                        content:
-                                            "最低预算100元,单次预算修改幅度不小于100元,日修改预算不超过20次"
+                                        content: "最低预算100元,单次预算修改幅度不小于100元,日修改预算不超过20次"
                                     }
                                 },
                                 [
@@ -477,20 +478,15 @@ export default {
                                                             h(
                                                                 "div",
                                                                 {
-                                                                    class:
-                                                                        "budget-txt"
+                                                                    class: "budget-txt"
                                                                 },
                                                                 "该预算设置第2天0点后自动生效"
                                                             ),
                                                             h("Input", {
                                                                 props: {
-                                                                    value:
-                                                                        params
-                                                                            .row
-                                                                            .budget,
+                                                                    value: params.row.budget,
                                                                     autofocus: true,
-                                                                    placeholder:
-                                                                        "日消耗限额"
+                                                                    placeholder: "日消耗限额"
                                                                 },
                                                                 on: {
                                                                     input: val => {
@@ -501,8 +497,7 @@ export default {
                                                             h(
                                                                 "div",
                                                                 {
-                                                                    class:
-                                                                        "budget-txt2"
+                                                                    class: "budget-txt2"
                                                                 },
                                                                 "*实际生效时间可能会延迟0-5分钟左右，在此期间不建议再人工修改。"
                                                             )
@@ -510,42 +505,23 @@ export default {
                                                     },
                                                     onOk: () => {
                                                         if (value == "") {
-                                                            this.$Message.info(
-                                                                "请输入修改信息"
-                                                            );
+                                                            this.$Message.info("请输入修改信息");
                                                             return;
                                                         }
                                                         Axios.post("api.php", {
                                                             action: "ttAdPut",
-                                                            opt:
-                                                                "updateAdgroupBudget",
-                                                            account_id:
-                                                                params.row
-                                                                    .account_id,
-                                                            adgroup_id:
-                                                                params.row
-                                                                    .adgroup_id,
+                                                            opt: "updateAdgroupBudget",
+                                                            account_id: params.row.account_id,
+                                                            adgroup_id: params.row.adgroup_id,
                                                             budget: value //预算
-                                                        })
-                                                            .then(res => {
-                                                                if (
-                                                                    res.ret == 1
-                                                                ) {
-                                                                    this.$Message.info(
-                                                                        res.msg
-                                                                    );
-                                                                    this.getCampaignsList(
-                                                                        this
-                                                                            .page
-                                                                    );
-                                                                }
-                                                            })
-                                                            .catch(err => {
-                                                                console.log(
-                                                                    "修改删除投放计划失败" +
-                                                                    err
-                                                                );
-                                                            });
+                                                        }).then(res => {
+                                                            if (res.ret == 1) {
+                                                                this.$Message.info(res.msg);
+                                                                this.getCampaignsList();
+                                                            }
+                                                        }).catch(err => {
+                                                            console.log("修改删除投放计划失败" + err);
+                                                        });
                                                     }
                                                 });
                                             }
@@ -562,7 +538,7 @@ export default {
                     width: 100,
                     render: (h, params) => {
                         let value = params.row.bid;
-                        if(!value)return;
+                        if (!value) return;
                         let is_stage2bid = "0";
                         //三位数加逗号
                         let newvalue = value
@@ -588,23 +564,17 @@ export default {
                                     click: () => {
                                         this.$Modal.confirm({
                                             render: h => {
-                                                if (
-                                                    params.row
-                                                        .cpa_skip_first_phrase ==
-                                                    1
-                                                ) {
+                                                if (params.row.cpa_skip_first_phrase == 1) {
                                                     return [
                                                         h(
                                                             "Select",
                                                             {
                                                                 props: {
                                                                     value: is_stage2bid,
-                                                                    placeholder:
-                                                                        "出价"
+                                                                    placeholder: "出价"
                                                                 },
                                                                 style: {
-                                                                    marginBottom:
-                                                                        "10px"
+                                                                    marginBottom: "10px"
                                                                 },
                                                                 on: {
                                                                     "on-change": val => {
@@ -617,8 +587,7 @@ export default {
                                                                     "Option",
                                                                     {
                                                                         props: {
-                                                                            value:
-                                                                                "0"
+                                                                            value: "0"
                                                                         }
                                                                     },
                                                                     "不修改第二阶段出价"
@@ -627,8 +596,7 @@ export default {
                                                                     "Option",
                                                                     {
                                                                         props: {
-                                                                            value:
-                                                                                "1"
+                                                                            value: "1"
                                                                         }
                                                                     },
                                                                     "修改第二阶段出价"
@@ -637,12 +605,9 @@ export default {
                                                         ),
                                                         h("Input", {
                                                             props: {
-                                                                value:
-                                                                    params.row
-                                                                        .bid,
+                                                                value: params.row.bid,
                                                                 autofocus: true,
-                                                                placeholder:
-                                                                    "出价"
+                                                                placeholder: "出价"
                                                             },
                                                             on: {
                                                                 input: val => {
@@ -654,8 +619,7 @@ export default {
                                                 } else {
                                                     return h("Input", {
                                                         props: {
-                                                            value:
-                                                                params.row.bid,
+                                                            value: params.row.bid,
                                                             autofocus: true,
                                                             placeholder: "出价"
                                                         },
@@ -669,35 +633,23 @@ export default {
                                             },
                                             onOk: () => {
                                                 if (value == "") {
-                                                    this.$Message.info(
-                                                        "请输入修改信息"
-                                                    );
+                                                    this.$Message.info("请输入修改信息");
                                                     return;
                                                 }
                                                 Axios.post("api.php", {
                                                     action: "ttAdPut",
                                                     opt: "updateAdgroupBid",
-                                                    ids: params.row.id.split(
-                                                        ","
-                                                    ),
+                                                    ids: params.row.id.split(","),
                                                     is_stage2bid: is_stage2bid,
                                                     bid: value //预算
-                                                })
-                                                    .then(res => {
-                                                        if (res.ret == 1) {
-                                                            this.$Message.info(
-                                                                res.msg
-                                                            );
-                                                            this.getCampaignsList(
-                                                                this.page
-                                                            );
-                                                        }
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(
-                                                            "修改出价失败" + err
-                                                        );
-                                                    });
+                                                }).then(res => {
+                                                    if (res.ret == 1) {
+                                                        this.$Message.info(res.msg);
+                                                        this.getCampaignsList();
+                                                    }
+                                                }).catch(err => {
+                                                    console.log("修改出价失败" + err);
+                                                });
                                             }
                                         });
                                     }
@@ -866,7 +818,7 @@ export default {
                     key: "",
                     width: 130,
                     render: (h, params) => {
-                        if(params.row._disabled)return;
+                        if (params.row._disabled) return;
                         return [
                             h(
                                 "span",
@@ -907,30 +859,18 @@ export default {
                                                 onOk: () => {
                                                     Axios.post("api.php", {
                                                         action: "ttAdPut",
-                                                        opt:
-                                                            "updateAdgroupStatus",
-                                                        ids: params.row.id.split(
-                                                            ","
-                                                        ),
+                                                        opt: "updateAdgroupStatus",
+                                                        ids: params.row.id.split(","),
                                                         opt_status: "delete"
-                                                    })
-                                                        .then(res => {
-                                                            if (res.ret == 1) {
-                                                                this.$Message.info(
-                                                                    res.msg
-                                                                );
-                                                                this.getCampaignsList(
-                                                                    this.page
-                                                                );
-                                                            }
-                                                        })
-                                                        .catch(err => {
-                                                            console.log(
-                                                                "删除失败" + err
-                                                            );
-                                                        });
-                                                },
-                                                onCancel: () => { }
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList();
+                                                        }
+                                                    }).catch(err => {
+                                                        console.log("删除失败" + err);
+                                                    });
+                                                }
                                             });
                                         }
                                     }
