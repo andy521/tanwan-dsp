@@ -8,7 +8,7 @@
 }
 </style>
 <template>
-    <Poptip content="content" placement="bottom-start" trigger="hover">
+    <Poptip placement="bottom-start" trigger="hover">
         <Button type="ghost">选择代理商</Button>
         <div slot="content">
             <Card dis-hover :bordered="false">
@@ -42,7 +42,7 @@ export default {
         this.getadgroups();
     },
     methods: {
-        //获取广告计划
+        //获取代理商
         getadgroups() {
             Axios.post("api.php", {
                 action: "sys",

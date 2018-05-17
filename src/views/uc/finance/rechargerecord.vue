@@ -47,6 +47,27 @@
             <Page :total="total_number" :page-size="page_size" ref="fundpage" @on-change="getfund" show-elevator show-total></Page>
             </Col>
         </Row>
+        <Modal v-model="win_modal" title="充值记录" @on-ok="changeConfirm">
+            <Form :model="row" :label-width="80" :rules="ruleValidate" ref="formValidate">
+                <FormItem label="负责人" prop="author">
+                    <Select v-model="row.author">
+                        <Option v-for="item in thour_list" :value="item.uName" :key="this">{{ item.uName }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="代理商" prop="agent">
+                    <Select v-model="row.agent">
+                        <Option v-for="item in agent_list" :value="item.agent" :key="this">{{ item.agent }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="充值金额" prop="money">
+                    <Input v-model="row.money" placeholder="请输入充值金额（元）" clearable></Input>
+                </FormItem>
+                <FormItem label="备注">
+                    <Input v-model="row.mark" placeholder="请输入备注" clearable></Input>
+                </FormItem>
+            </Form>
+
+        </Modal>
     </Card>
 </template>
 <script>
@@ -66,9 +87,31 @@ export default {
     },
     data() {
         return {
+            win_modal: false,
+            row: {
+                id: "",
+                account_id: "",
+                money: "",
+                mark: "",
+                author: "",
+                agent: ""
+            },
+            ruleValidate: {
+                author: [
+                    { required: true, message: '请选择负责人', trigger: 'change' }
+                ],
+                agent: [
+                    { required: true, message: '请选择代理商', trigger: 'change' }
+                ],
+                money: [
+                    { required: true, message: '请输入充值金额', trigger: 'blur' }
+                ]
+            },
+            thour_list: [],
+            agent_list: [],
             loading: false,
             options: DateShortcuts, //日期辅助功能
-            agent:"",
+            agent: "",
             mediaType: 3,
             edit_status: "",
             author: [],
@@ -149,6 +192,77 @@ export default {
                             }, "已处理");
                         }
                     }
+                },
+                {
+                    title: "操作",
+                    key: "",
+                    render: (h, params) => {
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "edit_link",
+                                    on: {
+                                        click: () => {
+                                            if (params.row.status == 1) {
+                                                this.$Message.info("已处理状态不能编辑");
+                                                return;
+                                            }
+                                            if (this.thour_list.length == 0) {
+                                                this.getAdsAthour();
+                                            }
+                                            if (this.agent_list.length == 0) {
+                                                this.getAgent();
+                                            }
+                                            this.win_modal = true;
+                                            this.row.id = params.row.id;
+                                            this.row.account_id = params.row.account_id;
+                                            this.row.money = params.row.money;
+                                            this.row.mark = params.row.mark;
+                                            this.row.author = params.row.author;
+                                            this.row.agent = params.row.agent;
+                                        }
+                                    }
+                                },
+                                "编辑"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "del_link",
+                                    on: {
+                                        click: value => {
+                                            if (params.row.status == 1) {
+                                                this.$Message.info("已处理状态不能删除");
+                                                return;
+                                            }
+                                            this.$Modal.confirm({
+                                                title: "操作提示",
+                                                content: "<p>确认删除</p>",
+                                                onOk: () => {
+                                                    Axios.post("api.php", {
+                                                        action: "sys",
+                                                        opt: "accountRechargeDel",
+                                                        ids: params.row.id.split(",")
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getfund();
+                                                        }
+                                                    }).catch(err => {
+                                                        this.loading = false;
+                                                        console.log("删除充值记录" + err);
+                                                    });
+                                                }
+                                            });
+
+                                        }
+                                    }
+                                },
+                                "删除"
+                            )
+                        ];
+                    }
                 }
             ],
             funddata: [],
@@ -176,9 +290,9 @@ export default {
                 action: "sys",
                 opt: "accountRechargeData",
                 media_type: this.mediaType,
-                agent:this.agent,
-                author:this.author,
-                account_name:this.account_name,
+                agent: this.agent,
+                author: this.author,
+                account_name: this.account_name,
                 start_date: this.DateDomain[0], //开始时间
                 end_date: this.DateDomain[1], //结速时间
             }).then(res => {
@@ -268,6 +382,62 @@ export default {
                 original: false
             });
         },
+        //获取管理员
+        getAdsAthour() {
+            Axios.post('api.php', {
+                action: 'sys',
+                opt: 'getAdsAthour'
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.thour_list = res.data;
+                }
+            }).catch(err => {
+                console.log('获取管理员' + err)
+            })
+        },
+        //获取代理商
+        getAgent() {
+            Axios.post("api.php", {
+                action: "sys",
+                opt: "getAgent",
+            }).then(
+                res => {
+                    if (res.ret == 1) {
+                        this.agent_list = res.data;
+                    }
+                }
+            ).catch(err => { console.log(err) });
+        },
+        //修改
+        changeConfirm() {
+            this.$refs["formValidate"].validate((valid) => {
+                if (valid) {
+                    Axios.post('api.php', {
+                        action: 'sys',
+                        opt: 'updateAccountRecharge',
+                        id: this.row.id,
+                        account_id: this.row.account_id,
+                        money: this.row.money,
+                        mark: this.row.mark,
+                        author: this.row.author,
+                        agent: this.row.agent
+                    }).then(
+                        res => {
+                            if (res.ret == 1) {
+                                this.$Message.info(res.msg);
+                                this.getfund();
+                            }
+                        }
+                    ).catch(
+                        err => {
+                            console.log('修改帐户失败' + err)
+                        }
+                    )
+                } else {
+                    this.$Message.info('请填写正确信息');
+                }
+            })
+        }
     }
 };
 </script>
