@@ -193,6 +193,58 @@
       "val_type": "AD_STATUS_DELETE"
     }
   ],
+  "pricing": [
+    {
+      "name": "CPC",
+      "val_type": "PRICING_CPC"
+    },
+    {
+      "name": "OCPC",
+      "val_type": "PRICING_OCPC"
+    },
+    {
+      "name": "CPA",
+      "val_type": "PRICING_CPA"
+    },
+    {
+      "name": "CPV",
+      "val_type": "PRICING_CPV"
+    },
+    {
+      "name": "OCPM",
+      "val_type": "PRICING_OCPM"
+    }
+  ],
+  "image_mode": [
+    {
+      "name": "小图",
+      "val_type": "CREATIVE_IMAGE_MODE_SMALL"
+    },
+    {
+      "name": "大图",
+      "val_type": "CREATIVE_IMAGE_MODE_LARGE"
+    },
+    {
+      "name": "组图",
+      "val_type": "CREATIVE_IMAGE_MODE_GROUP"
+    },
+    {
+      "name": "视频",
+      "val_type": "CREATIVE_IMAGE_MODE_VIDEO"
+    },
+    {
+      "name": "GIF图",
+      "val_type": "CREATIVE_IMAGE_MODE_GIF"
+    },
+    {
+      "name": "大图竖图",
+      "val_type": "CREATIVE_IMAGE_MODE_LARGE_VERTICAL"
+    },
+    {
+      "name": "竖版视频",
+      "val_type": "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL"
+    }
+  ],
   "gender": [
     {
       "type": "GENDER_UNLIMITED",
