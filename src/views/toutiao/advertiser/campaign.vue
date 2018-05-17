@@ -14,6 +14,7 @@
   text-align: left;
   width: 110px;
 }
+
 </style>
 <template>
     <div>
@@ -23,7 +24,7 @@
                 <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Input class="inp" clearable placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
                 <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
                 <Col span="4" style="text-align: right;">
@@ -153,7 +154,7 @@ export default {
     methods: {
         //获取选中的游戏id
         getids(gid) {
-            this.game_id = gid.join(",");
+            this.game_id = "[" + gid.join(",") + "]";
             this.getCampaignsList();
         },
         //返回没有选中的
@@ -180,7 +181,7 @@ export default {
                 column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
         },
-        //表格高亮calss
+         //表格高亮calss
         rowClassName(row, index) {
             if (row._disabled) {
                 return "table-statistics";
@@ -237,7 +238,7 @@ export default {
                 .then(res => {
                     this.loading = false;
                     if (res.ret == 1) {
-                        // console.log(res.data.list);
+                        console.log(res.data.list);
                         //添加统计
                         res.data.curr_page_total._disabled = true;
                         res.data.list.push(res.data.curr_page_total);
@@ -268,36 +269,15 @@ export default {
                     width: 200,
                     render: (h, params) => {
                         if (params.row._disabled) {
-                            return h("span", "本页统计");
-                        }
-                        else {
-                            let value = params.row.campaign_name;
-                            return [
-                                h(
-                                    "span",
-                                    {
-                                        class: "name_text",
-                                        on: {
-                                            click: () => {
-                                                this.$router.push({
-                                                    name: "tt_ad",
-                                                    query: {
-                                                        campaign_id: params.row.campaign_id,
-                                                        campaign_name: params.row.campaign_name
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    },
-                                    params.row.campaign_name
-                                ),
-                                h("i-button", {
-                                    props: {
-                                        icon: "edit",
-                                        type: "text",
-                                        size: "small"
-                                    },
-                                    class: ["edit"],
+                        return h("span", "本页统计");
+                    }
+                    else{
+                        let value = params.row.campaign_name;
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "name_text",
                                     on: {
                                         click: () => {
                                             let query = {
@@ -333,35 +313,38 @@ export default {
                                                         input: val => {
                                                             value = val;
                                                         }
-                                                    });
-                                                },
-                                                onOk: () => {
-                                                    if (value == "") {
-                                                        this.$Message.info("请输入修改信息");
-                                                        return;
                                                     }
-                                                    Axios.post("api.php", {
-                                                        action: "ttAdPut",
-                                                        opt: "updateCampaign",
-                                                        account_id: params.row.account_id,
-                                                        modify_time: params.row.modify_time,
-                                                        campaign_id: params.row.campaign_id,
-                                                        campaign_name: value
-                                                    }).then(res => {
+                                                });
+                                            },
+                                            onOk: () => {
+                                                if (value == "") {
+                                                    this.$Message.info("请输入修改信息");
+                                                    return;
+                                                }
+                                                Axios.post("api.php", {
+                                                    action: "ttAdPut",
+                                                    opt: "updateCampaign",
+                                                    account_id: params.row.account_id,
+                                                    modify_time: params.row.modify_time,
+                                                    campaign_id: params.row.campaign_id,
+                                                    campaign_name: value
+                                                })
+                                                    .then(res => {
                                                         if (res.ret == 1) {
                                                             this.$Message.info(res.msg);
                                                             this.getCampaignsList(this.page);
                                                         }
-                                                    }).catch(err => {
+                                                    })
+                                                    .catch(err => {
                                                         console.log("修改广告组名失败" + err);
                                                     });
-                                                }
-                                            });
-                                        }
+                                            }
+                                        });
                                     }
-                                })
-                            ];
-                        }
+                                }
+                            })
+                        ];
+                    }
                     }
                 },
                 {
@@ -590,7 +573,7 @@ export default {
                     key: "",
                     width: 130,
                     render: (h, params) => {
-                        if (params.row._disabled) return;
+                        if(params.row._disabled)return;
                         return [
                             h(
                                 "span",
