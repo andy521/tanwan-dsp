@@ -5,12 +5,12 @@
     .ivu-card {
         margin-bottom: 10px;
         padding: 20px;
-        .title{
-            font-size: 22px;
-            margin-bottom: 36px;
-            line-height: 30px;
-        }
     }
+}
+.newtt-ad .title-ad{
+    font-size: 22px;
+    margin-bottom: 36px;
+    line-height: 30px;
 }
 </style>
 
@@ -20,7 +20,7 @@
          <targeting-tab></targeting-tab>
 
          <Card>
-             <div class="title">投放目标</div>
+             <div class="title-ad">投放目标</div>
               <Form :label-width="100">
                 <FormItem label="投放目标">
                     <span class="required-item"></span>
@@ -66,7 +66,7 @@ export default {
     },
     mounted() {
         if (this.id) {
-            this.getCampaigns();
+            this.getAdgroups();
         }
     },
     methods: {
@@ -106,28 +106,21 @@ export default {
                 this.budgetTip.isSubmit = true
             }
         },
-        //广告组获取详情
-        getCampaigns() {
+        //广告获取详情
+        getAdgroups() {
             Axios.post("api.php", {
                 action: "ttAdPut",
-                opt: "getCampaigns",
+                opt: "getAdgroups",
                 id: this.id
             })
                 .then(res => {
                     if (res.ret == 1) {
                         let data = res.data[0];
-                        this.account_id = data.account_id;
-                        this.campaign_id = data.campaign_id;
-                        this.budget_mode = data.budget_mode
-                        this.initBudget = this.budget = data.budget;
-                        this.modify_time = data.modify_time;
-                        this.campaign_name = data.campaign_name;
-                        this.landing_type = data.landing_type;
-                        this.modify_time = data.modify_time;
+                    console.log('---', data)
                     }
                 })
                 .catch(err => {
-                    console.log("广告组获取详情" + err);
+                    console.log("广告获取详情" + err);
                 });
         },
         //广告组修改

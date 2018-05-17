@@ -1,7 +1,4 @@
 <style scoped>
-.transfer-tree{
-  margin-top: 20px;
-}
 .transfer-tree .search-content{
   width: 450px;
 }
@@ -9,17 +6,17 @@
   margin: 0;
   padding: 0 12px;
   width: 100%;
-  border-bottom: 1px solid #dee4f5;
+  border: 1px solid #dddee1;
+  border-bottom: none;
   background-color: #fafbfe;
   color: #333;
   font-size: 14px;
 }
 .transfer-tree .content{
-  padding: 10px 15px;
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 243px;
   overflow-y: scroll;
-  border: 1px solid #ccc;
+  border: 1px solid #dddee1;
   box-sizing: border-box;
 }
 .g-flex{
@@ -29,7 +26,7 @@
   width: 450px;
 }
 .g-flex-item{
-  height: 300px;
+  height: 280px;
 }
 .col-10{
   flex: 0 0 100%;
@@ -43,6 +40,9 @@
   flex: 0 0 33.3333%;
   width: 33.3333%;
 }
+.transfer-tree .filter-tree-content{
+  margin: 20px 0 0;
+}
 </style>
 <template>
   <div class="transfer-tree">
@@ -53,27 +53,47 @@
       </Input>
     </div>
 
-    <div v-if="deep === 2" class="g-flex">
-      <div :class="{'col-10': isCol10}" class="g-flex-item">
-        <div class="title">{{colTitle.col1}}</div>
-        <div class="content">
-          <Tree @on-check-change="handleProvince" :data="provinceOrgin" show-checkbox></Tree>
+    <Row>
+      <Col span="16">
+        <div v-if="deep === 2 && provinceOrgin && provinceOrgin.length !== 0" class="g-flex">
+          <div :class="{'col-10': isCol10, 'col-5': isCol5 && deep === 2}" class="g-flex-item">
+            <div class="title">{{colTitle.col1}}</div>
+            <div class="content">
+              <!-- <Tree @on-check-change="handleProvince" :data="provinceOrgin" show-checkbox></Tree> -->
+              <selec-tree @on-change="handleProvinceChange" :select-all-show="true" :data="provinceOrgin" type="province"></selec-tree>
+            </div>
+          </div>
+          <div v-if="!isCol10" :class="{'col-5': isCol5 && deep === 2}" class="g-flex-item">
+            <div class="title">{{colTitle.col1}}</div>
+            <div class="content">
+              <selec-tree @on-change="handleCityChange" :select-all-show="true" :data="cityOrgin" type="city"></selec-tree>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="g-flex-item"></div>
-    </div>
 
-    <div v-if="deep === 3" class="g-flex">
-      <div class="g-flex-item"></div>
-      <div class="g-flex-item"></div>
-      <div class="g-flex-item"></div>
-    </div>
-
+        <div v-if="deep === 3" class="g-flex">
+          <div class="g-flex-item"></div>
+          <div class="g-flex-item"></div>
+          <div class="g-flex-item"></div>
+        </div>
+      </Col>
+      <Col span="8">
+        <div class="filter-tree-content">
+          <filter-tree @on-change="handleFilterChange" :value-data="valueData" :title-data="titleData"></filter-tree>
+        </div>
+      </Col>
+    </Row>
   </div>
 </template>
 <script>
+import selecTree from './selecTree';
+import filterTree from './filterTree';
 export default {
   name: 'transferTree',
+  components: {
+    selecTree,
+    filterTree
+  },
   props: {
     data: {
       type: Array,
@@ -106,28 +126,76 @@ export default {
       provinceOrgin: [],
       cityOrgin: [],
       countryOrgin: [],
-      search: ''
+      targetList: [], // 将要返回的数据
+      search: '',
+      valueData: [], // filterTree props 数据
+      titleData: [], // filterTree props 数据
     }
   },
   computed: {
     isCol10() {
-      // console.log('isCol10',this.provinceOrgin.length > 0 && !this.cityOrgin.length && !this.countryOrgin.length)
-      // return this.provinceOrgin.length > 0 && !this.cityOrgin.length && !this.countryOrgin.length
+      if (!this.countryOrgin && this.countryOrgin.length === 'undefine') {
+        return
+      }
+      return this.provinceOrgin.length > 0 && !this.cityOrgin.length
+    },
+    isCol5() {
+      if (!this.countryOrgin && this.countryOrgin.length === 'undefine') {
+        return
+      }
+      return this.provinceOrgin.length > 0 && this.cityOrgin.length > 0
+    },
+    isCol3() {
+      if (!this.countryOrgin && this.countryOrgin.length === 'undefine') {
+        return
+      }
+      return this.provinceOrgin.length > 0 && this.cityOrgin.length > 0 && this.countryOrgin.length > 0
     }
   },
   watch: {
     data(newVal) {
       this.treeData = newVal
-      this.provinceOrgin = this.getProvince(this.treeData)
+      // this.provinceOrgin = this.getProvince(this.treeData)
+      this.provinceOrgin = this.treeData
     }
   },
   mounted() {
     this.treeData = this.data
-    this.provinceOrgin = this.getProvince(this.treeData)
+    this.provinceOrgin = this.treeData
   },
   methods: {
-    handleProvince(val) {
-      console.log(val)
+    handleFilterChange(val) {
+      const value = val.value
+      // if (value.length === 0) {
+
+      // }
+      // value.forEach
+    },
+    handleCityChange(val) {
+      val.children.forEach(p => {
+        if (!p.selected) {
+          p.selected = true
+        }
+      })
+      // province
+
+
+      // country
+      this.countryOrgin = val.children
+      this.valueData = val.value
+      this.titleData = val.name
+      console.log('handleCityChange', val)
+    },
+    handleProvinceChange(val) {
+      val.children.forEach(p => {
+        if (!p.selected) {
+          p.selected = true
+        }
+      })
+      this.cityOrgin = val.children
+      this.valueData = val.value
+      this.titleData = val.name
+      console.log('handleProvinceChange', val, this.valueData, this.titleData)
     },
     handlereset() {
       if (this.search === '') {

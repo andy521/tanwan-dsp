@@ -5,12 +5,16 @@
     .ivu-card {
         margin-bottom: 10px;
         padding: 20px;
-        .title{
-            font-size: 22px;
-            margin-bottom: 36px;
-            line-height: 30px;
-        }
     }
+}
+.newtt-ad .title-ad{
+    font-size: 22px;
+    margin-bottom: 36px;
+    line-height: 30px;
+}
+.newtt-ad .tree-content{
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 </style>
 
@@ -26,7 +30,9 @@
             <Radio label="CITY">按省市</Radio>
             <Radio label="COUNTY">按区县</Radio>
           </RadioGroup>
-          <transfer-tree :data="provinceList"></transfer-tree>
+          <div class="tree-content">
+            <transfer-tree :data="provinceList"></transfer-tree>
+          </div>
         </FormItem>
 
         <FormItem label="性别">
@@ -120,6 +126,7 @@
 </template>
 
 <script>
+import getProvince from '../temp/getProvince.json'
 import targetingConf from '@/utils/toutiaoConfig.json'
 import Axios from '@/api/index'
 import transferTree from './transferTree'
@@ -163,8 +170,11 @@ export default {
   },
   mounted() {
     if (this.id) {
-      this.getCampaigns();
+      // this.getCampaigns();
     }
+    this.getTargetingList()
+    this.getTag()
+    this.getAppType()
   },
 methods: {
   handleCarrier() {},
@@ -217,7 +227,6 @@ methods: {
       return
     }
 
-    const provinceCity = ['北京', '上海', '天津', '重庆', '台湾', '香港', '澳门'] // 备份
     const ret = []
 
     list.forEach((province, ip) => {
@@ -262,7 +271,7 @@ methods: {
           value: province.value,
           expand: false,
           selected: false,
-          type: 'province',
+          type: 'city',
           children: []
         })
 
@@ -278,32 +287,40 @@ methods: {
           })
         })
       }
-
     })
+    const provinceCity = ['北京', '上海', '天津', '重庆', '台湾', '香港', '澳门'] // 备份
+    provinceCity.forEach(c => {
+      ret.forEach(p => {
+        if (c === p.title) {
+          p.type = 'city'
+        }
+      })
+    })
+    console.log(ret,'ret')
     return ret
   },
   // 获取地域列表
   getProvince() {
-    Axios.post("api.php", {
-      action: "ttAdPut",
-      opt: "getProvince"
-    })
-      .then(res => {
-        if (res.ret == 1) {
-          let data = res.data
-          this.provinceList = this.normalizeAddProvince(data)
-        }
-      })
-      .catch(err => {
-        console.log("获取地域列表错误" + err);
-      })
+    // Axios.post("api.php", {
+    //   action: "ttAdPut",
+    //   opt: "getProvince"
+    // })
+    //   .then(res => {
+    //     if (res.ret == 1) {
+    //       let data = res.data
+    //       this.provinceList = this.normalizeAddProvince(data)
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log("获取地域列表错误" + err);
+    //   })
+    this.provinceList = this.normalizeAddProvince(getProvince.data)
   },
-  //广告组获取详情
-  getCampaigns() {
-    Axios.post("api.php", {
-      action: "ttAdPut",
-      opt: "getCampaigns",
-      id: this.id
+  // 兴趣分类列表
+  getTag() {
+    Axios.post('api.php', {
+      action: 'ttAdPut',
+      opt: 'getTag'
     })
       .then(res => {
         if (res.ret == 1) {
@@ -311,25 +328,54 @@ methods: {
         }
       })
       .catch(err => {
-        console.log("广告组获取详情" + err);
+        console.log('获取兴趣分类列表失败' + err);
       })
   },
-  //广告组修改
-  updateCampaign() {
+  // APP分类列表
+  getAppType() {
+    Axios.post('api.php', {
+      action: 'ttAdPut',
+      opt: 'getAppType'
+    })
+      .then(res => {
+        if (res.ret == 1) {
+          let data = res.data[0]
+        }
+      })
+      .catch(err => {
+        console.log('获取APP分类列表失败' + err);
+      })
+  },
+  // 定向详情获取
+  getTargetingList() {
+    Axios.post('api.php', {
+    action: 'ttAdPut',
+    opt: 'getTargetingList'
+    })
+      .then(res => {
+        if (res.ret == 1) {
+          let data = res.data[0]
+        }
+      })
+      .catch(err => {
+        console.log('获取APP分类列表失败' + err);
+      })  
+  },
+  // 修改定向
+  updateTargeting() {
     this.handleBudget()
     if (!this.budgetTip.isSubmit) {
       return
     }
-    Axios.post("api.php", {
-      action: "ttAdPut",
-      opt: "updateCampaign",
+    Axios.post('api.php', {
+      action: 'ttAdPut',
+      opt: 'updateTargeting',
       account_id: this.account_id,
       campaign_id: this.campaign_id,
       modify_time: this.modify_time,
       campaign_name: this.campaign_name,
       landing_type: this.landing_type,
       budget_mode: this.budget_mode,
-      budget: this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budget
     })
       .then(res => {
         if (res.ret == 1) {
@@ -340,19 +386,19 @@ methods: {
         }
       })
       .catch(err => {
-        console.log("修改广告组" + err)
+        console.log('修改定向错误' + err)
       })
   },
-  //提交
-  submitCampaign() {
+  // 提交
+  submitTargeting() {
       if (this.id) {
-        this.updateCampaign()
+        this.updateTargeting()
       } else {
-        this.addCampaign()
+        this.addTargeting()
       }
   },
-  //添加广告组
-  addCampaign() {
+  // 添加定向
+  addTargeting() {
     // 次account_id 只在开发时使用，上线前删掉
     this.account_id = '93949559469'
 
@@ -360,14 +406,14 @@ methods: {
     if (!this.budgetTip.isSubmit) {
       return
     }
-    Axios.post("api.php", {
-      action: "ttAdPut",
-      opt: "addCampaign",
+    Axios.post('api.php', {
+      action: 'ttAdPut',
+      opt: 'addTargeting',
       account_id: this.account_id,
       campaign_name: this.campaign_name,
       landing_type: this.landing_type,
       budget_mode: this.budget_mode,
-      budget:this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budge
+
     })
       .then(res => {
         if (res.ret == 1) {
@@ -379,7 +425,7 @@ methods: {
         }
       })
       .catch(err => {
-        console.log("提交广告组" + err)
+        console.log('提交定向错误' + err)
       })
     }
   }
