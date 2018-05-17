@@ -116,7 +116,6 @@ export default {
                 .then(res => {
                     if (res.ret == 1) {
                         let data = res.data[0];
-                    console.log('---', data)
                     }
                 })
                 .catch(err => {

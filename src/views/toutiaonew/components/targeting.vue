@@ -80,11 +80,15 @@
         </FormItem>
 
         <FormItem label="年龄" :model="targetSetting">
-          <RadioGroup v-model="ageStatus">
+          <!-- <RadioGroup v-model="ageStatus">
             <Radio label="">不限</Radio>
             <Radio label="1">自定义</Radio>
           </RadioGroup>
           <CheckboxGroup v-if="ageStatus === '1'" @on-change="handleAge" v-model="targetSetting.age">
+            <Checkbox v-for="(a, i) in targetingConf.age" :label="a.type" :key="i">{{a.name}}</Checkbox>
+          </CheckboxGroup> -->
+          <CheckboxGroup @on-change="handleAge" v-model="targetSetting.age">
+            <Checkbox label="">不限</Checkbox>
             <Checkbox v-for="(a, i) in targetingConf.age" :label="a.type" :key="i">{{a.name}}</Checkbox>
           </CheckboxGroup>
         </FormItem>
@@ -240,6 +244,24 @@ export default {
     this.getAppType()
   },
 methods: {
+  normalizeTxtShow(list, length) {
+    if (!Array.isArray(list)) {
+      return
+    }
+    const len = list.len
+    let retTxt = ''
+    if (len === 0) {
+      return retTxt
+    }
+    if (len < length) {
+      retTxt = list.slice().join('、')
+    } else if (typeof length == 'undefined') {
+      retTxt = list.slice().join('、')
+    } else {
+      retTxt = `${list.slice(0, length).join('、')}等${list.length}个`
+    }
+    return retTxt
+  },  
   handleGender(val) {
     const genderConf = targetingConf.gender
     genderConf.forEach(v => {
@@ -251,7 +273,19 @@ methods: {
   handleCarrier() {},
   handleAc() {},
   handlePlatform() {},
-  handleAge() {},
+  handleAge(val) {
+    const single = new Set(val)
+    for (let k of single) {
+      if (k === '') {
+        this.targetSetting.age = ['']
+        this.statistics.ageTxt = ''
+        single.delete(k)
+      } else {
+        this.targetSetting.age = [...single]
+        this.statistics.ageTxt = this.normalizeTxtShow(this.targetSetting.age)
+      }
+    }
+  },
   handleDistrict(val) {
     if (val !== '' && this.provinceList.length <= 0) {
       this.getProvince()

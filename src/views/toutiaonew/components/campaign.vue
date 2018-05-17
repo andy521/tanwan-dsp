@@ -185,7 +185,7 @@ export default {
         //添加广告组
         addCampaign() {
             // 次account_id 只在开发时使用，上线前删掉
-            this.account_id = '93949559469'
+            // this.account_id = '93949559469'
 
             this.handleBudget()
             if (!this.budgetTip.isSubmit) {
