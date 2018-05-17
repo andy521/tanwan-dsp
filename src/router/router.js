@@ -100,8 +100,7 @@ export const appRouter = [
             children: [ 
                 { path: 'journal', title: '资金流水', name: 'time_journal',  component: () => import('@/views/time/finance/journal.vue')},
                 { path: 'funds', title: '财务信息', name: 'time_funds', component: () => import('@/views/time/finance/funds.vue') }, 
-                { path: 'rechargerecord', title: '充值记录', name: 'time_rechargerecord', component: () => import('@/views/time/finance/rechargerecord.vue') }, 
-                // { path: 'recharge', title: '充值', name: 'time_recharge', component: () => import('@/views/time/finance/recharge.vue') },
+                { path: 'rechargerecord', title: '充值记录', name: 'time_rechargerecord', component: () => import('@/views/time/finance/rechargerecord.vue') } 
             ]},
         ]
     },

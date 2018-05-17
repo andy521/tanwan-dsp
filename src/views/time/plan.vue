@@ -111,7 +111,7 @@
                         <Button type="ghost" icon="edit">修改状态</Button>
                         <div class="api" slot="content">
                             <div style="text-align: left;">
-                                <Select v-model="edit_status" :value="edit_status">
+                                <Select v-model="edit_status">
                                     <Option value="AD_STATUS_NORMAL">启用</Option>
                                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
                                 </Select>
