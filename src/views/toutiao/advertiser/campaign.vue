@@ -300,18 +300,38 @@ export default {
                                     class: ["edit"],
                                     on: {
                                         click: () => {
-                                            this.$Modal.confirm({
-                                                render: h => {
-                                                    return h("Input", {
-                                                        props: {
-                                                            value: params.row.campaign_name,
-                                                            autofocus: true,
-                                                            placeholder: "请输入广告组名称"
-                                                        },
-                                                        on: {
-                                                            input: val => {
-                                                                value = val;
-                                                            }
+                                            let query = {
+                                                id: params.row.id
+                                            };
+                                            this.$router.push({
+                                                name: "tt_ad",
+                                                query: query
+                                            });
+                                        }
+                                    }
+                                },
+                                params.row.campaign_name
+                            ),
+                            h("i-button", {
+                                props: {
+                                    icon: "edit",
+                                    type: "text",
+                                    size: "small"
+                                },
+                                class: ["edit"],
+                                on: {
+                                    click: () => {
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return h("Input", {
+                                                    props: {
+                                                        value: params.row.campaign_name,
+                                                        autofocus: true,
+                                                        placeholder: "请输入广告组名称"
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            value = val;
                                                         }
                                                     });
                                                 },

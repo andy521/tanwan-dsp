@@ -45,7 +45,7 @@
             <p :style="{textAlign: 'center', color: color, fontSize: countSize, fontWeight: countWeight}" class="count">
               <span v-cloak :id="eleId">{{countNum}}</span>
             </p>
-            <p v-if="countUseNum" class="tip-txt">({{countUseNum}}元可用)</p>
+            <p v-if="countUseNum >= 0" class="tip-txt">({{countUseNum}}元可用)</p>
           </div>
         </Row>
       </Col>
