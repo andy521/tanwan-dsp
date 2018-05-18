@@ -91,7 +91,7 @@ export default {
     name: "sideBar",
     data() {
         return {
-            step: 1,
+            step: 0,
             current: [
                 {
                     name: "创建广告组",
