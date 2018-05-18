@@ -1,27 +1,14 @@
 
-<style lang="less">
-@import "../index.less";
-.newtt-ad{
-    .ivu-card {
-        margin-bottom: 10px;
-        padding: 20px;
-    }
-}
-.newtt-ad .title-ad{
-    font-size: 22px;
-    margin-bottom: 36px;
-    line-height: 30px;
-}
+<style scoped>
+
 </style>
 
 <template>
-    <div class="newtt newtt-ad">
-
-         <targeting-tab></targeting-tab>
-
-         <Card>
-             <div class="title-ad">投放目标</div>
-              <Form :label-width="100">
+    <div>
+        <targeting-tab></targeting-tab>
+        <Card dis-hover>
+            <div class="title-ad">投放目标</div>
+            <Form :label-width="100">
                 <FormItem label="投放目标">
                     <span class="required-item"></span>
                 </FormItem>
@@ -29,8 +16,8 @@
                     <span class="required-item"></span>
                     <Row>
                         <Col>
-                            <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
-                            <span class="color-red">广告名称长度为1-100个字符，中文占2个字符</span>
+                        <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
+                        <span class="color-red">广告名称长度为1-100个字符，中文占2个字符</span>
                         </Col>
                     </Row>
                 </FormItem>
@@ -74,7 +61,7 @@ export default {
         handleSeleCampaign(campaign) {
             this.$router.push({
                 name: 'ttad',
-                query:  campaign
+                query: campaign
             })
         },
         // 监听日预算
@@ -95,11 +82,11 @@ export default {
             }
             // 判断每次修改预算大于100
             let isdiff = this.budget == this.initBudget
-                console.log('111', isdiff, this.budget, this.initBudget)
+            console.log('111', isdiff, this.budget, this.initBudget)
             if (this.id && !isdiff && this.budget - this.initBudget < 100) {
                 this.budgetTip.isSubmit = false
                 this.$Notice.warning({
-                title: '单次修改预算不能少于100'
+                    title: '单次修改预算不能少于100'
                 });
                 return
             } else {
@@ -116,7 +103,7 @@ export default {
                 .then(res => {
                     if (res.ret == 1) {
                         let data = res.data[0];
-                    console.log('---', data)
+                        console.log('---', data)
                     }
                 })
                 .catch(err => {
@@ -138,7 +125,7 @@ export default {
                 campaign_name: this.campaign_name,
                 landing_type: this.landing_type,
                 budget_mode: this.budget_mode,
-                budget: this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budget
+                budget: this.budget_mode == "BUDGET_MODE_INFINITE" ? "" : this.budget
             })
                 .then(res => {
                     if (res.ret == 1) {
@@ -176,14 +163,14 @@ export default {
                 campaign_name: this.campaign_name,
                 landing_type: this.landing_type,
                 budget_mode: this.budget_mode,
-                budget:this.budget_mode=="BUDGET_MODE_INFINITE"?"": this.budge
+                budget: this.budget_mode == "BUDGET_MODE_INFINITE" ? "" : this.budge
             })
                 .then(res => {
                     if (res.ret == 1) {
                         this.$Message.info(res.msg);
                         this.$router.push({
                             name: 'ttad',
-                            query:  res.data.campaign_id
+                            query: res.data.campaign_id
                         })
                     }
                 })
