@@ -818,7 +818,7 @@ export default {
                                             adgroup_id: params.row.adgroup_id
                                         };
                                         this.$router.push({
-                                            name: "uc_idea",
+                                            name: "uc_creativity",
                                             query: query
                                         });
                                     }
