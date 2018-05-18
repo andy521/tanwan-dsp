@@ -28,6 +28,9 @@
   font-size: 12px;
   text-align: left;
   color: #333;
+  background-color: #fff;
+  z-index: 1000;
+  // display: none;
 }
 .nav-statistics>.content{
   padding: 16px;
@@ -66,8 +69,11 @@
             <Radio label="CITY">按省市</Radio>
             <Radio label="COUNTY">按区县</Radio>
           </RadioGroup>
-          <div class="tree-content">
-            <transfer-tree :data="provinceList"></transfer-tree>
+          <div v-if="targetSetting.district === 'CITY'" class="tree-content">
+            <transfer-tree :data="provinceList" :col-title="provinceTitle" :can-search="true" :search-placeholder="provincePlaceHolder"></transfer-tree>
+          </div>
+          <div v-if="targetSetting.district === 'COUNTY'" class="tree-content">
+            <transfer-tree :data="provinceList" :col-title="provinceTitle" :deep="3"></transfer-tree>
           </div>
         </FormItem>
 
@@ -80,13 +86,6 @@
         </FormItem>
 
         <FormItem label="年龄" :model="targetSetting">
-          <!-- <RadioGroup v-model="ageStatus">
-            <Radio label="">不限</Radio>
-            <Radio label="1">自定义</Radio>
-          </RadioGroup>
-          <CheckboxGroup v-if="ageStatus === '1'" @on-change="handleAge" v-model="targetSetting.age">
-            <Checkbox v-for="(a, i) in targetingConf.age" :label="a.type" :key="i">{{a.name}}</Checkbox>
-          </CheckboxGroup> -->
           <CheckboxGroup @on-change="handleAge" v-model="targetSetting.age">
             <Checkbox label="">不限</Checkbox>
             <Checkbox v-for="(a, i) in targetingConf.age" :label="a.type" :key="i">{{a.name}}</Checkbox>
@@ -180,6 +179,9 @@
         <p v-if="statistics.ageTxt.length !== 0">年龄：
           <span class="color-999">{{statistics.ageTxt}}</span>
         </p>
+        <p v-if="statistics.platfromTxt.length !== 0">平台：
+          <span class="color-999">{{statistics.platfromTxt}}</span>
+        </p>
       </div>
     </div>
 
@@ -188,6 +190,8 @@
 
 <script>
 import getProvince from '../temp/getProvince.json'
+import getTargetingList from '../temp/getTargetingList.json'
+import getTargetingById from '../temp/getTargetingById.json'
 import targetingConf from '@/utils/toutiaoConfig.json'
 import Axios from '@/api/index'
 import transferTree from './transferTree'
@@ -199,51 +203,72 @@ export default {
     return {
     // 定向参数
       targetSetting: {
-        district: '', // 地域
+        district: '', // 地域类型
         city: [], // 地域id
+        location_type: '', // 受众位置类型
         gender: 'GENDER_UNLIMITED', // 性别
-        age: [], // 年龄
+        age: [''], // 年龄
         ad_tag: [], // 兴趣分类
         interest_tags: [], // 兴趣关键词
-        platform: [], // 平台
+        platform: ['PC'], // 平台
         ac: [], // 网络类型
         carrier: [], // 运营商
       },
       targetingConf: targetingConf, // 定向配置参数
-      ageStatus: '', // 年龄状态
       customActionsStatus: '', // 人群包状态
       adTagStatus: '', // 兴趣分类状态
       interestTagsStatus: '', // 兴趣关键词状态
+      // 地域 - 省市数据 与 参数
       provinceList: [],
+      provinceTitle: {
+        col1: '省份',
+        col2: '城市',
+        col3: '区县'
+      },
+      provincePlaceHolder: '省市搜索，不支持按拼音、拼音首字母',
+      // 获取定向列表
+      targetingList: [],
       // 统计展示文本
       statistics: {
         areaTxt: '', // 地域
-        genderTxt: '', // 性别
-        ageTxt: '', // 年龄
-      },
-      id: this.$route.query.id, //
-      campaign_id: "", //广告组id
-      landing_type: "LINK", //广告组推广目的
-      budget_mode: "BUDGET_MODE_INFINITE", //广告组预算类型
-      budget: '', //广告组预算
-      initBudget: '',
-      budgetTip: {
-        isSubmit: true,
-        tip: '日预算不少于1000元'
-      }, // 日预算规则
-      campaign_name: "", //广告组名称
-      modify_time: "" //时间戳
+        genderTxt: '不限', // 性别
+        ageTxt: '不限', // 年龄
+        platfromTxt: 'PC', // 平台
+      }
     }
   },
   mounted() {
     if (this.id) {
-      // this.getCampaigns();
+      this.getTargetingList()
     }
-    this.getTargetingList()
+      this.getTargetingList()
     this.getTag()
     this.getAppType()
   },
 methods: {
+  initTargeting(res) {
+    const targeting = res.data.targeting
+    console.log(targeting)
+    // 年龄
+    if (targeting.age) {
+      const age = targeting.age
+      this.targetSetting.age = age
+      this.statistics.ageTxt = age && (age.length === 0 || age.length === 1 && age[0] === '') ? '不限' : this.normalizeTxtShow(this.targetSetting.age)
+    }
+    // 性别
+    if (targeting.gender) {
+      const gender = targeting.gender
+      this.targetSetting.gender = gender
+      this.handleGender(this.targetSetting.gender)
+    }
+    // 地域
+    // 平台
+    if (targeting.platform) {
+      const platform = targeting.platform
+      this.targetSetting.platform = platform
+      this.handlePlatform(this.targetSetting.platform)
+    }
+  },
   normalizeTxtShow(list, length) {
     if (!Array.isArray(list)) {
       return
@@ -263,8 +288,8 @@ methods: {
     return retTxt
   },  
   handleGender(val) {
-    const genderConf = targetingConf.gender
-    genderConf.forEach(v => {
+    const config = targetingConf.gender
+    config.forEach(v => {
       if (val === v.type) {
         this.statistics.genderTxt = v.name
       }
@@ -272,17 +297,51 @@ methods: {
   },
   handleCarrier() {},
   handleAc() {},
-  handlePlatform() {},
+  handlePlatform(val) {
+    if (val && val.length === 0) {
+      return
+    }
+    const single = new Set(val)
+    const config = targetingConf.platform
+    let txtList = []
+    for (let k of single) {
+      if (k === '') {
+        this.targetSetting.platform = ['']
+        this.statistics.platfromTxt = '不限'
+        single.delete(k)
+      } else if (k === 'PC') {
+        this.targetSetting.platform = ['PC'],
+        this.statistics.platfromTxt = 'PC'
+        single.delete(k)
+      } else{
+        this.targetSetting.platform = [...single]
+        config.forEach(v => {
+          if (k === v.type) {
+            txtList.push(v.name)
+          }
+        })
+        this.statistics.platfromTxt = this.normalizeTxtShow(txtList)
+      }
+    }
+    console.log(this.targetSetting.platform)
+  },
   handleAge(val) {
     const single = new Set(val)
+    const config = targetingConf.age
+    let txtList = []
     for (let k of single) {
       if (k === '') {
         this.targetSetting.age = ['']
-        this.statistics.ageTxt = ''
+        this.statistics.ageTxt = '不限'
         single.delete(k)
       } else {
         this.targetSetting.age = [...single]
-        this.statistics.ageTxt = this.normalizeTxtShow(this.targetSetting.age)
+        config.forEach(v => {
+          if (k === v.type) {
+            txtList.push(v.name)
+          }
+        })
+        this.statistics.ageTxt = this.normalizeTxtShow(txtList)
       }
     }
   },
@@ -290,42 +349,18 @@ methods: {
     if (val !== '' && this.provinceList.length <= 0) {
       this.getProvince()
     }
-  },
-  // 监听所选广告组
-  handleSeleCampaign(campaign) {
-    this.$router.push({
-      name: 'ttad',
-      query:  campaign
+    const type = ['', 'CITY', 'COUNTY']
+    type.forEach(v => {
+      if (v === type[1]) {
+
+      } else if (v === type[2]) {
+
+      } else {
+        this.targetSetting.city = []
+        this.statistics.areaTxt = ''
+      }
+
     })
-  },
-  // 监听日预算
-  handleBudget() {
-    let budget = this.budget = parseInt(this.budget)
-    if (isNaN(budget)) {
-      this.budget = 1000
-    }
-    // 判断日预算大于1000
-    if (this.budget_mode === 'BUDGET_MODE_DAY' && this.budget < 1000) {
-      this.budgetTip.isSubmit = false
-      this.$Notice.warning({
-        title: this.budgetTip.tip
-      })
-      return
-    } else {
-      this.budgetTip.isSubmit = true
-    }
-    // 判断每次修改预算大于100
-    let isdiff = this.budget == this.initBudget
-      console.log('111', isdiff, this.budget, this.initBudget)
-    if (this.id && !isdiff && this.budget - this.initBudget < 100) {
-      this.budgetTip.isSubmit = false
-      this.$Notice.warning({
-      title: '单次修改预算不能少于100'
-      })
-      return
-    } else {
-      this.budgetTip.isSubmit = true
-    }
   },
   normalizeAddProvince(list) {
     if (list.length < 1) {
@@ -453,18 +488,21 @@ methods: {
   },
   // 定向详情获取
   getTargetingList() {
-    Axios.post('api.php', {
-    action: 'ttAdPut',
-    opt: 'getTargetingList'
-    })
-      .then(res => {
-        if (res.ret == 1) {
-          let data = res.data[0]
-        }
-      })
-      .catch(err => {
-        console.log('获取APP分类列表失败' + err);
-      })  
+    // Axios.post('api.php', {
+    // action: 'ttAdPut',
+    // opt: 'getTargetingList',
+    // targeting_id: '1'
+    // })
+    //   .then(res => {
+    //     if (res.ret == 1) {
+    //       let data = res.data[0]
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log('获取APP分类列表失败' + err);
+    //   })
+    this.targetingList = getTargetingById
+    this.initTargeting(this.targetingList)
   },
   // 修改定向
   updateTargeting() {
@@ -505,9 +543,8 @@ methods: {
   // 添加定向
   addTargeting() {
     // 次account_id 只在开发时使用，上线前删掉
-    this.account_id = '93949559469'
+    // this.account_id = '93949559469'
 
-    this.handleBudget()
     if (!this.budgetTip.isSubmit) {
       return
     }

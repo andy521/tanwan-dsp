@@ -243,6 +243,20 @@
             "val_type": "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL"
         }
     ],
+    "district": [
+        {
+            "type": "",
+            "name": "不限"
+        },
+        {
+            "type": "CITY",
+            "name": "省市"
+        },
+        {
+            "type": "COUNTY",
+            "name": "区县"
+        }
+    ],
     "gender": [
         {
           "type": "GENDER_UNLIMITED",
@@ -293,8 +307,8 @@
           "name": "IOS"
         },
         {
-          "type": "Android",
-          "name": "ANDROID"
+          "type": "ANDROID",
+          "name": "Android"
         },
         {
           "type": "PC",

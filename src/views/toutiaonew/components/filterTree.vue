@@ -27,7 +27,7 @@
   color: #598fe6;
 }
 .filter-tree .content{
-  height: 243px;
+  height: 240px;
   overflow-y: auto;
 }
 .filter-tree .content>ul>li{
