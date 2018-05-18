@@ -111,12 +111,15 @@ export const appRouter = [
         title: 'UC实时投放',  
         access: 0,      
         component: Main,
-        children: [
-            { path: 'plan', title: '推广计划', name: 'uc_plan', icon: 'android-radio-button-off', component: () => import('@/views/uc/index.vue') },
-            { path: 'unit', title: '推广单元', name: 'uc_unit', icon: 'android-radio-button-off', component: () => import('@/views/uc/unit.vue') },
-            { path: 'idea', title: '创意', name: 'uc_idea', icon: 'android-radio-button-off', component: () => import('@/views/uc/idea.vue') },
+        children: [  
+            { path: 'advertiser', title: '推广管理', name: 'uc_advertiser', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
+            children:[
+                { path: 'plan', title: '推广计划', name: 'uc_plan', icon: 'android-radio-button-off', component: () => import('@/views/uc/index.vue') },
+                { path: 'unit', title: '推广单元', name: 'uc_unit', icon: 'android-radio-button-off', component: () => import('@/views/uc/unit.vue') },
+                { path: 'creativity', title: '创意', name: 'uc_creativity', icon: 'android-radio-button-off', component: () => import('@/views/uc/creativity.vue') },
+            ]},
             { path: 'report', title: '数据报告', name: 'uc_report', icon: 'android-radio-button-off', component: () => import('@/views/uc/report.vue') },
-            { path: 'finance', title: '财务', name: 'uc_finance', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
+            { path: 'finance', title: '财务', name: 'uc_finance', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'rechargerecord', title: '充值记录', name: 'uc_rechargerecord', component: () => import('@/views/uc/finance/rechargerecord.vue') }, 
             ]},
@@ -131,19 +134,19 @@ export const appRouter = [
         component: Main,
         children: [           
             { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
-            { path: 'advertiser', title: '推广管理', name: 'tt_advertiser', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
+            { path: 'advertiser', title: '推广管理', name: 'tt_advertiser', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'campaign', title: '广告组', name: 'tt_campaign',  component: () => import('@/views/toutiao/advertiser/campaign.vue')},
                 { path: 'ad', title: '广告计划', name: 'tt_ad', component: () => import('@/views/toutiao/advertiser/ad.vue') },  
                 { path: 'creative', title: '创意', name: 'tt_creative', component: () => import('@/views/toutiao/advertiser/creative.vue') },    
             ]},
-            { path: 'report', title: '数据报告', name: 'tt_report', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
+            { path: 'report', title: '数据报告', name: 'tt_report', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'statement', title: '账户报表', name: 'tt_statement',  component: () => import('@/views/toutiao/report/statement.vue')},
                 { path: 'audience', title: '受众分析', name: 'tt_audience', component: () => import('@/views/toutiao/report/audience.vue') },  
                 { path: 'bid', title: '效果广告报表', name: 'tt_bid', component: () => import('@/views/toutiao/report/bid.vue') }   
             ]},
-            { path: 'finance', title: '财务', name: 'tt_finance', icon: 'android-radio-button-off', component: () => import('@/components/childrouter/childrouter.vue'),
+            { path: 'finance', title: '财务', name: 'tt_finance', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'rechargerecord', title: '充值记录', name: 'tt_rechargerecord', component: () => import('@/views/toutiao/finance/rechargerecord.vue') }, 
             ]},

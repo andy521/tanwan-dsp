@@ -1,5 +1,6 @@
 <style>
-	@import "../../styles/common.less";
+    @import "../../styles/common.less";
+    .legend{border-top: 1px solid #eee; padding:15px}
 </style>
 <template>
 	<Card :bordered="false">
@@ -70,15 +71,14 @@
             			<Button type="ghost" @click="handleReset('modPassword')" style="margin-left: 8px">重置</Button>
 			        </Form-item>
 			    </Form>
-			    <hr>
-			    <pre>
-为了保障《综合业务后台》的账号安全，遵循后台数据信息的保密原则，作以下规定：
- 1、密码不能小于8个字符，必须同时包含大小写字母，数字和特殊字符；
- 2、密码的有效期为30天，期至将强制执行修改；
- 3、请保证账号相关信息的真实性；
- 4、原则上规定每人一个账号，不可以共用，账号出现异常问题将问责账号持有人；
- 5、请妥善保存好自己的密码，如有遗忘，必须走纸质申请流程重置密码。
-			    </pre>
+			    <ul class="legend">
+                    <li><b>为了保障《综合业务后台》的账号安全，遵循后台数据信息的保密原则，作以下规定：</b></li>
+                    <li>1、密码不能小于8个字符，必须同时包含大小写字母，数字和特殊字符；</li>
+                    <li>2、密码的有效期为30天，期至将强制执行修改；</li>
+                    <li>3、请保证账号相关信息的真实性；</li>
+                    <li>4、原则上规定每人一个账号，不可以共用，账号出现异常问题将问责账号持有人；</li>
+                    <li>5、请妥善保存好自己的密码，如有遗忘，必须走纸质申请流程重置密码。</li>
+			    </ul>
 	        </Tab-pane>
 	    </Tabs>
 	</Card>
