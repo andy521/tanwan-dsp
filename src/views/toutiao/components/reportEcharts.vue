@@ -127,7 +127,8 @@ export default {
                 legend: {
                     data: name
                 },
-                grid: { left: '2%', right: '3%', bottom: '2%', containLabel: true },
+                color: ['#37a2da', '#32c5e9', '#67e0e3', '#9fe6b8', '#ffdb5c', '#ff9f7f', '#fb7293', '#9d96f5', '#8378ea', '#96bfff'],
+                grid: { left: '2%', right: '4%', bottom: '2%',top:'10%', containLabel: true },
                 xAxis: {
                     type: 'category',
                     boundaryGap: false,

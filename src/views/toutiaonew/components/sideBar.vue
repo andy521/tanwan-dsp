@@ -91,10 +91,10 @@ export default {
     name: "sideBar",
     data() {
         return {
-            step: 0,
+            step: 1,
             current: [
                 {
-                    name: "新建广告组",
+                    name: "创建广告组",
                     list: [
                         {
                             name: "推广目的"
@@ -102,30 +102,33 @@ export default {
                     ]
                 },
                 {
-                    name: "新建广告计划",
+                    name: "创建广告计划",
                     list: [
                         {
-                            name: "设置计划详情"
+                            name: "用户定向"
                         },
                         {
-                            name: "设置广告受众"
+                            name: "投放目标"
                         },
                         {
-                            name: "设置广告预算和出价"
+                            name: "网页链接"
+                        },
+                        {
+                            name: "预算与出价"
                         }
                     ]
                 },
                 {
-                    name: "新建假意",
+                    name: "创建创意",
                     list: [
                         {
-                            name: "设置投放位置"
+                            name: "推广位置"
                         },
                         {
-                            name: "添加创意素材"
+                            name: "创意素材"
                         },
                         {
-                            name: "设置创意分类和标签"
+                            name: "创意分类和标签"
                         }
                     ]
                 }
@@ -137,6 +140,9 @@ export default {
         back() {
             this.$router.go(-1);
         }
+    },
+    beforeRouteUpdate (to, from, next) {
+        console.log('router',to,from, next)
     }
 };
 </script>

@@ -1,6 +1,6 @@
 <style scoped>
 .toutiaonew {
-    padding: 40px 40px 40px 240px;
+    padding: 10px 10px 10px 210px;
     overflow: auto;
     height: 100%;
     font-size: 14px;

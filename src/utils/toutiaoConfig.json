@@ -1,4 +1,13 @@
 {
+    "type": [{
+            "name": "分日",
+            "val_type": "Day"
+        },
+        {
+            "name": "分时",
+            "val_type": "Hour"
+        }
+    ],
     "landing_type": [{
             "name": "推广落地页",
             "val_type": "LINK"
@@ -182,6 +191,154 @@
         {
             "name": "已删除",
             "val_type": "AD_STATUS_DELETE"
+        }
+    ],
+    "pricing": [{
+            "name": "CPC",
+            "val_type": "PRICING_CPC"
+        },
+        {
+            "name": "OCPC",
+            "val_type": "PRICING_OCPC"
+        },
+        {
+            "name": "CPA",
+            "val_type": "PRICING_CPA"
+        },
+        {
+            "name": "CPV",
+            "val_type": "PRICING_CPV"
+        },
+        {
+            "name": "OCPM",
+            "val_type": "PRICING_OCPM"
+        }
+    ],
+    "image_mode": [{
+            "name": "小图",
+            "val_type": "CREATIVE_IMAGE_MODE_SMALL"
+        },
+        {
+            "name": "大图",
+            "val_type": "CREATIVE_IMAGE_MODE_LARGE"
+        },
+        {
+            "name": "组图",
+            "val_type": "CREATIVE_IMAGE_MODE_GROUP"
+        },
+        {
+            "name": "视频",
+            "val_type": "CREATIVE_IMAGE_MODE_VIDEO"
+        },
+        {
+            "name": "GIF图",
+            "val_type": "CREATIVE_IMAGE_MODE_GIF"
+        },
+        {
+            "name": "大图竖图",
+            "val_type": "CREATIVE_IMAGE_MODE_LARGE_VERTICAL"
+        },
+        {
+            "name": "竖版视频",
+            "val_type": "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL"
+        }
+    ],
+    "gender": [
+        {
+          "type": "GENDER_UNLIMITED",
+          "name": "不限"
+        },
+        {
+          "type": "GENDER_MALE",
+          "name": "男"
+        },
+        {
+          "type": "GENDER_FEMALE",
+          "name": "女"
+        }
+    ],
+    "age": [
+        {
+          "type": "AGE_BELOW_18",
+          "name": "<18"
+        },
+        {
+          "type": "AGE_BETWEEN_18_23",
+          "name": "18-23"
+        },
+        {
+          "type": "AGE_BETWEEN_24_30",
+          "name": "24-30"
+        },
+        {
+          "type": "AGE_BETWEEN_31_40",
+          "name": "31-40"
+        },
+        {
+          "type": "AGE_BETWEEN_41_49",
+          "name": "41-49"
+        },
+        {
+          "type": "AGE_ABOVE_50",
+          "name": ">=50"
+        }
+    ],
+    "platform": [
+        {
+          "type": "",
+          "name": "不限"
+        },
+        {
+          "type": "IOS",
+          "name": "IOS"
+        },
+        {
+          "type": "Android",
+          "name": "ANDROID"
+        },
+        {
+          "type": "PC",
+          "name": "PC"
+        }
+    ],
+    "ac": [
+        {
+          "type": "",
+          "name": "不限"
+        },
+        {
+          "type": "WIFI",
+          "name": "WIFI"
+        },
+        {
+          "type": "2G",
+          "name": "2G"
+        },
+        {
+          "type": "3G",
+          "name": "3G"
+        },
+        {
+          "type": "4G",
+          "name": "4G"
+        }
+    ],
+    "carrier": [
+        {
+          "type": "",
+          "name": "不限"
+        },
+        {
+          "type": "移动",
+          "name": "MOBILE"
+        },
+        {
+          "type": "联通",
+          "name": "UNICOM"
+        },
+        {
+          "type": "电信",
+          "name": "UNICOM"
         }
     ]
 }

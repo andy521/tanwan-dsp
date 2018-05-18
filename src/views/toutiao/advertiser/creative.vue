@@ -14,23 +14,6 @@
   text-align: left;
   width: 110px;
 }
-.name_text {
-  color: #2b7ed1;
-  cursor: pointer;
-}
-.name_text:hover {
-  text-decoration: underline;
-}
-.copy_link,
-.edit_link,
-.del_link {
-  cursor: pointer;
-  color: #2b7ed1;
-  margin-right: 5px;
-}
-.del_link {
-  color: #ff7474;
-}
 </style>
 <template>
     <div>
@@ -40,7 +23,7 @@
                 <!-- <Button type="primary">返回</Button> -->
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
-                <Input class="inp" placeholder="请输入创意ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
+                <Input class="inp" clearable placeholder="请输入创意ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
                 <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
                 <Col span="4" style="text-align: right;">
@@ -96,7 +79,7 @@
                 </Col>
             </Row>
             <div>
-                <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe></Table>
+                <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="taCheck" @on-sort-change="sortchange" stripe :row-class-name="rowClassName"></Table>
                 <Row class="margin-top-10">
                     <Col span="10"> 表格尺寸
                     <Radio-group v-model="tableSize" type="button">
@@ -179,7 +162,7 @@ export default {
     methods: {
         //获取选中的游戏id
         getids(gid) {
-            this.game_id = "[" + gid.join(",") + "]";
+            this.game_id = gid.join(",");
             this.getCampaignsList();
         },
         //返回没有选中的
@@ -204,6 +187,12 @@ export default {
             this.orderField = column.key;
             this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
+        },
+        //表格高亮calss
+        rowClassName(row, index) {
+            if (row._disabled) {
+                return "table-statistics";
+            }
         },
         //改变日期
         changeDate(e) {
@@ -259,8 +248,8 @@ export default {
                     if (res.ret == 1) {
                         console.log(res.data.list);
                         //添加统计
-                        // res.data.curr_page_total._disabled = true;
-                        // res.data.list.push(res.data.curr_page_total);
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                         this.newAdList = res.data.list;
@@ -287,6 +276,9 @@ export default {
                     key: "content",
                     width: 250,
                     render: (h, params) => {
+                        if (params.row._disabled) {
+                        return h("span", "本页统计");
+                    }else{
                         return h(createidea, {
                             props: {
                                 title: params.row.title,
@@ -294,6 +286,7 @@ export default {
                                 // source:params.row.source
                             }
                         });
+                    }
                     }
                 },
                 {
@@ -553,6 +546,7 @@ export default {
                     key: "",
                     width: 130,
                     render: (h, params) => {
+                        if(params.row._disabled)return;
                         return h("span",
                             {
                                 class: "edit_link",
