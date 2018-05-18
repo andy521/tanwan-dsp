@@ -1,3 +1,7 @@
+<style lang="less">
+@import "./styles/common.less";
+@import "./styles/table.less";
+</style>
 <template>
     <div id="app" class="app-main">
         <!-- <keep-alive> -->
