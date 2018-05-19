@@ -90,7 +90,7 @@
             <Row>
                 <Col span="16">
                 <!--自定义指标-->
-                <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
+                <view-popti @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-popti>
                 <!--选择负责人-->
                 <select-author :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
                 <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
@@ -182,13 +182,13 @@
 <script>
 import Axios from "@/api/index";
 import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
-import viewTip from "./components/viewPopti.vue";
+import viewPopti from "./components/viewPopti.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import searchTree from "@/components/select-tree/searchTree.vue";
 
 export default {
     components: {
-        viewTip,
+        viewPopti,
         searchTree,
         selectAuthor
     },

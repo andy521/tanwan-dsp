@@ -54,11 +54,7 @@
   width: auto;
   min-width: 150px;
 }
-.search_area {
-  width: 200px;
-  display: inline-block;
-  margin-bottom: -12px;
-}
+
 .name_text {
   color: #2b7ed1;
   cursor: pointer;
@@ -66,30 +62,31 @@
 .name_text:hover {
   text-decoration: underline;
 }
+.inp {
+  width: 200px;
+  display: inline-block;
+}
 </style>
 <template>
     <Card dis-hover shadow class="margin-top-10">
         <div slot="title" class="card-title">
             <Icon type="ios-paper"></Icon> 按账户查看
-
             <div class="tr">
-                <div class="search_area">
-                    <Input v-model="keyword" placeholder="请输入要搜索的内容" @on-enter="tableData()">
-                    <Button slot="append" icon="ios-search" @click="tableData()"></Button>
-                    </Input>
-                </div>
+                <!--选择指标-->
+                <view-popti @on-change="getuncheck" action="index" opt="index"></view-popti>
+                <!--选择代理商-->
+                <select-agent @on-change="agentChange"></select-agent>
                 <!-- <select-author :is-linkage="true" :media-type="media_type"  @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
                 <select-author :is-linkage="true" :media-type="media_type" @on-change="authorChange"></select-author>
-
                 <select-media class="smedia" @on-change="mediaChange"></select-media>
-
                 <DatePicker type="daterange" :options="options" :value="date" style="width: 190px" placement="bottom-end" placeholder="请选择日期" format="yyyy-MM-dd" @on-change="changeTime"></DatePicker>
-
+                <Input v-model="keyword" placeholder="请输入要搜索的内容" @on-enter="tableData()" class="inp"></Input>
+                <Button type="primary" icon="ios-search" @click="tableData()">搜索</Button>
                 <Button icon="document-text" @click="exportData()">下载报表</Button>
             </div>
         </div>
 
-        <Table stripe :size="tableSize" :columns="tcolumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397">
+        <Table stripe :size="tableSize" :columns="taColumns" :data="tdata.list" ref="TableExport" @on-sort-change="sortChange" :row-class-name="rowClassName" height="397">
             <!-- <div slot="footer"></div> -->
         </Table>
         <Row class="margin-top-10">
@@ -114,10 +111,14 @@ import Axios from "@/api/index";
 import selectMedia from "@/components/select-media/index.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
+import viewPopti from "./viewPopti.vue";
+import selectAgent from "@/components/select-agent/index.vue";
 export default {
     components: {
         selectMedia,
-        selectAuthor
+        selectAuthor,
+        viewPopti,
+        selectAgent
     },
     name: "viewTab",
     props: {
@@ -129,6 +130,7 @@ export default {
             num: 0,
             //keyword
             keyword: "",
+            uncheck: [],
             //日期辅助功能
             options: DateShortcuts,
             //每页数量
@@ -148,9 +150,105 @@ export default {
             orderField: "",
             orderDirection: "SORT_ASC",
             //负责人
-            author_model: [],
             author: [],
-            tcolumns: [
+            agent: [],
+        };
+    },
+    methods: {
+        // handleClickAuthor() {
+        // 	if (!this.media_type) {
+        // 		this.$Message.warning('请先选择媒体账号');
+        // 		return;
+        // 	}
+        // },
+        //这里的排序没有做哈哈哈
+        tableData(page) {
+            if (page === undefined) {
+                this.$refs["pages"].currentPage = 1;
+                this.page = 1;
+            } else {
+                this.page = page;
+            }
+            //console.log(this.media_type)
+            let param = {
+                keyword: this.keyword,
+                media_type: this.media_type,
+                tdate: this.date[0],
+                edate: this.date[1],
+                page: this.page,
+                page_size: this.page_size,
+                orderField: this.orderField,
+                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+                author: this.author,
+                agent: this.agent
+            };
+            this.$emit("on-change", param);
+        },
+        //分页
+        changePage(val) {
+            this.page = val;
+            this.tableData();
+        },
+        //返回没有选中的
+        getuncheck(val) {
+            this.uncheck = val;
+        },
+        //选择代理商
+        agentChange(data) {
+            this.agent = data;
+            this.tableData();
+        },
+        //按时间
+        changeTime(val) {
+            this.date = val;
+            this.tableData();
+        },
+        //导出表单
+        exportData() {
+            if (!this.tab) {
+                this.$refs.TableExport.exportCsv({
+                    filename: "按账户查看"
+                });
+            } else {
+                this.$refs.TableExport.exportCsv({
+                    filename: "按负责人查看"
+                });
+            }
+        },
+        //按媒体筛选
+        mediaChange(val) {
+            this.media_type = val;
+            this.tableData();
+        },
+        //排序
+        sortChange(column) {
+            this.orderField = column.key;
+            if (column.order == "asc") {
+                this.orderDirection = "SORT_ASC";
+            } else if (column.order == "desc") {
+                this.orderDirection = "SORT_DESC";
+            } else {
+                this.orderField = "";
+                this.orderDirection = "";
+            }
+            this.tableData();
+        },
+        //选择负责人
+        authorChange(data) {
+            this.author = data;
+            this.tableData();
+        },
+        //表格高亮calss
+        rowClassName(row, index) {
+            if (row._disabled) {
+                return "table-statistics";
+            }
+        }
+    },
+    computed: {
+        //设置表格头部
+        taColumns() {
+            const tableColumnList =  [
                 {
                     title: "媒体",
                     key: "media_name",
@@ -247,7 +345,7 @@ export default {
                 },
                 {
                     title: "点击率",
-                    key: "click_per",
+                    key: "ctr",
                     sortable: "custom"
                 },
                 {
@@ -386,88 +484,15 @@ export default {
                         )
                     }
                 }
-            ]
-        };
-    },
-    methods: {
-        // handleClickAuthor() {
-        // 	if (!this.media_type) {
-        // 		this.$Message.warning('请先选择媒体账号');
-        // 		return;
-        // 	}
-        // },
-        //这里的排序没有做哈哈哈
-        tableData(page) {
-            if (page === undefined) {
-                this.$refs["pages"].currentPage = 1;
-                this.page = 1;
-            } else {
-                this.page = page;
-            }
-            //console.log(this.media_type)
-            let param = {
-                keyword: this.keyword,
-                media_type: this.media_type,
-                tdate: this.date[0],
-                edate: this.date[1],
-                page: this.page,
-                page_size: this.page_size,
-                orderField: this.orderField,
-                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-                author: this.author_model
-            };
-            this.$emit("on-change", param);
-        },
-        //分页
-        changePage(val) {
-            this.page = val;
-            this.tableData();
-        },
-        //按时间
-        changeTime(val) {
-            this.date = val;
-            this.tableData();
-        },
-        //导出表单
-        exportData() {
-            if (!this.tab) {
-                this.$refs.TableExport.exportCsv({
-                    filename: "按账户查看"
+            ];
+            this.uncheck.forEach(item => {
+                tableColumnList.forEach((col, i) => {
+                    if (col.key == item) {
+                        tableColumnList.splice(i, 1);
+                    }
                 });
-            } else {
-                this.$refs.TableExport.exportCsv({
-                    filename: "按负责人查看"
-                });
-            }
-        },
-        //按媒体筛选
-        mediaChange(val) {
-            this.media_type = val;
-            this.tableData();
-        },
-        //排序
-        sortChange(column) {
-            this.orderField = column.key;
-            if (column.order == "asc") {
-                this.orderDirection = "SORT_ASC";
-            } else if (column.order == "desc") {
-                this.orderDirection = "SORT_DESC";
-            } else {
-                this.orderField = "";
-                this.orderDirection = "";
-            }
-            this.tableData();
-        },
-        //选择负责人
-        authorChange(data) {
-            this.author_model = data;
-            this.tableData();
-        },
-        //表格高亮calss
-        rowClassName(row, index) {
-            if (row._disabled) {
-                return "table-statistics";
-            }
+            });
+            return tableColumnList;
         }
     },
     beforeMount() {
