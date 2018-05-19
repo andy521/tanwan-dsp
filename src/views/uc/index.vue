@@ -384,7 +384,7 @@ export default {
         //改变日期
         changeDate(e) {
             this.DateDomain = e;
-            this.getSpread();
+            this.getSpread(this.page);
         },
         //获取选中的id
         taCheck(row) {
@@ -408,7 +408,7 @@ export default {
             this.orderField = column.key;
             this.orderDirection =
                 column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-            this.getSpread();
+            this.getSpread(this.page);
         },
         getSpread(page) {
             if (page === undefined) {
@@ -1177,7 +1177,49 @@ export default {
             this.keyword = query.toString();
             this.isBack = true;
         }
-        this.getSpread();
+
+        //返回时获取保存数据
+        const planCache = this.$store.state.ucnew.planCache
+        if (this.$route.meta.keepAlive && JSON.stringify(planCache) !== '{}') {
+            this.DateDomain = planCache.DateDomain
+            this.page = planCache.page
+            this.page_size = planCache.page_size
+            this.game_id = planCache.game_id
+            this.checkCampaign = planCache.checkCampaign
+            this.checkId = planCache.checkId
+            this.uncheck = planCache.uncheck
+            this.orderField = planCache.orderField
+            this.orderDirection = planCache.orderDirection
+            this.author_model = planCache.author
+            this.getSpread(this.page)
+        } else {
+            this.getSpread()
+        }
+    },
+    beforeRouteLeave(to, from, next) {
+        if (to.name === 'uc_unit') {
+            const cache = {
+                DateDomain: this.DateDomain, //时间
+                page: this.page, //页码
+                page_size: this.page_size, //每页数量
+                game_id: this.GameListIds, //游戏id
+                checkCampaign: this.checkCampaign, // 选中计划id
+                checkId: this.checkId, // 选中账户id
+                uncheck: this.uncheck, // 没选中的
+                orderField: this.orderField, //排序的orderField参数名
+                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+                author: this.author_model //负责人
+            };
+            this.$store.commit('SAVE_PLAN_CACHE', cache)
+        }
+        from.meta.keepAlive = false
+        next()
+    },
+    beforeRouteEnter(to, from, next) {
+        if (from.name === 'uc_unit') {
+            to.meta.keepAlive = true
+        }
+        next()
     }
 };
 </script>
