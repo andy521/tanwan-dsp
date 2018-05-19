@@ -1366,7 +1366,49 @@ export default {
             this.isBack = true;
         }
         this.changeTableColumns();
-        this.getUnit();
+        
+        //返回时获取保存数据
+        const unitCache = this.$store.state.ucnew.unitCache
+        if (this.$route.meta.keepAlive && JSON.stringify(unitCache) !== '{}') {
+            this.DateDomain = unitCache.DateDomain
+            this.page = unitCache.page
+            this.page_size = unitCache.page_size
+            this.game_id = unitCache.game_id
+            this.selePlanId = unitCache.selePlanId
+            this.checkId = unitCache.checkId
+            this.orderField = unitCache.orderField
+            this.orderDirection = unitCache.orderDirection
+            this.author_model = unitCache.author
+            this.campaign_id = unitCache.campaign_id
+            this.getUnit(this.page)
+        } else {
+            this.getUnit()
+        }
+    },
+    beforeRouteLeave(to, from, next) {
+        if (to.name === 'uc_creativity') {
+            const cache = {
+                campaign_id: this.campaign_id,
+                DateDomain: this.DateDomain, //时间
+                page: this.page, //页码
+                page_size: this.page_size, //每页数量
+                game_id: this.GameListIds, //游戏id
+                selePlanId: this.selePlanId, // 选中计划id
+                checkId: this.checkId, // 选中账户id
+                orderField: this.orderField, //排序的orderField参数名
+                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+                author: this.author_model //负责人
+            };
+            this.$store.commit('SAVE_UNIT_CACHE', cache)
+        }
+        from.meta.keepAlive = false
+        next()
+    },
+    beforeRouteEnter(to, from, next) {
+        if (from.name === 'uc_creativity') {
+            to.meta.keepAlive = true
+        }
+        next()        
     }
 };
 </script>

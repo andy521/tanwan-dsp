@@ -2,15 +2,15 @@ import Axios from '@/api/index';
 
 const ucnew = {
   state: {
-    accountId: "", // 当前用户id
-    campaignId: "", // 推广计划id
-    adgroupId: "", // 推广单元id
-    creativeId: "", // 推广创意id
-    videoId: "", // 视频id
+    planCache: {},
+    unitCache: {}
   },
   mutations: {
-    SAVE_ACCOUNT_ID(state, id) {
-      state.accountId = id;
+    SAVE_PLAN_CACHE(state, cache) {
+      state.planCache = cache;
+    },
+    SAVE_UNIT_CACHE(state, cache) {
+      state.unitCache = cache;
     }
   }
 };
