@@ -1,0 +1,258 @@
+{
+  "ret": 1,
+  "msg": "succ",
+  "data": {
+    "adtags": [
+      {
+        "subTags": [
+          { "value": 10101, "name": "休闲时间" },
+          { "value": 10102, "name": "跑酷竞速" },
+          { "value": 10103, "name": "宝石消除" },
+          { "value": 10104, "name": "网络游戏" },
+          { "value": 10105, "name": "动作射击" },
+          { "value": 10106, "name": "扑克棋牌" },
+          { "value": 10107, "name": "儿童益智" },
+          { "value": 10108, "name": "塔防守卫" },
+          { "value": 10109, "name": "体育格斗" },
+          { "value": 10110, "name": "角色扮演" },
+          { "value": 10111, "name": "经营策略" }
+        ],
+        "value": 10001,
+        "name": "游戏"
+      },
+      {
+        "subTags": [
+          { "value": 10201, "name": "家装建材" },
+          { "value": 10202, "name": "家居家纺" },
+          { "value": 10203, "name": "家用电器" },
+          { "value": 10204, "name": "家电维修" },
+          { "value": 10205, "name": "日用百货" }
+        ],
+        "value": 10002,
+        "name": "家装百货"
+      },
+      {
+        "subTags": [
+          { "value": 10301, "name": "股票基金" },
+          { "value": 10302, "name": "保险" },
+          { "value": 10303, "name": "彩票" },
+          { "value": 10304, "name": "期货外汇" },
+          { "value": 10305, "name": "银行理财" },
+          { "value": 10306, "name": "互联网金融" },
+          { "value": 10307, "name": "贵金属" }
+        ],
+        "value": 10003,
+        "name": "金融理财"
+      },
+      {
+        "subTags": [
+          { "value": 10401, "name": "学前教育" },
+          { "value": 10402, "name": "中小学教育" },
+          { "value": 10403, "name": "大学教育" },
+          { "value": 10404, "name": "职业教育" },
+          { "value": 10405, "name": "学历教育" },
+          { "value": 10406, "name": "语言培训" },
+          { "value": 10407, "name": "IT培训" },
+          { "value": 10408, "name": "公务员考试" },
+          { "value": 10409, "name": "出国留学" },
+          { "value": 10410, "name": "技能培训" },
+          { "value": 10411, "name": "拓展训练" }
+        ],
+        "value": 10004,
+        "name": "教育培训"
+      },
+      {
+        "subTags": [
+          { "value": 10501, "name": "本地周边游" },
+          { "value": 10502, "name": "国内游" },
+          { "value": 10503, "name": "港澳台游" },
+          { "value": 10504, "name": "境外游" },
+          { "value": 10505, "name": "户外探险" },
+          { "value": 10506, "name": "主题旅游" },
+          { "value": 10507, "name": "酒店住宿" },
+          { "value": 10508, "name": "交通票务" }
+        ],
+        "value": 10005,
+        "tag": "new",
+        "name": "旅游出行"
+      },
+      {
+        "subTags": [
+          { "value": 10601, "name": "时尚女装" },
+          { "value": 10602, "name": "精品男装" },
+          { "value": 10603, "name": "女鞋" },
+          { "value": 10604, "name": "男鞋" },
+          { "value": 10605, "name": "内衣" },
+          { "value": 10606, "name": "珠宝配饰" },
+          { "value": 10607, "name": "童装童鞋" },
+          { "value": 10608, "name": "箱包皮具" },
+          { "value": 10609, "name": "手表" }
+        ],
+        "value": 10006,
+        "tag": "new",
+        "name": "服饰箱包"
+      },
+      {
+        "subTags": [
+          { "value": 10701, "name": "低档车" },
+          { "value": 10702, "name": "中档车" },
+          { "value": 10703, "name": "高档车" },
+          { "value": 10704, "name": "二手车" },
+          { "value": 10705, "name": "租车" },
+          { "value": 10706, "name": "车辆养护" }
+        ],
+        "value": 10007,
+        "tag": "new",
+        "name": "汽车"
+      },
+      {
+        "subTags": [
+          { "value": 10801, "name": "减肥瘦身" },
+          { "value": 10802, "name": "美容整形" },
+          { "value": 10803, "name": "美发护发" },
+          { "value": 10804, "name": "化妆护肤" }
+        ],
+        "value": 10008,
+        "tag": "new",
+        "name": "美容化妆"
+      },
+      {
+        "subTags": [
+          { "value": 10901, "name": "租房" },
+          { "value": 10902, "name": "二手房" },
+          { "value": 10903, "name": "普通住宅" },
+          { "value": 10904, "name": "别墅豪宅" },
+          { "value": 10905, "name": "写字楼" }
+        ],
+        "value": 10009,
+        "tag": "new",
+        "name": "房产"
+      },
+      {
+        "subTags": [
+          { "value": 11001, "name": "餐馆" },
+          { "value": 11002, "name": "烹饪用品" },
+          { "value": 11003, "name": "零食" },
+          { "value": 11004, "name": "水果蔬菜" },
+          { "value": 11005, "name": "其他生鲜" },
+          { "value": 11006, "name": "面包蛋糕" },
+          { "value": 11007, "name": "饮料" },
+          { "value": 11008, "name": "酒水" },
+          { "value": 11009, "name": "进口食品" }
+        ],
+        "value": 10010,
+        "tag": "new",
+        "name": "餐饮美食"
+      },
+      {
+        "subTags": [
+          { "value": 11101, "name": "孕妇用品" },
+          { "value": 11102, "name": "胎教相关" },
+          { "value": 11103, "name": "宝宝用品" },
+          { "value": 11104, "name": "宝宝食品" },
+          { "value": 11105, "name": "写真拍照" },
+          { "value": 11106, "name": "儿童玩具" }
+        ],
+        "value": 10011,
+        "tag": "new",
+        "name": "母婴儿童"
+      },
+      {
+        "subTags": [
+          { "value": 11201, "name": "手机及配件" },
+          { "value": 11202, "name": "电脑周边" },
+          { "value": 11203, "name": "数码摄像" },
+          { "value": 11204, "name": "网络设备" },
+          { "value": 11205, "name": "游戏机" },
+          { "value": 11206, "name": "办公设备" }
+        ],
+        "value": 10012,
+        "tag": "new",
+        "name": "科技数码"
+      },
+      {
+        "subTags": [
+          { "value": 11301, "name": "球类运动" },
+          { "value": 11302, "name": "休闲运动" },
+          { "value": 11303, "name": "跑步骑行" },
+          { "value": 11304, "name": "水上运动" },
+          { "value": 11305, "name": "极限运动" },
+          { "value": 11306, "name": "户外运动" },
+          { "value": 11307, "name": "运动装备" }
+        ],
+        "value": 10013,
+        "tag": "new",
+        "name": "体育运动"
+      },
+      {
+        "subTags": [
+          { "value": 11401, "name": "美容美发" },
+          { "value": 11402, "name": "家政服务" },
+          { "value": 11403, "name": "摄影照相" },
+          { "value": 11404, "name": "宠物用品" },
+          { "value": 11405, "name": "娱乐设施" },
+          { "value": 11406, "name": "鲜花礼品" }
+        ],
+        "value": 10014,
+        "tag": "new",
+        "name": "生活服务"
+      },
+      {
+        "subTags": [
+          { "value": 11501, "name": "成人用品" },
+          { "value": 11502, "name": "保健品" },
+          { "value": 11503, "name": "医疗器械" },
+          { "value": 11504, "name": "药品" },
+          { "value": 11505, "name": "医疗诊疗" }
+        ],
+        "value": 10015,
+        "tag": "new",
+        "name": "医疗健康"
+      },
+      {
+        "subTags": [
+          { "value": 11601, "name": "司法鉴定" },
+          { "value": 11602, "name": "律师服务" },
+          { "value": 11603, "name": "公证" }
+        ],
+        "value": 10016,
+        "tag": "new",
+        "name": "法律服务"
+      },
+      {
+        "subTags": [
+          { "value": 11701, "name": "动漫周边" },
+          { "value": 11702, "name": "桌游" },
+          { "value": 11703, "name": "电影电视" },
+          { "value": 11704, "name": "艺术展览" },
+          { "value": 11705, "name": "演出" },
+          { "value": 11706, "name": "酒吧KTV" },
+          { "value": 11707, "name": "爱好收藏" },
+          { "value": 11708, "name": "书籍杂志" }
+        ],
+        "value": 10017,
+        "tag": "new",
+        "name": "文化娱乐"
+      },
+      {
+        "subTags": [
+          { "value": 11801, "name": "办公文教" },
+          { "value": 11802, "name": "求职招聘" },
+          { "value": 11803, "name": "移民中介" },
+          { "value": 11804, "name": "机械器材" },
+          { "value": 11805, "name": "农林牧渔" },
+          { "value": 11806, "name": "化工材料" },
+          { "value": 11807, "name": "节能环保" },
+          { "value": 11808, "name": "安全安保" },
+          { "value": 11809, "name": "物流配送" },
+          { "value": 11810, "name": "营销广告" },
+          { "value": 11811, "name": "展会服务" },
+          { "value": 11812, "name": "招商加盟" }
+        ],
+        "value": 10018,
+        "tag": "new",
+        "name": "商务服务"
+      }
+    ]
+  }
+}

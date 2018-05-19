@@ -33,7 +33,7 @@ export default {
     },
     methods : {
         echartUpdate(data){ 
-            console.log(data)
+            //console.log(data)
 
             let xb = [],
                 len = this.echartData[0].data.length;
@@ -47,14 +47,11 @@ export default {
                     data:['消耗','展现','点击','转化']
                 },
                 grid: {left: '3%',right: '4%',bottom: '3%',containLabel: true},
-                toolbox: {feature: {saveAsImage: {}}},
                 xAxis: {
                     type: 'category',
                     boundaryGap: false,
                     data: xb
                 },
-
-                
                 yAxis: {
                     type: 'value'
                 }, 

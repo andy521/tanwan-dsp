@@ -1,29 +1,53 @@
-<style scoped>
-.pt{font-size: 14px; margin-bottom: 5px;}
-.plan_box{max-height: 400px; overflow-y: auto; border: 1px solid #eee;  padding: 0 10px;}
+<style lang="less" scoped>
+.plan{
+    position: relative;
+    display: inline-block;
+    .choose {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #fff;
+        padding: 10px;
+        min-width: 250px;
+        border-left: 1px solid #eee; 
+        border-right: 1px solid #eee; 
+        z-index: 11000;
+    }
+    .content{
+        display: inherit;
+        position: absolute;
+        left: 0;
+        top: 50px;
+        padding: 0 10px;
+        max-width: 300px;
+        min-width: 250px;
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #eee;
+        font-size: 14px; 
+        background-color: #fff;
+        z-index: 10000;
+        .select{z-index: 10001;}
+    }
+}
+.poptip{padding:10px}
 .ivu-checkbox-group-item{display: block; margin-top: 10px;}
 .plan_name{width: 120px; text-align: center; max-width: 190px; overflow: hidden;text-overflow: ellipsis; white-space: nowrap; word-wrap: normal;word-wrap: break-word;word-break: break-all;}
-.search{margin-bottom: 10px;}
 </style>
 <template>
 	<div class="plan">
         <Button  @click="adgroupFun" class="plan_name">{{ts}}</Button>
-        <Modal v-model="isModal" title="选择计划" @on-ok="modalOk">
-            <div class="search">
-                <Input v-model="search" placeholder="请输入要搜索的计划..." @on-enter="getSearch">
-                    <Button slot="append" icon="ios-search"  @click="getSearch"></Button>
-                </Input>
+        <div ref="poptip" class="poptip">
+            <div v-if="isModal"  class="choose">
+                <Checkbox @on-change="seleAll">全选</Checkbox>
+                <Button @click="handleOk" type="primary">确定</Button>
             </div>
-            <div class="pt">
-                全部单元
-                <Checkbox style="float:right" @on-change="seleAll">全选</Checkbox>
-            </div>
-            <div class="plan_box">
-                <Checkbox-group v-model="seleAdgroup">
+            <div ref="plane" v-if="isModal" class="content">
+                <Checkbox-group v-model="seleAdgroup" class="select">
                     <Checkbox v-for="(item, index) in adgroupList" :label="item.adgroup_id" :key="index">{{ item.adgroup_name }}</Checkbox>
                 </Checkbox-group>
             </div>
-        </Modal>
+        </div>
 	</div>
 </template>
 
@@ -60,9 +84,10 @@
                     this.$Message.info('请先选择计划');
                     return
                 }
+                this.getPoptip().addEventListener('mouseleave', this.handleHide)
                 this.isModal = true;
             },
-            modalOk(){
+            handleOk(){
                 if(!this.seleAdgroup.length){
                     this.$Message.info('没有选择任何');
                     return
@@ -78,7 +103,8 @@
                         }
                     }
                 });
-                this.ts = name;
+                this.isModal = false
+                this.ts = name.length > 0 ? name.substring(0, name.length - 1) : this.ts
                 this.$emit('on-change', ids);
             },
             seleAll(val){
@@ -105,7 +131,16 @@
                     } 
                 });
                 this.adgroupList = filter;
-            }            
+            },
+            getPoptip() {
+                return this.$refs.poptip
+            },
+            handleHide() {
+                this.isModal = false
+            },
+        },
+        beforeDestroy() {
+            this.getPoptip().removeEventListener('mouseleave', this.handleHide)
 		}
 	};
 </script>

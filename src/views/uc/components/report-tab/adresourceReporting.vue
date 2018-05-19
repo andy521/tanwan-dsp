@@ -36,7 +36,7 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getReporting()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -151,10 +151,11 @@
             },
             //选择计划
             campaignChange(campaign){
-                console.log(campaign)
+                console.log('campaign', campaign)
                 Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
 					res => {
 						if(res.ret == 1) {
+                            console.log('res', res.data)
                             let list = this.adgroupList =  res.data,
                                 ids = '';
                             list.forEach(e=>{

@@ -1,15 +1,12 @@
-<style scoped>
-.mt20 {
-    margin-top: 20px;
-}
-</style><template>
-    <div>
+<template>
+    <Card shadow>
         <div>
             <Select v-model="account_id" placeholder="请选择帐号" style="width:250px;" @on-change="getfund()">
+                <Option value="">全部帐号</Option>
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
         </div>
-        <Table :columns="fundcolumns" :data="funddata" height="650" :loading="loading" :size="tableSize" class="mt20"></Table>
+        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10"></Table>
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
             <Radio-group v-model="tableSize" type="button">
@@ -19,19 +16,18 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getfund()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
             <Page :total="total_number" :page-size="page_size" ref="fundpage" @on-change="getfund" show-elevator show-total></Page>
             </Col>
         </Row>
-    </div>
+    </Card>
 </template>
 <script>
 import Axios from "@/api/index";
 export default {
-    name: "financeFunds",
     data() {
         return {
             account_id: "",
@@ -135,7 +131,7 @@ export default {
                 this.page = page;
             }
             this.loading = true;
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtaccount",
                 opt: "funds_get",
                 account_id: this.account_id
@@ -155,10 +151,10 @@ export default {
         },
         //获取媒体账号
         getMedia() {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "api",
                 opt: "getAccount",
-                MeidaType: "Gdt"
+                media_type: 1
             })
                 .then(res => {
                     if (res.ret == 1) {
