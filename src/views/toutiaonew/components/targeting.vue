@@ -94,11 +94,8 @@
                         <Checkbox v-for="item in toutiaoConfig.carrier" :label="item.val_type" :key="this">{{item.name}}</Checkbox>
                     </CheckboxGroup>
                 </FormItem>
-
-
             </Form>
         </div>
-
     </Card>
 </template>
 

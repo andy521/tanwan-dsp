@@ -47,7 +47,7 @@
             </Col>
         </Row>
         <div class="city_main">
-            <div class="city_title">省份
+            <div class="city_title">兴趣分类
                 <span class="clearcity" @click="AllProvince()">全选</span>
             </div>
             <div class="city_box">
@@ -67,7 +67,7 @@
         </div>
 
         <div class="city_main" style="border-left:none;" v-if="adtags">
-            <div class="city_title">城市
+            <div class="city_title">生活服务
                 <span class="clearcity" @click="AllCity()">全选</span>
             </div>
             <div class="city_box">
