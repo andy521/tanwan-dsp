@@ -24,6 +24,10 @@ export default {
         title:{
             type:String,
             default:''
+        },
+        toRouteName: {
+            type: String,
+            default: 'ucplan'
         }
     },
     data() {
@@ -60,7 +64,7 @@ export default {
                 return;
             }
             this.$router.push({
-                name: "ucplan",
+                name: this.toRouteName,
                 query: { account: this.account }
             });
             this.accountModal = false;
