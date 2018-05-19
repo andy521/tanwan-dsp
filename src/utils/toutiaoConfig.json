@@ -321,7 +321,7 @@
             "name": "联通"
         },
         {
-            "val_type": "UNICOM",
+            "val_type": "TELCOM",
             "name": "电信"
         }
     ],

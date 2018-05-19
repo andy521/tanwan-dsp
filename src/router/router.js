@@ -80,7 +80,7 @@ export const appRouter = [
         icon: 'ios-home',
         name: 'overview',
         redirect: '/home',
-        title: '账户总览1',
+        title: '账户总览',
         component: Main,
         children: [
             { path: '/', title: '账户总览', name: 'home_index', icon: 'ios-home', component: () => import('@/views/home/home.vue') }

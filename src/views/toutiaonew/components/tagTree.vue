@@ -51,8 +51,8 @@
                 <span class="clearcity" @click="AllProvince()">全选</span>
             </div>
             <div class="city_box">
-                <div class="item" v-for="item in province_list" @click="checkedprovince2(item)">
-                    <span @click="checkedprovince(item)" v-if="item.cityList">
+                <div class="item" v-for="item in adtags_list" @click="checkedprovince2(item)">
+                    <span @click="checkedprovince(item)" v-if="item.subTags">
                         <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon" v-if="item.checked"></Icon>
                         <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
                     </span>
@@ -61,21 +61,21 @@
                         <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
                     </span>
                     {{item.name}}
-                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.cityList"></Icon>
+                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subTags"></Icon>
                 </div>
             </div>
         </div>
 
-        <div class="city_main" style="border-left:none;" v-if="province">
+        <div class="city_main" style="border-left:none;" v-if="adtags">
             <div class="city_title">城市
                 <span class="clearcity" @click="AllCity()">全选</span>
             </div>
             <div class="city_box">
-                <div class="item" v-for="item in province.cityList" @click="checkedcity(item)">
+                <div class="item" v-for="item in adtags.subTags" @click="checkedcity(item)">
                     <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon" v-if="item.checked"></Icon>
                     <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
                     {{item.name}}
-                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.cityList"></Icon>
+                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subTags"></Icon>
                 </div>
             </div>
         </div>
@@ -100,36 +100,36 @@
 <script>
 import Axios from "@/api/index";
 export default {
-    name: "cityTree",
+    name: "tagTree",
     props: ["value"],
     data() {
         return {
             ids: [],
             searchcity: "",
-            province_list: [],
-            province: ""
+            adtags_list: [],
+            adtags: ""
         }
     },
     mounted() {
-        this.getProvince();
+        this.getTag();
         this.ids = this.value;
     },
     methods: {
         //获取省市区
-        getProvince() {
+        getTag() {
             Axios.post('api.php', {
                 action: 'ttAdPut',
-                opt: 'getProvince'
+                opt: 'getTag'
             }).then(res => {
                 if (res.ret == 1) {
-                    this.ad_province(res.data)
+                    this.ad_adtags(res.data.adtags);
                 }
             }).catch(err => {
-                console.log('获取省市列表失败' + err);
+                console.log('获取兴趣分类表失败' + err);
             })
         },
         //省添加checked
-        ad_province(data) {
+        ad_adtags(data) {
             data.forEach(v => {
                 v.checked = false;
                 this.ids.forEach(item => {
@@ -137,68 +137,48 @@ export default {
                         v.checked = true;
                     }
                 })
-                if (v.countyList) {
-                    v.countyList.forEach(v => {
+                if (v.subTags) {
+                    v.subTags.forEach(v => {
                         v.checked = false;
                         this.ids.forEach(item => {
                             if (item == v.value) {
                                 v.checked = true;
-                            } 
+                            }
                         })
-                    })
-                }
-                if (v.cityList) {
-                    v.cityList.forEach(v => {
-                        v.checked = false;
-                        this.ids.forEach(item => {
-                            if (item == v.value) {
-                                v.checked = true;
-                            } 
-                        })
-                        if (v.countyList) {
-                            v.countyList.forEach(v => {
-                                v.checked = false;
-                                this.ids.forEach(item => {
-                                    if (item == v.value) {
-                                        v.checked = true;
-                                    }
-                                })
-                            })
-                        }
                     })
                 }
             })
-            this.province_list = data;
+            this.adtags_list = data;
         },
         //选择省
         checkedprovince(item) {
             item.checked = !item.checked;
-            if (item.cityList) {
-                item.cityList.forEach(v => {
+            if (item.subTags) {
+                item.subTags.forEach(v => {
                     v.checked = item.checked;
                 });
-                this.province = item;
+                this.adtags = item;
             } else {
-                this.province = "";
+                this.adtags = "";
             }
         },
         checkedprovince2(item) {
-            if (item.cityList) {
-                this.province = item;
+            if (item.subTags) {
+                this.adtags = item;
             } else {
                 item.checked = !item.checked;
-                this.province = "";
+                this.adtags = "";
             }
         },
         //选全省
         AllProvince() {
-            this.province_list.forEach(item => {
+            this.adtags_list.forEach(item => {
                 item.checked = true;
             });
         },
         //选全市
         AllCity() {
-            this.province.cityList.forEach(item => {
+            this.adtags.subTags.forEach(item => {
                 item.checked = true;
             });
             this.citylen();
@@ -211,58 +191,41 @@ export default {
         //城市全选，父级加1
         citylen() {
             let len = 0;
-            this.province.cityList.forEach(item => {
+            this.adtags.subTags.forEach(item => {
                 if (item.checked) {
                     len++;
                 }
             });
-            if (this.province.cityList.length == len) {
-                this.province.checked = true;
+            if (this.adtags.subTags.length == len) {
+                this.adtags.checked = true;
             } else {
-                this.province.checked = false;
+                this.adtags.checked = false;
             }
         },
         //删除城市
         removecity(v) {
             v.checked = false;
-            if (v.countyList) {
-                v.countyList.forEach(v => {
+            if (v.subTags) {
+                v.subTags.forEach(v => {
                     v.checked = false;
-                })
-            }
-            if (v.cityList) {
-                v.cityList.forEach(v => {
-                    v.checked = false;
-                    if (v.countyList) {
-                        v.countyList.forEach(v => {
-                            v.checked = false;
-                        })
-                    }
                 })
             }
         },
         //全部清空
         removeAllcity() {
             this.ids=[];
-            this.ad_province(this.province_list);
+            this.ad_adtags(this.adtags_list);
         }
     },
     computed: {
         checked_list() {
             let list = [], ids = [];
-            this.province_list.forEach(v => {
+            this.adtags_list.forEach(v => {
                 if (v.checked) {
                     list.push(v);
                 } else {
-                    if (v.countyList) {
-                        v.countyList.forEach(v => {
-                            if (v.checked) {
-                                list.push(v);
-                            }
-                        });
-                    }
-                    if (v.cityList) {
-                        v.cityList.forEach(v => {
+                    if (v.subTags) {
+                        v.subTags.forEach(v => {
                             if (v.checked) {
                                 list.push(v);
                             }

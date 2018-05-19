@@ -28,7 +28,7 @@
         <Input v-model="search" placeholder="请输入计划名称" @on-change="filterData" @on-enter="filterData">
         <Button slot="append" icon="ios-search" @click="filterData">搜索</Button>
         </Input>
-        <div class="panel" :style="{height:height+'px'}">
+        <div class="panel" :style="{maxHeight:height+'px'}">
             <div @click="checked(item)" v-for="item in campaigns_list" :key="this" class="panel-item">
                 <div class="name">{{item.campaign_name}}</div>
                 <div class="type" v-for="subitem in toutiaoConfig.landing_type" v-if="item.landing_type==subitem.val_type">{{subitem.name}}</div>

@@ -12,6 +12,9 @@
   color: #598fe6;
   cursor: pointer;
 }
+.txt-grey {
+  color: #999;
+}
 </style>
 
 <template>
@@ -20,80 +23,56 @@
             <div class="title">用户定向
                 <span class="sub-title">复制已有定向</span>
             </div>
-            <Form :label-width="100" class="margin-top-20">
+            <Form :label-width="100" class="margin-top-20" onsubmit="return false;">
                 <FormItem label="地域">
-                    <RadioGroup @on-change="handleDistrict" v-model="targeting.district" type="button" size="large">
+                    <RadioGroup @on-change="handleDistrict" v-model="targeting.district" size="large" type="button">
                         <Radio label="">不限</Radio>
-                        <Radio  v-for="item in toutiaoConfig.district" :label="item.val_type" :key="this">{{item.name}}</Radio>
+                        <Radio v-for="item in toutiaoConfig.district" :label="item.val_type" :key="this">{{item.name}}</Radio>
                     </RadioGroup>
-
-                    <div class="margin-top-10">{{targeting.city}}
-                        <city-tree v-model="targeting.city"></city-tree>
+                    <div class="margin-top-10">
+                        <city-tree v-model="targeting.city" v-if="targeting.district=='CITY'"></city-tree>
+                        <county-tree v-model="targeting.city" v-if="targeting.district=='COUNTY'"></county-tree>
                     </div>
                 </FormItem>
 
                 <FormItem label="性别">
-                    <RadioGroup v-model="targeting.gender" type="button" size="large">
-                        <Radio label="GENDER_UNLIMITED">不限</Radio>
-                        <Radio label="GENDER_MALE">男</Radio>
-                        <Radio label="GENDER_FEMALE">女</Radio>
+                    <RadioGroup v-model="targeting.gender" size="large" type="button">
+                        <Radio v-for="item in toutiaoConfig.gender" :label="item.val_type" :key="this">{{item.name}}</Radio>
                     </RadioGroup>
                 </FormItem>
 
-                <FormItem label="年龄" :model="targeting">
-                    <RadioGroup v-model="ageStatus">
-                        <Radio label="">不限</Radio>
-                        <Radio label="1">自定义</Radio>
-                    </RadioGroup>
-                    <CheckboxGroup v-if="ageStatus === '1'" @on-change="handleAge" v-model="targeting.age">
-                        <Checkbox v-for="(a, i) in toutiaoConfig.age" :label="a.val_type" :key="i">{{a.name}}</Checkbox>
+                <FormItem label="年龄">
+                    <CheckboxGroup v-model="targeting.age" size="large">
+                        <Checkbox v-for="item in toutiaoConfig.age" :label="item.val_type" :key="this">{{item.name}}</Checkbox>
                     </CheckboxGroup>
                 </FormItem>
 
-                <FormItem>
-                    <span slot="label">
-                        <span>
-                            <Tooltip placement="top">
-                                <Icon type="help-circled"></Icon>
-                                <div slot="content">
-                                    <p>接入您的应用或网站的数据, 选定或排除特定的用户。</p>
-                                    <p>您可以在工具箱-头条DMP中管理人群包</p>
-                                </div>
-                            </Tooltip>
-                            人群包
-                            <br/>
-                            <span class="txt-grey">(选定/排除)</span>
-                        </span>
-                    </span>
-                    <RadioGroup v-model="customActionsStatus" type="button" size="large">
-                        <Radio label="GENDER_UNLIMITED">不限</Radio>
-                        <Radio label="GENDER_MALE">定向人群包</Radio>
-                        <Radio label="GENDER_FEMALE">排除人群包</Radio>
-                    </RadioGroup>
-                </FormItem>
-
                 <FormItem label="兴趣分类">
-                    <RadioGroup v-model="adTagStatus" type="button" size="large">
-                        <Radio label="GENDER_UNLIMITED">不限</Radio>
-                        <Radio label="GENDER_MALE">添加兴趣分类</Radio>
-                        <Radio label="GENDER_FEMALE">系统推荐</Radio>
+                    <RadioGroup v-model="ad_tag_model" size="large" type="button">
+                        <Radio label="0">不限</Radio>
+                        <Radio label="1">添加兴趣分类</Radio>
                     </RadioGroup>
+                    <div class="margin-top-10">
+                        <tag-tree v-model="targeting.ad_tag" v-if="ad_tag_model=='1'"></tag-tree>
+                    </div>
+
                 </FormItem>
 
                 <FormItem label="兴趣关键词">
-                    <RadioGroup v-model="interestTagsStatus" type="button" size="large">
-                        <Radio label="GENDER_UNLIMITED">不限</Radio>
-                        <Radio label="GENDER_MALE">使用关键词</Radio>
-                        <Radio label="GENDER_FEMALE">使用系统推荐</Radio>
+                    <RadioGroup v-model="interest_tags_model" size="large" type="button">
+                        <Radio label="0">不限</Radio>
+                        <Radio label="1">使用关健词</Radio>
                     </RadioGroup>
+                    <div class="margin-top-10">
+                        <interest-tree v-model="targeting.interest_tags" v-if="interest_tags_model=='1'"></interest-tree>
+                    </div>
                 </FormItem>
-
                 <FormItem label="平台">
-                    <CheckboxGroup @on-change="handlePlatform" v-model="targeting.platform">
-                        <Checkbox v-for="(p, i) in toutiaoConfig.platform" :label="p.val_type" :key="i">
-                            {{p.name}}
-                            <Poptip v-if="p.name === 'PC'" trigger="hover" placement="top">
-                                <Icon type="help-circled"></Icon>
+                    <CheckboxGroup @on-change="handlePlatform" v-model="targeting.platform" size="large">
+                        <Checkbox v-for="item in toutiaoConfig.platform" :label="item.val_type" :key="this">
+                            {{item.name}}
+                            <Poptip v-if="item.val_type === 'PC'" trigger="hover" placement="top">
+                                <Icon type="help-circled" size="14" color="#999"></Icon>
                                 <div slot="title">PC设置提示</div>
                                 <div slot="content">
                                     <p>若平台选择PC定向，则其他所有受众</p>
@@ -105,30 +84,39 @@
                 </FormItem>
 
                 <FormItem label="网络">
-                    <CheckboxGroup@on-change="handleAc" v-model="targeting.ac">
-                        <Checkbox v-for="(a, i) in toutiaoConfig.ac" :label="a.val_type" :key="i">{{a.name}}</Checkbox>
-                        </CheckboxGroup>
-                </FormItem>
-
-                <FormItem label="运营商">
-                    <CheckboxGroup @on-change="handleCarrier" v-model="targeting.carrier">
-                        <Checkbox v-for="(c, i) in toutiaoConfig.carrier" :label="c.val_type" :key="i">{{c.name}}</Checkbox>
+                    <CheckboxGroup v-model="targeting.ac" size="large">
+                        <Checkbox v-for="item in toutiaoConfig.ac" :label="item.val_type" :key="this">{{item.name}}</Checkbox>
                     </CheckboxGroup>
                 </FormItem>
 
+                <FormItem label="运营商">
+                    <CheckboxGroup v-model="targeting.carrier" size="large">
+                        <Checkbox v-for="item in toutiaoConfig.carrier" :label="item.val_type" :key="this">{{item.name}}</Checkbox>
+                    </CheckboxGroup>
+                </FormItem>
+
+
             </Form>
         </div>
+
     </Card>
 </template>
 
 <script>
-import Axios from '@/api/index'
-import getProvince from '../temp/getProvince.json'
-import toutiaoConfig from '@/utils/toutiaoConfig.json'
-import cityTree from './cityTree.vue'
+import Axios from '@/api/index';
+import getProvince from '../temp/getProvince.json';
+import toutiaoConfig from '@/utils/toutiaoConfig.json';
+import cityTree from './cityTree.vue';
+import countyTree from './countyTree.vue';
+import tagTree from './tagTree.vue';
+import interestTree from './interestTree.vue';
+
 export default {
     components: {
-        cityTree
+        cityTree,
+        countyTree,
+        tagTree,
+        interestTree
     },
     data() {
         return {
@@ -138,21 +126,18 @@ export default {
             // 定向参数
             targeting: {
                 district: '', // 地域类型
-                city: ["130100"], // 地域id
-
+                city: ["130100", "11"], // 地域id
                 gender: 'GENDER_UNLIMITED', // 性别
                 age: [], // 年龄
-                ad_tag: [], // 兴趣分类
-                interest_tags: [], // 兴趣关键词
+                ad_tag: ["10201", "10202"], // 兴趣分类
+                interest_tags: ["你好"], // 兴趣关键词
                 platform: [], // 平台
                 ac: [], // 网络类型
                 carrier: [], // 运营商
             },
+            ad_tag_model: "0",
+            interest_tags_model: "0",
 
-
-            
-            ageStatus: '', // 年龄状态
-            customActionsStatus: '', // 人群包状态
             adTagStatus: '', // 兴趣分类状态
             interestTagsStatus: '', // 兴趣关键词状态
             provinceList: [],
