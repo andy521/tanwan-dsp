@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </Poptip>
-                <new-edit title="新建单元"></new-edit>
+                <new-edit :title="newTitle" :to-route-name="toRouteName" :campaign-id="planIdForCreative" :adgroup-id="adgroupIdForCreative" class="margin-left-5"></new-edit>
                 </Col>
             </Row>
 
@@ -136,6 +136,8 @@ export default {
     },
     data() {
         return {
+            planIdForCreative: parseInt(this.$route.query.campaign_id) ? parseInt(this.$route.query.campaign_id) : -1,
+            adgroupIdForCreative: parseInt(this.$route.query.adgroup_id) ? parseInt(this.$route.query.adgroup_id) : -1,
             height: document.body.clientHeight - 200,
             isBack: false,
             filterLoading: false,
@@ -206,6 +208,14 @@ export default {
             checkId: [],
             author: []
         };
+    },
+    computed: {
+        newTitle() {
+            return this.$route.query.adgroup_id && this.$route.query.campaign_id ? '新建创意' : '新建计划'
+        },
+        toRouteName() {
+            return this.$route.query.adgroup_id && this.$route.query.campaign_id ? 'ucidea' : 'ucplan'
+        }
     },
     methods: {
         //返回

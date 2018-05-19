@@ -231,7 +231,7 @@ export default {
     },
     data() {
         return {
-            planIdForUnit: parseInt(this.$route.query.id) ? parseInt(this.$route.query.id) : -1,
+            planIdForUnit: parseInt(this.$router.query.id) ? parseInt(this.$route.query.id) : -1,
             loading: false,
             isBack: false,
             height: document.body.clientHeight - 300,
@@ -824,8 +824,7 @@ export default {
                                 on: {
                                     click: () => {
                                         let query = {
-                                            adgroup_id: params.row.adgroup_id,
-                                            campaign_id: params.row.campaign_id
+                                            adgroup_id: params.row.adgroup_id
                                         };
                                         this.$router.push({
                                             name: "uc_creativity",
