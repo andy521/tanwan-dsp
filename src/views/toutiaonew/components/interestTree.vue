@@ -113,6 +113,7 @@ export default {
     props: ["value"],
     data() {
         return {
+            account_id: this.$route.query.account_id, //账户id
             search: "",
             InterestWord: [],
             taCheckitem: [],
@@ -257,19 +258,20 @@ export default {
                 return;
             }
 
-
-            //  Axios.post('api.php', {
-            //     action: 'ttAdPut',
-            //     opt: 'getInterestWord'
-            // }).then(res => {
-            //     if (res.ret == 1) {
-            //         this.InterestWord = res.data;
-            //     }
-            // }).catch(err => {
-            //     console.log('获取兴趣分类表失败' + err);
-            // })
-
-            console.log(this.formItem.interest_tags.split("\n"))
+            Axios.post('api.php', {
+                action: 'ttAdPut',
+                opt: 'createInterestWord',
+                account_id: this.account_id,
+                name: this.formItem.name,
+                words: interest_tags
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getInterestWord();
+                }
+            }).catch(err => {
+                console.log('关键词包' + err);
+            })
         }
     },
 

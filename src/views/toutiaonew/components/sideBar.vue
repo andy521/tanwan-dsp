@@ -1,52 +1,52 @@
 <style scoped>
 .sidediv {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 100%;
-    overflow: auto;
-    background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  overflow: auto;
+  background: #fff;
 }
 
 .sidebox {
-    padding: 20px;
-    border-bottom: 1px solid #f0f0f0;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .item {
-    line-height: 30px;
-    color: #333;
-    padding: 20px;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
-    cursor: pointer;
+  line-height: 30px;
+  color: #333;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  /* cursor: pointer; */
 }
 
 .active {
-    background: #f0f0f0;
+  background: #f0f0f0;
 }
 .active .content {
-    color: #2d8cf0;
+  color: #2d8cf0;
 }
 
 .title {
-    font-weight: bold;
+  font-weight: bold;
 }
 .content {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
 }
 .content span {
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-    flex: 1;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
 }
 
 .forbidden {
-    color: #999;
-    cursor: no-drop;
+  color: #999;
+  /* cursor: no-drop; */
 }
 </style>
 
@@ -91,6 +91,7 @@ export default {
     name: "sideBar",
     data() {
         return {
+            campaign_id: this.$route.query.campaign_id, //广告组id  
             step: 0,
             current: [
                 {
@@ -135,14 +136,17 @@ export default {
             ]
         };
     },
+    mounted() {
+
+    },
     methods: {
         //返回
         back() {
             this.$router.go(-1);
         }
     },
-    beforeRouteUpdate (to, from, next) {
-        console.log('router',to,from, next)
+    beforeRouteUpdate(to, from, next) {
+        console.log('router', to, from, next)
     }
 };
 </script>

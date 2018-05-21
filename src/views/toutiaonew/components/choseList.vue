@@ -44,7 +44,8 @@ export default {
     name: 'choList',
     data() {
         return {
-            height: document.body.clientHeight - 180,
+            account_id: this.$route.query.account_id, //账户id
+            height: document.body.clientHeight - 200,
             toutiaoConfig: toutiaoConfig,
             search: '',
             campaigns_list: [],
@@ -60,6 +61,7 @@ export default {
             this.$router.push({
                 name: 'ttad',
                 query: {
+                    account_id:this.account_id,
                     campaign_id: campaign.campaign_id
                 }
             })
@@ -78,7 +80,7 @@ export default {
                     filter.push(item)
                 }
             })
-            const retNull = [{ campaign_name: '无搜索结果,请重新搜索', landing_type_name: '-' }]
+            const retNull = [{ campaign_name: '无搜索结果,请重新搜索', landing_type_name: '' }]
             this.campaigns_list = filter.length < 1 ? retNull : filter
         },
         //获取广告组列表

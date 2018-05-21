@@ -39,20 +39,13 @@
 </style>
 <template>
     <div>
-        <Row>
-            <Col span="12">
-            <!-- <Select v-model="searchcity" filterable remote :remote-method="remoteMethod1" :loading="loading" @on-change="changesearchcity" placeholder="搜索省、市">
-                <Option v-for="(option, index) in options" :value="option.value" :key="index">{{option.label}}</Option>
-            </Select> -->
-            </Col>
-        </Row>
         <div class="city_main">
-            <div class="city_title">兴趣分类
+            <div class="city_title">按分类
                 <span class="clearcity" @click="AllProvince()">全选</span>
             </div>
             <div class="city_box">
                 <div class="item" v-for="item in adtags_list" @click="checkedprovince2(item)">
-                    <span @click="checkedprovince(item)" v-if="item.subTags">
+                    <span @click="checkedprovince(item)" v-if="item.subItems">
                         <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon" v-if="item.checked"></Icon>
                         <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
                     </span>
@@ -61,7 +54,7 @@
                         <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
                     </span>
                     {{item.name}}
-                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subTags"></Icon>
+                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subItems"></Icon>
                 </div>
             </div>
         </div>
@@ -71,11 +64,11 @@
                 <span class="clearcity" @click="AllCity()">全选</span>
             </div>
             <div class="city_box">
-                <div class="item" v-for="item in adtags.subTags" @click="checkedcity(item)">
+                <div class="item" v-for="item in adtags.subItems" @click="checkedcity(item)">
                     <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon" v-if="item.checked"></Icon>
                     <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
                     {{item.name}}
-                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subTags"></Icon>
+                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subItems"></Icon>
                 </div>
             </div>
         </div>
@@ -100,7 +93,7 @@
 <script>
 import Axios from "@/api/index";
 export default {
-    name: "tagTree",
+    name: "appTree",
     props: ["value"],
     data() {
         return {
@@ -115,17 +108,18 @@ export default {
         this.ids = this.value;
     },
     methods: {
-        //获取兴趣分类
+        //获取app行为
         getTag() {
             Axios.post('api.php', {
                 action: 'ttAdPut',
-                opt: 'getTag'
+                opt: 'getAppType'
             }).then(res => {
                 if (res.ret == 1) {
-                    this.ad_adtags(res.data.adtags);
+                    this.ad_adtags(res.data.android);
+                    console.log(res.data.android)
                 }
             }).catch(err => {
-                console.log('获取兴趣分类表失败' + err);
+                console.log('获取app行为' + err);
             })
         },
         //省添加checked
@@ -137,8 +131,8 @@ export default {
                         v.checked = true;
                     }
                 })
-                if (v.subTags) {
-                    v.subTags.forEach(v => {
+                if (v.subItems) {
+                    v.subItems.forEach(v => {
                         v.checked = false;
                         this.ids.forEach(item => {
                             if (item == v.value) {
@@ -153,8 +147,8 @@ export default {
         //选择省
         checkedprovince(item) {
             item.checked = !item.checked;
-            if (item.subTags) {
-                item.subTags.forEach(v => {
+            if (item.subItems) {
+                item.subItems.forEach(v => {
                     v.checked = item.checked;
                 });
                 this.adtags = item;
@@ -163,7 +157,7 @@ export default {
             }
         },
         checkedprovince2(item) {
-            if (item.subTags) {
+            if (item.subItems) {
                 this.adtags = item;
             } else {
                 item.checked = !item.checked;
@@ -178,7 +172,7 @@ export default {
         },
         //选全市
         AllCity() {
-            this.adtags.subTags.forEach(item => {
+            this.adtags.subItems.forEach(item => {
                 item.checked = true;
             });
             this.citylen();
@@ -191,12 +185,12 @@ export default {
         //城市全选，父级加1
         citylen() {
             let len = 0;
-            this.adtags.subTags.forEach(item => {
+            this.adtags.subItems.forEach(item => {
                 if (item.checked) {
                     len++;
                 }
             });
-            if (this.adtags.subTags.length == len) {
+            if (this.adtags.subItems.length == len) {
                 this.adtags.checked = true;
             } else {
                 this.adtags.checked = false;
@@ -205,8 +199,8 @@ export default {
         //删除城市
         removecity(v) {
             v.checked = false;
-            if (v.subTags) {
-                v.subTags.forEach(v => {
+            if (v.subItems) {
+                v.subItems.forEach(v => {
                     v.checked = false;
                 })
             }
@@ -224,8 +218,8 @@ export default {
                 if (v.checked) {
                     list.push(v);
                 } else {
-                    if (v.subTags) {
-                        v.subTags.forEach(v => {
+                    if (v.subItems) {
+                        v.subItems.forEach(v => {
                             if (v.checked) {
                                 list.push(v);
                             }

@@ -584,6 +584,7 @@ export default {
                                             this.$router.push({
                                                 name: "ttcampaign",
                                                 query: {
+                                                    account_id:params.row.account_id,
                                                     id: params.row.id
                                                 }
                                             });

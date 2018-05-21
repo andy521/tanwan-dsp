@@ -87,7 +87,6 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     let data = res.data[0];
-                    this.account_id = data.account_id;
                     this.campaign_id = data.campaign_id;
                     this.landing_type = data.landing_type;
                     this.budget_mode = data.budget_mode
@@ -149,6 +148,7 @@ export default {
                     this.$router.push({
                         name: 'ttad',
                         query: {
+                            account_id:this.account_id,
                             campaign_id: res.data.campaign_id
                         }
                     })

@@ -122,7 +122,7 @@ export default {
                 opt: 'getProvince'
             }).then(res => {
                 if (res.ret == 1) {
-                    this.ad_province(res.data)
+                    this.ad_province(res.data);
                 }
             }).catch(err => {
                 console.log('获取省市列表失败' + err);
@@ -143,7 +143,7 @@ export default {
                         this.ids.forEach(item => {
                             if (item == v.value) {
                                 v.checked = true;
-                            } 
+                            }
                         })
                     })
                 }
@@ -153,7 +153,7 @@ export default {
                         this.ids.forEach(item => {
                             if (item == v.value) {
                                 v.checked = true;
-                            } 
+                            }
                         })
                         if (v.countyList) {
                             v.countyList.forEach(v => {
@@ -243,7 +243,7 @@ export default {
         },
         //全部清空
         removeAllcity() {
-            this.ids=[];
+            this.ids = [];
             this.ad_province(this.province_list);
         }
     },
