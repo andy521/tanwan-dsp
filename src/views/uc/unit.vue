@@ -38,7 +38,7 @@
                 </Col>
                 <Col span="5" style="text-align: right;">
                 <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
-                <new-edit title="新建单元" class="margin-left-5"></new-edit>
+                <new-edit :title="newTitle" :to-route-name="toRouteName" :query-params="queryParam" class="margin-left-5"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -329,6 +329,19 @@ export default {
             // 选择负责人
             author: []
         };
+    },
+    computed: {
+        newTitle() {
+            return this.$route.query.id ? '新建单元' : '新建计划'
+        },
+        toRouteName() {
+            return this.$route.query.id ? 'ucunit' : 'ucplan'
+        },
+        queryParam() {
+            const id = parseInt(this.$route.query.id)
+            const retParam = id ? {campaign_id: id} : {}
+            return retParam
+        }
     },
     methods: {
         //选择负责人
@@ -815,7 +828,8 @@ export default {
                                 on: {
                                     click: () => {
                                         let query = {
-                                            adgroup_id: params.row.adgroup_id
+                                            adgroup_id: params.row.adgroup_id,
+                                            campaign_id: params.row.campaign_id
                                         };
                                         this.$router.push({
                                             name: "uc_creativity",
