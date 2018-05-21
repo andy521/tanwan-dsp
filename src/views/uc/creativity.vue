@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </Poptip>
-                <new-edit :title="newTitle" :to-route-name="toRouteName" :campaign-id="planIdForCreative" :adgroup-id="adgroupIdForCreative" class="margin-left-5"></new-edit>
+                <new-edit :title="newTitle" :to-route-name="toRouteName" :query-params="queryParam" class="margin-left-5"></new-edit>
                 </Col>
             </Row>
 
@@ -136,8 +136,6 @@ export default {
     },
     data() {
         return {
-            planIdForCreative: parseInt(this.$route.query.campaign_id) ? parseInt(this.$route.query.campaign_id) : -1,
-            adgroupIdForCreative: parseInt(this.$route.query.adgroup_id) ? parseInt(this.$route.query.adgroup_id) : -1,
             height: document.body.clientHeight - 200,
             isBack: false,
             filterLoading: false,
@@ -215,6 +213,12 @@ export default {
         },
         toRouteName() {
             return this.$route.query.adgroup_id && this.$route.query.campaign_id ? 'ucidea' : 'ucplan'
+        },
+        queryParam() {
+            const campaign_id = parseInt(this.$route.query.campaign_id) ? parseInt(this.$route.query.campaign_id) : ''
+            const adgroup_id = parseInt(this.$route.query.adgroup_id) ? parseInt(this.$route.query.adgroup_id) : ''
+            const retParam = campaign_id && adgroup_id ? {campaign_id: campaign_id, adgroup_id: adgroup_id} : {}
+            return retParam
         }
     },
     methods: {

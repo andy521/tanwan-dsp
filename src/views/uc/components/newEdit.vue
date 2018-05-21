@@ -29,13 +29,9 @@ export default {
             type: String,
             default: 'ucplan'
         },
-        campaignId: {
-            type: Number,
-            default: -1
-        },
-        adgroupId: {
-            type: Number,
-            default: -1
+        queryParams: {
+            type: Object,
+            default: (() => {})
         }
     },
     data() {
@@ -71,23 +67,9 @@ export default {
                 this.$Message.info("请选择帐号");
                 return;
             }
-            let query = {}
-            if (this.campaignId === -1 && this.adgroupId === -1) {
-                query = {
-                    account: this.account
-                }
-            } else if (this.campaignId !== -1 && this.adgroupId === -1) {
-                query = {
-                    account: this.account,
-                    campaign_id: this.campaignId === -1 ? '' : this.campaignId
-                }                
-            } else if (this.campaignId !== -1 && this.adgroupId !== -1) {
-                query = {
-                    account: this.account,
-                    campaign_id: this.campaignId === -1 ? '' : this.campaignId,
-                    adgroup_id: this.adgroupId === -1 ? '' : this.adgroupId
-                }                
-            }
+            const query = Object.assign({
+                account: this.account
+            }, this.queryParams)
 
             this.$router.push({
                 name: this.toRouteName,

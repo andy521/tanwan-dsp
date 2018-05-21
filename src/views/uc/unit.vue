@@ -38,7 +38,7 @@
                 </Col>
                 <Col span="5" style="text-align: right;">
                 <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
-                <new-edit :title="newTitle" :to-route-name="toRouteName" :campaign-id="planIdForUnit" class="margin-left-5"></new-edit>
+                <new-edit :title="newTitle" :to-route-name="toRouteName" :query-params="queryParam" class="margin-left-5"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -231,7 +231,6 @@ export default {
     },
     data() {
         return {
-            planIdForUnit: parseInt(this.$route.query.id) ? parseInt(this.$route.query.id) : -1,
             loading: false,
             isBack: false,
             height: document.body.clientHeight - 300,
@@ -337,6 +336,11 @@ export default {
         },
         toRouteName() {
             return this.$route.query.id ? 'ucunit' : 'ucplan'
+        },
+        queryParam() {
+            const id = parseInt(this.$route.query.id)
+            const retParam = id ? {campaign_id: id} : {}
+            return retParam
         }
     },
     methods: {
