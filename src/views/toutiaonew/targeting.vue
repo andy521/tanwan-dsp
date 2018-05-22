@@ -13,6 +13,10 @@
   color: #999;
 }
 .city_main {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 50px;
   line-height: 36px;
   width: 250px;
   border: solid 1px #dee4f5;

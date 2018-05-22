@@ -150,16 +150,7 @@ export default {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.money)) {
                             //三位数加逗号
-                            let newvalue = (params.row.money)
-                                .toString()
-                                .split("")
-                                .reverse()
-                                .join("")
-                                .replace(/(\d{3})/g, "$1,")
-                                .replace(/\,$/, "")
-                                .split("")
-                                .reverse()
-                                .join("");
+                            let newvalue = String(params.row.money).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                             return [h("span", newvalue)];
                         } else {
                             return [h("span", params.row.recharge_money)];
