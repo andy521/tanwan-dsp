@@ -125,9 +125,9 @@ export const appRouter = [
         component: Main,
         children: [
             { path: 'modprfpsw', title: '修改个人信息', name: 'setid_modprfpsw', icon: 'android-radio-button-off', component: () => import('@/views/setid/modPrfPsw.vue') },
-            { path: 'adduser', title: '添加账号', name: 'setid_adduser', icon: 'android-radio-button-off', component: () => import('@/views/setid/addUser.vue') },
+            // { path: 'adduser', title: '添加账号', name: 'setid_adduser', icon: 'android-radio-button-off', component: () => import('@/views/setid/addUser.vue') },
             { path: 'userlist', title: '账号管理', name: 'setid_userlist', icon: 'android-radio-button-off', component: () => import('@/views/setid/userList.vue') },
-            { path: 'addgroup', title: '添加权限组', name: 'setid_addgroup', icon: 'android-radio-button-off', component: () => import('@/views/setid/addGroup.vue') },
+            // { path: 'addgroup', title: '添加权限组', name: 'setid_addgroup', icon: 'android-radio-button-off', component: () => import('@/views/setid/addGroup.vue') },
             { path: 'grouplist', title: '权限组管理', name: 'setid_grouplist', icon: 'android-radio-button-off', component: () => import('@/views/setid/groupList.vue') },
             { path: 'userlog', title: '账户日志', name: 'setid_userlog', icon: 'android-radio-button-off', component: () => import('@/views/setid/userLog.vue') },
             { path: 'principal', title: '负责人管理', name: 'setid_principal', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue') },

@@ -5,6 +5,16 @@
     <Card :bordered="false">
         <Row v-show="showGroupListTable">
             <Col span="24">
+                <Button icon="plus-round" @click="showAddGroupDialog">添加权限组</Button>
+            </Col>
+        </Row>
+        <Row v-show="showGroupListTable">
+            <Col span="24">
+            <br>
+            </Col>
+        </Row>
+        <Row v-show="showGroupListTable">
+            <Col span="24">
                 <Table border :columns="tableColumns" :data="tableData" size="small" style="width:700px"></Table>
             </Col>
         </Row>
@@ -172,36 +182,68 @@
                     groupDetail: [
                         { required: true, message: '权限组描述不能为空', trigger: 'blur' },
                     ]
-                }
+                },
+                //添加or编辑权限组
+                commitType : '',
             }
         },
         mounted() {
             this.getGroupList();
         },
         methods: {
+            //添加权限组会话框
+            showAddGroupDialog () {
+                this.commitType = "add";
+                this.editGroupDialog = true;
+                this.editGroupInfo.title = "添加权限组";
+                this.editGroupInfo.groupID = '';
+                this.editGroupInfo.groupName = '';
+                this.editGroupInfo.groupDetail = '';
+            },
             //提交编辑权限组
             editGroup () {
                 this.$refs['editGroupInfo'].validate((valid) => {
                     if (valid) {
-                        Axios.post('api.php?action=sys&opt=pmgroup', {
-                            stage: 'edit',
-                            pmid: this.editGroupInfo.groupID,
-                            name: this.editGroupInfo.groupName,
-                            memo: this.editGroupInfo.groupDetail
-                        }).then(
-                            res => {
-                                if (res.ret == 1) {
-                                    this.getGroupList();
-                                    this.$Message.success(res.data);
-                                } else {
-                                    this.$Message.error(res.msg);
+                        if (this.commitType == "edit") {
+                            Axios.post('api.php?action=sys&opt=pmgroup', {
+                                stage: 'edit',
+                                pmid: this.editGroupInfo.groupID,
+                                name: this.editGroupInfo.groupName,
+                                memo: this.editGroupInfo.groupDetail
+                            }).then(
+                                res => {
+                                    if (res.ret == 1) {
+                                        this.getGroupList();
+                                        this.$Message.success(res.data);
+                                    } else {
+                                        this.$Message.error(res.msg);
+                                    }
                                 }
-                            }
-                        ).catch(
-                            err => {
-                                console.log('提交失败' + err)
-                            }
-                        )
+                            ).catch(
+                                err => {
+                                    console.log('提交失败' + err)
+                                }
+                            )
+                        } else if (this.commitType == "add") {
+                            Axios.post('api.php?action=sys&opt=pmgroup', {
+                                stage: 'add',
+                                name: this.editGroupInfo.groupName,
+                                memo: this.editGroupInfo.groupDetail,
+                            }).then(
+                                res => {
+                                    if (res.ret == 1) {
+                                        this.getGroupList();
+                                        this.$Message.success(res.data);
+                                    } else {
+                                        this.$Message.error(res.msg);
+                                    }
+                                }
+                            ).catch(
+                                err => {
+                                    console.log('提交失败' + err);
+                                }
+                            )
+                        }
                     } else {
                         this.$Message.error('请填写带*号信息!');
                     }
@@ -209,6 +251,7 @@
             },
             //编辑权限组会话框
             showEditGroupDialog (gid) {
+                this.commitType = "edit";
                 Axios.get('api.php?action=sys&opt=pmgroup&act=edit&pmid='+gid)
                 .then(
                     res => {
