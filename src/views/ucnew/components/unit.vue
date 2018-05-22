@@ -187,14 +187,14 @@
             </RadioGroup>
           </FormItem> -->
           <FormItem label="定向名称">
-            <Input @on-change="handleTargetingName" v-model="targetingSetting.targeting_name" :maxlength="30" placeholder="请输入定向名称" class="item-width"></Input>
+            <Input @on-blur="handleTargetingName" v-model="targetingSetting.targeting_name" :maxlength="30" placeholder="请输入定向名称" class="item-width"></Input>
             <span class="color-red">最多30个字符，且不能包含特殊字符</span>
           </FormItem>
           <FormItem label="投放地域">
             <RadioGroup @on-change="handleAllRegion" v-model="targetingSetting.all_region">
-              <Radio label="-1">不限</Radio>
+              <Radio label="1">不限</Radio>
               <Radio label="0">省市</Radio>
-              <!-- <Radio label="1">
+              <Radio label="2">
                 <span>区县</span>
                 <Tooltip placement="top">
                   <Icon type="help-circled"></Icon>
@@ -203,7 +203,7 @@
                     <p>时位于该区县的人群。</p>
                   </div>
                 </Tooltip>
-              </Radio> -->
+              </Radio>
             </RadioGroup>
             <div v-if="targetingSetting.all_region === '0'" class="regions-box">
               <Tree @on-check-change="handleChangeProvinceTree" :data="provinceTreeList" show-checkbox></Tree>
@@ -358,14 +358,14 @@
         <Form ref="priceSetting" :model="unitSetting" :label-width="126" label-position="left">
 
           <FormItem label="转化类型">
-            <Select @on-change="handleChangeConvertMonitorTypes" v-model="convert.convertMonitorTypeName" :disabled="isconvertTypeStatus" class="item-width">
+            <Select @on-change="handleChangeConvertMonitorTypes" :loading="loading" loading-text="加载中，请稍后..." v-model="convert.convertMonitorTypeName" :disabled="isconvertTypeStatus" class="item-width">
               <Option v-if="convert.convertMonitorTypesList.length > 0" v-for="(convertName, index) in convert.convertMonitorTypesList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
             </Select>
             <span v-if="JSON.stringify(convert.currConvertMonitorTypes) !== '{}' && convert.currConvertMonitorTypes.name === '下载'" class="color-red">目前仅提供Android下载完成数据</span>
           </FormItem>
 
           <FormItem v-if="JSON.stringify(convert.currConvertMonitorTypes) !== '{}' && convert.currConvertMonitorTypes.name !== '下载'" label="转化名称">
-            <Select @on-change="handleChangeConvertMonitorName" class="item-width">
+            <Select @on-change="handleChangeConvertMonitorName" :loading="loading" loading-text="加载中，请稍后..." class="item-width">
               <Option v-if="convert.convertList.length > 0" v-for="(convertName, index) in convert.convertList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
             </Select>
             <span v-if="convert.convertMonitorTypeName !== '下载' && convert.convertMonitorTypeName !== '激活'" class="color-red">该账户的转化目标暂不可用,请跳转到
@@ -480,7 +480,7 @@
           <h4 class="evaluate-subtitle">操作系统：</h4>
           <div class="evaluate-text">{{evaluate.platform}}</div>
         </div>
-        <div v-if="targetingSetting.all_region !== '-1' && evaluate.provinceTxt.length > 0" class="evaluate-content">
+        <div v-if="targetingSetting.all_region !== '1' && evaluate.provinceTxt.length > 0" class="evaluate-content">
           <h4 class="evaluate-subtitle">地域：</h4>
           <div class="evaluate-text">
             {{evaluate.provinceTxt}}
@@ -568,7 +568,7 @@ export default {
       isEdit: false, // 推广单页状态：true为编辑状态，false为新建状态
       isOptTarConvertZXStatus: false, // 编辑状态下,优化目标为展现是，则不可编辑
       isOptTarConvertStatus: false, // 编辑状态下，优化目标为点击时，则可更改为转化, 其他状态下都为不可编辑。状态：true为不可编辑，false为可编辑
-      isconvertTypeStatus: false, // convertMonitorType默认值为0时不可编辑。状态：true为不可编辑，false为可编辑
+      isconvertTypeStatus: false, // converType已经选择的状态下，convertMonitorType默认值为0时不可编辑。状态：true为不可编辑，false为可编辑
       isTargetingSubmit: false, // 判断定向设置是否提交了。提交为true
       isUnitSubmitStatus: false, // 单元提交按钮（新建与编辑下都有效）。状态：true为可以提交，false为不可提交
       isEditTargetingChange: 0, // 判断在编辑状态下定向内容是否更改，若更改定向则需要重新提交。isEditTargetingChange数字大于0则更改
@@ -610,7 +610,7 @@ export default {
         targeting_name: '', // 定向名称
         audience: [], // 人群包定向id集合
         audience_targeting: '', // 自定义人群定向
-        all_region: '-1', // 投放地域定向
+        all_region: '1', // 投放地域定向
         region: [], // 地域id集合
         gender: '-1', // 性别定向
         age: '-1', // 年龄定向
@@ -951,13 +951,13 @@ export default {
       const range = [0.5, 101]
       if (bid < range[0]) {
         this.isUnitSubmitStatus = false
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: '出价不能低于' + range[0]
         })
       } else if (bid > range[101]) {
         this.isUnitSubmitStatus = false
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: '出价不能高于' + range[1]
         })
@@ -968,13 +968,13 @@ export default {
       const range = [1, 999.99]
       if (secbid < range[0]) {
         this.isUnitSubmitStatus = false
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: '出价不能低于' + range[0]
         })
       } else if (secbid > range[101]) {
         this.isUnitSubmitStatus = false
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: '出价不能高于' + range[1]
         })
@@ -1013,21 +1013,27 @@ export default {
         return
       }
       // 下载监测类型只有投放uc头条，推广方式为打开页面的单元可以设置
-      // 如果 推广计划推广资源 不为 1uc头条， 转化类型 为 下载类型，同时 推广方式  不为 1打开页面 则报错
+      // 如果 推广计划推广资源adResourceId 不为 1uc头条， 转化类型 为 下载类型，同时 推广方式adResourceId   不为 1打开页面 则报错
       if (convertType === '下载') {
         if (
           this.unitSetting.generalizeType !== '1' &&
           this.unitSetting.adResourceId !== 1
         ) {
           this.isUnitSubmitStatus = false
-          this.$Notice.warning({
+          this.$Message.warning({
             title: '温馨提示：',
             desc: '只有计划中推广资源选择了UC头条，并且推广方式为打开页面时,才能选择下载类型'})
         } else {
           this.isUnitSubmitStatus = true
         }
       }
-      const currConvertObj = this._getcurrList(this.convert.convertMonitorTypesList, 'name', convertType)
+      // converType已经选择的状态下
+      let currConvertObj = {}
+      if (this.isconvertTypeStatus) {
+        currConvertObj = this.convert.currConvertMonitorTypes
+      } else {
+        currConvertObj = this._getcurrList(this.convert.convertMonitorTypesList, 'name', convertType)
+      }
       this.unitSetting.convertMonitorType = currConvertObj.objType
       this.convert.currConvertMonitorTypes = currConvertObj
       this.convert.convertMonitorTypeName = convertType
@@ -1120,15 +1126,15 @@ export default {
     // 事件：监听投放地段状态
     handleAllRegion(region) {
       switch (region) {
-        case '-1':
+        case '1':
           this.targetingSetting.all_region = region
           break
         case '0':
           this.targetingSetting.all_region = region
           break
-        // case "1":
-        //   this.targetingSetting.all_region = region
-        //   break
+        case "2":
+          this.targetingSetting.all_region = region
+          break
       }
       // 判断编辑状态下，定向更改
       if (this.isEdit) {
@@ -1241,11 +1247,11 @@ export default {
     // 事件：新建定向设置
     handleTargetingSumbit() {
       // 判断状态，在编辑状态下 或 在新建状态下 ， 若已经提交则更新定向
-      if (this.isEdit && this.unitSetting.targeting_id) {
+      if (this.isEdit) {
         this.updateTargeting()
       } else {
         if (!this.isTargetingSubmit) {
-          this.$Notice.warning({
+          this.$Message.warning({
             title: '温馨提示：',
             desc: '请填写正确数据再提交定向！'
           })
@@ -1254,13 +1260,13 @@ export default {
         this.addTargeting()
       }
     },
-    handleTargetingName(e) {
+    handleTargetingName(val) {
       const range = [30]
-      let str = e.target.value
-      let strLen = this.getByteLen(str)
+      const str = this.targetingSetting.targeting_name
+      const strLen = this.getByteLen(str)
       // 判断长度
       if (strLen > range[0]) {
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: `定向名称不能超过${range[0]}个字符`
         })
@@ -1272,7 +1278,7 @@ export default {
       } else {
         this.isUnitSubmitStatus = false
         this.isTargetingSubmit = false
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: '定向名称不能为空'
         })
@@ -1288,7 +1294,7 @@ export default {
       let strLen = this.getByteLen(str)
       // 判断长度
       if (strLen > range[0]) {
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: `单元名称不能超过${range[0]}个字符`
         })
@@ -1298,7 +1304,7 @@ export default {
         this.isUnitSubmitStatus = true
       } else {
         this.isUnitSubmitStatus = false
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示',
           desc: '单元名称不能为空'
         })
@@ -1316,10 +1322,10 @@ export default {
         target
       )
       const targeting = JSON.parse(currTarget.targeting)
-      console.log('select target', target, currTarget, targeting)
+      this.isTargetingSubmit = true
       this._assignMethod(this.targetingSetting, targeting)
       this.targetingSetting.account_id = currTarget.account_id
-      this.targetingSetting.targeting_name = currTarget.targeting_name
+      this.targetingSetting.targeting_name = currTarget.targeting_name + '-复制'
       // 推广单元 单选和复选操作的年龄数据
       this.targetingSetting.age = targeting.age
       this.targetingAgeStatus = targeting.age === '-1' ? '-1' : '1'
@@ -1431,7 +1437,7 @@ export default {
       let update = {
         action: 'ucAdPut',
         opt: 'updateAdgroup',
-        do: 'edit',
+        // do: 'edit',
         account_id: this.unitSetting.account_id,
         adgroup_id: this.adgroupId,
         adgroup_name: this.unitSetting.adgroup_name,
@@ -1440,7 +1446,7 @@ export default {
         adResourceId: parseInt(this.unitSetting.adResourceId),
         platform: this.unitSetting.platform,
         chargeType: parseInt(this.unitSetting.chargeType),
-        paused: this.paused,
+        paused: +this.paused,
         bid: this.unitSetting.bid.toString(),
         secondBid: this.unitSetting.secondBid.toString(),
         adconvertId: parseInt(this.unitSetting.adconvertId),
@@ -1470,10 +1476,11 @@ export default {
         generalizeType: parseInt(this.unitSetting.generalizeType),
         adResourceId: parseInt(this.unitSetting.adResourceId),
         chargeType: parseInt(this.unitSetting.chargeType),
-        convertMonitorType: parseInt(this.unitSetting.convertMonitorType),
         adconvertId: parseInt(this.unitSetting.adconvertId),
+        convertMonitorType: parseInt(this.unitSetting.convertMonitorType),
         optimizationTarget: parseInt(this.unitSetting.optimizationTarget),
         unitType: parseInt(this.unitSetting.unitType),
+        targeting_id: + this.unitSetting.targeting_id,
         bid: this.unitSetting.bid.toString(),
         secondBid: this.unitSetting.secondBid.toString()
       })
@@ -1502,7 +1509,7 @@ export default {
         this.handleTargetingSumbit()
       }
       if (this.isEdit && this.isEditTargetingChange > 0) {
-        this.$Notice.warning({
+        this.$Message.warning({
           title: '温馨提示：',
           desc: '定向内容已更改，请按确认按钮重新保存定向！'
         })
@@ -1513,7 +1520,7 @@ export default {
         this.updateUnit()
       } else {
         if (!this.isUnitSubmitStatus) {
-          this.$Notice.warning({
+          this.$Message.warning({
             title: '温馨提示：',
             desc: '请填写正确数据在提交单元！'
           })
@@ -1561,7 +1568,7 @@ export default {
       this.targetingSetting.targeting_name = ''
       this.targetingSetting.audience = []
       this.targetingSetting.audience_targeting = []
-      this.targetingSetting.all_region = '-1'
+      this.targetingSetting.all_region = '1'
       this.targetingSetting.region = []
       this.targetingSetting.gender = '-1'
       this.targetingSetting.age = '-1'
@@ -1696,6 +1703,7 @@ export default {
     },
     // 获取转化列表
     getAdConvert(objType) {
+      console.log(objType)
       Axios.post('api.php', {
         action: 'ucAdPut',
         opt: 'getAdConvert',
@@ -1725,11 +1733,12 @@ export default {
             this.convert.convertMonitorTypesList = res.data
             this.convert.convertMonitorTypesListCopy = this.convert.convertMonitorTypesList.slice()
 
-            // 在编辑状态下，二次判断
-            if (this.isconvertTypeStatus === true && this.isEdit) {
-              res.data.forEach(c => {
+            // converType已经选择的状态下
+            if (this.isconvertTypeStatus) {
+              this.convert.convertMonitorTypesList.forEach(c => {
                 if (c && c.id === this.unitSetting.convertMonitorType) {
                   this.convert.convertMonitorTypeName = c.name
+                  this.convert.currConvertMonitorTypes = c
                 }
               })
             }
@@ -1741,12 +1750,15 @@ export default {
       // 本地测试代码
       // this.convert.convertMonitorTypesList = convertTypeList.data
       // this.convert.convertMonitorTypesListCopy = this.convert.convertMonitorTypesList.slice()
+      // this.convert.convertMonitorTypesList = res.data
+      // this.convert.convertMonitorTypesListCopy = this.convert.convertMonitorTypesList.slice()
 
-      // // 在编辑状态下，二次判断
-      // if (this.isconvertTypeStatus === true && this.isEdit) {
-      //   this.convert.convertMonitorTypesList.data.forEach(c => {
+      // converType已经选择的状态下
+      // if (this.isconvertTypeStatus) {
+      //   this.convert.convertMonitorTypesList.forEach(c => {
       //     if (c && c.id === this.unitSetting.convertMonitorType) {
       //       this.convert.convertMonitorTypeName = c.name
+      //       this.convert.currConvertMonitorTypes = c
       //     }
       //   })
       // }
@@ -1865,10 +1877,12 @@ export default {
     },
     // 初始化单元状态
     initUnitEditStatus(unit) {
+      this.isUnitSubmitStatus = true
       this._assignMethod(this.unitSetting, unit)
-      console.log(this.unitSetting)
 
       // 编辑 与 导入单元 状态时 的公用参数
+      // 单元名称
+      this.unitSetting.adgroup_name = this.unitSetting.adgroup_name + '-复制'
       // 推广方式
       this.unitSetting.generalizeType = this.unitSetting.generalizeType
       this.handleGeneralizeType(this.unitSetting.generalizeType)
@@ -1896,22 +1910,11 @@ export default {
         this.isOptTarConvertStatus = this.unitSetting.optimizationTarget !== '1'
         
         // 转化监测类型 - convertMonitorType 状态
-        // 转化监测类型数据加载失败则重新加载
-        if (this.convert.convertMonitorTypesList.length === 0) {
-          this.getConvertMonitorTypes()
-        }
-        const convertMonitorType = +this.unitSetting.convertMonitorType
+        const convertMonitorType = this.unitSetting.convertMonitorType = +this.unitSetting.convertMonitorType
         this.isconvertTypeStatus = convertMonitorType !== 0
-        if (convertMonitorType !== 0) {
-          this.convert.convertMonitorTypesList.forEach(c => {
-            if (c && c.id === convertMonitorType) {
-              this.convert.convertMonitorTypeName = c.name
-            }
-          })
-        }
+        // this.unitSetting.generalizeType = this.unitSetting.generalizeType
+        this.getConvertMonitorTypes()
       }
-
-      
     },
     // 根据id获取单元内容接口,在编辑状态下调用
     getAdgroupById(params) {
@@ -1933,16 +1936,6 @@ export default {
         })
       // 本地测试代码
       // this.initUnitEditStatus(getAdgroupById.data[0])
-    },
-    getAdgroupsList() {
-      Axios.post('api.php', {
-        action: 'ucAdPut',
-        opt: 'getAdgroupsList'
-      }).then(res => {
-        if (ERR_OK === res.ret) {
-          // this.importDate.unitNameList = res.data
-        }
-      })      
     },
     // 根据计划id获取单元名称列表
     getAdgroupNameList(id) {
@@ -2035,7 +2028,6 @@ export default {
     // 获取account信息
     getAccountInfo() {
       const query = this.$route.query
-      // console.log('router query', query)
       this.unitSetting.account_id = query.account
       this.unitSetting.campaign_id = query.campaign_id
       this.targetingSetting.account_id = query.account

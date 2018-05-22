@@ -23,20 +23,28 @@
     color: #2b7ed1;
     font-weight: bold;
 }
+.manger-head-bar:first-of-type{
+    flex: 2;
+    text-align: left;
+}
+.manger-head-bar:last-of-type{
+    flex: 1;
+    text-align: right;
+}
 </style>
 <template>
     <div class="unit">
 
         <Card shadow>
-            <Row>
-                <Col span="19">
+            <Row type="flex" justify="space-between">
+                <Col class="manger-head-bar">
                 <Button type="primary" @click="back" v-show="isBack">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
                 <Button type="primary" icon="search" @click="getUnit()">搜索</Button>
                 </Col>
-                <Col span="5" style="text-align: right;">
+                <Col class="manger-head-bar">
                 <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
                 <new-edit :title="newTitle" :to-route-name="toRouteName" :query-params="queryParam" class="margin-left-5"></new-edit>
                 </Col>
