@@ -189,6 +189,7 @@ export default {
         },
         //改变日期
         changeDate(e) {
+            console.log(e)
             this.DateDomain = e;
             this.getCampaignsList();
         },

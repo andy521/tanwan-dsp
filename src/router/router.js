@@ -153,6 +153,23 @@ export const appRouter = [
         ]
     },
     {
+        path: '/baidu',
+        icon: 'ios-paw',
+        name: 'bd',
+        title: '百度投放',
+        access: 0,
+        component: Main,
+        children: [
+            { path: 'index', title: '首页', name: 'bd_main', icon: 'android-radio-button-off', component: () => import('@/views/baidu/index.vue')},
+            { path: 'advertiser', title: '推广管理', name: 'bd_advertiser', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
+            children: [
+                { path: 'campaign', title: '推广计划', name: 'bd_campaign', icon: 'android-radio-button-off', component: () => import('@/views/baidu/advertiser/campaign.vue') },
+                { path: 'adgroup', title: '推广单元', name: 'bd_adgroup', icon: 'android-radio-button-off', component: () => import('@/views/baidu/advertiser/adgroup.vue') },
+                { path: 'creative', title: '推广创意', name: 'bd_creative', icon: 'android-radio-button-off', component: () => import('@/views/baidu/advertiser/creative.vue') }
+            ]}
+        ]
+    },
+    {
         path: '/channel',
         icon: 'android-apps',
         title: '渠道信息',
