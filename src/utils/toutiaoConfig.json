@@ -281,8 +281,7 @@
             "name": ">=50"
         }
     ],
-    "platform": [
-        {
+    "platform": [{
             "val_type": "IOS",
             "name": "IOS"
         },
@@ -321,7 +320,7 @@
             "name": "联通"
         },
         {
-            "val_type": "UNICOM",
+            "val_type": "TELCOM",
             "name": "电信"
         }
     ],
@@ -333,5 +332,33 @@
             "val_type": "COUNTY",
             "name": "按区县"
         }
+    ],
+    "activate_type": [{
+            "val_type": "WITH_IN_A_MONTH",
+            "name": "一个月以内"
+        }, {
+            "val_type": "ONE_MONTH_2_THREE_MONTH",
+            "name": "一个月到三个月"
+        },
+        {
+            "val_type": "THREE_MONTH_EAILIER",
+            "name": "三个月或更早"
+        }
+    ],
+    "app_behavior_target": [{
+            "val_type": "NONE",
+            "name": "不限"
+        }, {
+            "val_type": "CATEGORY",
+            "name": "按分类"
+        },
+        {
+            "val_type": "APP",
+            "name": "按APP"
+        }
     ]
+
+
+
+
 }

@@ -1,27 +1,39 @@
 
 <style scoped>
-
+.newtt {
+  padding: 20px;
+}
+.title {
+  font-size: 22px;
+}
 </style>
 
 <template>
     <div>
+        <!-- 定向 -->
         <targeting-tab></targeting-tab>
-        <Card dis-hover>
-            <div class="title-ad">投放目标</div>
-            <Form :label-width="100">
-                <FormItem label="投放目标">
-                    <span class="required-item"></span>
-                </FormItem>
-                <FormItem label="计划名称">
-                    <span class="required-item"></span>
-                    <Row>
-                        <Col>
-                        <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
-                        <span class="color-red">广告名称长度为1-100个字符，中文占2个字符</span>
-                        </Col>
-                    </Row>
-                </FormItem>
-            </Form>
+
+        <Card dis-hover class="margin-top-20">
+            <div class="newtt">
+                <div class="title">
+                    <span>投放目标</span>
+                </div>
+
+                <Form :label-width="100">
+                    <FormItem label="投放目标">
+                        <span class="required-item"></span>
+                    </FormItem>
+                    <FormItem label="计划名称">
+                        <span class="required-item"></span>
+                        <Row>
+                            <Col>
+                            <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
+                            <span class="color-red">广告名称长度为1-100个字符，中文占2个字符</span>
+                            </Col>
+                        </Row>
+                    </FormItem>
+                </Form>
+            </div>
         </Card>
 
     </div>
@@ -37,8 +49,9 @@ export default {
     data() {
         return {
             account_id: this.$route.query.account_id, //账户id
-            id: this.$route.query.id, //
             campaign_id: "", //广告组id
+            id: this.$route.query.id, //
+
             landing_type: "LINK", //广告组推广目的
             budget_mode: "BUDGET_MODE_INFINITE", //广告组预算类型
             budget: '', //广告组预算

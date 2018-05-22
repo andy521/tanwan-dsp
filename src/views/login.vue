@@ -77,7 +77,7 @@
                                                 access.push('time_plan');
                                             break;
                                             case '1030': 
-                                                access.push('time_ad') 
+                                                access.push('time_ad');
                                             break;
                                             case '1037': 
                                                 access.splice(1,0,'channel_product','channel_media','channel_account','channel_plan','channel_ad');
@@ -92,10 +92,11 @@
                                                 access.push('setid_systemmsg');
                                             break;
                                             case '1043': 
+                                                access.push('uc_advertiser')
                                                 access.push('uc_report');
                                             break;
                                             case '1042': 
-                                                access.push('uc_idea');
+                                                access.push('uc_creativity');
                                             break;
                                             case '1041': 
                                                 access.push('uc_plan');
@@ -123,10 +124,13 @@
                                             break;
                                         }
                                     });
-                                };
+                                };                            
                                 //console.log(access)
                                 Util.setItem('user', this.form.userName );  
-                                Util.setItem('sessionid',data.data.sessionid);                                       
+                                Util.setItem('sessionid',data.data.sessionid); 
+
+                                //console.log(access)         
+                                //["home_index", "channel_product", "channel_media", "channel_account", "channel_plan", "channel_ad", "setid_modprfpsw", "uc_unit", "uc_plan", "uc_creativity", "uc_report"]                             
                                 Util.setItem('access', access.join(",")); 
                                 this.$store.dispatch('UserLogin', userinfo);
                                                                 
