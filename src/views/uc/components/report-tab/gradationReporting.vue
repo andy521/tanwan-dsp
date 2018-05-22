@@ -16,15 +16,14 @@
                     <Radio label="4">创意报告</Radio>
                 </Radio-group>
             </Form-item>
-            <!-- 账户报告 -->
-            <Form-item v-show="retype == 1">
-                <Select v-model="accountIds" style="width:200px" placeholder="请选择账户">
-                    <Option v-for="(item,index) in accountList" :value="item.account_id" :key="index">{{ item.account_name }}</Option>
-                </Select>
-            </Form-item>
 
-            <Form-item v-show="showPlanSelect">
-                <plan-list @on-change="changePlan"></plan-list>
+            <Form-item label="选择计划：">
+                <!-- <get-account :visible="accountShow" @on-change="accountChange" style="display:inline-block"></get-account> -->
+                <get-campaign v-show="retype == '2' || retype == '3' || retype == '4'" style="display:inline-block;margin-left:5px;" @on-change="campaignChange"></get-campaign>
+                <div v-show="retype == '3' || retype == '4'" style="display:inline-block;margin-left:5px;">
+                    <adgroup-list :adgroup="adgroupList" @on-change="adgroupChange"></adgroup-list>
+                </div>
+                <idea-list v-show="retype == '4'" :creative="creativeList" @on-change="creativeChange" style="display:inline-block;margin-left:5px;"></idea-list>
             </Form-item>
 
             <Form-item label="时间单位：">
@@ -41,7 +40,7 @@
             </Form-item>
         </Form>  
 
-        <line-chart :datas="echart" :title="title" inside="true" style="margin-top:15px;"></line-chart>
+        <line-chart :datas="echart" :title="title" zoom="true" style="margin-top:15px;"></line-chart>
 
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
@@ -53,7 +52,7 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getReporting()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -69,24 +68,36 @@
     import Axios from "@/api/index";
     import echarts from 'echarts';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-    import planList from "../returnPlan.vue";
     import lineChart from "../lineChart.vue";
+    import getCampaign from "../getCampaign.vue";
+    import adgroupList from "../adgroupList.vue";
+    import ideaList from "../ideaList.vue";
+    import getAccount from "../getAccount.vue";
 	export default {
         name: 'gradationReporting',
         components: {
-            planList,
+            getCampaign,
+            adgroupList,
+            getAccount,
+            ideaList,
             lineChart
-        },        
+        },
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },  
 		data() {
 			return {
                 loading:false,
                 options: null,
-                title:'账户报告',
-                //是否显示选择计划按钮
-                showPlanSelect:false,
-                //账户列表
-                accountList:[],
-                accountIds:'',
+                title:'账户报告', 
+                adgroupList:[],
+                creativeData: [],
+                creativeList:[],
+                //账户
+                accountIds: [],
                 //筛选时间
                 DateDomain: [formatDate(new Date(new Date().getTime()-1000*60*60*24*7), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")], 
                 //比较
@@ -115,9 +126,22 @@
                 ],
                 tableSize: "small",
                 echart:[],
-                
+                // 显示选择账号
+                accountShow: false,
+                accountIds: [],
+                creativeId: [],
+                adgroupIds:[]
 			};
-		},
+        },
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },
+        mounted() {
+            this.getCreative();
+        }, 
 		methods: {	
             //改变日期
             changeDate(e) {
@@ -136,7 +160,7 @@
                     retype:this.retype,
                     type:this.type,
                     accountIds:this.accountIds,
-                    adgroupIds:this.adgroupIds,
+                    adgroupIds:this.adgroupIds.join(','),
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量
                     orderField:this.orderField,
@@ -145,7 +169,7 @@
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            console.log(res);  
+                            console.log('getReporting',res);  
                             this.loading = false;                      
                             this.echart = res.data.echart; 
                             this.list = res.data.list;
@@ -161,38 +185,71 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
-            },
-            getAccountList(){
-                Axios.post('api.php', {action:'ucAdPut',opt:'getAccountList'}).then(
-					res => {
-						if(res.ret == 1) {                            
-                            this.accountList = res.data;
-                            console.log(this.accountList);
-						}
-					}
-                ).catch(err => {console.log(err)});
+                this.getReporting();
             },
             //报告类型
             retypeChange(val){
                 switch (val) {
-                    case '1': this.title ='账户报告'; this.showPlanSelect=false; break;
-                    case '2': this.title ='计划报告'; this.showPlanSelect=true; break;
-                    case '3': this.title ='单元报告'; this.showPlanSelect=true;break;
-                    case '4': this.title ='创意报告'; this.showPlanSelect=true; break;
+                    case '1': this.title ='账户报告'; this.accountShow = true; break;
+                    case '2': this.title ='计划报告'; break;
+                    case '3': this.title ='单元报告'; break;
+                    case '4': this.title ='创意报告'; break;
                 }
             },
-            //获取所有单元ID
-            changePlan(data){
-                console.log(data)
-                this.adgroupIds = data
-            }        
+            // 选择创意
+            creativeChange(creativeId) {
+                this.creativeId = creativeId;
+            },
+            // 获取创意
+            getCreative() {
+                Axios.post('api.php',{action:'ucAdPut',opt:'getCreativeById'}).then(
+					res => {
+						if(res.ret == 1) {
+                            this.creativeData =  res.data;
+						}
+					}
+                ).catch(err => {console.log(err)});         
+            },
+            // 选在账号
+            accountChange(id) {
+                this.accountIds = id;
+            },
+             //选择计划
+            campaignChange(campaign){
+                console.log(campaign)
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
+					res => {
+						if(res.ret == 1) {
+                            let list = this.adgroupList =  res.data,
+                                ids = '';
+                            list.forEach(e=>{
+                                ids += e.adgroup_id + ',';
+                            });
+                            console.log(this.adgroupList)
+                            this.adgroupIds = ids;
+						}
+					}
+                ).catch(err => {console.log(err)});            
+            },
+            //选择单元
+            adgroupChange(val){
+                this.adgroupIds = val;
+                this.adgroupIds.forEach(adg => {
+                     this.creativeData.forEach( item => {
+                        if (item.adgroup_id === adg) {
+                            console.log("============")
+                            this.creativeList.push(item)
+                        }
+                    })
+                })
+                
+            }      
         },
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
             this.options = setDate;
-            this.getAccountList();  
+            this.accountIds = this.account;
             this.getReporting(); 
             // this.$Notice.warning({
             //     title: '提示',
@@ -200,7 +257,5 @@
             // });
         }
     };
-
 </script>
-
 

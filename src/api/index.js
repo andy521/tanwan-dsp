@@ -50,9 +50,10 @@ Axios.interceptors.response.use(
                 util.removeItem('access');
                 router.replace({
                     path: '/login',
+                    //返回当前页面信息
                     query: { redirect: router.currentRoute.fullPath }
                 });
-                Message.info(res.data.msg);
+                //Message.info(res.data.msg);
             } else {
                 Message.info(res.data.msg);
             }
@@ -82,6 +83,10 @@ export default {
             }).then(res => {
                 resolve(res)
             })
+            .catch(err => {
+                reject(err)
+                console.log(err);
+            });
         })
     },
     post(url, opt) {
@@ -95,9 +100,13 @@ export default {
                     cancel = c
                 })
             })
-                .then(res => {
-                    resolve(res)
-                })
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                reject(err)
+                console.log(err);
+            });
         })
     }
 };

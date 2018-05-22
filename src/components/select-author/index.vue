@@ -3,15 +3,18 @@
 .author-btn>.ivu-btn{width: 50%;}
 .author-item{display: block;padding: 10px 0;border-bottom: 1px solid #f5f5f5;}
 .author .ivu-poptip-body-content{overflow: initial;}
+.author-list{max-height: 300px; overflow-y: auto;}
 </style>
 <template>
 
   <Poptip class="author" placement="bottom-start" width="200" trigger="hover">
         <Button type="ghost"><Icon type="person-stalker"></Icon> 选择负责人</Button>
-        <div class="api" slot="content">            
-            <Checkbox-group v-model="value" @on-change="authorChange">
-                <Checkbox class="author-item" v-for="(item,index) in author" :key="index" :label="item.author"></Checkbox>
-            </Checkbox-group>
+        <div class="api" slot="content">      
+            <div class="author-list">      
+                <Checkbox-group v-model="value" @on-change="authorChange">
+                    <Checkbox class="author-item" v-for="(item,index) in author" :key="index" :label="item.author"></Checkbox>
+                </Checkbox-group>
+            </div>
             <Button-group class="author-btn" long>
                 <Button type="ghost" @click="selectAll"> 全选 </Button>
                 <Button type="ghost" @click="cancel"> 取消 </Button>
@@ -27,8 +30,27 @@
 		data() {
 			return {
                 value:[],
-                author: []
+                author: [],
+                linkage: false,
 			}
+        },
+        props: {
+            // 媒体类型 :空值：返回全部媒体账号1: 广点通媒体2: 今日头条 3: Uc媒体 
+            mediaType: {
+                type: [String, Number],
+                default: ''
+            },
+            // 是否与传入的mediaType联动。只有需要传入mediaType的时候才将isLinkage设置为true
+            isLinkage: {
+                type: Boolean,
+                default: false
+            }
+        },
+        watch: {
+            mediaType(val) {
+                this.linkage = false
+                this.getAuthor();
+            }
         },
 		methods: {
             selectAll(){
@@ -51,7 +73,16 @@
             },
             //获取全部游戏     
             getAuthor(){
-                Axios.get('api.php',{'action':'api','opt':'getAuthor'})
+                // if (this.linkage) {
+
+                //     // this.$Notice.info({
+                //     //     title: '请选择媒体类型'
+                //     // });
+
+                //     return;
+                // }
+                if (typeof val === 'string') this.mediaType = parseInt(this.mediaType);
+                Axios.get('api.php',{'action':'api','opt':'getAuthor','media_type':this.mediaType})
                 .then( 
                     res=>{ 
                         if(res.ret == '1'){
@@ -68,7 +99,8 @@
                 this.$emit('on-change', data);
 			}
         },
-        mounted(){       
+        mounted(){
+            this.linkage = this.isLinkage       
             this.getAuthor();
         }
 	}

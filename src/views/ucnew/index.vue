@@ -3,7 +3,8 @@
 .uc-plan-wrapper {
   margin: 10px;
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
+  /* background-color: #fff */
 }
 </style>
 

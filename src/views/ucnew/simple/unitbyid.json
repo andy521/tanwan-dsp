@@ -1,0 +1,35 @@
+{
+  "ret": 1,
+  "msg": "succ",
+  "data": [
+    {
+      "id": "1",
+      "account_id": "207326436",
+      "campaign_id": "30441770",
+      "adgroup_id": "30837813",
+      "adgroup_name": "\u68b5\u8482\u5188",
+      "agent_id": "0",
+      "game_id": "0",
+      "site_id": "0",
+      "generalizeType": "2",
+      "chargeType": "1",
+      "bid": "1",
+      "secondBid": "0",
+      "targeting_id": "141",
+      "paused": "0",
+      "adconvertId": "0",
+      "convertMonitorType": "0",
+      "optimizationTarget": "1",
+      "bidStage": "1",
+      "state": "0",
+      "adResourceId": "1",
+      "platform": "010",
+      "unitType": "0",
+      "invalidReasonList":
+        "[\"\u8be5\u5355\u5143\u6240\u5728\u8ba1\u5212\u4e3a\u6682\u505c\u72b6\u6001\u3002\"]",
+      "adgroup_index": "0",
+      "created_time": "0",
+      "last_modified_time": "0"
+    }
+  ]
+}
