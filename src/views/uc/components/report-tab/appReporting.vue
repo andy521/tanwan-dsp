@@ -39,7 +39,7 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getReporting()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -58,7 +58,13 @@
         name: 'appReporting',
         components: {
             lineChart
-        },        
+        },  
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },       
 		data() {
 			return {
                 loading:false,
@@ -69,6 +75,8 @@
                 platform:'',
                 //时间单位
                 type:'1',
+                //账户
+                accountIds:'',
                 //排序
                 orderField:'',
                 orderDirection: '',
@@ -93,7 +101,13 @@
                 tableSize: "small",
                 echart:[]
 			};
-		},
+        },
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },
 		methods: {	
             //改变日期
             changeDate(e) {
@@ -109,6 +123,7 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getAppReporting',
+                    accountIds:this.accountIds,
                     platform:this.platform,
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间                    
@@ -137,13 +152,14 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
+                this.getReporting();
             },       
         },
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
-            this.options = setDate;            
+            this.options = setDate;   
+            this.accountIds = this.account;          
             this.getReporting(); 
         }
 	};

@@ -5,13 +5,21 @@
                 <Tag>今天</Tag>
             </Form-item>
             <Form-item label="报表类型：">
-                <Radio-group v-model="retype">
+                <Radio-group v-model="retype" @on-change="retypeChange">
                     <Radio label="1">账户报告</Radio>
                     <Radio label="2">计划报告</Radio>
                     <Radio label="3">单元报告 </Radio>
                     <Radio label="4">创意报告</Radio>
                 </Radio-group>
             </Form-item>
+
+            <Form-item v-show="retype == '2' || retype == '3'" label="选择计划：">
+                <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
+                <div v-show="retype == '3'" style="display:inline-block;margin-left:5px;">
+                    <adgroup-list :adgroup="adgroupList" @on-change="adgroupChange"></adgroup-list>
+                </div>
+            </Form-item>
+
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
                     <Radio label="0">分小时</Radio>
@@ -21,7 +29,7 @@
             <Button type="primary" @click="getReporting()">查询</Button>
         </Form>  
 
-        <line-chart :datas="echart" title="账户报告 (注意：当日数据仅供参考，请以隔日数据为准)"></line-chart>
+        <line-chart :datas="echart" zoom="true" :title="title"></line-chart>
 
         <Table :data="list" :loading="loading" :columns="tableColumns" :size="tableSize" class="margin-top-10" ref="Vtable"  @on-sort-change="sortchange" stripe></Table>
         <Row class="margin-top-10">
@@ -33,7 +41,7 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getReporting()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -48,14 +56,31 @@
     import echarts from 'echarts';
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
     import lineChart from "../lineChart.vue";
+    import getCampaign from "../getCampaign.vue";
+    import adgroupList from "../adgroupList.vue";
 	export default {
         name: 'hourReporting',
         components: {
+            getCampaign,
+            adgroupList,
             lineChart
-        },        
+        }, 
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },  
 		data() {
 			return {
                 loading:false,
+                title:'账户报告 (注意：当日数据仅供参考，请以隔日数据为准)',
+                //账户id
+                accountIds:'',
+                //单元id集合
+                adgroupIds:[],
+                //单元列表
+                adgroupList:[],
                 //报表类型
                 retype:'1',
                 //时间单位
@@ -81,12 +106,27 @@
                 tableSize: "small",
                 echart:[]
 			};
-		},
+        },
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },  
 		methods: {	
             //改变日期
             changeDate(e) {
                 this.DateDomain = e;
-            },	
+            },
+            //
+            retypeChange(val){
+                switch (val) {
+                    case '1': this.title = '账户报告'; break;
+                    case '2': this.title = '计划报告'; break;
+                    case '3': this.title = '单元报告'; break;
+                    case '4': this.title = '创意报告'; break;
+                };
+            },
 			getReporting(page){
                 if (page === undefined) {
                     this.page = 1;
@@ -96,17 +136,19 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getHourReporting',
+                    accountIds:this.accountIds,
+                    adgroupIds:this.adgroupIds.join(','),
                     retype:this.retype,                 
                     type:this.type,
                     page: this.page, //页码
                     page_size: this.page_size, //每页数量
                     orderField:this.orderField,
                     orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-                };
+                }; 
+                console.log(param)               
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            console.log(res);  
                             this.loading = false;                      
                             this.echart = res.data.echart; 
                             this.list = res.data.list;
@@ -122,10 +164,31 @@
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
-            },       
+                this.getReporting();
+            },
+            //选择计划
+            campaignChange(campaign){
+                console.log(campaign)
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
+					res => {
+						if(res.ret == 1) {
+                            let list = this.adgroupList =  res.data,
+                                ids = '';
+                            list.forEach(e=>{
+                                ids += e.adgroup_id + ',';
+                            });
+                            this.adgroupIds = ids;
+						}
+					}
+                ).catch(err => {console.log(err)});            
+            },
+            //选择单元
+            adgroupChange(val){
+                this.adgroupIds = val;
+            }  
         },
-        beforeMount(){          
+        beforeMount(){ 
+            this.accountIds = this.account; 
             this.getReporting(); 
         }
 	};

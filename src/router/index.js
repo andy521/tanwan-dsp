@@ -48,12 +48,7 @@ router.beforeEach((to, from, next) => {
             //没有配置权限的路由, 直接通过
             Util.toDefaultPage([...routers], to.name, router, next);
         }
-    }    
-    //console.log("用户名是" +  Util.getItem('user') )
-   
-  
-    
-
+    } 
 });
 router.afterEach((to) => {    
     Util.openNewPage(router.app, to.name, to.params, to.query);

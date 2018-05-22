@@ -1,21 +1,15 @@
 <style scoped>
-
 </style>
 <template>
     <Select @on-change="mediaChange" placeholder="请选择媒体" clearable>
-        <Option v-for="item in media" :value="item.MeidaType" :key="this">{{ item.name }}</Option>
+        <Option value="" >不限</Option>
+        <Option v-for="item in media" :value="item.media_type" :key="this">{{ item.cn }}</Option>
     </Select>
 </template>
 <script>
     import  Axios  from "@/api/index"
 	export default {
-        name: 'selectMedia',
-        props: {
-            // placeholder: {
-            //     type: String,
-            //     default: ''
-            // }
-        },
+        name: 'selectMedia',      
 		data() {
 			return {
                 media: []
@@ -24,13 +18,11 @@
 		methods: {
             //获取全部游戏     
             getMedia(){
-                Axios.get('api.php',{'action':'api','opt':'getMedia'})
+                Axios.post('api.php',{'action':'api','opt':'getMedia'})
                 .then( 
                     res=>{ 
                         if(res.ret == '1'){
-                            let list = res.data;
-                            list.unshift({MeidaType:'',mediaId:'',name:'全部'})
-                            this.media= list;
+                            this.media= res.data;
                         }
                     }
                 ).catch( 
@@ -39,6 +31,7 @@
             },
 			//点击树节点时触发
 			mediaChange(data) {
+                data = data === 0 ? '' : data
                 this.$emit('on-change', data);
 			}
         },

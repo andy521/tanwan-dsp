@@ -1,12 +1,14 @@
 <style lang="less">
 @import "./main.less";
+@import "../styles/common.less";
+@import "../styles/table.less";
 </style>
 <template>
 
     <div class="main" :class="{'main-hide-text': shrink}">
 
         <!-- 左侧导航 -->
-        <div class="sidebar-menu-con" :style="{width: shrink?'40px':'200px', overflow: shrink ? 'visible' : 'auto'}">
+        <div class="sidebar-menu-con" :style="{width: shrink?'40px':'200px', overflowY: shrink ? 'visible' : 'auto',overflowX: shrink ? 'visible' : 'hidden'}">
             <shrinkable-menu :shrink="shrink" @on-change="handleSubmenuChange" :theme="menuTheme" :before-push="beforePush" :open-names="openedSubmenuArr" :menu-list="menuList">
                 <div slot="top" class="logo-con">
                     <img v-show="!shrink" src="../images/logo.png" key="max-logo" />
@@ -113,7 +115,7 @@ export default {
             shrink: false,
             userName: "",
             isFullScreen: false, //是否全屏
-            openedSubmenuArr: this.$store.state.app.openedSubmenuArr
+            openedSubmenuArr: []
         };
     },
     mounted() {
@@ -150,10 +152,19 @@ export default {
             //更新菜单
             this.$store.commit("updateMenulist");
             this.userName = util.getItem("user");
-            let pathArr = util.setCurrentPath(this, this.$route.name);
-            if (pathArr.length >= 2) {
-                this.$store.commit("addOpenSubmenu", pathArr[1].name);
-            }
+            this.$store.commit("addOpenSubmenu", this.$route.name);
+
+            //查找展开菜单
+            this.$route.matched.forEach((v, i) => {
+                if (i < (this.$route.matched.length - 1)) {
+                    this.openedSubmenuArr.push(v.name)
+                }
+            });
+
+            // let pathArr = util.setCurrentPath(this, this.$route.name);
+            // if (pathArr.length >= 2) {
+            //     this.$store.commit("addOpenSubmenu", pathArr[1].name);
+            // }
         },
         toggleClick() {
             this.shrink = !this.shrink;
@@ -199,10 +210,10 @@ export default {
 
 <style>
 .main-header-con {
-    box-shadow: none;
-    height: 60px;
+  box-shadow: none;
+  height: 60px;
 }
 .main .single-page-con {
-    top: 60px;
+  top: 60px;
 }
 </style>

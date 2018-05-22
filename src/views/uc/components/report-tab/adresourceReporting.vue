@@ -6,14 +6,15 @@
             </Form-item>
             <Form-item label="推广资源：">
                 <Select v-model="adresource" style="width:200px">
-                    <Option value="">不限</Option>
+                    <Option value="">全部推广资源</Option>
                     <Option value="UC头条">UC头条</Option>
                     <Option value="UC精准">UC精准</Option>
                     <Option value="应用商店">应用商店</Option>
                 </Select>
             </Form-item>
             <Form-item label="选择计划：">
-                <plan-list @on-change="changePlan"></plan-list>
+                <get-campaign style="display:inline-block" @on-change="campaignChange"></get-campaign>
+                <adgroup-list :adgroup="adgroupList" style="display:inline-block;margin-left:5px;" @on-change="adgroupChange"></adgroup-list>
             </Form-item>
             <Form-item label="时间单位：">
                 <Radio-group v-model="type">
@@ -35,7 +36,7 @@
             </Radio-group>
             每页显示
             <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getReporting()">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
             </Select>
             </Col>
             <Col span="14" style="text-align: right;">
@@ -48,14 +49,22 @@
 <script>
     import Axios from "@/api/index";
     import { DateShortcuts, formatDate } from "@/utils/DateShortcuts.js";
-    import planList from "../returnPlan.vue";
+    import getCampaign from "../getCampaign.vue";
+    import adgroupList from "../adgroupList.vue";
     import lineChart from "../lineChart.vue";
 	export default {
         components: {
-            planList,
+            getCampaign,
+            adgroupList,
             lineChart
         },
-        name: 'adresourceReporting',        
+        name: 'adresourceReporting',  
+        props:{
+            account:{
+                type:String,
+                default:''
+            }
+        },      
 		data() {
 			return {
                 loading:false,
@@ -63,9 +72,11 @@
                 //筛选时间
                 DateDomain: [formatDate(new Date(new Date().getTime()-1000*60*60*24*7), "yyyy-MM-dd"),formatDate(new Date(), "yyyy-MM-dd")],                
                 //推广单元id集合
-                adgroupids:[],
+                adgroupIds:[],
                 //推广资源
                 adresource:'',
+                //账户
+                accountIds:'',
                 //时间单位
                 type:'1',
                 //排序
@@ -87,9 +98,17 @@
                     {title: "千次展现价格",sortable: "cost",key: "cpm"},
                 ],
                 tableSize: "small",
-                echart:[]
+                echart:[],
+                //单元列表
+                adgroupList:[]
 			};
-		},
+        },
+        watch:{
+            account(data){
+                this.accountIds = data;
+                this.getReporting();
+            }
+        },
 		methods: {	
             //改变日期
             changeDate(e) {
@@ -105,7 +124,8 @@
                 let param = {
                     action:'ucAdPut',
                     opt:'getAdresourceReporting',
-                    adgroupids:this.adgroupids,
+                    accountIds:this.accountIds,
+                    adgroupIds:this.adgroupIds.join(','),
                     startDate: this.DateDomain[0], //开始时间
                     endDate: this.DateDomain[1], //结速时间
                     adresource:this.adresource,
@@ -130,21 +150,38 @@
                 ).catch(err => {console.log(err)});
             },
             //选择计划
-            changePlan(val){                
-                this.adgroupids = val;
-                console.log(this.adgroupids);
+            campaignChange(campaign){
+                console.log('campaign', campaign)
+                Axios.post('api.php',{action:'ucAdPut',opt:'getAdgroupNameList',campaign_id:campaign}).then(
+					res => {
+						if(res.ret == 1) {
+                            console.log('res', res.data)
+                            let list = this.adgroupList =  res.data,
+                                ids = '';
+                            list.forEach(e=>{
+                                ids += e.adgroup_id + ',';
+                            });
+                            this.adgroupIds = ids;
+						}
+					}
+                ).catch(err => {console.log(err)});            
+            },
+            //选择单元
+            adgroupChange(val){
+                this.adgroupIds = val;
             },
             //排序
             sortchange(column) {
                 this.orderField = column.key;
                 this.orderDirection =  column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-                this.getSpread();
+                this.getReporting();
             },            
         },
         beforeMount(){
             let setDate = DateShortcuts;
             setDate.disabledDate = (date) =>{return date && date.valueOf() > Date.now() - 86400000}
-            this.options = setDate;            
+            this.options = setDate; 
+            this.accountIds = this.account;         
             this.getReporting(); 
         }
 	};

@@ -2,65 +2,61 @@
 @import "../../styles/common.less";
 @import "../../styles/table.less";
 .sel {
-    width: 220px;
+  width: 220px;
 }
 
 .time .ivu-poptip {
-    display: inline-block;
+  display: inline-block;
 }
 
 .tipbtn {
-    text-align: right;
+  text-align: right;
 }
 
 .clear:after {
-    content: "\20";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
+  content: "\20";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
 }
 
 .ivu-table .ivu-col span {
-    line-height: 24px;
+  line-height: 24px;
 }
 
 .inp {
-    display: inline-block;
-    width: 150px;
+  display: inline-block;
+  width: 150px;
 }
 
 .sel_state {
-    text-align: left;
-    width: 100px;
+  text-align: left;
+  width: 100px;
 }
 
 .sel_state1 {
-    text-align: left;
-    width: 300px;
+  text-align: left;
+  width: 300px;
 }
 
 .demo-carousel {
-    width: 300px;
+  width: 300px;
 }
 
 .sel_state1.ivu-select-multiple .ivu-select-selection {
-    overflow: auto;
-    height: 32px;
+  overflow: auto;
+  height: 32px;
 }
 
 .namediv {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .namediv:hover {
-    color: #57a3f3;
+  color: #57a3f3;
 }
 
-.table-statistics {
-    color: #2b7ed1;
-    font-weight: bold;
-}
 </style>
 
 <template>
@@ -96,9 +92,10 @@
                 <!--自定义指标-->
                 <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
                 <!--选择负责人-->
-                <select-author @on-change="authorChange"></select-author>
-                <Select v-model="configured_status" :value="configured_status" class="sel_state" @on-change="getCampaignsList()">
-                    <Option value="0">所有未册除</Option>
+                <select-author :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
+                <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
+                <Select v-model="configured_status" class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
+                    <Option value="">不限</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
                 </Select>
@@ -107,14 +104,14 @@
                 </Col>
                 <Col span="8" style="text-align: right;">
                 <div class="btn-group clear">
-                    <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)">
+                    <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-start" @on-ok="AmendCampaignsList(3)" style="text-align: left;">
                         <Button type="ghost" icon="trash-a">删除</Button>
                     </Poptip>
                     <Poptip placement="bottom-start" v-model="visible">
                         <Button type="ghost" icon="edit">修改状态</Button>
                         <div class="api" slot="content">
                             <div style="text-align: left;">
-                                <Select v-model="edit_status" :value="edit_status">
+                                <Select v-model="edit_status">
                                     <Option value="AD_STATUS_NORMAL">启用</Option>
                                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
                                 </Select>
@@ -148,7 +145,7 @@
                 </Col>
             </Row>
             <div>
-                <Table :data="newAdList" height="650" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
+                <Table :data="newAdList" :height="height" :loading="loading" :columns="taColumns" :size="tableSize" class="margin-top-10" ref="Vtable" @on-selection-change="taCheck" @on-sort-change="sortchange" :row-class-name="rowClassName" stripe></Table>
                 <Row class="margin-top-10">
                     <Col span="10"> 表格尺寸
                     <Radio-group v-model="tableSize" type="button">
@@ -158,7 +155,7 @@
                     </Radio-group>
                     每页显示
                     <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getCampaignsList()">
-                        <Option v-for="item in 100" :value="item" :key="item" v-if="item%25==0">{{ item }}</Option>
+                        <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
                     </Select>
                     </Col>
                     <Col span="14" style="text-align: right;">
@@ -198,6 +195,7 @@ export default {
     data() {
         return {
             params: this.$route.query,
+            height: document.body.clientHeight - 300,
             mediaList: [], //媒体账号列表
             campaignslist: [], //推广计划列表
             loading: false,
@@ -231,7 +229,7 @@ export default {
                 formatDate(new Date(), "yyyy-MM-dd")
             ], //筛选时间
             options: DateShortcuts, //日期辅助功能
-            configured_status: "0", //过滤无数据的广告
+            configured_status: "", //过滤无数据的广告
             campaign_name: "", //关键字
             check_value: false,
             edit_status: "AD_STATUS_NORMAL", //批量状态
@@ -351,7 +349,7 @@ export default {
                                                     .catch(err => {
                                                         console.log(
                                                             "修改删除投放计划失败" +
-                                                                err
+                                                            err
                                                         );
                                                     });
                                             }
@@ -382,13 +380,13 @@ export default {
                 {
                     title: "点击率",
                     sortable: "custom",
-                    key: "click_per",
+                    key: "ctr",
                     width: 100
                 },
                 {
                     title: "点击均价",
                     sortable: "custom",
-                    key: "click_cost",
+                    key: "cpc",
                     width: 110
                 },
                 {
@@ -446,7 +444,7 @@ export default {
                     width: 110
                 },
                 {
-                    title: "点击激活率",
+                    title: "点击注册率",
                     sortable: "custom",
                     key: "click_install",
                     width: 120
@@ -454,13 +452,13 @@ export default {
                 {
                     title: "激活安装率",
                     sortable: "custom",
-                    key: "install_per",
+                    key: "reg_per_activation",
                     width: 120
                 },
                 {
                     title: "下载激活率",
                     sortable: "custom",
-                    key: "download_per",
+                    key: "activation_per_download",
                     width: 120
                 },
                 //
@@ -472,10 +470,15 @@ export default {
                 {
                     title: "注册设备数",
                     sortable: "custom",
-                    key: "reg_imei",
+                    key: "reg_dev",
                     width: 120
                 },
-
+                {
+                    title: "注册数",
+                    sortable: "custom",
+                    key: "activation",
+                    width: 100
+                },
                 {
                     title: "注册",
                     sortable: "custom",
@@ -485,13 +488,13 @@ export default {
                 {
                     title: "注册设备成本",
                     sortable: "custom",
-                    key: "reg_imei_cost",
+                    key: "cost_per_dev",
                     width: 130
                 },
                 {
                     title: "注册成本",
                     sortable: "custom",
-                    key: "reg_cost",
+                    key: "cost_per_reg",
                     width: 110
                 },
                 {
@@ -515,7 +518,7 @@ export default {
                 {
                     title: "活跃率",
                     sortable: "custom",
-                    key: "act_per",
+                    key: "active_per_reg",
                     width: 100
                 },
                 {
@@ -533,13 +536,13 @@ export default {
                 {
                     title: "付费率",
                     sortable: "custom",
-                    key: "pay_per",
+                    key: "pay_per_reg",
                     width: 110
                 },
                 {
                     title: "回本率",
                     sortable: "custom",
-                    key: "income_per",
+                    key: "roi",
                     width: 100
                 },
                 {
@@ -556,7 +559,7 @@ export default {
                                         size: "small",
                                         value:
                                             params.row.configured_status ==
-                                            "AD_STATUS_NORMAL"
+                                                "AD_STATUS_NORMAL"
                                                 ? true
                                                 : false
                                     },
@@ -593,7 +596,7 @@ export default {
                                                 .catch(err => {
                                                     console.log(
                                                         "修改删除投放计划失败" +
-                                                            err
+                                                        err
                                                     );
                                                 });
                                         }
@@ -602,7 +605,7 @@ export default {
                                 h(
                                     "span",
                                     params.row.configured_status ==
-                                    "AD_STATUS_NORMAL"
+                                        "AD_STATUS_NORMAL"
                                         ? "开启"
                                         : "关闭"
                                 )
@@ -618,7 +621,7 @@ export default {
                     render: (h, params) => {
                         let value = params.row.daily_budget;
                         //三位数加逗号
-                        let newvalue =(value/100).toString()
+                        let newvalue = (value / 100).toString()
                             .split("")
                             .reverse()
                             .join("")
@@ -626,7 +629,7 @@ export default {
                             .replace(/\,$/, "")
                             .split("")
                             .reverse()
-                            .join("");                       
+                            .join("");
                         return [
                             h(
                                 "Tooltip",
@@ -705,7 +708,7 @@ export default {
                                                             .catch(err => {
                                                                 console.log(
                                                                     "修改删除投放计划失败" +
-                                                                        err
+                                                                    err
                                                                 );
                                                             });
                                                     }
@@ -729,7 +732,8 @@ export default {
                     key: "author",
                     width: 110
                 }
-            ]
+            ],
+            mediaType: ''
         };
     },
     mounted() {
@@ -758,6 +762,12 @@ export default {
         this.getMedia();
     },
     methods: {
+        // handleClickAuthor() {
+        //     if (!this.mediaType) {
+        //         this.$Message.warning('请先选择媒体账号');
+        //         return;
+        //     }
+        // },
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");
@@ -772,7 +782,8 @@ export default {
             Axios.get("api.php", {
                 action: "api",
                 opt: "getAccount",
-                MeidaType: "Gdt"
+                // MeidaType: "1"   //1代表广点能， 3代码UC
+                media_type: 1   // 2018-04-25修改
             })
                 .then(res => {
                     if (res.ret == 1) {
@@ -794,6 +805,7 @@ export default {
                 .then(res => {
                     if (res.ret == 1) {
                         this.campaignslist = res.data;
+                        this.mediaType = "1";
                     }
                 })
                 .catch(err => {
@@ -821,6 +833,7 @@ export default {
         },
         //选择负责人
         authorChange(data) {
+            console.log('author change', data)
             this.author_model = data;
             this.getCampaignsList();
         },
@@ -856,6 +869,7 @@ export default {
                     if (res.ret == 1) {
                         //添加统计
                         res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
                         res.data.list.push(res.data.curr_page_total);
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;

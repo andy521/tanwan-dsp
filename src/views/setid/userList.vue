@@ -27,7 +27,7 @@
         </Row>
         <Row v-show="showUserListTable">
             <Col span="24">
-                <Table border :columns="tableColumns" :data="tableData" :size="tableSize"></Table>
+                <Table  :columns="tableColumns" :data="tableData" :size="tableSize"></Table>
             </Col>
         </Row>
         <Row class="margin-top-10" v-show="showUserListTable">

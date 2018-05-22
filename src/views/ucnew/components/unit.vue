@@ -90,11 +90,11 @@
         <Form v-if="!isEdit" :label-width="126" label-position="left">
           <FormItem class="border-import">
             <h3 slot="label" class="sub-title">导入推广单元</h3>
-            <Select @on-change="handleChangeImportPlan" :clearable="true" class="item-width">
-              <Option v-for="(plan, index) in importDate.planlist" :value="plan.campaign_name" :key="index.id">{{plan.campaign_name}}</Option>
+            <Select @on-change="handleChangeImportPlan" v-model="campaign_name" :clearable="true" class="item-width">
+              <Option v-if="!isEdit && plan.campaign_name.length > 0" v-for="(plan, index) in importDate.planlist" :value="plan.campaign_name" :key="index">{{plan.campaign_name}}</Option>
             </Select>
             <Select @on-change="handleChangeImportUnit" v-model="unitAdgroupName" :clearable="true" class="item-width">
-              <Option v-for="(unit, index) in importDate.unitlist" :value="unit.adgroup_name" :key="index.id">{{unit.adgroup_name}}</Option>
+              <Option v-if="!isEdit && unit.adgroup_name.length > 0" v-for="(unit, index) in importDate.unitlist" :value="unit.adgroup_name" :key="index.id">{{unit.adgroup_name}}</Option>
             </Select>
             <Button type="text" @click="handleClearImport">重置</Button>
           </FormItem>
@@ -107,13 +107,13 @@
             <p>{{ campaign_name }}</p>
           </FormItem>
           <FormItem label="推广单元名称">
-            <Input v-model="unitSetting.adgroup_name" :maxlength="30" placeholder="推广单元名称" class="item-width"></Input>
+            <Input @on-change="handleUnitName" v-model="unitSetting.adgroup_name" :maxlength="30" placeholder="推广单元名称" class="item-width"></Input>
             <span class="color-red">最多30个字符，且不能包含特殊字符</span>
           </FormItem>
           <FormItem label="推广方式">
             <RadioGroup @on-change="handleGeneralizeType" v-model="unitSetting.generalizeType">
-              <Radio label="1">打开页面</Radio>
-              <Radio label="2">APP下载</Radio>
+              <Radio :disabled="isEdit" label="1">打开页面</Radio>
+              <Radio :disabled="isEdit" label="2">APP下载</Radio>
             </RadioGroup>
           </FormItem>
           <FormItem v-if="!isGeneralizePage" label="操作系统">
@@ -136,8 +136,8 @@
           <h3 class="sub-title color-green">定向设置</h3>
           </Col>
           <Col>
-          <Select @on-change="handleChangeTargeting" :clearable="true" class="item-width">
-            <Option v-for="(targeting, index) in targetingList" :value="targeting.targeting_name" :key="targeting.targeting_id">{{targeting.targeting_name}}</Option>
+          <Select v-if="!isEdit" @on-change="handleChangeTargeting" v-model="currTargetName" :clearable="true" class="item-width">
+            <Option v-if="targetingList && targetingList.length > 0 && targeting.targeting_name !== null" v-for="(targeting, index) in targetingList" :value="targeting.targeting_name" :key="index">{{targeting.targeting_name}}</Option>
           </Select>
           </Col>
         </Row>
@@ -176,7 +176,7 @@
             </RadioGroup>
           </FormItem> -->
           <FormItem label="定向名称">
-            <Input v-model="targetingSetting.targeting_name" :maxlength="30" placeholder="请输入定向名称" class="item-width"></Input>
+            <Input @on-change="handleTargetingName" v-model="targetingSetting.targeting_name" :maxlength="30" placeholder="请输入定向名称" class="item-width"></Input>
             <span class="color-red">最多30个字符，且不能包含特殊字符</span>
           </FormItem>
           <FormItem label="投放地域">
@@ -209,7 +209,6 @@
             <RadioGroup @on-change="handleAge" v-model="targetingAgeStatus">
               <Radio label="-1">不限</Radio>
               <Radio label="1">自定义</Radio>
-              <!-- <Radio :label="targetingAge" v-model="targetingAge" :true-value="targetingAge">自定义</Radio> -->
             </RadioGroup>
             <CheckboxGroup v-if="targetingAgeStatus === '1'" @on-change="handleChangeCustomAge" v-model="targetingCustomAgeList">
               <Checkbox label="<=18">&lt;=18</Checkbox>
@@ -225,7 +224,7 @@
               <Radio label="-1">不限</Radio>
               <Radio label="1">自定义</Radio>
             </RadioGroup>
-            <Tabs v-if="targetingSetting.user_targeting === '1'" value="interestTargeting" :animated="false">
+            <Tabs v-if="targetingSetting.user_targeting === '1'" @on-click="handleInterestTab" v-model="interestTab" :animated="false">
               <TabPane label="兴趣定向" name="interestTargeting">
                 <div class="interesting">
                   <div class="interest-item">
@@ -300,7 +299,7 @@
                     </h4>
                     <div class="text-left">
                       <Input v-model="interestSearch" clearable style="width: 200px"></Input>
-                      <Button type="ghost">搜索</Button>
+                      <Button @click="handleSearchApp" type="ghost">搜索</Button>
                     </div>
                   </div>
                 </div>
@@ -336,7 +335,7 @@
             </RadioGroup>
           </FormItem>
         </Form>
-        {{this.targetingSetting}}
+     
         <Row class="btn-submit">
           <Col>
           <Button @click="handleTargetingSumbit" type="primary">确认</Button>
@@ -348,20 +347,20 @@
         <Form ref="priceSetting" :model="unitSetting" :label-width="126" label-position="left">
 
           <FormItem label="转化类型">
-            <Select @on-change="handleChangeConvertMonitorTypes" class="item-width">
-              <Option v-for="(convertName, index) in convert.convertMonitorTypesList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
+            <Select @on-change="handleChangeConvertMonitorTypes" v-model="convertMonitorTypeName" :disabled="isconvertTypeStatus" class="item-width">
+              <Option v-if="convert.convertMonitorTypesList.length > 0" v-for="(convertName, index) in convert.convertMonitorTypesList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
             </Select>
             <span v-if="convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name === '下载'" class="color-red">目前仅提供Android下载完成数据</span>
           </FormItem>
 
-          <FormItem v-if="convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name !== '下载'" label="转化名称">
+          <FormItem v-if="convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name !== '下载' && unitSetting.convertMonitorType !== 0" label="转化名称">
             <Select @on-change="handleChangeConvertMonitorName" class="item-width">
-              <Option v-for="(convertName, index) in convert.convertList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
+              <Option v-if="convert.convertList.length > 0" v-for="(convertName, index) in convert.convertList" :value="convertName.name" :key="index">{{convertName.name}}</Option>
             </Select>
             <span v-if="(convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name !== '下载' && convert.currConvertMonitorTypes.name !== '激活')" class="color-red">该账户的转化目标暂不可用,请跳转到
               <a href="#">推广工具</a> 配置转化跟踪。</span>
           </FormItem>
-          {{this.unitSetting}}
+   
           <FormItem>
             <p slot="label">优化目标
               <Tooltip placement="top">
@@ -379,9 +378,9 @@
               </Tooltip>
             </p>
             <RadioGroup @on-change="handleChangeOptimizationTarget" v-model="unitSetting.optimizationTarget">
-              <Radio label="1">点击</Radio>
-              <Radio label="2">展现</Radio>
-              <Radio v-if="(convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name === '下载') || (convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name === '激活')" label="3">转化</Radio>
+              <Radio :disabled="isOptTarStatus" label="1">点击</Radio>
+              <Radio :disabled="isOptTarStatus" label="2">展现</Radio>
+              <Radio :disabled="isOptTarConvertStatus" v-if="(convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name === '下载') || (convert.currConvertMonitorTypes && convert.currConvertMonitorTypes.name === '激活')" label="3">转化</Radio>
             </RadioGroup>
             <span v-if="unitSetting.optimizationTarget === '3'" class="color-red">优化目标转化仅支持Android；IOS和其他操作系统将采用第一阶段出价进行出价</span>
           </FormItem>
@@ -429,7 +428,6 @@
         </Form>
         <!-- 出价设置 -->
         <!-- <h3 class="sub-title title-padding color-green">高级设置</h3>
-
         <Form ref="priceSetting" :model="unitSetting" :label-width="126" label-position="left">
           <RadioGroup v-model="unitSetting.unitType">
             <Radio label="0">拨打电话样式</Radio>
@@ -444,9 +442,9 @@
           </Col>
         </Row>
 
-      </Card> -->
+      </Card>
       </Col>
-      <Col span="3" style="position:fixed;right:16px;top:0">
+      <Col span="3" style="position:fixed;right:25px;top:0">
       <Card style="background-color:#f0f0f0;" class="g-card" dis-hover>
         <h3 class="evaluate-title color-green">
           流量预估
@@ -537,64 +535,78 @@
 
 <script>
 // 本地测试代码
-// import planList from "../simple/plan";
-// import unitList from "../simple/unit";
-// import targetingList from "../simple/targeting";
-// import provincesList from "../simple/province";
-// import interestList from "../simple/interest";
-// import convertTypeList from "../simple/convertType";
-import typeTree from "./typeTree";
-import Axios from "@/api/index";
-const ERR_OK = 1;
+// import unitList from '../simple/unit.json'
+// import unitbyid from '../simple/unitbyid.json'
+// import targetingList from '../simple/targeting.json'
+// import provincesList from '../simple/province.json'
+// import interestList from '../simple/interest.json'
+// import getAppCategory from '../simple/getAppCategory.json'
+// import convertTypeList from '../simple/convertType.json'
+// import getAdConvert from '../simple/getAdConvert.json'
+// import getCampaignNameList from '../simple/getCampaignNameList.json'
+import typeTree from './typeTree'
+import Axios from '@/api/index'
+const ERR_OK = 1
 export default {
   data() {
     return {
       isEdit: false, // 推广单页状态：true为编辑状态，false为新建状态
+      isOptTarStatus: false, // 优化目标  - optimizationTarget转态，优化目标新增后不可变更（即编辑状态下不可编辑） (优化目标为点击时，则可更改为转化)。状态：true为不可编辑，false为可编辑
+      isOptTarConvertStatus: false, // 编辑状态下，优化目标为点击时，则可更改为转化。状态：true为不可编辑，false为可编辑
+      isconvertTypeStatus: false, // convertMonitorType默认值为0时不可编辑。状态：true为不可编辑，false为可编辑
       isTargetingSubmit: false, // 判断定向设置是否提交了。提交为true
+      isUnitSubmitStatus: false, // 单元提交按钮（新建与编辑下都有效）。状态：true为可以提交，false为不可提交
+      isEditTargetingChange: 0, // 判断在编辑状态下定向内容是否更改，若更改定向则需要重新提交。isEditTargetingChange数字大于0则更改
       // 获取同步的 导入推广数据
       importDate: {
-        planlist: {}, // 推广计划数据
-        unitlist: {} // 推广单元数据
+        planlist: [], // 推广计划数据
+        unitlist: [] // 推广单元数据
       },
-      adgroupId: "", // 编辑时的推广单元id
-      campaign_name: "", // 推广计划名称
+      currId: 0, // 在编辑状态下的id
+      adgroupId: '', // 编辑时的推广单元id
+      targetingId: '', // 编辑时的定向id
+      paused: -1, // 编辑时的开启状态
+      campaign_name: '', // 推广计划名称
       // 自定义推广单元数据
       unitSetting: {
-        account_id: "",
-        adgroup_name: "", // 推广单元名称
-        campaign_id: "", // 推广方式的id
-        generalizeType: "1", // 推广方式
+        account_id: '',
+        adgroup_name: '', // 推广单元名称
+        campaign_id: '', // 推广方式的id
+        generalizeType: '1', // 推广方式
         adResourceId: 1, // 推广计划推广资源
-        platform: "", // 操作系统
-        chargeType: "1", // 计费方式
+        platform: '', // 操作系统
+        chargeType: '1', // 计费方式
         bid: 0, // 出价
         secondBid: 0, // 第二阶段出价
-        adconvertId: 0, // 	转化id
-        convertMonitorType: -1, // 转化监测类型
-        optimizationTarget: "1", // 优化目标
-        unitType: 0 // pp应用推广类型
+        adconvertId: 0, // 转化id
+        convertMonitorType: 0, // 转化监测类型
+        optimizationTarget: '1', // 优化目标
+        unitType: 0, // pp应用推广类型,
+        targeting_id: '' // 新建定向时返回的id
       },
-      unitAdgroupName: "", // 导入的推广单元名称
+      unitAdgroupName: '', // 导入的推广单元名称
+      convertMonitorTypeName: '', // 导入的推广单元转化类型名称
       // 获取同步的 定向数据
       targetingList: [],
+      // 当前所选的 定向名称
+      currTargetName: '',
       // 自定义定向设置数据
       targetingSetting: {
-        account_id: "", // 账户id
-        adgroup_id: "", // 推广单元id
-        targeting_name: "", // 	定向名称
+        account_id: this.$route.query.account, // 账户id
+        targeting_name: '', // 定向名称
         audience: [], // 人群包定向id集合
-        audience_targeting: "", // 自定义人群定向
-        all_region: "-1", // 投放地域定向
-        region: [], // 	地域id集合
-        gender: "-1", // 性别定向
-        age: "-1", // 	年龄定向
-        user_targeting: "-1", // 兴趣与行为自定义
+        audience_targeting: '', // 自定义人群定向
+        all_region: '-1', // 投放地域定向
+        region: [], // 地域id集合
+        gender: '-1', // 性别定向
+        age: '-1', // 年龄定向
+        user_targeting: '-1', // 兴趣与行为自定义
         interest: [], // 兴趣定向
         word: [], // 关键关键词定向
-        url: [], // 	兴趣站点定向
+        url: [], // 兴趣站点定向
         app: [], // app名称定向
         appcategory: [], // app分类定向
-        network_env: "11", // 	网络环境定向
+        network_env: '11', // 网络环境定向
         intelli_targeting: true, // 开启用户智能定向
         search_word: [], // 应用搜索关键词定向
         auto_search_word: false // 开启智能关键词
@@ -604,39 +616,42 @@ export default {
       // 右侧数据统计
       evaluate: {
         activeNum: 100, // 流量估计活跃量
-        activeTxt: "",
-        platform: "", // 操作系统数据
-        provinceTxt: "", // 省市名称集合
-        genderTxt: "", // 性别
-        ageTxt: "", // 年龄
-        interestCatTxt: "", //  兴趣定向 兴趣分类
-        interestWordTxt: "", //  兴趣定向 兴趣关键词
-        interestURLTxt: "", //  兴趣定向  兴趣站点
-        interestAPPGameTxt: "", // APP定向 游戏类
-        interestAPPSFTxt: "", // APP定向 软件类
-        interestAPPNameTxt: "", // APP定向 APP名称
-        netWorkEnvTxt: "" // 网络环境
+        activeTxt: '',
+        platform: '', // 操作系统数据
+        provinceTxt: '', // 省市名称集合
+        genderTxt: '', // 性别
+        ageTxt: '', // 年龄
+        interestCatTxt: '', //  兴趣定向 兴趣分类
+        interestWordTxt: '', //  兴趣定向 兴趣关键词
+        interestURLTxt: '', //  兴趣定向  兴趣站点
+        interestAPPGameTxt: '', // APP定向 游戏类
+        interestAPPSFTxt: '', // APP定向 软件类
+        interestAPPNameTxt: '', // APP定向 APP名称
+        netWorkEnvTxt: '' // 网络环境
       },
+      // seleinterestAPPGameName: [], // 选中的app定向游戏类
+      // seleinterestAPPSFName: [], // 选中的app定向软件类
       provinceList: [], // 获取同步的 省市地域列表
       provinceTreeList: [], // 省市Tree组件数据
-      targetingAgeStatus: "-1", // 定向设置的年龄数据状态：-1为不限，1为自定义
+      targetingAgeStatus: '-1', // 定向设置的年龄数据状态：-1为不限，1为自定义
       targetingCustomAgeList: [], // 自定义定向设置的年龄数据
+      interestTab: 'interestTargeting', // 兴趣选项卡
       interestTypesList: [], // 获取同步的 兴趣列表
       interestTreeList: [], // 省市Tree组件数据
       interestCat: [
-        "请选择定向兴趣，这些兴趣",
-        "要与您的目标用户相关。广",
-        "告将定向展现给与所选兴趣",
-        "相关联的用户。"
+        '请选择定向兴趣，这些兴趣',
+        '要与您的目标用户相关。广',
+        '告将定向展现给与所选兴趣',
+        '相关联的用户。'
       ], // 省市Tree组件数据 中 兴趣分类tip
       interestAPPList: [], // 获取同步的 APP定向列表
       interestAPPGameTreeList: [], // APP定向游戏Tree组件数据
       interestAPPSFTreeList: [], // APP定向软件Tree组件数据
       isInterestWord: false, // APP定向关键词状态
       isInterestURL: false, // APP定向站点状态
-      interestWord: "", // APP定向关键词内容
-      interestURL: "", // APP定向URL内容
-      interestSearch: "", // APP定向search内容
+      interestWord: '', // APP定向关键词内容
+      interestURL: '', // APP定向URL内容
+      interestSearch: '', // APP定向search内容
       // 转化对象
       convert: {
         convertMonitorTypesList: [], // 获取同步的 转化类型列表
@@ -644,523 +659,792 @@ export default {
         currConvertMonitorTypes: {}, // 当前操作的转化类型对象数据
         convertList: [] // 获取同步的 转化列表
       }
-    };
+    }
   },
   mounted() {
-    this.UNIT_PLATFORM_ARGUTMENT = ["001", "010", "100"];
-    this.UNIT_PLATFORM_NUM = [1, 10, 100];
-    this.getAccountInfo();
+    this.getAccountInfo()
+    this.getTargetingList()
+    this.getConvertMonitorTypes()
     this.$nextTick(() => {
-      this.getProvince();
-      this.getConvertMonitorTypes();
-      this.getInterestTypes();
-      this.getInterestAPP();
-    });
+      // 是否编辑状态下 获取 对应的数据
+      if (this.isEdit) {
+        this.getAdgroupById()
+      } else {
+        this.getCampaignUnit()
+      }
+
+      this.getProvince()
+      this.getInterestTypes()
+      this.getInterestAPP()
+    })
   },
   created() {
-    // init DATA
-    this.unitSetting.account_id = this.$store.state.ucnew.accountId;
-    this.getCampaignPlan();
-    this.getCampaignUnit();
-    this.getTargetingList();
+    this.getCampaignNameList()
   },
   methods: {
+    // 获取字符长度
+    getByteLen(str) {
+      let len = 0
+      for (let i = 0; i < str.length; i++) {
+        let char = str.charAt(i)
+        if (char.match(/[^\x00-\xff]/gi) !== null) {
+          len += 2
+        } else {
+          len += 1
+        }
+      }
+      return len
+    },
     // 获取操作系统数据
     getPlatform(data) {
-      const env = ["IOS", "Android", "其他系统"];
-      let retStr = "";
+      const env = ['IOS', 'Android', '其他系统']
+      let retStr = ''
       if (data && data.length > 0) {
-        if (typeof data === "string") {
-          let arr = data.split("").reverse();
+        if (typeof data === 'string') {
+          let arr = data.split('').reverse()
           for (let i = 0; i < data.length; i++) {
-            if ("1" === arr[i]) {
-              retStr += env[i] + "、";
+            if (arr[i] === '1') {
+              retStr += env[i] + '、'
             }
           }
         } else if (Array.isArray(data)) {
           for (let i = 0; i < data.length; i++) {
             switch (data[i]) {
-              case "001":
-                retStr += env[i] + "、";
-                break;
-              case "010":
-                retStr += env[i] + "、";
-                break;
-              case "100":
-                retStr += env[i] + "、";
-                break;
+              case '001':
+                retStr += env[i] + '、'
+                break
+              case '010':
+                retStr += env[i] + '、'
+                break
+              case '100':
+                retStr += env[i] + '、'
+                break
             }
           }
         }
       } else {
-        console.warn("请选择操作系统正确数据");
+        console.warn('请选择操作系统正确数据')
       }
-      return retStr.substring(0, retStr.length - 1);
+      return retStr.substring(0, retStr.length - 1)
     },
     //  定向设置中自定义年龄的字符串转数组
     ageStrToArray(str) {
-      let retArr = [];
-      if (typeof str === "string") {
-        if (str === "") {
-          return retArr;
+      let retArr = []
+      if (typeof str === 'string') {
+        if (str === '') {
+          return retArr
         }
-        const ageList = [">=50", "40-49", "30-39", "25-29", "19-24", "<=18"];
-        let currStr = "";
-        console.log("str.xxx", str);
+        const ageList = ['>=50', '40-49', '30-39', '25-29', '19-24', '<=18']
+        let currStr = ''
         ageList.forEach((age, index) => {
-          currStr = str.charAt(index);
-          if ("1" === currStr) {
-            retArr.push(age);
+          currStr = str.charAt(index)
+          if (currStr === '1') {
+            retArr.push(age)
           }
-        });
+        })
       } else {
-        return [];
+        return []
       }
-      return retArr;
+      return retArr
     },
     //  定向设置中自定义年龄的数组转字符串
     ageArrToString(list) {
       if (!list && !Array.isArray(list) && list.length < 1) {
-        return;
+        return
       }
-      const ageList = [">=50", "40-49", "30-39", "25-29", "19-24", "<=18"];
-      let retTxt = ["0", "0", "0", "0", "0", "0"];
+      const ageList = ['>=50', '40-49', '30-39', '25-29', '19-24', '<=18']
+      let retTxt = ['0', '0', '0', '0', '0', '0']
       list.forEach((c, ci) => {
         ageList.forEach((s, si) => {
           if (c === s) {
-            retTxt[si] = "1";
+            retTxt[si] = '1'
           }
-        });
-      });
-      return retTxt.join("");
+        })
+      })
+      return retTxt.join('')
     },
     //  对比两数组，符合条件则按照numList累加结果，返回字符串格式如： 111（推广单元中操作系统的选项转换）
-    platformArrToString(currList, srcList, numList) {
-      let total = 0;
-      for (let c = 0; c <= currList.length - 1; c++) {
-        for (let s = 0; s <= srcList.length - 1; s++) {
-          if (srcList[s] === currList[c]) {
-            total += numList[s];
+    platformArrToString(list) {
+      const refer = ['001', '010', '100']
+      const referNum = [1, 10, 100]
+      let total = 0
+      for (let c = 0; c <= list.length - 1; c++) {
+        for (let s = 0; s <= refer.length - 1; s++) {
+          if (refer[s] === list[c]) {
+            total += referNum[s]
           }
         }
       }
-      let retStr = total.toString();
-      console.log("platformArrToString", retStr, typeof retStr);
-      if ("0" === retStr) {
-        retStr = "000";
+      let retStr = total.toString()
+      switch (retStr) {
+        case '0':
+          retStr = '000'
+          break
+        case '1':
+          retStr = '001'
+          break
+        case '10':
+          retStr = '010'
+          break
+        case '11':
+          retStr = '011'
+          break
       }
-      return retStr;
+      return retStr
     },
     // 将字符串按照形式分割为数组（推广单元中操作系统的选项转换）
     platformStrToArray(str) {
-      let ret = [];
+      let ret = []
       switch (str) {
-        case "000":
-          ret = ["000"];
-          break;
-        case "001":
-          ret = ["001"];
-          break;
-        case "010":
-          ret = ["010"];
-          break;
-        case "100":
-          ret = ["100"];
-          break;
-        case "011":
-          ret = ["010", "001"];
-          break;
-        case "110":
-          ret = ["010", "100"];
-          break;
-        case "111":
-          ret = ["100", "010", "001"];
-          break;
+        case '000':
+          ret = ['000']
+          break
+        case '001':
+          ret = ['001']
+          break
+        case '010':
+          ret = ['010']
+          break
+        case '100':
+          ret = ['100']
+          break
+        case '011':
+          ret = ['010', '001']
+          break
+        case '110':
+          ret = ['010', '100']
+          break
+        case '111':
+          ret = ['100', '010', '001']
+          break
       }
-      console.log("platformStrToArray", ret, typeof ret);
-      return ret;
+      return ret
     },
-    // // 事件：监听兴趣APPSF
-    // handleInterestAPPSF(list) {
-    //   if (list.value > 0) {
-    //     this.targetingSetting.appcategory.push(list.value);
-    //   }
-    //   const app = [];
-    //   list.list.forEach(inter => {
-    //     if (inter.value) {
-    //       interest.push(inter.value);
-    //     }
-    //   });
-    //   this.targetingSetting.app = app;
-    //   console.log("事件：监听兴趣分类", list, this.targetingSetting.appcategory, this.targetingSetting.app)
-    // },
+    // 事件：监听app定向的app定向， 2为游戏，1为软件
+    handleInterestAPP(list) {
+      console.log(
+        '事件：监听兴趣APPSF',
+        list
+      )
+      let app = []
+      let seleinterestAPPSFName = []
+      let seleinterestAPPGameName = []
+      list.list.forEach(inter => {
+        app.push(inter.value)
+        if (list.value === 1) {
+          seleinterestAPPSFName.push(inter.title)
+          this.evaluate.interestAPPSFTxt = this.normalizeTxtShow(seleinterestAPPSFName, 12)
+        } else if (list.value === 2) {
+          seleinterestAPPGameName.push(inter.title)
+          this.evaluate.interestAPPGameTxt = this.normalizeTxtShow(seleinterestAPPGameName, 12)
+        }
+      })
+      this.targetingSetting.app = app
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
+      }
+    },
     normalizeTxtShow(list, length) {
       if (!Array.isArray(list)) {
-        return;
+        return
       }
-      let retTxt = "";
-      if (list.length === "") {
-        return retTxt;
+      let retTxt = ''
+      if (list.length === 0) {
+        return retTxt
       }
       if (list.length < length) {
-        retTxt = list.slice().join("、");
+        retTxt = list.slice().join('、')
       } else {
-        retTxt = `${list.slice(0, length).join("、")}等${list.length}个`;
+        retTxt = `${list.slice(0, length).join('、')}等${list.length}个`
       }
-      return retTxt;
+      return retTxt
     },
     // 事件：监听兴趣word
-    handlerInterestWord(word) {
-      this.targetingSetting.word.push(word.target.value);
+    handlerInterestWord(e) {
+      let word = e.target.value
+      if (!word && this.targetingSetting.word.length >= 200) {
+        this.interestWord = ths.targetingSetting.word.join()
+        return
+      }
+
+      let wordList = word.split('\n')
+      let val = wordList.filter(v => v.length > 0)
+      let ret = val.length <= 200 ? val : val.slice(0, 200)
+      this.targetingSetting.word =  ret
       this.evaluate.interestURLTxt = this.normalizeTxtShow(
         this.targetingSetting.word,
-        3
-      );
+        8
+      )
+
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
+      }
     },
     // 事件：监听兴趣url
-    handlerInterestURL(url) {
-      this.targetingSetting.url.push(url.target.value);
-      this.evaluate.interestWordTxt = this.normalizeTxtShow(
-        this.targetingSetting.url,
-        3
-      );
-    },
-    // 事件：监听兴趣APP
-    handleInterestAPP(list) {
-      if (list.value > 0) {
-        this.targetingSetting.appcategory.push(list.value);
+    handlerInterestURL(e) {
+      let url = e.target.value
+      if (!url && this.targetingSetting.url.length >= 200) {
+        this.isInterestURL = ths.targetingSetting.url.join()
+        return
       }
-      const app = [];
-      list.list.forEach(inter => {
-        if (inter.value) {
-          app.push(inter.value);
-        }
-      });
-      this.targetingSetting.app = app;
-      console.log(
-        "事件：监听兴趣APP",
-        list,
-        this.targetingSetting.appcategory,
-        this.targetingSetting.app
-      );
+
+      let urlList = url.split('\n')
+      let val = urlList.filter(v => v.length > 0)
+      let ret = val.length <= 200 ? val : val.slice(0, 200)
+      this.targetingSetting.url =  ret
+      this.evaluate.interestURLTxt = this.normalizeTxtShow(
+        this.targetingSetting.url,
+        8
+      )
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
+      }
     },
     // 事件：监听兴趣分类
     handleInterestCat(list) {
-      const interest = [];
+      console.log("handleInterestCat", list)
+      let interest = []
+      let interestTitle = []
       list.list.forEach(inter => {
         if (inter.value) {
-          interest.push(inter.value);
+          interest.push(inter.value)
+          interestTitle.push(inter.title)
         }
-      });
-      this.targetingSetting.interest = interest;
-      console.log(
-        "事件：监听兴趣分类",
-        list,
-        this.targetingSetting.appcategory,
-        this.targetingSetting.interest
-      );
+      })
+      this.targetingSetting.interest = interest
+      this.evaluate.interestWordTxt = this.normalizeTxtShow(interestTitle, 12)
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
+      }
     },
     // 事件：监听第一出价
     handleBid(bid) {
-      this.unitSetting.bid = bid;
+      const range = [0.5, 101]
+      if (bid < range[0]) {
+        this.isUnitSubmitStatus = false
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: '出价不能低于' + range[0]
+        })
+      } else if (bid > range[101]) {
+        this.isUnitSubmitStatus = false
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: '出价不能高于' + range[1]
+        })
+      }
     },
     // 事件：监听第二出价
     handleSecondBid(secbid) {
-      this.unitSetting.secondBid = secbid;
+      const range = [1, 999.99]
+      if (secbid < range[0]) {
+        this.isUnitSubmitStatus = false
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: '出价不能低于' + range[0]
+        })
+      } else if (secbid > range[101]) {
+        this.isUnitSubmitStatus = false
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: '出价不能高于' + range[1]
+        })
+      }
     },
     // 事件：监听计费方式
     handleChangeChargeType(chargeType) {},
     // 事件：监听优化目标
     handleChangeOptimizationTarget(optimizationTarget) {
-      const chargeType = ["1", "2"];
+      const chargeType = ['1', '2']
       switch (optimizationTarget) {
-        case "1":
-          this.unitSetting.optimizationTarget = optimizationTarget;
-          this.unitSetting.chargeType = chargeType[0];
-          break;
-        case "2":
-          this.unitSetting.optimizationTarget = optimizationTarget;
-          this.unitSetting.chargeType = chargeType[1];
-          break;
-        case "3":
-          this.unitSetting.optimizationTarget = optimizationTarget;
-          this.unitSetting.chargeType = chargeType[1];
-          break;
+        case '1':
+          this.unitSetting.optimizationTarget = optimizationTarget
+          this.unitSetting.chargeType = chargeType[0]
+          break
+        case '2':
+          this.unitSetting.optimizationTarget = optimizationTarget
+          this.unitSetting.chargeType = chargeType[1]
+          break
+        case '3':
+          this.unitSetting.optimizationTarget = optimizationTarget
+          this.unitSetting.chargeType = chargeType[1]
+          break
       }
     },
     // 事件：监听转化名称
     handleChangeConvertMonitorName(convertName) {
       let currConvertObj = this._getcurrList(
         this.convert.convertList,
-        "name",
+        'name',
         convertName
-      );
-      this.unitSetting.adconvertId = currConvertObj.convertId;
-      console.log("convertName", convertName, currConvertObj);
+      )
+      this.unitSetting.adconvertId = currConvertObj.convertId
     },
     // 事件：监听转化类型
     handleChangeConvertMonitorTypes(convertType) {
+      if (!convertType) {
+        return
+      }
+      // 下载监测类型只有投放uc头条，推广方式为打开页面的单元可以设置
+      // 如果 推广计划推广资源 不为 1uc头条， 转化类型 为 下载类型，同时 推广方式  不为 1打开页面 则报错
+      if (convertType === '下载') {
+        if (
+          this.unitSetting.generalizeType !== '1' &&
+          this.unitSetting.adResourceId !== 1
+        ) {
+          this.isUnitSubmitStatus = false
+          this.$Notice.warning({
+            title: '温馨提示：',
+            desc:
+              '只有计划中推广资源选择了UC头条，并且推广方式为打开页面时,才能选择下载类型'
+          })
+        } else {
+          this.isUnitSubmitStatus = true
+        }
+      }
       let currConvertObj = this._getcurrList(
         this.convert.convertMonitorTypesList,
-        "name",
+        'name',
         convertType
-      );
-      this.unitSetting.convertMonitorType = currConvertObj.objType;
-      this.convert.currConvertMonitorTypes = currConvertObj;
-      this.getAdConvert(currConvertObj.objType);
-      console.log("convertType", convertType, currConvertObj);
+      )
+      this.unitSetting.convertMonitorType = currConvertObj.objType
+      this.convert.currConvertMonitorTypes = currConvertObj
+      this.convertMonitorTypeName = currConvertObj.name
+      this.getAdConvert(currConvertObj.objType)
+      console.log('convertType', convertType, currConvertObj)
     },
     // 事件：监听自定义年龄数据
     handleChangeCustomAge(ageList) {
-      let currStr = this.ageArrToString(ageList);
-      this.targetingSetting.age = currStr;
+      let currStr = this.ageArrToString(ageList)
+      this.targetingSetting.age = currStr
       // 处理右侧evaluate.ageTxt 的输出
       if (Array.isArray(ageList) && ageList.length > 0) {
-        let ageTxt = ageList.slice().join("、");
-        this.evaluate.ageTxt = ageTxt;
+        let ageTxt = ageList.slice().join('、')
+        this.evaluate.ageTxt = ageTxt
+      }
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
       }
     },
     // 事件：监听年龄数据
     handleAge(ageType) {
-      if ("-1" === ageType) {
-        this.targetingSetting.age = "-1";
-      } else if ("1" === ageType) {
+      if (ageType === '-1') {
+        this.targetingSetting.age = '-1'
+      } else if (ageType === '1') {
         if (this.targetingCustomAgeList.length > 0) {
           this.targetingSetting.age = this.ageArrToString(
             this.targetingCustomAgeList
-          );
+          )
         } else {
-          this.targetingSetting.age = "000000";
+          this.targetingSetting.age = '000000'
         }
+      }
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
       }
     },
     // 事件：监听性别数据
     handleGender(gender) {
-      if ("1" === gender) {
-        this.evaluate.genderTxt = "男";
-      } else if ("0" === gender) {
-        this.evaluate.genderTxt = "女";
+      if (gender === '1') {
+        this.evaluate.genderTxt = '男'
+      } else if (gender === '0') {
+        this.evaluate.genderTxt = '女'
+      }
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
       }
     },
     // 事件：监听省市数据
     handleChangeProvinceTree(provinceList) {
       if (provinceList.length < 1) {
-        return;
+        return
       }
-      let retName = [];
-      let retValue = [];
-      let retTxt = "";
+      let retName = []
+      let retValue = []
+      let retTxt = ''
       provinceList.forEach((city, index) => {
-        retName.push(city.title);
-        retValue.push(city.value);
-      });
-      this.targetingSetting.region = retValue;
-      if (retName === "") {
-        retTxt = "";
-        return;
+        retName.push(city.title)
+        retValue.push(city.value)
+        console.log('region', typeof city.value, city.value)
+      })
+      this.targetingSetting.region = retValue
+      if (retName === '') {
+        retTxt = ''
+        return
       } else if (retName.length > 3) {
         retTxt = `${retName[0]}、${retName[1]}、${retName[2]}...等${
           retName.length
-        }个地域`;
+        }个地域`
       } else {
         retName.forEach(name => {
-          retTxt += name + "、";
-        });
-        retTxt = retTxt.substring(0, retTxt.length - 1);
+          retTxt += name + '、'
+        })
+        retTxt = retTxt.substring(0, retTxt.length - 1)
       }
-      this.evaluate.provinceTxt = retTxt;
+      this.evaluate.provinceTxt = retTxt
+
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
+      }
     },
+    handleSearchApp() {
+      this.getRecommend({type: 'app', seeds: [this.interestSearch]})
+    },
+    // 事件：兴趣选项卡
+    handleInterestTab(name) {},
     // 事件：监听投放地段状态
     handleAllRegion(region) {
       switch (region) {
-        case "-1":
-          this.targetingSetting.all_region = region;
-          break;
-        case "0":
-          this.targetingSetting.all_region = region;
-          break;
+        case '-1':
+          this.targetingSetting.all_region = region
+          break
+        case '0':
+          this.targetingSetting.all_region = region
+          break
         // case "1":
-        //   this.targetingSetting.all_region = region;
-        //   break;
+        //   this.targetingSetting.all_region = region
+        //   break
+      }
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
       }
     },
     // 事件：监听当前APP推广方式状态
     handleAPPPlatform(statusList) {
-      this.unitSetting.platform = statusList;
-      this.evaluate.platform = this.getPlatform(statusList);
-      console.log("handleAPPPlatform", statusList, this.unitSetting.platform);
+      this.unitSetting.platform = statusList
+      this.evaluate.platform = this.getPlatform(statusList)
     },
     // 事件：监听当前打开页面推广方式状态
     handlePagePlatform(statusList) {
-      let platform = this.platformArrToString(
-        statusList,
-        this.UNIT_PLATFORM_ARGUTMENT,
-        this.UNIT_PLATFORM_NUM
-      );
-      this.unitSetting.platform = platform;
-      this.evaluate.platform = this.getPlatform(platform);
-      console.log(
-        "handlePagePlatform",
-        statusList,
-        this.unitSetting.platform,
-        platform
-      );
+      let platformStr = this.platformArrToString(statusList)
+      this.unitSetting.platform = platformStr
+      this.evaluate.platform = this.getPlatform(platformStr)
     },
     // 事件：监听推广方式状态
     handleGeneralizeType(status) {
-      if ("1" === status) {
-        this.convert.convertMonitorTypesList = this.convert.convertMonitorTypesListCopy.slice();
-        this.isGeneralizePage = true;
-      } else if ("2" === status) {
-        let list = this.convert.convertMonitorTypesListCopy.forEach(conv => {
-          if ("激活" === conv.name) {
-            let arr = [];
-            arr.push(conv);
-            this.convert.convertMonitorTypesList = arr;
+      if (status === '1') {
+        this.convert.convertMonitorTypesList = this.convert.convertMonitorTypesListCopy.slice()
+        this.isGeneralizePage = true
+      } else if (status === '2') {
+        this.convert.convertMonitorTypesListCopy.forEach(conv => {
+          if (conv.name === '激活') {
+            let arr = []
+            arr.push(conv)
+            this.convert.convertMonitorTypesList = arr
           }
-        });
-        this.isGeneralizePage = false;
+        })
+        this.isGeneralizePage = false
       }
     },
     // 事件：监听网络环境
     handleNewWorkEnv(env) {
-      const enName = ["", "WIFI", "数据网络"];
-      const enKey = ["11", "01", "10"];
+      const enName = ['', 'WIFI', '数据网络']
+      const enKey = ['11', '01', '10']
       enKey.forEach((k, i) => {
         if (k === env) {
-          this.evaluate.netWorkEnvTxt = enName[i];
+          this.evaluate.netWorkEnvTxt = enName[i]
         }
-      });
+      })
+    },
+    // 编辑状态下， 更新定向
+    updateTargeting() {
+      console.log('定向params', this.targetingSetting)
+      let params = {
+        action: 'ucAdPut',
+        opt: 'updateTargeting',
+        account_id: this.targetingSetting.account_id,
+        adgroup_id: this.adgroupId,
+        targeting_name: this.targetingSetting.targeting_name,
+        audience: this.targetingSetting.audience,
+        audience_targeting: this.targetingSetting.audience_targeting,
+        all_region: this.targetingSetting.all_region,
+        region: this.targetingSetting.region,
+        gender: this.targetingSetting.gender,
+        age: this.targetingSetting.age,
+        user_targeting: this.targetingSetting.user_targeting,
+        interest: this.targetingSetting.interest,
+        word: this.targetingSetting.word,
+        url: this.targetingSetting.url,
+        app: this.targetingSetting.app,
+        appcategory: this.targetingSetting.appcategory,
+        network_env: this.targetingSetting.network_env,
+        intelli_targeting: this.targetingSetting.intelli_targeting,
+        search_word: this.targetingSetting.search_word,
+        auto_search_word: this.targetingSetting.auto_search_word
+      }
+      console.log('定向params', params)
+      Axios.post('api.php', params)
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            this.isTargetingSubmit = true
+            this.unitSetting.targeting_id = res.data.targeting_id
+            this.isEditTargetingChange = 0
+            console.log('更新定向设置' + this.unitSetting.targeting_id)
+            this.$Message.success('更新定向成功')
+          }
+        })
+        .catch(err => {
+          console.log('更新定向失败' + err)
+        })
+    },
+    // 新建定向
+    addTargeting() {
+      let params = Object.assign({}, this.targetingSetting, {
+        action: 'ucAdPut',
+        opt: 'addTargeting',
+        account_id: this.$route.query.account
+      })
+      console.log('定向params', params)
+      Axios.post('api.php', params)
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            this.isTargetingSubmit = true
+            this.unitSetting.targeting_id = res.data.targeting_id
+            console.log('新建定向设置' + this.unitSetting.targeting_id)
+            this.$Message.success('新建定向成功')
+          }
+        })
+        .catch(err => {
+          console.log('新建定向失败' + err)
+        })
     },
     // 事件：新建定向设置
-    handleTargetingSumbit() {},
+    handleTargetingSumbit() {
+      // 判断状态，在编辑状态下 或 在新建状态下 ， 若已经提交则更新定向
+      if (this.isEdit && this.unitSetting.targeting_id) {
+        this.updateTargeting()
+      } else {
+        if (!this.isTargetingSubmit) {
+          this.$Notice.warning({
+            title: '温馨提示：',
+            desc: '请填写正确数据再提交定向！'
+          })
+          return
+        }
+        this.addTargeting()
+      }
+    },
+    handleTargetingName(e) {
+      const range = [30]
+      let str = e.target.value
+      let strLen = this.getByteLen(str)
+      // 判断长度
+      if (strLen > range[0]) {
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: `定向名称不能超过${range[0]}个字符`
+        })
+      }
+      // 如果没有输入则不能提交单元和提交定向
+      if (strLen > 0) {
+        this.isUnitSubmitStatus = true
+        this.isTargetingSubmit = true
+      } else {
+        this.isUnitSubmitStatus = false
+        this.isTargetingSubmit = false
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: '定向名称不能为空'
+        })
+      }
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
+      }
+    },
+    handleUnitName(e) {
+      const range = [30]
+      let str = e.target.value
+      let strLen = this.getByteLen(str)
+      // 判断长度
+      if (strLen > range[0]) {
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: `单元名称不能超过${range[0]}个字符`
+        })
+      }
+      // 如果没有输入则不能提交单元
+      if (str.length > 0) {
+        this.isUnitSubmitStatus = true
+      } else {
+        this.isUnitSubmitStatus = false
+        this.$Notice.warning({
+          title: '温馨提示',
+          desc: '单元名称不能为空'
+        })
+      }
+    },
     // 事件：选择targeting
     handleChangeTargeting(target) {
       if (!target) {
-        return;
+        return
       }
+      this.currTargetName = target
       let currTarget = this._getcurrList(
         this.targetingList,
-        "targeting_name",
+        'targeting_name',
         target
-      );
-      const targeting = JSON.parse(currTarget.targeting);
-      console.log("select target", target, currTarget);
-      console.log("tar before", this.targetingSetting);
-      this._assignMethod(this.targetingSetting, targeting);
-      this.targetingSetting.account_id = currTarget.account_id;
-      this.targetingSetting.targeting_id = currTarget.targeting_id;
-      this.targetingSetting.targeting_name = currTarget.targeting_name;
+      )
+      const targeting = JSON.parse(currTarget.targeting)
+      console.log('select target', target, currTarget, targeting)
+      this._assignMethod(this.targetingSetting, targeting)
+      this.targetingSetting.account_id = currTarget.account_id
+      this.targetingSetting.targeting_name = currTarget.targeting_name
       // 推广单元 单选和复选操作的年龄数据
-      this.targetingSetting.age = targeting.age;
-      this.targetingAgeStatus = targeting.age === "-1" ? "-1" : "1";
+      this.targetingSetting.age = targeting.age
+      this.targetingAgeStatus = targeting.age === '-1' ? '-1' : '1'
       this.targetingCustomAgeList = this.ageStrToArray(
-        targeting.age === "-1" ? "000000" : targeting.age
-      );
+        targeting.age === '-1' ? '000000' : targeting.age
+      )
       // 右侧 年龄数据
-      let ageTxt = this.ageStrToArray(targeting.age).join("、");
+      let ageTxt = this.ageStrToArray(targeting.age).join('、')
       this.evaluate.ageTxt =
-        targeting.age === "-1" ? "" : ageTxt.substring(0, ageTxt.length);
+        targeting.age === '-1' ? '' : ageTxt.substring(0, ageTxt.length)
       console.log(
-        "tar after",
+        'tar after',
         targeting.age,
         typeof targeting.age,
-        targeting.age === "-1",
+        targeting.age === '-1',
         this.targetingAgeStatus,
         this.targetingSetting
-      );
+      )
       // 投放地域
       if (this.targetingSetting.region.length > 0) {
-        const provinceList = [];
+        const provinceList = []
         this.targetingSetting.region.forEach(region => {
           this.provinceTreeList.forEach((vp, ip) => {
             if (region === vp.value) {
-              vp.checked = true;
-              vp.expand = true;
-              provinceList.push(vp);
+              vp.checked = true
+              vp.expand = true
+              provinceList.push(vp)
             }
             vp.children.forEach((vc, ic) => {
               if (region === vc.value) {
-                vc.checked = true;
-                vc.expand = true;
-                provinceList.push(vc);
+                vc.checked = true
+                vc.expand = true
+                provinceList.push(vc)
               }
-            });
-          });
-        });
-        this.handleChangeProvinceTree(provinceList);
+            })
+          })
+        })
+        this.handleChangeProvinceTree(provinceList)
       } else {
-        this.evaluate.provinceTxt = "";
+        this.evaluate.provinceTxt = ''
       }
       // 兴趣与行为定向
       let interestCatSelectedList = this.normalizeInterestTreeList(
         this.targetingSetting.interest,
         this.interestTreeList
-      );
-      let catNameList = [];
+      )
+      let catNameList = []
       interestCatSelectedList.forEach(val => {
-        catNameList.push(val.name);
-        this.evaluate.activeNum += val.value;
-      });
-      this.evaluate.interestCatTxt = this.normalizeTxtShow(catNameList, 3);
-
-      this.evaluate.interestWordTxt = this.normalizeTxtShow(targeting.word, 3);
-      this.evaluate.interestURLTxt = this.normalizeTxtShow(targeting.url, 3);
+        catNameList.push(val.title)
+        this.evaluate.activeNum += val.value
+      })
+      this.evaluate.interestCatTxt = this.normalizeTxtShow(catNameList, 3)
+      this.evaluate.interestWordTxt = this.normalizeTxtShow(targeting.word, 3)
+      this.evaluate.interestURLTxt = this.normalizeTxtShow(targeting.url, 3)
       this.interestWord =
-        targeting.word.length > 0 ? targeting.word.join("、") : "";
+        targeting.word.length > 0 ? targeting.word.join('、') : ''
       this.interestURL =
-        targeting.url.length > 0 ? targeting.url.join("、") : "";
-      console.log('this.evaluate.activeNum', this.evaluate.activeNum)
-      this.evaluate.activeTxt = this.normalizeActiveTxt(this.evaluate.activeNum);
+        targeting.url.length > 0 ? targeting.url.join('、') : ''
+      // APP定向
+
+      // 活跃数
+      this.evaluate.activeTxt = this.normalizeActiveTxt(
+        this.evaluate.activeNum
+      )
       // 网络环境
-      this.handleNewWorkEnv(this.targetingSetting.network_env);
+      this.handleNewWorkEnv(this.targetingSetting.network_env)
     },
     // 初始化活跃用户数,传参为Number类型
     normalizeActiveTxt(activeNum) {
       console.log(activeNum)
-      let len = activeNum.toString().length;
-      let retTxt = "";
+      let len = activeNum.toString().length
+      let retTxt = ''
       if (len < 5) {
-        retTxt = activeNum;
-        return `${activeNum}`;
+        retTxt = activeNum
+        return `${activeNum}`
       } else if (len < 8) {
-        retTxt = Math.round(activeNum / 10000);
-        return `${retTxt} 万 +`;
+        retTxt = Math.round(activeNum / 10000)
+        return `${retTxt} 万 +`
       } else {
-        retTxt = Math.round(activeNum / 1000000000);
-        return `${retTxt} 亿 +`;
+        retTxt = Math.round(activeNum / 1000000000)
+        return `${retTxt} 亿 +`
       }
     },
     // 初始化导入的兴趣数组，并返回匹配数组
     normalizeInterestTreeList(arrList, srcList) {
-      this.evaluate.activeNum = 0;
-      const ret = [];
+      this.evaluate.activeNum = 0
+      const ret = []
       arrList.forEach(tar => {
         srcList.forEach((vp, ip) => {
           if (tar === vp.value) {
-            vp.checked = true;
-            vp.expand = true;
-            ret.push(vp);
+            vp.checked = true
+            vp.expand = true
+            ret.push(vp)
           }
           vp.children.forEach((vc, ic) => {
             if (tar === vc.value) {
-              vc.checked = true;
-              vc.expand = true;
-              ret.push(vc);
-              this.evaluate.activeNum += vc.value;
+              vc.checked = true
+              vc.expand = true
+              ret.push(vc)
+              this.evaluate.activeNum += vc.value
             }
-          });
-        });
-      });
-      return ret;
+          })
+        })
+      })
+      return ret
     },
     // 更新推广单元数据
-    updateUnit() {},
+    updateUnit() {
+      let update = {
+        action: 'ucAdPut',
+        opt: 'updateAdgroup',
+        do: 'edit',
+        account_id: this.unitSetting.account_id,
+        adgroup_id: this.adgroupId,
+        adgroup_name: this.unitSetting.adgroup_name,
+        campaign_id: parseInt(this.unitSetting.campaign_id),
+        generalizeType: parseInt(this.unitSetting.generalizeType),
+        adResourceId: parseInt(this.unitSetting.adResourceId),
+        platform: this.unitSetting.platform,
+        chargeType: parseInt(this.unitSetting.chargeType),
+        paused: this.paused,
+        bid: this.unitSetting.bid.toString(),
+        secondBid: this.unitSetting.secondBid.toString(),
+        adconvertId: parseInt(this.unitSetting.adconvertId),
+        convertMonitorType: parseInt(this.unitSetting.convertMonitorType),
+        optimizationTarget: parseInt(this.unitSetting.optimizationTarget),
+        unitType: parseInt(this.unitSetting.unitType)
+      }
+      console.log('edit this.unitSetting', update)
+      Axios.post('api.php', update)
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            this.adgroupId = res.adgroup_id
+            this.$Message.success('更新推广单元数据成功')
+            this.handleGoBack()
+          }
+        })
+        .catch(err => {
+          console.log('新建推广单元失败' + err)
+        })
+    },
     // 新建推广单元数据
     addUnit() {
       let update = Object.assign({}, this.unitSetting, {
-        action: "ucAdPut",
-        opt: "addAdgroup",
+        action: 'ucAdPut',
+        opt: 'addAdgroup',
         campaign_id: parseInt(this.unitSetting.campaign_id),
         generalizeType: parseInt(this.unitSetting.generalizeType),
         adResourceId: parseInt(this.unitSetting.adResourceId),
@@ -1171,82 +1455,113 @@ export default {
         unitType: parseInt(this.unitSetting.unitType),
         bid: this.unitSetting.bid.toString(),
         secondBid: this.unitSetting.secondBid.toString()
-      });
-      console.log("add this.unitSetting", update);
-      Axios.post("api.php", update)
+      })
+      Axios.post('api.php', update)
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.$Message.success("新建推广单元成功");
+            this.$Message.success('新建推广单元成功')
             this.$router.push({
-              name: "ucidea",
+              name: 'ucidea',
               query: {
                 account: this.unitSetting.account_id,
                 campaign_id: this.unitSetting.campaign_id,
                 adgroup_id: res.data.adgroup_id
               }
-            });
+            })
           }
         })
         .catch(err => {
-          console.log("新建推广单元失败" + err);
-        });
+          console.log('新建推广单元失败' + err)
+        })
     },
     // 事件：新建推广单元
     handleUnitSumbit() {
-      if (!this.isTargetingSubmit) {
-        this.handleTargetingSumbit();
+      // 判断新建单元状态
+      if (!this.isTargetingSubmit && !this.unitSetting.targeting_id) {
+        this.handleTargetingSumbit()
       }
+      if (this.isEdit && this.isEditTargetingChange > 0) {
+        this.$Notice.warning({
+          title: '温馨提示：',
+          desc: '定向内容已更改，请按确认按钮重新保存定向！'
+        })
+        return
+      }
+      // 判断编辑时状态
       if (this.isEdit) {
-        this.updateUnit();
+        this.updateUnit()
       } else {
-        this.addUnit();
+        if (!this.isUnitSubmitStatus) {
+          this.$Notice.warning({
+            title: '温馨提示：',
+            desc: '请填写正确数据在提交单元！'
+          })
+          return
+        }
+        this.addUnit()
       }
-    },
-    clearSingleSelect(...arg) {
-      console.log(arg);
     },
     // 事件：返回计划列表
     handleGoBack() {
-      this.$router.go(-1);
+      this.$router.go(-1)
     },
     // 事件：重置导入推广单元的数据与显示
     handleClearImport() {
-      this.unitAdgroupName = "";
-      this.campaign_name = "";
-      this.unitSetting.adgroup_name = "";
-      this.pagePlatform = [];
-      this.evaluate.platform = "";
+      // 重置单元
+      this.unitAdgroupName = ''
+      this.campaign_name = ''
+      this.unitSetting.adgroup_name = ''
+      this.pagePlatform = []
+      this.evaluate.platform = ''
+      this.unitSetting.convertMonitorType = -1
+      this.convertMonitorTypeName = ''
+      this.unitSetting.generalizeType = '1'
+      this.unitSetting.optimizationTarget = '1'
+      this.unitSetting.bid = 0
+      this.unitSetting.secondBid = 0
+      // 重置定向
     },
     // 事件：处理导入推广单元的计划数据
     handleChangeImportPlan(plan) {
-      console.log(plan);
-      this.campaign_name = plan;
+      this.campaign_name = plan
     },
     // 事件：处理导入推广单元的单元数据
     handleChangeImportUnit(unit) {
       let currUnit = this._getcurrList(
         this.importDate.unitlist,
-        "adgroup_name",
+        'adgroup_name',
         unit
-      );
+      )
       if (!currUnit) {
-        return;
+        return
       }
-      console.log("select unit", unit, currUnit);
-      this._assignMethod(this.unitSetting, currUnit);
-      this.unitSetting.bid = parseInt(this.unitSetting.bid);
-      this.unitSetting.secondBid = parseInt(this.unitSetting.secondBid);
-      this.pagePlatform = this.platformStrToArray(this.unitSetting.platform);
-      this.evaluate.platform = this.getPlatform(this.unitSetting.platform);
-      this.unitSetting.chargeType = currUnit.chargeType;
-      this.unitSetting.generalizeType = currUnit.generalizeType;
-      this.handleGeneralizeType(this.unitSetting.generalizeType);
+      this._assignMethod(this.unitSetting, currUnit)
+      // 推广方式
+      this.unitSetting.generalizeType = currUnit.generalizeType
+      // 出价
+      this.unitSetting.bid = parseInt(this.unitSetting.bid)
+      this.unitSetting.secondBid = parseInt(this.unitSetting.secondBid)
+      // 操作系统 - platform
+      this.pagePlatform = this.platformStrToArray(this.unitSetting.platform)
+      this.evaluate.platform = this.getPlatform(this.unitSetting.platform)
+      // 计费方式 - chargeType
+      this.unitSetting.chargeType = currUnit.chargeType
+      // 转化监测类型 - convertMonitorType 状态
+      const convertMonitorType = parseInt(currUnit.convertMonitorType)
+      // this.isconvertTypeStatus = convertMonitorType === 0 ? false : true
+      this.isconvertTypeStatus = convertMonitorType !== 0
+      this.convert.convertMonitorTypesList.forEach(c => {
+        if (c.id === convertMonitorType) {
+          this.convertMonitorTypeName = c.name
+        }
+      })
+      this.handleGeneralizeType(this.unitSetting.generalizeType)
     },
     // 初始化APP定向列表
     normalizeAPPList(appList, key) {
-      const ret = [];
+      const ret = []
       if (appList[0].children.length < 1) {
-        return;
+        return
       }
       appList.forEach((app, i) => {
         if (app.value === key) {
@@ -1255,159 +1570,179 @@ export default {
               title: appp.name,
               expand: false,
               value: appp.value
-            });
+            })
             appp.children.forEach((appc, ic) => {
               ret[ip].children.push({
                 title: appc.name,
                 expland: false,
                 value: appc.value
-              });
-            });
-          });
+              })
+            })
+          })
           if (this.targetingSetting.appcategory.length > 0) {
             this.targetingSetting.appcategory.forEach((value, iv) => {
               ret.forEach((reti, ir) => {
                 if (value === ret.value) {
-                  reti[ir].checked = true;
+                  reti[ir].checked = true
                 }
-              });
-            });
+              })
+            })
           }
         }
-      });
-      return ret;
+      })
+      return ret
     },
     // 初始化兴趣列表
     normalizeInterestList(interestList) {
-      this.evaluate.activeNum = 0;
-      const ret = [];
+      this.evaluate.activeNum = 0
+      const ret = []
       interestList.forEach((interp, ip) => {
         ret.push({
           title: interp.name,
           expand: false,
           value: interp.value,
           children: []
-        });
+        })
         interp.children.forEach((interc, ic) => {
           ret[ip].children.push({
             title: interc.name,
             expand: false,
             value: interc.value
-          });
-          this.evaluate.activeNum += interc.value;
-        });
-      });
+          })
+          this.evaluate.activeNum += interc.value
+        })
+      })
       if (this.targetingSetting.interest.length > 0) {
         this.targetingSetting.interest.forEach((value, iv) => {
           ret.forEach((reti, ir) => {
             if (value === ret.value) {
-              reti[ir].selected = true;
+              reti[ir].selected = true
             }
-          });
-        });
+          })
+        })
       }
-      return ret;
+      return ret
     },
     // 初始化省市地域列表
     normalizeProvinceList(provinceList) {
-      this.evaluate.activeNum = 0;
-      const ret = [];
+      this.evaluate.activeNum = 0
+      const ret = []
       provinceList.forEach((province, pi) => {
         ret.push({
           title: province.name,
           expand: false,
           value: province.value,
           children: []
-        });
+        })
         province.cityList.forEach((city, ci) => {
           ret[pi].children.push({
             title: city.name,
             expand: false,
             value: city.value
-          });
-          this.evaluate.activeNum += city.value;
-        });
-      });
-      return ret;
+          })
+          this.evaluate.activeNum += city.value
+        })
+      })
+      return ret
     },
     // 获取转化列表
     getAdConvert(objType) {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getAdConvert",
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getAdConvert',
         account_id: this.$route.query.account,
         convertMonitorType: objType
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.convert.convertList = res.data;
-            console.log("获取转化列表", this.convert.convertList);
+            this.convert.convertList = res.data
           }
         })
         .catch(err => {
-          console.log("获取转化列表错误：" + err);
-        });
+          console.log('获取转化列表错误：' + err)
+        })
+      // 本地测试代码
+      // this.convert.convertList = getAdConvert.data
     },
     // 获取转化类型列表
     getConvertMonitorTypes() {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getConvertType",
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getConvertType',
         account_id: this.$route.query.account
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.convert.convertMonitorTypesList = res.data;
-            this.convert.convertMonitorTypesListCopy = this.convert.convertMonitorTypesList.slice();
-            console.log(
-              "获取转化类型列表",
-              this.convert.convertMonitorTypesList
-            );
+            this.convert.convertMonitorTypesList = res.data
+            this.convert.convertMonitorTypesListCopy = this.convert.convertMonitorTypesList.slice()
+
+            // 在编辑状态下，二次判断
+            if (this.isconvertTypeStatus === true && this.isEdit) {
+              res.data.forEach(c => {
+                if (c && c.id === this.unitSetting.convertMonitorType) {
+                  this.convertMonitorTypeName = c.name
+                }
+              })
+            }
           }
         })
         .catch(err => {
-          console.log("获取转化类型列表错误：" + err);
-        });
+          console.log('获取转化类型列表错误：' + err)
+        })
       // 本地测试代码
-      // this.convert.convertMonitorTypesList = convertTypeList.data;
+      // this.convert.convertMonitorTypesList = convertTypeList.data
+      // this.convert.convertMonitorTypesListCopy = this.convert.convertMonitorTypesList.slice()
+
+      // // 在编辑状态下，二次判断
+      // if (this.isconvertTypeStatus === true && this.isEdit) {
+      //   this.convert.convertMonitorTypesList.data.forEach(c => {
+      //     if (c && c.id === this.unitSetting.convertMonitorType) {
+      //       this.convertMonitorTypeName = c.name
+      //     }
+      //   })
+      // }
     },
     // 获取APP列表
     getInterestAPP() {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getAppCategory",
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getAppCategory',
         account_id: this.$route.query.account
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.interestAPPList = res.data.appCategories;
-            const key = [1, 2]; // appCategories值，"1"为软件，"2"为游戏
+            this.interestAPPList = res.data.appCategories
+            const key = [1, 2] // appCategories值，"1"为软件，"2"为游戏
             this.interestAPPSFTreeList = this.normalizeAPPList(
               this.interestAPPList,
               key[0]
-            );
+            )
             this.interestAPPGameTreeList = this.normalizeAPPList(
               this.interestAPPList,
               key[1]
-            );
-            console.log("获取APP列表", this.interestTypesList);
+            )
           }
         })
         .catch(err => {
-          console.log("获取APP列表错误：" + err);
-        });
+          console.log('获取APP列表错误：' + err)
+        })
       // 本地测试代码
-      // this.interestAPPList = res.data.appCategories;
-      // const key = ["1", "2"]; // appCategories值，"1"为软件，"2"为游戏
-      // this.interestAPPSFTreeList = this.normalizeAPPList(this.interestAPPList, key[0]);
-      // this.interestAPPGameTreeList = this.normalizeAPPList(this.interestAPPList, key[1]);
-      // console.log("获取APP列表", this.interestTypesList);
+      // this.interestAPPList = getAppCategory.data.appCategories
+      // const key = [1, 2] // appCategories值，"1"为软件，"2"为游戏
+      // this.interestAPPSFTreeList = this.normalizeAPPList(
+      //   this.interestAPPList,
+      //   key[0]
+      // )
+      // this.interestAPPGameTreeList = this.normalizeAPPList(
+      //   this.interestAPPList,
+      //   key[1]
+      // )
     },
     // 获取兴趣列表
     getInterestTypes() {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getInterest",
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getInterest',
         account_id: this.$route.query.account
       })
         .then(res => {
@@ -1415,26 +1750,27 @@ export default {
             this.interestTypesList = res.data.interestTypes;
             this.interestTreeList = this.normalizeInterestList(
               this.interestTypesList
-            );
-            this.evaluate.activeTxt = this.normalizeActiveTxt(this.evaluate.activeNum);
-            console.log("获取兴趣列表", this.interestTypesList);
+            )
+            this.evaluate.activeTxt = this.normalizeActiveTxt(
+              this.evaluate.activeNum
+            )
+            // console.log("获取兴趣列表", this.interestTypesList)
           }
         })
         .catch(err => {
-          console.log("获取兴趣列表错误：" + err);
-        });
+          console.log('获取兴趣列表错误：' + err)
+        })
       // 本地测试代码
-      // this.interestTypesList = interestList.data.interestTypes;
-      // this.interestTreeList = this.normalizeInterestList(
-      //   this.interestTypesList
-      // );
+      // this.interestTypesList = interestList.data.interestTypes
+      // this.interestTreeList = this.normalizeInterestList(this.interestTypesList)
+      // this.evaluate.activeTxt = this.normalizeActiveTxt(this.evaluate.activeNum)
       // console.log("获取兴趣列表", this.interestTypesList);
     },
     // 获取省市地域列表
     getProvince() {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getProvince",
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getProvince',
         account_id: this.$route.query.account
       })
         .then(res => {
@@ -1442,107 +1778,202 @@ export default {
             this.provinceList = res.data.provinces;
             this.provinceTreeList = this.normalizeProvinceList(
               this.provinceList
-            );
-            this.evaluate.activeTxt = this.normalizeActiveTxt(this.evaluate.activeNum);
-            console.log("获取省市地域列表", this.provinceList);
+            )
+            this.evaluate.activeTxt = this.normalizeActiveTxt(
+              this.evaluate.activeNum
+            )
+            // console.log("获取省市地域列表", this.provinceList)
           }
         })
         .catch(err => {
-          console.log("获取省市地域列表错误：" + err);
-        });
+          console.log('获取省市地域列表错误：' + err)
+        })
       // 本地测试代码
-      // this.provinceList = provincesList.data.provinces;
-      // this.provinceTreeList = this.normalizeProvinceList(this.provinceList);
-      // console.log("获取省市地域列表", this.provinceList);
+      // this.provinceList = provincesList.data.provinces
+      // this.provinceTreeList = this.normalizeProvinceList(this.provinceList)
+      // this.evaluate.activeTxt = this.normalizeActiveTxt(this.evaluate.activeNum)
     },
-    // 获取推广单元数据
+    // 获取关键词推荐、站点推荐、APP 推荐结果. params包括：maxNum，excludes，seeds，type
+    // type包含：app ： app推荐 ，word ： 关键词推荐 ，url ： 站点推荐
+    getRecommend(params) {
+      console.log(params)
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getRecommend',
+        account_id: this.$route.query.account,
+        type: params.type,
+        maxNum: 200,
+        seeds: params.seeds
+      })
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            console.log('获取关键词推荐、站点推荐、APP 推荐结果', res.data)
+          }
+        })
+        .catch(err => {
+          console.log('获取省市地域列表错误：' + err)
+        })
+    },
+    // 初始化单元状态
+    initUnitEditStatus(unit) {
+      this._assignMethod(this.unitSetting, unit)
+
+      this.paused = unit.paused
+      this.targetingId = unit.targeting_id
+
+      // 推广方式
+      this.unitSetting.generalizeType = this.unitSetting.generalizeType
+      // 出价
+      this.unitSetting.bid = parseInt(this.unitSetting.bid)
+      this.unitSetting.secondBid = parseInt(this.unitSetting.secondBid)
+      // 操作系统 - platform
+      this.pagePlatform = this.platformStrToArray(this.unitSetting.platform)
+      this.evaluate.platform = this.getPlatform(this.unitSetting.platform)
+      // 计费方式 - chargeType
+      this.unitSetting.chargeType = this.unitSetting.chargeType
+      // 优化目标  - optimizationTarget 状态
+      this.isOptTarStatus = true
+      this.isOptTarConvertStatus =
+        // this.unitSetting.optimizationTarget === '1' ? false : true // 优化目标为点击（即为1）时，可以选择为转为（3）
+        this.unitSetting.optimizationTarget !== '1' // 优化目标为点击（即为1）时，可以选择为转为（3）
+      // 转化监测类型 - convertMonitorType 状态
+      // 转化监测类型数据加载失败则重新加载
+      if (this.convert.convertMonitorTypesList.length < 1) {
+        this.getConvertMonitorTypes()
+      }
+      const convertMonitorType = parseInt(this.unitSetting.convertMonitorType)
+      // this.isconvertTypeStatus = convertMonitorType === 0 ? false : true
+      this.isconvertTypeStatus = convertMonitorType !== 0
+      if (convertMonitorType !== 0) {
+        this.convert.convertMonitorTypesList.forEach(c => {
+          if (c && c.id === convertMonitorType) {
+            this.convertMonitorTypeName = c.name
+          }
+        })
+      }
+    },
+    // 根据id获取单元内容接口,在编辑状态下调用
+    getAdgroupById() {
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getAdgroupById',
+        id: this.$route.query.id
+      })
+        .then(res => {
+          if (ERR_OK === res.ret) {
+            const data = res.data[0];
+            // console.log("编辑时根据id获取单元内容接口getAdgroupById", data);
+            this.initUnitEditStatus(data);
+          }
+        })
+        .catch(err => {
+          console.log('获取推广单元数据错误：' + err);
+        })
+      // 本地测试代码
+      // this.initUnitEditStatus(unitbyid.data[0])
+    },
+    // 获取推广单元数据，新建时调用
     getCampaignUnit() {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getAdgroupsList",
-        campaign_id: "30428830"
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getAdgroupById'
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.importDate.unitlist = res.data;
-            console.log(
-              "单元this.importDate.unitlist",
-              this.importDate.unitlist
-            );
+            const data = res.data.length > 0 ? res.data : [];
+            this.importDate.unitlist = data;
+            // console.log("新建时获取单元内容接口xxx", res.data)
           }
         })
         .catch(err => {
-          console.log("获取推广单元数据错误：" + err);
-        });
+          console.log('获取推广单元数据错误：' + err)
+        })
       // 本地测试代码
-      // this.importDate.unitlist = unitList.data;
+      // this.importDate.unitlist = unitList.data
     },
-    // 获取推广计划数据
-    getCampaignPlan() {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getCampaignsList"
+    // 获取计划名称列表
+    getCampaignNameList() {
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getCampaignNameList'
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.importDate.planlist = res.data;
-            console.log(
-              "单元this.importDate.planlist",
-              this.importDate.planlist
-            );
+            const data = res.data.length > 0 ? res.data : []
+            this.importDate.planlist = data
+            data.forEach(campaign => {
+              if (campaign.campaign_id === this.unitSetting.campaign_id) {
+                this.campaign_name = campaign.campaign_name
+              }
+            })
           }
         })
         .catch(err => {
-          console.log("获取推广计划数据错误：" + err);
-        });
-      // 本地测试代码
-      // this.importDate.planlist = planList.data;
+          console.log('获取计划名称列表错误：' + err)
+        })
+      // 本地测试
+      // this.importDate.planlist = getCampaignNameList.data
+      // this.importDate.planlist.forEach(campaign => {
+      //   if (campaign.campaign_id === this.unitSetting.campaign_id) {
+      //     this.campaign_name = campaign.campaign_name
+      //   }
+      // })
     },
     // 获取定向设置数据
     getTargetingList() {
-      Axios.post("api.php", {
-        action: "ucAdPut",
-        opt: "getTargetingList"
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getTargetingList'
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.targetingList = res.data;
-            console.log("targetingList", this.targetingList);
+            const data = res.data.length > 0 ? res.data : []
+            this.targetingList = data
+            if (this.isEdit) {
+              this.initEditTargeting()
+            }
+            // console.log('获取定向设置数据', this.targetingList)
           }
         })
         .catch(err => {
-          console.log("获取定向设置数据错误：" + err);
-        });
+          console.log('获取定向设置数据错误：' + err)
+        })
       // 本地测试代码
-      // this.targetingList = targetingList.data;
+      // this.targetingList = targetingList.data
+      // if (this.isEdit) {
+      //   this.initEditTargeting()
+      // }
     },
     // 获取account信息
     getAccountInfo() {
-      const query = this.$route.query;
-      const params = this.$route.params;
-      console.log("unit router query", query, params);
-      this.adgroupId = params.adgroup_id;
+      const query = this.$route.query
+      // console.log('router query', query)
+      this.unitSetting.account_id = query.account
+      this.unitSetting.campaign_id = query.campaign_id
+      this.targetingSetting.account_id = query.account
+
       if (
-        typeof query === "object" &&
+        typeof query === 'object' &&
         query.account &&
         query.campaign_id &&
         query.edit &&
-        query.edit === "1"
+        query.edit === '1'
       ) {
-        if (params && params.account_id) {
-          this._assignMethod(this.unitSetting, params);
-          this.unitSetting.bid = parseInt(this.unitSetting.bid);
-          this.unitSetting.secondBid = parseInt(this.unitSetting.secondBid);
-          this._assignMethod(this.targetingSetting, params);
-          this.isEdit = true;
-        } else {
-          this.handleGoBack();
-        }
+        this.currId = query.id
+        this.adgroupId = query.adgroup_id
+        this.targetingId = query.targeting_id
+        this.isEdit = true
       } else {
-        this.isEdit = false;
-        this.unitSetting.account_id = query.account;
-        this.unitSetting.campaign_id = query.campaign_id;
+        this.isEdit = false
       }
+    },
+    // 编辑时的定向设置数据
+    initEditTargeting() {
+      this.targetingList.forEach(targ => {
+        if (targ.targeting_id === this.targetingId) {
+          this._assignMethod(this.targetingSetting, targ)
+        }
+      })
     },
     /**
      * 赋值函数
@@ -1552,29 +1983,32 @@ export default {
     _assignMethod(tar, src) {
       for (let k in tar) {
         if (src[k] && src.hasOwnProperty(k)) {
-          tar[k] = src[k];
+          tar[k] = src[k]
         }
       }
-      console.log("_assignMethod", tar, src);
     },
     /**
      * 返回匹配的数组
      * @augments list 将要对比的数组集合
-     * @argument name 将要对比的名称
+     * @argument type 将要对比的对象的键
+     * @argument name 将要对比的对象的值
      * @returns ret 返回匹配的对象集合
      */
     _getcurrList(list, type, name) {
-      const ret = [];
+      if (list.length < 1) {
+        return
+      }
+      const ret = []
       list.forEach(item => {
         if (item[type] === name) {
-          ret.push(item);
+          ret.push(item)
         }
-      });
-      return ret[0];
+      })
+      return ret[0]
     }
   },
   components: {
     typeTree
   }
-};
+}
 </script>

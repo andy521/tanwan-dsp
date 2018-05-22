@@ -7,8 +7,13 @@ const user = {
         isLogin : 0,
         //用户自定义指标
         userindex:[],
+        //account:'',
+        report_account_id:""
     },
-    mutations: {        
+    mutations: {   
+        REPORT_ACCOUNT_ID(state,id){
+            state.report_account_id=id;
+        },
         USER_LOGINOUT ( state ){
             state.username = ''
             state.isLogin = 0 
@@ -21,7 +26,10 @@ const user = {
         USER_INDEX(state,data){
             let val = data ? data.split(',') : [];
             state.userindex = val
-        }
+        },
+        // SET_ACCOUNT(state,data){
+        //     state.account = data
+        // }
     },
     actions : {
         //用户登录
@@ -55,6 +63,10 @@ const user = {
             util.removeItem('sessionid');
             util.removeItem('access' );
         },
+        //用户选择账号
+        // setAccount({ commit }, data){
+        //     commit('SET_ACCOUNT',data);
+        // },
         //获取用户自定义指标
         DiyIndex({ commit },opt){
             let param = opt;
