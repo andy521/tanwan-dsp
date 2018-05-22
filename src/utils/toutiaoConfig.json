@@ -195,22 +195,27 @@
     ],
     "pricing": [{
             "name": "CPC",
+            "cname":"点击量",
             "val_type": "PRICING_CPC"
         },
         {
             "name": "OCPC",
+            "cname":"转换量",
             "val_type": "PRICING_OCPC"
         },
         {
-            "name": "CPA",
-            "val_type": "PRICING_CPA"
+            "name": "CPM",
+            "cname":"展示量",
+            "val_type": "PRICING_CPM"
         },
         {
             "name": "CPV",
+            "cname":"有效播放量",
             "val_type": "PRICING_CPV"
         },
         {
             "name": "OCPM",
+            "cname":"转换量",
             "val_type": "PRICING_OCPM"
         }
     ],
@@ -351,12 +356,9 @@
         }, {
             "val_type": "CATEGORY",
             "name": "按分类"
-        },
-        {
-            "val_type": "APP",
-            "name": "按APP"
         }
     ]
+  
 
 
 

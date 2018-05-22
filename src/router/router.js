@@ -56,10 +56,12 @@ export const ttNew = {
     meta: {
         title: '新建头条推广'
     },    
-    component: () => import('@/views/toutiaonew/index.vue'),
+    component: () => import('@/components/childrouter/childrouter.vue'),
     children: [
-        { path: 'campaign', title: '新建头条广告组', name: 'ttcampaign', component: () => import('@/views/toutiaonew/components/campaign.vue') },
-        { path: 'ad', title: '新建头条广告计划', name: 'ttad', component: () => import('@/views/toutiaonew/components/ad.vue') },
+        { path: 'campaign', title: '新建头条广告组', name: 'ttcampaign', component: () => import('@/views/toutiaonew/campaign.vue') },
+        { path: 'ad', title: '新建头条广告计划', name: 'ttad', component: () => import('@/views/toutiaonew/ad.vue') },
+        { path: 'targeting', title: '新建头条定向', name: 'tttargeting', component: () => import('@/views/toutiaonew/targeting.vue') },
+        { path: 'creative', title: '新建头条创意', name: 'ttcreative', component: () => import('@/views/toutiaonew/creative.vue') },
     ]
 };
 

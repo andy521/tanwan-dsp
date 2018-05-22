@@ -1,62 +1,74 @@
 
 <style scoped>
+.toutiaonew {
+  padding: 10px 10px 10px 210px;
+  overflow: auto;
+  height: 100%;
+  font-size: 14px;
+}
 .newtt {
   padding: 20px;
 }
 </style>
 <template>
-    <Card dis-hover>
-        <div class="newtt">
-            <Tabs :animated="false">
-                <TabPane label="创建新广告组">
-                    <Row>
-                        <Col span="12">
-                        <Form :label-width="100" class="margin-top-20">
-                            <FormItem label="选择推广目的">
-                                <RadioGroup v-model="landing_type" type="button" size="large">
-                                    <template v-if="id">
-                                        <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this" v-if="item.val_type == landing_type">{{item.name}}</Radio>
-                                    </template>
-                                    <template v-else>
-                                        <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Radio>
-                                    </template>
-                                </RadioGroup>
-                            </FormItem>
-                            <FormItem label="预算">
-                                <RadioGroup v-model="budget_mode" type="button" size="large">
-                                    <Radio :label="item.val_type" v-for="item in toutiaoConfig.budget_mode" :key="this" v-if="item.val_type!='BUDGET_MODE_TOTAL'">{{item.name}}</Radio>
-                                </RadioGroup>
-                            </FormItem>
-                            <FormItem v-show="budget_mode!='BUDGET_MODE_INFINITE'">
-                                <Input v-model="budget" placeholder="RMB"></Input>
-                            </FormItem>
-                            <FormItem label="广告组名称">
-                                <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
-                            </FormItem>
-                            <FormItem v-if="id">
-                                <Button type="primary" @click="submitCampaign()">确定修改</Button>
-                            </FormItem>
-                            <FormItem v-else>
-                                <Button type="primary" @click="submitCampaign()">保存并继续</Button>
-                            </FormItem>
-                        </Form>
-                        </Col>
-                    </Row>
-                </TabPane>
-                <TabPane label="选择已有广告组">
-                    <cho-list></cho-list>
-                </TabPane>
-            </Tabs>
-        </div>
-    </Card>
+    <div class="toutiaonew">
+        <!-- 导行 -->
+        <side-bar :step="0"></side-bar>
+        <Card dis-hover>
+            <div class="newtt">
+                <Tabs :animated="false">
+                    <TabPane label="创建新广告组">
+                        <Row>
+                            <Col span="12">
+                            <Form :label-width="100" class="margin-top-20">
+                                <FormItem label="选择推广目的">
+                                    <RadioGroup v-model="landing_type" type="button" size="large">
+                                        <template v-if="id">
+                                            <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this" v-if="item.val_type == landing_type">{{item.name}}</Radio>
+                                        </template>
+                                        <template v-else>
+                                            <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Radio>
+                                        </template>
+                                    </RadioGroup>
+                                </FormItem>
+                                <FormItem label="预算">
+                                    <RadioGroup v-model="budget_mode" type="button" size="large">
+                                        <Radio :label="item.val_type" v-for="item in toutiaoConfig.budget_mode" :key="this" v-if="item.val_type!='BUDGET_MODE_TOTAL'">{{item.name}}</Radio>
+                                    </RadioGroup>
+                                </FormItem>
+                                <FormItem v-show="budget_mode!='BUDGET_MODE_INFINITE'">
+                                    <Input v-model="budget" placeholder="RMB"></Input>
+                                </FormItem>
+                                <FormItem label="广告组名称">
+                                    <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
+                                </FormItem>
+                                <FormItem v-if="id">
+                                    <Button type="primary" @click="submitCampaign()">确定修改</Button>
+                                </FormItem>
+                                <FormItem v-else>
+                                    <Button type="primary" @click="submitCampaign()">保存并继续</Button>
+                                </FormItem>
+                            </Form>
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane label="选择已有广告组">
+                        <cho-list></cho-list>
+                    </TabPane>
+                </Tabs>
+            </div>
+        </Card>
+    </div>
 </template>
 
 <script>
 import Axios from "@/api/index";
+import sideBar from "./components/sideBar.vue";
 import toutiaoConfig from "@/utils/toutiaoConfig.json";
-import choList from './choseList.vue'
+import choList from './components/choseList.vue'
 export default {
     components: {
+        sideBar,
         choList
     },
     data() {
@@ -146,10 +158,11 @@ export default {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
                     this.$router.push({
-                        name: 'ttad',
+                        name: 'tttargeting',
                         query: {
-                            account_id:this.account_id,
-                            campaign_id: res.data.campaign_id
+                            account_id: this.account_id,
+                            campaign_id: res.data.campaign_id,
+                            landing_type:this.landing_type
                         }
                     })
                 }

@@ -89,10 +89,9 @@
 <script>
 export default {
     name: "sideBar",
+    props: ["step"],
     data() {
         return {
-            campaign_id: this.$route.query.campaign_id, //广告组id  
-            step: 0,
             current: [
                 {
                     name: "创建广告组",
@@ -103,11 +102,16 @@ export default {
                     ]
                 },
                 {
-                    name: "创建广告计划",
+                    name: "创建用户定向",
                     list: [
                         {
                             name: "用户定向"
-                        },
+                        }
+                    ]
+                },
+                {
+                    name: "创建广告计划",
+                    list: [
                         {
                             name: "投放目标"
                         },
@@ -137,16 +141,12 @@ export default {
         };
     },
     mounted() {
-
     },
     methods: {
         //返回
         back() {
             this.$router.go(-1);
         }
-    },
-    beforeRouteUpdate(to, from, next) {
-        console.log('router', to, from, next)
     }
 };
 </script>

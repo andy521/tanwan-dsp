@@ -271,7 +271,7 @@ export default {
         },
         //确定
         confirm() {
-            this.$emit("on-change", this.targeting.targeting);
+            this.$emit("on-change", this.targeting);
         },
     }
 }
