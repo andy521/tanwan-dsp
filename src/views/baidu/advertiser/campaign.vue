@@ -1,3 +1,6 @@
+<style lang="less">
+@import "../index.less";
+</style>
 <style scoped>
 .sel {
   width: 220px;
@@ -35,7 +38,7 @@
         </Col>
         <Col class="manger-head-bar">
           <!-- 新建 -->
-          <new-edit to-route-name="bdplan" title="新建推广计划"></new-edit>
+          <new-edit to-route-name="bd_campaign" title="新建推广计划"></new-edit>
         </Col>
       </Row>
     </Card>
@@ -75,7 +78,7 @@
       </Row>
 
       <div>
-        <Table :data="tableList" :height="height" :loading="loading" :columns="taColumns" :size="tabSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="handlecheckChange" @on-sort-change="handleSortchange" stripe :row-class-name="rowClassName"></Table>
+        <Table :data="tableList" :height="height" :loading="loading" :columns="tableColumnList" :size="tabSize" class="margin-top-10" ref="toutiaoAdTable" @on-selection-change="handlecheckChange" @on-sort-change="handleSortchange" stripe :row-class-name="rowClassName"></Table>
         <Row class="margin-top-10">
           <Col span="12"> 表格尺寸
             <Radio-group v-model="tabSize" type="button">
@@ -91,7 +94,7 @@
             </span>
           </Col>
           <Col span="12" style="text-align: right;">
-            <Page :total="pageTotalNum" :page-size="pageSize" ref="pages" @on-change="searchCampaigns()" show-elevator show-total></Page>
+            <Page :total="pageTotalNum" :page-size="pageSize" :current="searchParams.page" ref="pages" @on-change="searchCampaigns" show-elevator show-total></Page>
           </Col>
         </Row>
       </div>
@@ -122,6 +125,7 @@ export default {
       pageSize: 50, // 每页数量,
       loading: false, // Table组件加载loading
       visible: false, // 弹窗可视
+      tableColumnList: [], // Table结构
       tableList: [], // Table数据
       tabSize: 'small', // Table尺寸
       batchEdit: '', // 批量修改状态
@@ -143,8 +147,81 @@ export default {
       }
     }
   },
-  computed: {
-    taColumns() {
+  mounted() {
+    // 返回时获取保存数据
+    const planCache = this.$store.state.bd.planCache
+    if (this.$route.meta.keepAlive && JSON.stringify(planCache) !== '{}') {
+        this.tabSize = unitCache.tabSize
+        this.pageSize = unitCache.pageSize
+        this.searchParams.keyword = unitCache.keyword
+        this.searchParams.page = unitCache.page
+        this.searchCampaigns(this.searchParams.page)
+    } else {
+        this.searchCampaigns()
+    }
+
+    this.getTableColumnList()
+  },
+  methods: {
+    // 表格高亮calss
+    rowClassName(row, index) {
+      if (row._disabled) {
+        return 'table-statistics'
+      }
+    },
+    // 排序
+    handleSortchange(col) {
+      this.searchParams.orderField = col.key
+      this.searchParams.orderDirection = 'asc' ? 'SORT_ASC' : 'SORT_DESC'
+      this.searchCampaigns()
+    },
+    // 获取选中的id
+    handlecheckChange(rowList) {
+      const ret = []
+      rowList.forEach(row => {
+        ret.push(row.id)
+      })
+      this.checkedIdList = ret
+    },
+    handleDateChange(val) {
+      this.searchParams.startDate = val[0]
+      this.searchParams.endDate = val[1]
+      this.searchCampaigns()
+    },
+    handleAuthorChange(val) {
+      this.searchParams.authors = val
+      this.searchCampaigns()
+    },
+    //返回没有选中的
+    getuncheck(val) {
+      this.uncheck = val
+      this.getTableColumnList()
+    },
+    handleGameIdChange(idList) {
+      this.searchParams.game_ids = Array.from(idList)
+      this.searchCampaigns()
+    },
+    //修改状态
+    editStatus() {
+      Axios.post('api.php', {
+          action: 'bdAdPut',
+          opt: 'updateCampaignStatus',
+          ids: this.checkedIdList,
+          opt_status: this.batchEdit
+      })
+        .then(res => {
+            if (res.ret == 1) {
+                this.$Message.info(res.msg)
+                this.searchCampaigns(this.page)
+                this.visible = false
+            }
+        })
+        .catch(err => {
+            console.log('批量修改状态失败' + err)
+        })
+    },
+    // 初始化Table 结构
+    getTableColumnList() {
       const tableColumnList = [
         {
           type: 'selection',
@@ -156,7 +233,6 @@ export default {
           key: 'campaign_name',
           width: 200,
           render: (h, params) => {
-            console.log(params)
             if (params.row._disabled) {
               return h('span', '本页统计')
             } else {
@@ -170,7 +246,7 @@ export default {
                         id: params.row.id
                       }
                       this.$router.push({
-                        name: 'bd_plan',
+                        name: 'bd_adgroup',
                         query: query
                       })
                     }
@@ -187,7 +263,7 @@ export default {
                     click: () => {
                       this.$Modal.confirm({
                         render: h => {
-                          return h('input', {
+                          return h('i-input', {
                             props: {
                               value: params.row.campaign_name,
                               autofocus: true,
@@ -483,78 +559,15 @@ export default {
           }
         })
       })
-      return tableColumnList
-    }
-  },
-  created() {},
-  mounted() {
-    this.searchCampaigns()
-  },
-  methods: {
-    // 表格高亮calss
-    rowClassName(row, index) {
-      if (row._disabled) {
-        return "table-statistics";
-      }
-    },
-    // 排序
-    handleSortchange(col) {
-      this.searchParams.orderField = col.key
-      this.searchParams.orderDirection = 'asc' ? 'SORT_ASC' : 'SORT_DESC'
-      this.searchCampaigns()
-    },
-    // 获取选中的id
-    handlecheckChange(rowList) {
-      const ret = []
-      rowList.forEach(row => {
-        ret.push(row.id)
-      })
-      this.checkedIdList = ret
-    },
-    handleDateChange(val) {
-      this.searchParams.startDate = val[0]
-      this.searchParams.endDate = val[1]
-      this.searchCampaigns()
-    },
-    handleAuthorChange(val) {
-      this.searchParams.authors = val
-      this.searchCampaigns()
-    },
-    //返回没有选中的
-    getuncheck(val) {
-      this.uncheck = val
-    },
-    handleGameIdChange(idList) {
-      this.searchParams.game_ids = Array.from(idList)
-      this.searchCampaigns()
-    },
-    //修改状态
-    editStatus() {
-      Axios.post('api.php', {
-          action: 'bdAdPut',
-          opt: 'updateCampaignStatus',
-          ids: this.checkedIdList,
-          opt_status: this.batchEdit
-      })
-        .then(res => {
-            if (res.ret == 1) {
-                this.$Message.info(res.msg)
-                this.searchCampaigns(this.page)
-                this.visible = false
-            }
-        })
-        .catch(err => {
-            console.log('批量修改状态失败' + err)
-        })
+      this.tableColumnList = tableColumnList
     },
     // 推广计划搜索
     searchCampaigns(page) {
       this.loading = true
       if (page === undefined) {
-        this.$refs['pages'].currentPage = 1
-        this.page = 1
+        this.searchParams.page = 1
       } else {
-        this.page = page
+        this.searchParams.page = page
       }
 
       const params = Object.assign({}, this.searchParams, {
@@ -573,7 +586,7 @@ export default {
           res.data.list.push(res.data.curr_page_total)
 
           // 初始化数据
-          this.pageTotalNum = data.total_page
+          this.pageTotalNum = data.total_number
           this.tableList = data.list
         }
       }).catch(err => {
@@ -581,6 +594,25 @@ export default {
         console.error('推广计划搜索错误', err)
       })
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'bd_adgroup') {
+      to.meta.keepAlive = true
+    }
+    next()
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'bd_adgroup') {
+      const cache = {
+        tabSize: this.tabSize,
+        pageSize: this.pageSize,
+        keyword: this.searchParams.keyword,
+        page: this.searchParams.page
+      }
+      this.$store.commit('SAVE_BD_PLAN_CACHE', cache)      
+    }
+    from.meta.keepAlive = false
+    next()
   }
 }
 </script>
