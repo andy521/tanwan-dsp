@@ -119,7 +119,7 @@
                         </Select>
                     </FormItem>
                     <FormItem label="转账金额">
-                        <Input v-model="transfer.money" placeholder="请输入退款金额(元)"></Input>
+                        <Input v-model="transfer.money" placeholder="请输入转账金额(元)"></Input>
                     </FormItem>
                     <FormItem label="备注">
                         <Input v-model="transfer.mark" placeholder="请输入备注"></Input>
