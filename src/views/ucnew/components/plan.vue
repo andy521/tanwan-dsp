@@ -22,8 +22,8 @@
       <Form :label-width="126" label-position="left">
         <FormItem v-if="!isEdit" class="border-import">
           <h3 slot="label" class="sub-title color-green">导入推广计划</h3>
-          <Select @on-change="handleChangeAdPlan" v-model="selPlanName" class="item-width">
-            <Option v-for="(plan, index) in planNameList" :value="plan" :key="index">{{plan}}</Option>
+          <Select @on-change="handleChangeAdPlan" v-model="adCustomPlan.campaign_name" class="item-width">
+            <Option v-for="(plan, index) in AdPlan" :value="plan" :key="index">{{plan}}</Option>
           </Select>
           <Button type="text" @click="handleClearPlanInfo">重置</Button>
         </FormItem>
@@ -57,17 +57,18 @@
           </RadioGroup>
         </FormItem>
         <FormItem label="日预算">
-          <RadioGroup @on-change="handleBudgetModel" v-model="budgetStatus">
+          <RadioGroup @on-change="handleChangeBudget" v-model="budgetStatus">
             <Radio label="0">
               <span>不限</span>
             </Radio>
             <Radio label="1">
-              <Input @on-blur="handleBudget" v-model="adCustomPlan.budget" placeholder="100" :disabled="isDisableBudget" class="item-width"></Input>元
+              <InputNumber @on-blur="handleBudget" v-model="adCustomPlan.budget" :min="100" :max="100000" :precision="2" :step="100" placeholder="100" :disabled="isDisableBudget" class="item-width"></InputNumber>元
             </Radio>
           </RadioGroup>
         </FormItem>
         <FormItem label="开始日期">
-          <DatePicker @on-change="handleStartDate" :value="adCustomPlan.startDate" type="date" format="yyyy-MM-dd" placeholder="请选择开始日期" class="item-width"></DatePicker>
+          <DatePicker @on-change="changeStartDate" :value="adCustomPlan.startDate" type="date" placeholder="请选择开始日期" class="item-width"></DatePicker>
+          <!-- <DatePicker v-model="adCustomPlan.startDate" type="date" format="yyyy-MM-dd" placeholder="请选择开始日期" class="item-width"></DatePicker> -->
         </FormItem>
         <FormItem label="结束日期">
           <RadioGroup @on-change="handleChangeEndDate" v-model="endDateStatus">
@@ -81,7 +82,7 @@
         </FormItem>
         <FormItem label="投放时段">
           <span class="text-primary">全部时段</span>
-          <Button @click="weekTimeModal = true" type="text" class="color-theme">修改</Button>
+          <Button @click="handlerWeekTime" type="text" class="color-theme">修改</Button>
         </FormItem>
       </Form>
       <Row>
@@ -111,9 +112,9 @@ export default {
     return {
       isEdit: false, // 判断当前推广计划状态：true为编辑状态，false为新建状态
       currId: 0, // 编辑状态是的 计划id
-      selPlanName: '', // 选择的计划名称
-      planNameList: [], // 推广计划名称（campaign_name）
+      AdPlan: [], // 推广计划名称（campaign_name）
       adPlanList: [], // 推广计划数据
+      adPlanListCopy: [],
       adResourceId: [1, 2], // 默认推广资源
       budgetStatus: '0', // 日预算状态：不限为0，自定义为1
       isDisableBudget: true, // 日预算状态，禁止为true，自定义为false
@@ -124,7 +125,7 @@ export default {
         account_id: 123456789,
         campaign_name: '',
         adResourceId: 1,
-        budget: -1,
+        budget: 100,
         startDate: this._getStartDate(),
         endDate: SET_END_DATE_UNLIMITED,
         monday: '111111111111111111111111',
@@ -151,24 +152,19 @@ export default {
       planInfo: {
         campaignId: '',
         campaignName: ''
-      },
-      budgetTip: {
-        isSubmit: true,
-        range: [100, 100000],
-        tip: '日预算范围100~100000元'
-      }, // 日预算规则
+      }
     }
   },
   methods: {
     // 判断字符长度
     judgeLen() {
-      const currStr = this.adCustomPlan.campaign_name
-      const isSpecial = this.judgeSpecial(currStr)
+      let currStr = this.adCustomPlan.campaign_name
+      let isSpecial = this.judgeSpecial(currStr)
       if (isSpecial) {
         this.adCustomPlan.campaign_name = ''
         this.$Message.error('不能输入特殊字符')
       }
-      const currLen = this.getByteLen(currStr)
+      let currLen = this.getByteLen(currStr)
       if (currLen === 30) {
         this.$Message.error('最大输入不能超过30个字符')
         this.adCustomPlan.campaign_name = currStr
@@ -206,10 +202,10 @@ export default {
     // 获取推广计划数据
     getAdPlan() {
       let ret = []
-      this.adPlanList.forEach(plan => {
+      this.adPlanListCopy.forEach(plan => {
         ret.push(plan.campaign_name)
       })
-      this.planNameList = ret
+      this.AdPlan = ret
     },
     updateCampaign() {
       let params = Object.assign({}, this.adCustomPlan, {
@@ -249,7 +245,7 @@ export default {
         platform: '',
         budget: this.adCustomPlan.budget.toString()
       })
-
+      console.log('add this.adCustomPlan', this.adCustomPlan, update)
       Axios.post('api.php', update)
         .then(res => {
           if (ERR_OK === res.ret) {
@@ -264,7 +260,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('新建推广计划错误' + err)
+          console.log('新建推广计划' + err)
         })
       // 本地测试代码
       // this.planInfo.campaignId = 'this.adCustomPlan.account_id'
@@ -292,9 +288,11 @@ export default {
     },
     // 监听自定义结束时间
     handleEndDate(date) {
+      this.isDisableEndDate = false
+      this.endDateStatus = '1'
       this.adCustomPlan.endDate = date
     },
-    handleStartDate(date) {
+    changeStartDate(date) {
       this.adCustomPlan.startDate = date
     },
     // 投放时间弹窗的on-ok事件，获取同步的推广时间段
@@ -309,44 +307,37 @@ export default {
     },
     // 提交推广计划
     handleSumbit() {
-      this.handleBudget()
       if (this.isEdit) {
         this.updateCampaign()
       } else {
         this.addCampaign()
       }
     },
+    // 弹窗控制
+    handlerWeekTime() {
+      this.weekTimeModal = true
+    },
     // 监听日预算开关按钮
-    handleBudgetModel(flag) {
-      switch (flag) {
+    handleChangeBudget(budgetSwitch) {
+      switch (budgetSwitch) {
         case '0':
           this.isDisableBudget = true
           this.adCustomPlan.budget = -1
           break
         case '1':
           this.isDisableBudget = false
-          this.adCustomPlan.budget = 100
+          this.adCustomPlan.budget = 0
           break
       }
     },
-    // 监听日预算操作。取值范围[100,100000]
-    handleBudget() {
-      let budget = parseInt(this.adCustomPlan.budget)
-      if (isNaN(budget)) {
-          this.adCustomPlan.budget = 100
-      }
-      // 判断日预算大于1000
-      if (this.budgetStatus === '1' && (budget < this.budgetTip.range[0] || budget > this.budgetTip.range[1])) {
-          this.budgetTip.isSubmit = false
-          this.$Message.warning(this.budgetTip.tip)
-          return
-      } else {
-          this.budgetTip.isSubmit = true
-      }
+    // 监听日预算操作
+    handleBudget(budgetNum) {
+      this.isDisableBudget = false
+      this.budgetStatus = '1'
+      this.adCustomPlan.budget = budgetNum < 100 ? 100 : budgetNum
     },
     // "导入推广计划"的重置计划事件按钮
     handleClearPlanInfo() {
-      this.selPlanName = ''
       this.adCustomPlan.campaign_name = ''
       this.adCustomPlan.adResourceId = 1
       this.adCustomPlan.budget = 100
@@ -354,15 +345,13 @@ export default {
       this.budgetStatus = '0'
       this.adCustomPlan.startDate = this._getStartDate()
       this.adCustomPlan.endDate = SET_END_DATE_UNLIMITED
+      this.adPlanListCopy = deepClone(this.adPlanList)
     },
     // "导入推广计划" select组件的change事件
     handleChangeAdPlan(campaignName) {
-      if (campaignName === '') {
-        return
-      }
-      this.adCustomPlan.campaign_name = campaignName + '-复制'
       this.adPlanList.forEach(plan => {
         if (campaignName === plan.campaign_name) {
+          this.adCustomPlan.campaign_name = plan.campaign_name
           this.adCustomPlan.adResourceId = parseInt(plan.adResourceId)
           let budget = plan.budget
           this.budgetStatus = budget === '-1' ? '0' : '1'
@@ -381,6 +370,7 @@ export default {
     campaignPlan() {
       // 本地测试代码
       // this.adPlanList = planList.data
+      // this.adPlanListCopy = deepClone(this.adPlanList)
       // this.getAdPlan()
       Axios.post('api.php', {
         action: 'ucAdPut',
@@ -388,8 +378,9 @@ export default {
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            const data = res.data
-            this.adPlanList = data
+            this.adPlanList = res.data
+            console.log('xxjihua', this.adPlanList)
+            this.adPlanListCopy = deepClone(this.adPlanList)
             if (this.isEdit) {
               this.initEditData()
             } else {
@@ -410,7 +401,12 @@ export default {
     getAccountInfo() {
       const query = this.$route.query
       this.adCustomPlan.account_id = query.account
-      if (query.id) {
+      if (
+        typeof query === 'object' &&
+        query.account &&
+        query.edit &&
+        query.edit === '1'
+      ) {
         this.isEdit = true
         this.currId = query.id
       } else {

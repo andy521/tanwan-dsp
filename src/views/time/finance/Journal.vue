@@ -81,7 +81,16 @@ export default {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.save)) {
                             //三位数加逗号
-                            let newvalue = String(params.row.save / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            let newvalue = (params.row.save / 100)
+                                .toString()
+                                .split("")
+                                .reverse()
+                                .join("")
+                                .replace(/(\d{3})/g, "$1,")
+                                .replace(/\,$/, "")
+                                .split("")
+                                .reverse()
+                                .join("");
                             return [h("span", newvalue)];
                         } else {
                             return [h("span", params.row.save)];
@@ -95,7 +104,16 @@ export default {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.pay)) {
                             //三位数加逗号
-                            let newvalue = String(params.row.pay / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            let newvalue = (params.row.pay / 100)
+                                .toString()
+                                .split("")
+                                .reverse()
+                                .join("")
+                                .replace(/(\d{3})/g, "$1,")
+                                .replace(/\,$/, "")
+                                .split("")
+                                .reverse()
+                                .join("");
                             return [h("span", newvalue)];
                         } else {
                             return [h("span", params.row.pay)];

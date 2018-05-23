@@ -7,26 +7,18 @@
                     <Option value="Gdt">广点通</Option>
                     <Option value="Baidu">百度</Option>
                     <Option value="Uc">UC</Option>
-                    <Option value="Toutiao">头条</Option>
                 </Select>
             </div>
             <div class="padding-10" v-if="MeidaType=='Gdt'">
                 <center>
                     <ButtonGroup size="large">
-                        <Button type="ghost" @click="openAuth(1)">用户数据授权</Button>
-                        <Button type="ghost" @click="openAuth(2)">其他数据授权</Button>
-                    </ButtonGroup>
-                </center>
-            </div>
-            <div class="padding-10" v-if="MeidaType=='Toutiao'">
-                <center>
-                    <ButtonGroup size="large">
-                        <Button type="ghost" @click="toutiaoOpenAuth">用户数据授权</Button>
+                        <Button type="ghost" @click="openAuth(1) ">用户数据授权</Button>
+                        <Button type="ghost" @click="openAuth(2) ">其他数据授权</Button>
                     </ButtonGroup>
                 </center>
             </div>
             <div class="padding-10" v-if="MeidaType=='Baidu'">
-                <Input v-model="baidu.account_name" placeholder="请输入百度的账户名称"></Input>
+                <Input v-model="baidu.account_id" placeholder="请输入百度的账户名称"></Input>
             </div>
             <div class="padding-10" v-if="MeidaType=='Uc'">
                 <Input v-model="uc.account_id" placeholder="请输入UC账户id"></Input>
@@ -47,19 +39,18 @@ export default {
             authMedia: "",
             addBindIdwin: false,
             loading: true,
-            MeidaType: "",
+            MeidaType: '',
             //uc账号
             uc: {
-                account_id: "",
-                userName: "",
-                password: "",
-                token: ""
+                account_id: '',
+                userName: '',
+                password: '',
+                token: ''
             },
             //百度帐号
             baidu: {
-                account_name: ""
-            },
-            toutiaoUrl: ""
+                account_name: ''
+            }
         };
     },
     methods: {
@@ -77,23 +68,6 @@ export default {
                 console.log('广点通绑定账号' + err)
             })
         },
-        //获取头条绑定链接
-        get_AuthorizedUrl() {
-            Axios.post('api.php', {
-                action: 'ttAdPut',
-                opt: 'getAuthorizedUrl'
-            }).then(res => {
-                if (res.ret == 1) {
-                    this.toutiaoUrl = res.data;
-                }
-            }).catch(err => {
-                console.log("绑定头条账号" + err)
-            });
-        },
-        //打开头条链接
-        toutiaoOpenAuth() {
-            window.open(this.toutiaoUrl.url);
-        },
         //打开广点通链接
         openAuth(i) {
             this.addBindIdwin = false;
@@ -103,9 +77,6 @@ export default {
         changeMeidaType() {
             if (this.MeidaType == "Gdt" && this.authMedia == "") {
                 this.get_authMedia();
-            }
-            if (this.MeidaType == "Toutiao" && this.toutiaoUrl == "") {
-                this.get_AuthorizedUrl();
             }
         },
         //确定

@@ -90,7 +90,7 @@
             <Row>
                 <Col span="16">
                 <!--自定义指标-->
-                <view-popti @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-popti>
+                <view-tip @on-change="getuncheck" action="gdtAdPut" opt="campaigns"></view-tip>
                 <!--选择负责人-->
                 <select-author :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
                 <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
@@ -182,13 +182,13 @@
 <script>
 import Axios from "@/api/index";
 import { DateShortcuts, formatDate, deepClone } from "@/utils/DateShortcuts.js";
-import viewPopti from "./components/viewPopti.vue";
+import viewTip from "./components/viewPopti.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import searchTree from "@/components/select-tree/searchTree.vue";
 
 export default {
     components: {
-        viewPopti,
+        viewTip,
         searchTree,
         selectAuthor
     },
@@ -621,7 +621,15 @@ export default {
                     render: (h, params) => {
                         let value = params.row.daily_budget;
                         //三位数加逗号
-                        let newvalue = String(value / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        let newvalue = (value / 100).toString()
+                            .split("")
+                            .reverse()
+                            .join("")
+                            .replace(/(\d{3})/g, "$1,")
+                            .replace(/\,$/, "")
+                            .split("")
+                            .reverse()
+                            .join("");
                         return [
                             h(
                                 "Tooltip",

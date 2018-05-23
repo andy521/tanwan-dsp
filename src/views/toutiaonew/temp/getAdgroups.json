@@ -1,0 +1,41 @@
+{
+  "ret": 1,
+  "msg": "succ",
+  "data": [
+    {
+      "id": "6572",
+      "account_id": "92853518559",
+      "campaign_id": "1600697052066855",
+      "adgroup_id": "1600700677614611",
+      "adgroup_name": "\u4f20\u4e16\u6765\u4e86-0517-03- 1",
+      "pricing": "PRICING_OCPM",
+      "bid": "0",
+      "opt_status": "AD_STATUS_ENABLE",
+      "budget_mode": "0",
+      "budget": "200000",
+      "status": "AD_STATUS_AUDIT",
+      "inventory_type": "INVENTORY_AWEME_FEED",
+      "schedule_type": "SCHEDULE_FROM_NOW",
+      "schedule_time": "SCHEDULE_TIME_ALL_DAY",
+      "flow_control_mode": "FLOW_CONTROL_MODE_SMOOTH",
+      "open_url": "",
+      "external_url": "",
+      "download_url": "https://itunes.apple",
+      "app_type": "APP_IOS",
+      "package": "",
+      "audit_reject_reason": "",
+      "cpa_bid": "250.23",
+      "cpa_skip_first_phrase": "0",
+      "convert_id": "1600698865369139",
+      "targeting_id": "6007",
+      "game_id": "532",
+      "agent_id": "101995",
+      "site_id": "163537",
+      "start_time": "2018-05-17 16:57:00",
+      "end_time": "2028-05-17 16:57:00",
+      "modify_time": "ab2aee23af0f6ff77bd214b8ac10c061",
+      "created_time": "1526547448",
+      "last_modified_time": "1526547457"
+    }
+  ]
+}

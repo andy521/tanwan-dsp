@@ -23,30 +23,22 @@
     color: #2b7ed1;
     font-weight: bold;
 }
-.manger-head-bar:first-of-type{
-    flex: 2;
-    text-align: left;
-}
-.manger-head-bar:last-of-type{
-    flex: 1;
-    text-align: right;
-}
 </style>
 <template>
     <div class="unit">
 
         <Card shadow>
-            <Row type="flex" justify="space-between">
-                <Col class="manger-head-bar">
+            <Row>
+                <Col span="19">
                 <Button type="primary" @click="back" v-show="isBack">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
                 <Button type="primary" icon="search" @click="getUnit()">搜索</Button>
                 </Col>
-                <Col class="manger-head-bar">
+                <Col span="5" style="text-align: right;">
                 <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
-                <new-edit :title="newTitle" :to-route-name="toRouteName" :query-params="queryParam" class="margin-left-5"></new-edit>
+                <new-edit title="新建单元" class="margin-left-5"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -337,19 +329,6 @@ export default {
             // 选择负责人
             author: []
         };
-    },
-    computed: {
-        newTitle() {
-            return this.$route.query.id ? '新建单元' : '新建计划'
-        },
-        toRouteName() {
-            return this.$route.query.id ? 'ucunit' : 'ucplan'
-        },
-        queryParam() {
-            const id = parseInt(this.$route.query.id)
-            const retParam = id ? {campaign_id: id} : {}
-            return retParam
-        }
     },
     methods: {
         //选择负责人
@@ -836,8 +815,7 @@ export default {
                                 on: {
                                     click: () => {
                                         let query = {
-                                            adgroup_id: params.row.adgroup_id,
-                                            campaign_id: params.row.campaign_id
+                                            adgroup_id: params.row.adgroup_id
                                         };
                                         this.$router.push({
                                             name: "uc_creativity",
@@ -1388,49 +1366,7 @@ export default {
             this.isBack = true;
         }
         this.changeTableColumns();
-        
-        //返回时获取保存数据
-        const unitCache = this.$store.state.ucnew.unitCache
-        if (this.$route.meta.keepAlive && JSON.stringify(unitCache) !== '{}') {
-            this.DateDomain = unitCache.DateDomain
-            this.page = unitCache.page
-            this.page_size = unitCache.page_size
-            this.game_id = unitCache.game_id
-            this.selePlanId = unitCache.selePlanId
-            this.checkId = unitCache.checkId
-            this.orderField = unitCache.orderField
-            this.orderDirection = unitCache.orderDirection
-            this.author_model = unitCache.author
-            this.campaign_id = unitCache.campaign_id
-            this.getUnit(this.page)
-        } else {
-            this.getUnit()
-        }
-    },
-    beforeRouteLeave(to, from, next) {
-        if (to.name === 'uc_creativity') {
-            const cache = {
-                campaign_id: this.campaign_id,
-                DateDomain: this.DateDomain, //时间
-                page: this.page, //页码
-                page_size: this.page_size, //每页数量
-                game_id: this.GameListIds, //游戏id
-                selePlanId: this.selePlanId, // 选中计划id
-                checkId: this.checkId, // 选中账户id
-                orderField: this.orderField, //排序的orderField参数名
-                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-                author: this.author_model //负责人
-            };
-            this.$store.commit('SAVE_UNIT_CACHE', cache)
-        }
-        from.meta.keepAlive = false
-        next()
-    },
-    beforeRouteEnter(to, from, next) {
-        if (from.name === 'uc_creativity') {
-            to.meta.keepAlive = true
-        }
-        next()        
+        this.getUnit();
     }
 };
 </script>

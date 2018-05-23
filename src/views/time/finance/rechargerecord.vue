@@ -132,26 +132,11 @@ export default {
                     key: "account_name"
                 },
                 {
-                    title: "代理简称",
+                    title: "代理商",
                     key: "agent"
-                },
-                 {
-                    title: "代理全称",
-                    key: "agent_detail"
-                },
-                {
-                    title: "当前账户余额",
-                    width: 140,
-                    key: "balance"
-                },
-                {
-                    title: "过去三天日均消耗",
-                    width: 140,
-                    key: "cost"
                 },
                 {
                     title: "充值返点比例",
-                    width: 140,
                     key: "rebate"
                 },
                 {
@@ -160,13 +145,21 @@ export default {
                 },
                 {
                     title: "充值人民币（元）",
-                    width: 140,
                     key: "money",
                     render: (h, params) => {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.money)) {
                             //三位数加逗号
-                            let newvalue = String(params.row.money).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            let newvalue = (params.row.money)
+                                .toString()
+                                .split("")
+                                .reverse()
+                                .join("")
+                                .replace(/(\d{3})/g, "$1,")
+                                .replace(/\,$/, "")
+                                .split("")
+                                .reverse()
+                                .join("");
                             return [h("span", newvalue)];
                         } else {
                             return [h("span", params.row.recharge_money)];
@@ -202,7 +195,6 @@ export default {
                 },
                 {
                     title: "操作",
-                    width: 100,
                     key: "",
                     render: (h, params) => {
                         return [

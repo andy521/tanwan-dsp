@@ -84,7 +84,7 @@ export default {
     methods: {
         //获取账户总览总数据            
         getData(param) {
-            Axios.post('api.php', param).then(
+            Axios.get('api.php', param).then(
                 res => {
                     if (res.ret == '1') {
                         let data = res.data;

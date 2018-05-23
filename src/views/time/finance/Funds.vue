@@ -69,7 +69,16 @@ export default {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.balance)) {
                             //三位数加逗号
-                            let newvalue = String(params.row.balance).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            let newvalue = (params.row.balance )
+                                .toString()
+                                .split("")
+                                .reverse()
+                                .join("")
+                                .replace(/(\d{3})/g, "$1,")
+                                .replace(/\,$/, "")
+                                .split("")
+                                .reverse()
+                                .join("");
                             return [h("span", newvalue)];
                         } else {
                             return [h("span", params.row.balance)];
@@ -83,7 +92,16 @@ export default {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.realtime_cost)) {
                             //三位数加逗号
-                            let newvalue = String(params.row.realtime_cost).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            let newvalue = (params.row.realtime_cost)
+                                .toString()
+                                .split("")
+                                .reverse()
+                                .join("")
+                                .replace(/(\d{3})/g, "$1,")
+                                .replace(/\,$/, "")
+                                .split("")
+                                .reverse()
+                                .join("");
                             return [h("span", newvalue)];
                         } else {
                             return [h("span", params.row.realtime_cost)];

@@ -1,5 +1,7 @@
 <style lang="less">
 @import "./main.less";
+@import "../styles/common.less";
+@import "../styles/table.less";
 </style>
 <template>
 

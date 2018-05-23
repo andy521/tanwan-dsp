@@ -2045,7 +2045,16 @@ export default {
         toThousands: function(val) {
             if (val) {
                 //三位数加逗号
-                return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return val
+                    .toString()
+                    .split("")
+                    .reverse()
+                    .join("")
+                    .replace(/(\d{3})/g, "$1,")
+                    .replace(/\,$/, "")
+                    .split("")
+                    .reverse()
+                    .join("");
             }
         }
     }

@@ -77,7 +77,7 @@
                                                 access.push('time_plan');
                                             break;
                                             case '1030': 
-                                                access.push('time_ad');
+                                                access.push('time_ad') 
                                             break;
                                             case '1037': 
                                                 access.splice(1,0,'channel_product','channel_media','channel_account','channel_plan','channel_ad');
@@ -92,11 +92,10 @@
                                                 access.push('setid_systemmsg');
                                             break;
                                             case '1043': 
-                                                access.push('uc_advertiser')
                                                 access.push('uc_report');
                                             break;
                                             case '1042': 
-                                                access.push('uc_creativity');
+                                                access.push('uc_idea');
                                             break;
                                             case '1041': 
                                                 access.push('uc_plan');
@@ -107,15 +106,15 @@
                                             case '277': 
                                                 access.push('setid_modprfpsw');
                                             break;
-                                            // case '170': 
-                                            //     access.push('setid_adduser');
-                                            // break;
+                                            case '170': 
+                                                access.push('setid_adduser');
+                                            break;
                                             case '171': 
                                                 access.push('setid_userlist');
                                             break;
-                                            // case '278': 
-                                            //     access.push('setid_addgroup');
-                                            // break;
+                                            case '278': 
+                                                access.push('setid_addgroup');
+                                            break;
                                             case '265': 
                                                 access.push('setid_grouplist');
                                             break;
@@ -124,13 +123,10 @@
                                             break;
                                         }
                                     });
-                                };                            
+                                };
                                 //console.log(access)
                                 Util.setItem('user', this.form.userName );  
-                                Util.setItem('sessionid',data.data.sessionid); 
-
-                                //console.log(access)         
-                                //["home_index", "channel_product", "channel_media", "channel_account", "channel_plan", "channel_ad", "setid_modprfpsw", "uc_unit", "uc_plan", "uc_creativity", "uc_report"]                             
+                                Util.setItem('sessionid',data.data.sessionid);                                       
                                 Util.setItem('access', access.join(",")); 
                                 this.$store.dispatch('UserLogin', userinfo);
                                                                 

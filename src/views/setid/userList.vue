@@ -17,7 +17,6 @@
                     <Option value="0">锁定</Option>
                 </Select>
                 <Button icon="search" @click="getUserList">搜索</Button>
-                <Button icon="plus-round" @click="arouseAddUserDialog">添加账号</Button>
             </Col>
         </Row>
         <Row>
@@ -359,9 +358,7 @@
                     permissionGroupSelected: '',
                     statement: '1',
                     searchDataStatement: '1'
-                },
-                //添加or编辑用户
-                commitUserProfileType : '',
+                }
             }
         },
         mounted() {
@@ -370,24 +367,6 @@
             this.getDepartmentsList();
         },
         methods: {
-            //添加用户 - 会话框
-            arouseAddUserDialog () {
-                this.commitUserProfileType = 'add';
-                this.editProfileDialog = true;
-                this.editUserProfile.title = "添加用户";
-                this.editUserProfile.uid = '';
-                this.editUserProfile.userName = '';
-                this.editUserProfile.password = '';
-                this.editUserProfile.permissionGroupSelected = '0';
-                this.editUserProfile.realName = '';
-                this.editUserProfile.sex = '';
-                this.editUserProfile.departmentSelected = '0';
-                this.editUserProfile.positionSelected = '';
-                this.editUserProfile.dutyDescribe = '';
-                this.editUserProfile.eMail = '';
-                this.editUserProfile.officePhone = '';
-                this.editUserProfile.mobile = '';
-            },
             //恢复用户
             recoverUser (uid) {
                 Axios.get('api.php?action=sys&opt=useradd&stage=recover&uid='+uid)
@@ -408,7 +387,7 @@
             },
             //删除用户
             deleteUser (uid, userSN) {
-                Axios.get('api.php?action=sys&opt=useradd&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
+                Axios.get('api.php?action=sys&opt=useradd&act=del&uid='+uid+'&mb_isbn='+userSN)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -453,70 +432,34 @@
             commitUserProfile () {
                 this.$refs['editUserProfile'].validate((valid) => {
                     if (valid) {
-                        if (this.commitUserProfileType == 'edit') {
-                            Axios.post('api.php?action=sys&opt=useradd', {
-                                stage: 'edit',
-                                uId: this.editUserProfile.uid,
-                                uName: this.editUserProfile.userName,
-                                uPass: this.editUserProfile.password,
-                                uGid: this.editUserProfile.permissionGroupSelected,
-                                truename: this.editUserProfile.realName,
-                                sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
-                                dept: this.editUserProfile.departmentSelected,
-                                position: this.editUserProfile.positionSelected,
-                                position_desc: this.editUserProfile.dutyDescribe,
-                                email: this.editUserProfile.eMail,
-                                office_phone: this.editUserProfile.officePhone,
-                                mobile: this.editUserProfile.mobile
-                            }).then(
-                                res => {
-                                    if (res.ret == 1) {
-                                        this.getUserList(this.page);
-                                        this.$Message.success(res.data);
-                                    } else {
-                                        this.$Message.error(res.msg);
-                                    }
+                        Axios.post('api.php?action=sys&opt=useradd', {
+                            stage: 'edit',
+                            uId: this.editUserProfile.uid,
+                            uName: this.editUserProfile.userName,
+                            uPass: this.editUserProfile.password,
+                            uGid: this.editUserProfile.permissionGroupSelected,
+                            truename: this.editUserProfile.realName,
+                            sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
+                            dept: this.editUserProfile.departmentSelected,
+                            position: this.editUserProfile.positionSelected,
+                            position_desc: this.editUserProfile.dutyDescribe,
+                            email: this.editUserProfile.eMail,
+                            office_phone: this.editUserProfile.officePhone,
+                            mobile: this.editUserProfile.mobile
+                        }).then(
+                            res => {
+                                if (res.ret == 1) {
+                                    this.getUserList(this.page);
+                                    this.$Message.success(res.data);
+                                } else {
+                                    this.$Message.error(res.msg);
                                 }
-                            ).catch(
-                                err => {
-                                    console.log('提交失败' + err)
-                                }
-                            )
-                        } else if (this.commitUserProfileType == 'add') {
-                            Axios.post('api.php', {
-                                action: 'sys',
-                                opt: 'useradd',
-                                stage: 'add',
-                                uName: this.editUserProfile.userName,
-                                uPass: this.editUserProfile.password,
-                                uGid: this.editUserProfile.permissionGroupSelected,
-                                truename: this.editUserProfile.realName,
-                                sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
-                                dept: this.editUserProfile.departmentSelected,
-                                position: this.editUserProfile.positionSelected,
-                                position_desc: this.editUserProfile.dutyDescribe,
-                                email: this.editUserProfile.eMail,
-                                extension: 0,
-                                office_phone: this.editUserProfile.officePhone,
-                                mobile: this.editUserProfile.mobile,
-                                actionid: '',
-                                gamelist: '',
-                                accountList: '',
-                            }).then(
-                                res => {
-                                    if (res.ret == 1) {
-                                        this.getUserList(this.page);
-                                        this.$Message.success(res.data);
-                                    } else {
-                                        this.$Message.error(res.msg);
-                                    }
-                                }
-                            ).catch(
-                                err => {
-                                    console.log('提交失败' + err);
-                                }
-                            )
-                        }
+                            }
+                        ).catch(
+                            err => {
+                                console.log('提交失败' + err)
+                            }
+                        )
                     } else {
                         this.$Message.error('请填写带*号信息!');
                     }
@@ -524,7 +467,6 @@
             },
             //修改用户资料-会话框
             editUserProfileDialog (uid) {
-                this.commitUserProfileType = 'edit';
                 Axios.get('api.php?action=sys&opt=useradd&act=edit&uid='+uid)
                 .then(
                     res => {
@@ -731,8 +673,8 @@
                                     permissionGroup: (res.data.pmData[res.data.uData[i].uGid])?res.data.pmData[res.data.uData[i].uGid].name:'',
                                     realName: res.data.uData[i].truename,
                                     sex: res.data.uData[i].sex,
-                                    department: (res.data.dpData==null)?'':((res.data.dpData[res.data.uData[i].dept])?res.data.dpData[res.data.uData[i].dept]:''),
-                                    position: (res.data.dpData==null)?'':((res.data.dpData[res.data.uData[i].position])?res.data.dpData[res.data.uData[i].position]:''),
+                                    department: res.data.dpData[res.data.uData[i].dept],
+                                    position: res.data.dpData[res.data.uData[i].position],
                                     mobile: res.data.uData[i].mobile,
                                     sn: res.data.uData[i].mb_isbn,
                                     loginCount: res.data.uData[i].logincount,
@@ -755,7 +697,7 @@
                 .then(
                     res => {
                         if (res.ret == 1) {
-                            //console.log(res);
+                            console.log(res);
                             this.editPermission.act = res.data.gData.act;
                             this.editPermission.uid = res.data.gData.uid;
                             this.editPermission.pmid = res.data.gData.pmid;
