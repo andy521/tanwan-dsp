@@ -189,6 +189,7 @@ export default {
         },
         //改变日期
         changeDate(e) {
+            console.log(e)
             this.DateDomain = e;
             this.getCampaignsList();
         },
@@ -584,6 +585,7 @@ export default {
                                             this.$router.push({
                                                 name: "ttcampaign",
                                                 query: {
+                                                    account_id:params.row.account_id,
                                                     id: params.row.id
                                                 }
                                             });

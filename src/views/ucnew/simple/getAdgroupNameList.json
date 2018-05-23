@@ -1,0 +1,8 @@
+{
+  "ret": 1,
+  "msg": "succ",
+  "data": [
+    { "adgroup_id": "30863862", "adgroup_name": "demo-150224" },
+    { "adgroup_id": "30871904", "adgroup_name": "demo-1502241" }
+  ]
+}

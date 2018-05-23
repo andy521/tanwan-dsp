@@ -6,7 +6,7 @@
   display: inline-block;
   width: 150px;
 }
-.ad .ivu-poptip {
+.toutiaoad .ivu-poptip {
   display: inline-block;
 }
 .sel_state {
@@ -25,7 +25,7 @@
 }
 </style>
 <template>
-    <div class="ad">
+    <div class="toutiaoad">
         <Card shadow class="margin-top-10">
             <Row>
                 <Col span="20">
@@ -187,7 +187,7 @@ export default {
                 column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
         },
-         //表格高亮calss
+        //表格高亮calss
         rowClassName(row, index) {
             if (row._disabled) {
                 return "table-statistics";
@@ -267,100 +267,99 @@ export default {
                 {
                     type: "selection",
                     width: 58,
-                    key: ""  
+                    key: ""
                 },
                 {
                     title: "广告计划",
                     key: "adgroup_name",
                     width: 250,
                     render: (h, params) => {
-                    if (params.row._disabled) {
-                        return h("span", "本页统计");
-                    }
-                    else{
-                        let value = params.row.adgroup_name;
-                        return [
-                            h(
-                                "span",
-                                {
-                                    class: "name_text",
+                        if (params.row._disabled) {
+                            return h("span", "本页统计");
+                        }
+                        else {
+                            let value = params.row.adgroup_name;
+                            return [
+                                h(
+                                    "span",
+                                    {
+                                        class: "name_text",
+                                        on: {
+                                            click: () => {
+                                                this.$router.push({
+                                                    name: "tt_creative",
+                                                    query: {
+                                                        id: params.row.id
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    },
+                                    params.row.adgroup_name
+                                ),
+                                h("i-button", {
+                                    props: {
+                                        icon: "edit",
+                                        type: "text",
+                                        size: "small"
+                                    },
+                                    class: ["edit"],
                                     on: {
                                         click: () => {
-                                            let query = {
-                                                id: params.row.id
-                                            };
-                                            this.$router.push({
-                                                name: "tt_creative",
-                                                query: query
+                                            this.$Modal.confirm({
+                                                render: h => {
+                                                    return h("Input", {
+                                                        props: {
+                                                            value:
+                                                                params.row
+                                                                    .adgroup_name,
+                                                            autofocus: true,
+                                                            placeholder:
+                                                                "请输入广告组名称"
+                                                        },
+                                                        on: {
+                                                            input: val => {
+                                                                value = val;
+                                                            }
+                                                        }
+                                                    });
+                                                },
+                                                onOk: () => {
+                                                    if (value == "") {
+                                                        this.$Message.info(
+                                                            "请输入修改信息"
+                                                        );
+                                                        return;
+                                                    }
+                                                    Axios.post("api.php", {
+                                                        action: "ttAdPut",
+                                                        opt: "updateAdgroupName",
+                                                        id: params.row.id,
+                                                        adgroup_name: value
+                                                    })
+                                                        .then(res => {
+                                                            if (res.ret == 1) {
+                                                                this.$Message.info(
+                                                                    res.msg
+                                                                );
+                                                                this.getCampaignsList(
+                                                                    this.page
+                                                                );
+                                                            }
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(
+                                                                "修改广告计划失败" +
+                                                                err
+                                                            );
+                                                        });
+                                                }
                                             });
                                         }
                                     }
-                                },
-                                params.row.adgroup_name
-                            ),
-                            h("i-button", {
-                                props: {
-                                    icon: "edit",
-                                    type: "text",
-                                    size: "small"
-                                },
-                                class: ["edit"],
-                                on: {
-                                    click: () => {
-                                        this.$Modal.confirm({
-                                            render: h => {
-                                                return h("Input", {
-                                                    props: {
-                                                        value:
-                                                            params.row
-                                                                .adgroup_name,
-                                                        autofocus: true,
-                                                        placeholder:
-                                                            "请输入广告组名称"
-                                                    },
-                                                    on: {
-                                                        input: val => {
-                                                            value = val;
-                                                        }
-                                                    }
-                                                });
-                                            },
-                                            onOk: () => {
-                                                if (value == "") {
-                                                    this.$Message.info(
-                                                        "请输入修改信息"
-                                                    );
-                                                    return;
-                                                }
-                                                Axios.post("api.php", {
-                                                    action: "ttAdPut",
-                                                    opt: "updateAdgroupName",
-                                                    id: params.row.id,
-                                                    adgroup_name: value
-                                                })
-                                                    .then(res => {
-                                                        if (res.ret == 1) {
-                                                            this.$Message.info(
-                                                                res.msg
-                                                            );
-                                                            this.getCampaignsList(
-                                                                this.page
-                                                            );
-                                                        }
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(
-                                                            "修改广告计划失败" +
-                                                            err
-                                                        );
-                                                    });
-                                            }
-                                        });
-                                    }
-                                }
-                            })
-                        ];
-                    } 
+                                })
+                            ];
+                        }
                     }
                 },
                 {
@@ -438,7 +437,7 @@ export default {
                     width: 150,
                     render: (h, params) => {
                         let value = params.row.budget;
-                        if(!value)return;
+                        if (!value) return;
                         //三位数加逗号
                         let newvalue = value
                             .toString()
@@ -562,7 +561,7 @@ export default {
                     width: 100,
                     render: (h, params) => {
                         let value = params.row.bid;
-                        if(!value)return;
+                        if (!value) return;
                         let is_stage2bid = "0";
                         //三位数加逗号
                         let newvalue = value
@@ -866,7 +865,7 @@ export default {
                     key: "",
                     width: 130,
                     render: (h, params) => {
-                        if(params.row._disabled)return;
+                        if (params.row._disabled) return;
                         return [
                             h(
                                 "span",

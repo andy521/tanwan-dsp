@@ -15,21 +15,29 @@
     color: #2b7ed1;
     font-weight: bold;
 }
+.manger-head-bar:first-of-type{
+    flex: 2;
+    text-align: left;
+}
+.manger-head-bar:last-of-type{
+    flex: 1;
+    text-align: right;
+}
 </style>
 <template>
     <div class="spread">
         <!-- 查询账户信息 -->
         <!-- <account-info></account-info> -->
         <Card shadow>
-            <Row>
-                <Col span="19">
+            <Row type="flex" justify="space-between">
+                <Col class="manger-head-bar">
                 <Button type="primary" @click="back" v-show="isBack">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
                 <Button type="primary" icon="search" @click="getSpread()">搜索</Button>
                 </Col>
-                <Col span="5" style="text-align: right;">
+                <Col class="manger-head-bar">
                 <Button type="ghost" :loading="copyPlanLoading" icon="ios-copy" @click="copyPlan">复制计划</Button>
                 <new-edit title="新建计划" class="margin-left-5"></new-edit>
                 </Col>
@@ -384,7 +392,7 @@ export default {
         //改变日期
         changeDate(e) {
             this.DateDomain = e;
-            this.getSpread();
+            this.getSpread(this.page);
         },
         //获取选中的id
         taCheck(row) {
@@ -408,7 +416,7 @@ export default {
             this.orderField = column.key;
             this.orderDirection =
                 column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
-            this.getSpread();
+            this.getSpread(this.page);
         },
         getSpread(page) {
             if (page === undefined) {
@@ -1177,7 +1185,49 @@ export default {
             this.keyword = query.toString();
             this.isBack = true;
         }
-        this.getSpread();
+
+        //返回时获取保存数据
+        const planCache = this.$store.state.ucnew.planCache
+        if (this.$route.meta.keepAlive && JSON.stringify(planCache) !== '{}') {
+            this.DateDomain = planCache.DateDomain
+            this.page = planCache.page
+            this.page_size = planCache.page_size
+            this.game_id = planCache.game_id
+            this.checkCampaign = planCache.checkCampaign
+            this.checkId = planCache.checkId
+            this.uncheck = planCache.uncheck
+            this.orderField = planCache.orderField
+            this.orderDirection = planCache.orderDirection
+            this.author_model = planCache.author
+            this.getSpread(this.page)
+        } else {
+            this.getSpread()
+        }
+    },
+    beforeRouteLeave(to, from, next) {
+        if (to.name === 'uc_unit') {
+            const cache = {
+                DateDomain: this.DateDomain, //时间
+                page: this.page, //页码
+                page_size: this.page_size, //每页数量
+                game_id: this.GameListIds, //游戏id
+                checkCampaign: this.checkCampaign, // 选中计划id
+                checkId: this.checkId, // 选中账户id
+                uncheck: this.uncheck, // 没选中的
+                orderField: this.orderField, //排序的orderField参数名
+                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+                author: this.author_model //负责人
+            };
+            this.$store.commit('SAVE_PLAN_CACHE', cache)
+        }
+        from.meta.keepAlive = false
+        next()
+    },
+    beforeRouteEnter(to, from, next) {
+        if (from.name === 'uc_unit') {
+            to.meta.keepAlive = true
+        }
+        next()
     }
 };
 </script>

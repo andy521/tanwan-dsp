@@ -195,22 +195,27 @@
     ],
     "pricing": [{
             "name": "CPC",
+            "cname":"点击量",
             "val_type": "PRICING_CPC"
         },
         {
             "name": "OCPC",
+            "cname":"转换量",
             "val_type": "PRICING_OCPC"
         },
         {
-            "name": "CPA",
-            "val_type": "PRICING_CPA"
+            "name": "CPM",
+            "cname":"展示量",
+            "val_type": "PRICING_CPM"
         },
         {
             "name": "CPV",
+            "cname":"有效播放量",
             "val_type": "PRICING_CPV"
         },
         {
             "name": "OCPM",
+            "cname":"转换量",
             "val_type": "PRICING_OCPM"
         }
     ],
@@ -243,102 +248,119 @@
             "val_type": "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL"
         }
     ],
-    "gender": [
-        {
-          "type": "GENDER_UNLIMITED",
-          "name": "不限"
+    "gender": [{
+            "val_type": "GENDER_UNLIMITED",
+            "name": "不限"
         },
         {
-          "type": "GENDER_MALE",
-          "name": "男"
+            "val_type": "GENDER_MALE",
+            "name": "男"
         },
         {
-          "type": "GENDER_FEMALE",
-          "name": "女"
+            "val_type": "GENDER_FEMALE",
+            "name": "女"
         }
     ],
-    "age": [
-        {
-          "type": "AGE_BELOW_18",
-          "name": "<18"
+    "age": [{
+            "val_type": "AGE_BELOW_18",
+            "name": "<18"
         },
         {
-          "type": "AGE_BETWEEN_18_23",
-          "name": "18-23"
+            "val_type": "AGE_BETWEEN_18_23",
+            "name": "18-23"
         },
         {
-          "type": "AGE_BETWEEN_24_30",
-          "name": "24-30"
+            "val_type": "AGE_BETWEEN_24_30",
+            "name": "24-30"
         },
         {
-          "type": "AGE_BETWEEN_31_40",
-          "name": "31-40"
+            "val_type": "AGE_BETWEEN_31_40",
+            "name": "31-40"
         },
         {
-          "type": "AGE_BETWEEN_41_49",
-          "name": "41-49"
+            "val_type": "AGE_BETWEEN_41_49",
+            "name": "41-49"
         },
         {
-          "type": "AGE_ABOVE_50",
-          "name": ">=50"
+            "val_type": "AGE_ABOVE_50",
+            "name": ">=50"
         }
     ],
-    "platform": [
-        {
-          "type": "",
-          "name": "不限"
+    "platform": [{
+            "val_type": "IOS",
+            "name": "IOS"
         },
         {
-          "type": "IOS",
-          "name": "IOS"
+            "val_type": "ANDROID",
+            "name": "Android"
         },
         {
-          "type": "Android",
-          "name": "ANDROID"
-        },
-        {
-          "type": "PC",
-          "name": "PC"
+            "val_type": "PC",
+            "name": "PC"
         }
     ],
-    "ac": [
-        {
-          "type": "",
-          "name": "不限"
+    "ac": [{
+            "val_type": "WIFI",
+            "name": "WIFI"
         },
         {
-          "type": "WIFI",
-          "name": "WIFI"
+            "val_type": "2G",
+            "name": "2G"
         },
         {
-          "type": "2G",
-          "name": "2G"
+            "val_type": "3G",
+            "name": "3G"
         },
         {
-          "type": "3G",
-          "name": "3G"
-        },
-        {
-          "type": "4G",
-          "name": "4G"
+            "val_type": "4G",
+            "name": "4G"
         }
     ],
-    "carrier": [
-        {
-          "type": "",
-          "name": "不限"
+    "carrier": [{
+            "val_type": "MOBILE",
+            "name": "移动"
         },
         {
-          "type": "移动",
-          "name": "MOBILE"
+            "val_type": "UNICOM",
+            "name": "联通"
         },
         {
-          "type": "联通",
-          "name": "UNICOM"
+            "val_type": "TELCOM",
+            "name": "电信"
+        }
+    ],
+    "district": [{
+            "val_type": "CITY",
+            "name": "按省市"
         },
         {
-          "type": "电信",
-          "name": "UNICOM"
+            "val_type": "COUNTY",
+            "name": "按区县"
+        }
+    ],
+    "activate_type": [{
+            "val_type": "WITH_IN_A_MONTH",
+            "name": "一个月以内"
+        }, {
+            "val_type": "ONE_MONTH_2_THREE_MONTH",
+            "name": "一个月到三个月"
+        },
+        {
+            "val_type": "THREE_MONTH_EAILIER",
+            "name": "三个月或更早"
+        }
+    ],
+    "app_behavior_target": [{
+            "val_type": "NONE",
+            "name": "不限"
+        }, {
+            "val_type": "CATEGORY",
+            "name": "按分类"
         }
     ]
+  
+
+
+
+
 }

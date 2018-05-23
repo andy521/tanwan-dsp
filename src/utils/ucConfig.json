@@ -1,0 +1,78 @@
+{
+  "unit": {
+    "generalizeType": [
+      {
+        "value": 1,
+        "name": "打开页面"
+      },
+      {
+        "value": 2,
+        "name": "APP下载"
+      }
+    ],
+    "adResourceId": [
+      {
+        "value": 1,
+        "name": "uc头条"
+      },
+      {
+        "value": 2,
+        "name": "uc精准"
+      }
+    ],
+    "platform": [
+      {
+        "value": "001",
+        "name": "IOS"
+      },
+      {
+        "value": "010",
+        "name": "Android"
+      },
+      {
+        "value": "100",
+        "name": "其他系统"
+      }
+    ],
+    "chargeType": [
+      {
+        "value": 1,
+        "name": "CPC"
+      },
+      {
+        "value": 2,
+        "name": "CPM"
+      }
+    ],
+    "unitType": [
+      {
+        "value": 0,
+        "name": "应用推荐"
+      },
+      {
+        "value": 1,
+        "name": "应用搜索"
+      },
+      {
+        "value": 2,
+        "name": "分类推荐"
+      }      
+    ]
+  },
+  "targeting": {
+    "gender": [
+      {
+        "value": -1,
+        "name": "不限"
+      },
+      {
+        "value": 0,
+        "name": "女"
+      },
+      {
+        "value": 1,
+        "name": "男"
+      } 
+    ]
+  }
+}

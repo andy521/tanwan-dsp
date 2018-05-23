@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </Poptip>
-                <new-edit title="新建单元"></new-edit>
+                <new-edit :title="newTitle" :to-route-name="toRouteName" :query-params="queryParam" class="margin-left-5"></new-edit>
                 </Col>
             </Row>
 
@@ -206,6 +206,20 @@ export default {
             checkId: [],
             author: []
         };
+    },
+    computed: {
+        newTitle() {
+            return this.$route.query.adgroup_id && this.$route.query.campaign_id ? '新建创意' : '新建计划'
+        },
+        toRouteName() {
+            return this.$route.query.adgroup_id && this.$route.query.campaign_id ? 'ucidea' : 'ucplan'
+        },
+        queryParam() {
+            const campaign_id = parseInt(this.$route.query.campaign_id) ? parseInt(this.$route.query.campaign_id) : ''
+            const adgroup_id = parseInt(this.$route.query.adgroup_id) ? parseInt(this.$route.query.adgroup_id) : ''
+            const retParam = campaign_id && adgroup_id ? {campaign_id: campaign_id, adgroup_id: adgroup_id} : {}
+            return retParam
+        }
     },
     methods: {
         //返回
