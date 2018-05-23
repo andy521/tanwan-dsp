@@ -75,7 +75,7 @@
                             <Form :label-width="80" class="margin-top-20" onsubmit="return false;" label-position="left">
                                 <FormItem>
                                     <!-- 复制定向 -->
-                                    <copy-targeting @on-change="changetargeting" :province="province" :ad_tag="ad_tag" app_category="app_category" :device_brand="device_brand" :article_category="article_category"></copy-targeting>
+                                    <copy-targeting @on-change="changetargeting" :province="province" :ad_tag="ad_tag" :app_category="app_category" :device_brand="device_brand" :article_category="article_category"></copy-targeting>
                                 </FormItem>
                                 <FormItem label="定向名字">
                                     <Input v-model="targeting_name" placeholder="请输入定向名字" size="large" style="width:300px;"></Input>
@@ -193,7 +193,7 @@
                                         <Radio v-for="item in toutiaoConfig.app_behavior_target" :label="item.val_type" :key="this">{{item.name}}</Radio>
                                     </RadioGroup>
                                     <div class="margin-top-10">
-                                        <app-tree v-model="targeting.app_category" v-if="targeting.app_behavior_target=='CATEGORY'"></app-tree>
+                                        <app-tree v-model="targeting.app_category" :datas="app_category" v-if="targeting.app_behavior_target=='CATEGORY'"></app-tree>
                                     </div>
                                 </FormItem>
 
@@ -203,7 +203,7 @@
                                         <Radio label="1">按品牌</Radio>
                                     </RadioGroup>
                                     <div class="margin-top-10">
-                                        <device-tree v-model="targeting.device_brand" v-if="device_brand_model=='1'"></device-tree>
+                                        <device-tree v-model="targeting.device_brand" :datas="device_brand" v-if="device_brand_model=='1'"></device-tree>
                                     </div>
                                 </FormItem>
                                 <FormItem>
@@ -225,12 +225,13 @@
                                         <Radio label="1">文章分类</Radio>
                                     </RadioGroup>
                                     <div class="margin-top-10">
-                                        <article-tree v-model="targeting.article_category" v-if="article_category_model=='1'"></article-tree>
+                                        <device-tree v-model="targeting.article_category" :datas="article_category" v-if="article_category_model=='1'"></device-tree>
                                     </div>
                                 </FormItem>
 
                                 <FormItem>
-                                    <Button type="primary" size="large" @click="submitTargeting()">保存到下一步</Button>
+                                    <Button v-if="targeting_id==''" type="primary" size="large" @click="addTargeting()">保存到下一步</Button>
+                                    <Button v-else type="primary" size="large" @click="updateTargeting()">修改定向到下一步</Button>
                                 </FormItem>
 
                             </Form>
@@ -351,8 +352,7 @@
                                                     {{item.name}};
                                                 </template>
                                                 <template v-for="item in targeting.app_category">
-                                                    <template v-for="subitem in app_category" v-if="item==subitem.value">
-                                                        {{subitem.name}};
+                                                    <template v-for="subitem in app_category">
                                                         <template v-for="subTagsitem in subitem.subItems" v-if="item==subTagsitem.value">
                                                             {{subTagsitem.name}};
                                                         </template>
@@ -391,7 +391,7 @@
                     </TabPane>
                     <TabPane label="选择已有定向">
                         <!-- 定向列表 -->
-                        <targeting-list @on-change="changetargeting" :province="province" :ad_tag="ad_tag" app_category="app_category" :device_brand="device_brand" :article_category="article_category"></targeting-list>
+                        <targeting-list @on-change="changetargeting" :province="province" :ad_tag="ad_tag" :app_category="app_category" :device_brand="device_brand" :article_category="article_category"></targeting-list>
 
                     </TabPane>
                 </Tabs>
@@ -410,7 +410,6 @@ import tagTree from './components/tagTree.vue';
 import interestTree from './components/interestTree.vue';
 import appTree from './components/appTree.vue';
 import deviceTree from './components/deviceTree.vue';
-import articleTree from './components/articleTree.vue';
 import copyTargeting from './components/copyTargeting.vue';
 import targetingList from './components/targetingList.vue';
 
@@ -423,7 +422,6 @@ export default {
         interestTree,
         appTree,
         deviceTree,
-        articleTree,
         copyTargeting,
         targetingList
     },
@@ -472,7 +470,6 @@ export default {
     },
     mounted() {
         if (this.id) {
-            // this.getCampaigns();
         }
         this.getProvince();
         this.getTag();
@@ -482,6 +479,7 @@ export default {
 
     },
     methods: {
+
         //获取省市区
         getProvince() {
             Axios.post('api.php', {
@@ -587,6 +585,7 @@ export default {
         },
         changetargeting(targeting) {
             this.targeting_name = targeting.targeting_name;
+            // this.targeting_id = targeting.targeting_id;
             if (targeting.targeting.district) {
                 this.targeting.district = targeting.targeting.district; // 地域类型
             } else {
@@ -673,23 +672,136 @@ export default {
                 this.advanced_options = false;
                 this.targeting.article_category = []
             }
-
         },
         //保存定向
-        submitTargeting() {
-            Axios.post('api.php', {
+        addTargeting() {
+            if (this.targeting_name == "") {
+                this.$Message.info("请输入定向名");
+                return;
+            }
+            let params = {
                 action: 'ttAdPut',
                 opt: 'addTargeting',
                 account_id: this.account_id,
-                targeting_name: this.account_id
-            }).then(res => {
+                targeting_name: this.targeting_name,
+                city: this.targeting.city,
+                district: this.targeting.district,
+                gender: this.targeting.gender,
+                app_behavior_target: this.targeting.app_behavior_target,
+            }
+            if (this.age_model == "1") {
+                params.age = this.targeting.age;
+            }
+            if (this.ad_tag_model == "1") {
+                params.ad_tag = this.targeting.ad_tag;
+            }
+            if (this.interest_tags_model == "1") {
+                params.interest_tags = this.targeting.interest_tags;
+            }
+            if (this.platform_model == "1") {
+                params.platform = this.targeting.platform;
+            }
+            if (this.ac_model == "1") {
+                params.ac = this.targeting.ac;
+            }
+            if (this.carrier_model == "1") {
+                params.carrier = this.targeting.carrier;
+            }
+            if (this.activate_type_model == "1") {
+                params.activate_type = this.targeting.activate_type;
+            }
+            if (this.device_brand_model == "1") {
+                params.device_brand = this.targeting.device_brand;
+            }
+            if (this.article_category_model == "1") {
+                params.article_category = this.targeting.article_category;
+            }
+            if (this.targeting.app_behavior_target != "NONE") {
+                params.app_category = this.targeting.app_category;
+            }
+
+            Axios.post('api.php', params).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
+                    this.$router.push({
+                        name: 'ttad',
+                        query: {
+                            account_id: this.account_id,
+                            campaign_id: this.campaign_id,
+                            landing_type: this.landing_type,
+                            targeting_id: res.data.targeting_id
+                        }
+                    })
                 }
             }).catch(err => {
-                console.log('获取手机品牌' + err);
+                console.log("新建定向" + err);
             })
+        },
+        //修改定向
+        updateTargeting() {
+            if (this.targeting_name == "") {
+                this.$Message.info("请输入定向名");
+                return;
+            }
 
+            let params = {
+                action: 'ttAdPut',
+                opt: 'updateTargeting',
+                account_id: this.account_id,
+                targeting_id: this.targeting_id,
+                targeting_name: this.targeting_name,
+                city: this.targeting.city,
+                district: this.targeting.district,
+                gender: this.targeting.gender,
+                app_behavior_target: this.targeting.app_behavior_target,
+            }
+            if (this.age_model == "1") {
+                params.age = this.targeting.age;
+            }
+            if (this.ad_tag_model == "1") {
+                params.ad_tag = this.targeting.ad_tag;
+            }
+            if (this.interest_tags_model == "1") {
+                params.interest_tags = this.targeting.interest_tags;
+            }
+            if (this.platform_model == "1") {
+                params.platform = this.targeting.platform;
+            }
+            if (this.ac_model == "1") {
+                params.ac = this.targeting.ac;
+            }
+            if (this.carrier_model == "1") {
+                params.carrier = this.targeting.carrier;
+            }
+            if (this.activate_type_model == "1") {
+                params.activate_type = this.targeting.activate_type;
+            }
+            if (this.device_brand_model == "1") {
+                params.device_brand = this.targeting.device_brand;
+            }
+            if (this.article_category_model == "1") {
+                params.article_category = this.targeting.article_category;
+            }
+            if (this.targeting.app_behavior_target != "NONE") {
+                params.app_category = this.targeting.app_category;
+            }
+
+            Axios.post('api.php', params).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.$router.push({
+                        name: 'ttad',
+                        query: {
+                            account_id: this.account_id,
+                            campaign_id: this.campaign_id,
+                            landing_type: this.landing_type,
+                            targeting_id: this.targeting_id
+                        }
+                    })
+                }
+            }).catch(err => {
+                console.log("修改定向" + err);
+            })
         }
     },
     computed: {

@@ -104,6 +104,30 @@
             <Page :total="parseInt(tdata.total_number)" :page-size="parseInt(tdata.page_size)" ref="pages" @on-change="tableData" show-elevator show-total></Page>
             </Col>
         </Row>
+
+        <Modal v-model="transfer_modal" title="转帐" @on-ok="changTransfer()">
+            <div class="padding-10">
+                <Form :label-width="80">
+                    <FormItem label="退款账号id">
+                        <Select v-model="transfer.out_account_id" placeholder="请选择退款账号id">
+                            <Option v-for="item in transfer.accountList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="加款账号id">
+                        <Select v-model="transfer.in_account_id" placeholder="请选择加款账号id">
+                            <Option v-for="item in transfer.accountList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="转账金额">
+                        <Input v-model="transfer.money" placeholder="请输入退款金额(元)"></Input>
+                    </FormItem>
+                    <FormItem label="备注">
+                        <Input v-model="transfer.mark" placeholder="请输入备注"></Input>
+                    </FormItem>
+                </Form>
+            </div>
+        </Modal>
+
     </Card>
 </template>
 <script>
@@ -152,15 +176,66 @@ export default {
             //负责人
             author: [],
             agent: [],
+            //转帐
+            transfer_modal: false,
+            transfer: {
+                accountList: "",
+                media_type: "",
+                out_account_id: "",
+                in_account_id: "",
+                money: "",
+                mark: "",
+            }
         };
     },
+    mounted() {
+    },
     methods: {
-        // handleClickAuthor() {
-        // 	if (!this.media_type) {
-        // 		this.$Message.warning('请先选择媒体账号');
-        // 		return;
-        // 	}
-        // },
+        //退款
+        changTransfer() {
+            if (this.transfer.out_account_id == "") {
+                this.$Message.info("请选对退款账号id");
+                return;
+            }
+            if (this.transfer.in_account_id == "") {
+                this.$Message.info("请选对加款账号id");
+                return;
+            }
+            if (this.transfer.money == "") {
+                this.$Message.info("请输入转账金额");
+                return;
+            }
+            Axios.get("api.php", {
+                action: "sys",
+                opt: "accountTransfer",
+                media_type: this.transfer.media_type,
+                out_account_id: this.transfer.out_account_id,
+                in_account_id: this.transfer.in_account_id,
+                money: this.transfer.money,
+                mark: this.transfer.mark,
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    if (params.row.media_type == 1) {
+                        this.$router.push({
+                            name: "time_transferAccounts"
+                        });
+                    }
+                    if (params.row.media_type == 3) {
+                        this.$router.push({
+                            name: "uc_transferAccounts"
+                        });
+                    }
+                    if (params.row.media_type == 4) {
+                        this.$router.push({
+                            name: "tt_transferAccounts"
+                        });
+                    }
+                }
+            }).catch(err => {
+                console.log("获取媒体账号" + err);
+            });
+        },
         //这里的排序没有做哈哈哈
         tableData(page) {
             if (page === undefined) {
@@ -248,7 +323,7 @@ export default {
     computed: {
         //设置表格头部
         taColumns() {
-            const tableColumnList =  [
+            const tableColumnList = [
                 {
                     title: "媒体",
                     key: "media_name",
@@ -401,89 +476,113 @@ export default {
                     }
                 },
                 {
-                    title: "充值",
+                    title: "充值与转帐",
                     key: "platform",
-                    width: 60,
+                    width: 100,
                     render: (h, params) => {
                         if (params.row._disabled) return;
                         let money = "", mark = "";
-                        return h(
-                            "span",
-                            {
-                                class: "name_text",
-                                on: {
-                                    click: () => {
-                                        this.$Modal.confirm({
-                                            render: h => {
-                                                return [h("Input", {
-                                                    props: {
-                                                        value: money,
-                                                        autofocus: true,
-                                                        placeholder: "请输入充值金额（元）"
-                                                    },
-                                                    on: {
-                                                        input: val => {
-                                                            money = val;
-                                                        }
+                        return [h("span", {
+                            class: "name_text",
+                            on: {
+                                click: () => {
+                                    this.$Modal.confirm({
+                                        render: h => {
+                                            return [h("Input", {
+                                                props: {
+                                                    value: money,
+                                                    autofocus: true,
+                                                    placeholder: "请输入充值金额（元）"
+                                                },
+                                                on: {
+                                                    input: val => {
+                                                        money = val;
                                                     }
-                                                }), h("Input", {
-                                                    props: {
-                                                        value: mark,
-                                                        placeholder: "请输入备注"
-                                                    },
-                                                    style: {
-                                                        marginTop: "10px"
-                                                    },
-                                                    on: {
-                                                        input: val => {
-                                                            mark = val;
-                                                        }
-                                                    }
-                                                })];
-                                            },
-                                            onOk: () => {
-                                                if (money == "") {
-                                                    this.$Message.info("请输入充值金额");
-                                                    return;
                                                 }
-                                                Axios.post("api.php", {
-                                                    action: "sys",
-                                                    opt: "accountRecharge",
-                                                    account_id: params.row.account_id,
-                                                    media_type: params.row.media_type,
-                                                    money: money,
-                                                    mark: mark
-                                                }).then(res => {
-                                                    if (res.ret == 1) {
-                                                        this.$Message.info(res.msg);
-                                                        if (params.row.media_type == 1) {
-                                                            this.$router.push({
-                                                                name: "time_rechargerecord"
-                                                            });
-                                                        }
-                                                        if (params.row.media_type == 3) {
-                                                            this.$router.push({
-                                                                name: "uc_rechargerecord"
-                                                            });
-                                                        }
-                                                        if (params.row.media_type == 4) {
-                                                            this.$router.push({
-                                                                name: "tt_rechargerecord"
-                                                            });
-                                                        }
+                                            }), h("Input", {
+                                                props: {
+                                                    value: mark,
+                                                    placeholder: "请输入备注"
+                                                },
+                                                style: {
+                                                    marginTop: "10px"
+                                                },
+                                                on: {
+                                                    input: val => {
+                                                        mark = val;
                                                     }
-                                                }).catch(err => {
-                                                    console.log("充值失败" + err);
-                                                });
+                                                }
+                                            })];
+                                        },
+                                        onOk: () => {
+                                            if (money == "") {
+                                                this.$Message.info("请输入充值金额");
+                                                return;
                                             }
-                                        });
-                                    }
+                                            Axios.post("api.php", {
+                                                action: "sys",
+                                                opt: "accountRecharge",
+                                                account_id: params.row.account_id,
+                                                media_type: params.row.media_type,
+                                                money: money,
+                                                mark: mark
+                                            }).then(res => {
+                                                if (res.ret == 1) {
+                                                    this.$Message.info(res.msg);
+                                                    if (params.row.media_type == 1) {
+                                                        this.$router.push({
+                                                            name: "time_rechargeRecord"
+                                                        });
+                                                    }
+                                                    if (params.row.media_type == 3) {
+                                                        this.$router.push({
+                                                            name: "uc_rechargeRecord"
+                                                        });
+                                                    }
+                                                    if (params.row.media_type == 4) {
+                                                        this.$router.push({
+                                                            name: "tt_rechargeRecord"
+                                                        });
+                                                    }
+                                                }
+                                            }).catch(err => {
+                                                console.log("充值失败" + err);
+                                            });
+                                        }
+                                    });
                                 }
+                            }
+                        }, "充值"), h("span", {
+                            class: "name_text",
+                            style: {
+                                marginLeft: "10px"
                             },
-                            "充值"
-                        )
+                            on: {
+                                click: () => {
+                                    //获取媒体账号
+                                    Axios.get("api.php", {
+                                        action: "api",
+                                        opt: "getAccountByAgent",
+                                        media_type: params.row.media_type,
+                                        agent: params.row.agent
+                                    }).then(res => {
+                                        if (res.ret == 1) {
+                                            this.transfer.accountList = res.data;
+                                            this.transfer_modal = true;
+                                            this.transfer.in_account_id = params.row.account_id;
+                                            this.transfer.media_type = params.row.media_type;
+                                        }
+                                    }).catch(err => {
+                                        console.log("获取媒体账号" + err);
+                                    });
+                                }
+                            }
+                        },
+                            "转帐"
+                        )]
                     }
-                }
+                },
+
             ];
             this.uncheck.forEach(item => {
                 tableColumnList.forEach((col, i) => {
@@ -495,6 +594,7 @@ export default {
             return tableColumnList;
         }
     },
+
     beforeMount() {
         let setDate = DateShortcuts;
         setDate.disabledDate = date => {

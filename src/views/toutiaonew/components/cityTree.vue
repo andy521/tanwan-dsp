@@ -107,7 +107,13 @@ export default {
             ids: [],
             searchcity: "",
             province_list: [],
-            province: ""
+            province: "",
+            checked_list: []
+        }
+    },
+    watch: {
+        value() {
+            this.ids = this.value;
         }
     },
     mounted() {
@@ -181,6 +187,7 @@ export default {
             } else {
                 this.province = "";
             }
+            this.get_checked_list();
         },
         checkedprovince2(item) {
             if (item.cityList) {
@@ -189,12 +196,14 @@ export default {
                 item.checked = !item.checked;
                 this.province = "";
             }
+            this.get_checked_list();
         },
         //选全省
         AllProvince() {
             this.province_list.forEach(item => {
                 item.checked = true;
             });
+            this.get_checked_list();
         },
         //选全市
         AllCity() {
@@ -202,11 +211,13 @@ export default {
                 item.checked = true;
             });
             this.citylen();
+            this.get_checked_list();
         },
         //选择城市
         checkedcity(item) {
             item.checked = !item.checked;
             this.citylen();
+            this.get_checked_list();
         },
         //城市全选，父级加1
         citylen() {
@@ -221,6 +232,7 @@ export default {
             } else {
                 this.province.checked = false;
             }
+            this.get_checked_list();
         },
         //删除城市
         removecity(v) {
@@ -240,15 +252,15 @@ export default {
                     }
                 })
             }
+            this.get_checked_list();
         },
         //全部清空
         removeAllcity() {
             this.ids = [];
             this.ad_province(this.province_list);
-        }
-    },
-    computed: {
-        checked_list() {
+            this.get_checked_list();
+        },
+        get_checked_list() {
             let list = [], ids = [];
             this.province_list.forEach(v => {
                 if (v.checked) {
@@ -274,7 +286,7 @@ export default {
                 ids.push(v.value);
             })
             this.$emit('input', ids)
-            return list;
+            this.checked_list = list;
         }
     }
 }
