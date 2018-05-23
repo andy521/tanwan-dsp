@@ -100,12 +100,18 @@ export default {
             searchcity: "",
             province_list: [],
             province: "",
-            county: ""
+            county: "",
+            checked_list:[]
         }
     },
     mounted() {
         this.getProvince();
         this.ids = this.value;
+    },
+    watch: {
+        value() {
+            this.ids = this.value;
+        }
     },
     methods: {
         //获取省市区
@@ -165,6 +171,7 @@ export default {
                 this.province = "";
                 this.county = "";
             }
+            this.get_checked_list();
         },
 
         //选择城市
@@ -172,6 +179,7 @@ export default {
             if (item.countyList) {
                 this.county = item;
             }
+            this.get_checked_list();
         },
 
         //删除县区
@@ -192,28 +200,30 @@ export default {
                     }
                 })
             }
+            this.get_checked_list();
         },
 
         //选择县区
         checkedcounty(item) {
             item.checked = !item.checked;
+            this.get_checked_list();
         },
         //全选县区
         Allcounty() {
             this.county.countyList.forEach(v => {
                 v.checked = true;
             });
+            this.get_checked_list();
         },
 
 
         //全部清空
         removeAllcounty() {
-            this.ids=[];
+            this.ids = [];
             this.ad_province(this.province_list);
-        }
-    },
-    computed: {
-        checked_list() {
+            this.get_checked_list();
+        },
+        get_checked_list() {
             let list = [], ids = [];
             this.province_list.forEach(v => {
                 if (v.countyList) {
@@ -239,8 +249,10 @@ export default {
                 ids.push(v.value);
             })
             this.$emit('input', ids)
-            return list;
+            this.checked_list=list;
         }
     }
+   
+        
 }
 </script>
