@@ -215,17 +215,17 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
-                    if (params.row.media_type == 1) {
+                    if (this.transfer.media_type == 1) {
                         this.$router.push({
                             name: "time_transferAccounts"
                         });
                     }
-                    if (params.row.media_type == 3) {
+                    if (this.transfer.media_type == 3) {
                         this.$router.push({
                             name: "uc_transferAccounts"
                         });
                     }
-                    if (params.row.media_type == 4) {
+                    if (this.transfer.media_type == 4) {
                         this.$router.push({
                             name: "tt_transferAccounts"
                         });
