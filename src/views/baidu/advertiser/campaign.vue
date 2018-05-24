@@ -151,10 +151,10 @@ export default {
     // 返回时获取保存数据
     const planCache = this.$store.state.bd.planCache
     if (this.$route.meta.keepAlive && JSON.stringify(planCache) !== '{}') {
-        this.tabSize = unitCache.tabSize
-        this.pageSize = unitCache.pageSize
-        this.searchParams.keyword = unitCache.keyword
-        this.searchParams.page = unitCache.page
+        this.tabSize = planCache.tabSize
+        this.pageSize = planCache.pageSize
+        this.searchParams.keyword = planCache.keyword
+        this.searchParams.page = planCache.page
         this.searchCampaigns(this.searchParams.page)
     } else {
         this.searchCampaigns()
