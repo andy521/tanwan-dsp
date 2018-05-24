@@ -27,7 +27,7 @@ export default {
         },
         toRouteName: {
             type: String,
-            default: 'bdplan'
+            default: 'bdcampaign'
         },
         queryParams: {
             type: Object,

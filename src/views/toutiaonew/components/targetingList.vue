@@ -2,7 +2,7 @@
 <style scoped>
 .city_main {
   line-height: 36px;
-  width: 300px;
+  width: 350px;
   border: solid 1px #dee4f5;
   float: left;
 }
@@ -161,21 +161,14 @@
                             </span>
                         </div>
 
-                        <div class="targeting_item" v-if="targeting.targeting.app_behavior_target">
+                        <div class="targeting_item" v-if="targeting.targeting.app_behavior_target!='NONE'&&targeting.targeting.app_category">
                             <span>APP行为定向：</span>
                             <span class="grey">
                                 <template v-for="item in toutiaoConfig.app_behavior_target" v-if="item.val_type==targeting.targeting.app_behavior_target">
                                     {{item.name}};
                                 </template>
-                            </span>
-                        </div>
-
-                        <div class="targeting_item" v-if="targeting.targeting.app_category">
-                            <span>APP行为定向分类集合：</span>
-                            <span class="grey">
                                 <template v-for="item in targeting.targeting.app_category">
-                                    <template v-for="subitem in app_category" v-if="item==subitem.value">
-                                        {{subitem.name}};
+                                    <template v-for="subitem in app_category">
                                         <template v-for="subTagsitem in subitem.subItems" v-if="item==subTagsitem.value">
                                             {{subTagsitem.name}};
                                         </template>
@@ -271,6 +264,10 @@ export default {
         },
         //确定
         submitTargeting() {
+            if (!this.targeting.targeting_id) {
+                this.$Message.info("请选择定向");
+                return;
+            }
             this.$router.push({
                 name: 'ttad',
                 query: {

@@ -621,15 +621,7 @@ export default {
                     render: (h, params) => {
                         let value = params.row.daily_budget;
                         //三位数加逗号
-                        let newvalue = (value / 100).toString()
-                            .split("")
-                            .reverse()
-                            .join("")
-                            .replace(/(\d{3})/g, "$1,")
-                            .replace(/\,$/, "")
-                            .split("")
-                            .reverse()
-                            .join("");
+                        let newvalue = String(value / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         return [
                             h(
                                 "Tooltip",

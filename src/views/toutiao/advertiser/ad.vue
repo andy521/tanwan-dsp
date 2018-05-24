@@ -439,16 +439,7 @@ export default {
                         let value = params.row.budget;
                         if (!value) return;
                         //三位数加逗号
-                        let newvalue = value
-                            .toString()
-                            .split("")
-                            .reverse()
-                            .join("")
-                            .replace(/(\d{3})/g, "$1,")
-                            .replace(/\,$/, "")
-                            .split("")
-                            .reverse()
-                            .join("");
+                        let newvalue = String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         return [
                             h(
                                 "Tooltip",
@@ -564,16 +555,7 @@ export default {
                         if (!value) return;
                         let is_stage2bid = "0";
                         //三位数加逗号
-                        let newvalue = value
-                            .toString()
-                            .split("")
-                            .reverse()
-                            .join("")
-                            .replace(/(\d{3})/g, "$1,")
-                            .replace(/\,$/, "")
-                            .split("")
-                            .reverse()
-                            .join("");
+                        let newvalue = String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         return [
                             h("span", newvalue + "元"),
                             h("i-button", {

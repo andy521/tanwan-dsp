@@ -142,8 +142,9 @@ export default {
         this.interest_tags = this.value;
     },
     watch: {
-        interest_tags() {
-            this.$emit('input', this.interest_tags);
+        value(){
+             this.interest_tags = this.value;
+             
         }
     },
     methods: {
@@ -174,6 +175,7 @@ export default {
             if (!checked) {
                 this.interest_tags.push(this.search);
             }
+            this.$emit('input', this.interest_tags);
         },
         //上传关健词
         readFileword(e) {
@@ -206,14 +208,17 @@ export default {
                     }
                 };
             }
+            this.$emit('input', this.interest_tags);
         },
         //删除关键字全部
         removeAll() {
             this.interest_tags = [];
+            this.$emit('input', this.interest_tags);
         },
         //删除关键字单个
         remove(index) {
             this.interest_tags.splice(index, 1);
+            this.$emit('input', this.interest_tags);
         },
         //获取选中的id
         taCheck(row) {
@@ -236,6 +241,7 @@ export default {
                     }
                 })
             })
+            this.$emit('input', this.interest_tags);
         },
         //保存为词包
         saveword() {

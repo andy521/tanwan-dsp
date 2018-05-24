@@ -107,12 +107,18 @@ export default {
             ids: [],
             searchcity: "",
             adtags_list: [],
+            checked_list: [],
             adtags: ""
         }
     },
     mounted() {
         this.getTag();
         this.ids = this.value;
+    },
+    watch: {
+        value() {
+            this.ids = this.value;
+        }
     },
     methods: {
         //获取兴趣分类
@@ -149,6 +155,7 @@ export default {
                 }
             })
             this.adtags_list = data;
+            this.get_checked_list();
         },
         //选择省
         checkedprovince(item) {
@@ -161,6 +168,7 @@ export default {
             } else {
                 this.adtags = "";
             }
+            this.get_checked_list();
         },
         checkedprovince2(item) {
             if (item.subTags) {
@@ -169,12 +177,14 @@ export default {
                 item.checked = !item.checked;
                 this.adtags = "";
             }
+            this.get_checked_list();
         },
         //选全省
         AllProvince() {
             this.adtags_list.forEach(item => {
                 item.checked = true;
             });
+            this.get_checked_list();
         },
         //选全市
         AllCity() {
@@ -182,11 +192,13 @@ export default {
                 item.checked = true;
             });
             this.citylen();
+            this.get_checked_list();
         },
         //选择城市
         checkedcity(item) {
             item.checked = !item.checked;
             this.citylen();
+            this.get_checked_list();
         },
         //城市全选，父级加1
         citylen() {
@@ -201,6 +213,7 @@ export default {
             } else {
                 this.adtags.checked = false;
             }
+            this.get_checked_list();
         },
         //删除城市
         removecity(v) {
@@ -210,15 +223,15 @@ export default {
                     v.checked = false;
                 })
             }
+            this.get_checked_list();
         },
         //全部清空
         removeAllcity() {
-            this.ids=[];
+            this.ids = [];
             this.ad_adtags(this.adtags_list);
-        }
-    },
-    computed: {
-        checked_list() {
+            this.get_checked_list();
+        },
+        get_checked_list() {
             let list = [], ids = [];
             this.adtags_list.forEach(v => {
                 if (v.checked) {
@@ -236,8 +249,9 @@ export default {
             list.forEach(v => {
                 ids.push(v.value);
             })
-            this.$emit('input', ids)
-            return list;
+            this.ids = ids;
+            this.$emit('input', this.ids);
+            this.checked_list = list;
         }
     }
 }
