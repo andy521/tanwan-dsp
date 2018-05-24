@@ -59,7 +59,7 @@ export default {
         //选中广告组跳转
         checked(campaign) {
             this.$router.push({
-                name: 'tttargeting',
+                name: 'ttad',
                 query: {
                     account_id: this.account_id,
                     campaign_id: campaign.campaign_id,

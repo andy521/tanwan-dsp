@@ -149,7 +149,7 @@ export default {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
                     this.$router.push({
-                        name: 'tttargeting',
+                        name: 'ttad',
                         query: {
                             account_id: this.account_id,
                             campaign_id: res.data.campaign_id,

@@ -60,7 +60,6 @@ export const ttNew = {
     children: [
         { path: 'campaign', title: '新建头条广告组', name: 'ttcampaign', component: () => import('@/views/toutiaonew/campaign.vue') },
         { path: 'ad', title: '新建头条广告计划', name: 'ttad', component: () => import('@/views/toutiaonew/ad.vue') },
-        { path: 'targeting', title: '新建头条定向', name: 'tttargeting', component: () => import('@/views/toutiaonew/targeting.vue') },
         { path: 'creative', title: '新建头条创意', name: 'ttcreative', component: () => import('@/views/toutiaonew/creative.vue') },
     ]
 };
@@ -137,7 +136,7 @@ export const appRouter = [
         access: 0,      
         component: Main,
         children: [           
-            { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
+            // { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
             { path: 'advertiser', title: '推广管理', name: 'tt_advertiser', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'campaign', title: '广告组', name: 'tt_campaign', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/advertiser/campaign.vue')},

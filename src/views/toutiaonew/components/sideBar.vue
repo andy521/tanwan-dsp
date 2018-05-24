@@ -100,15 +100,7 @@ export default {
                             name: "推广目的"
                         }
                     ]
-                },
-                {
-                    name: "创建用户定向",
-                    list: [
-                        {
-                            name: "用户定向"
-                        }
-                    ]
-                },
+                },               
                 {
                     name: "创建广告计划",
                     list: [
@@ -117,6 +109,9 @@ export default {
                         },
                         {
                             name: "网页链接"
+                        },
+                        {
+                            name: "用户定向"
                         },
                         {
                             name: "预算与出价"
