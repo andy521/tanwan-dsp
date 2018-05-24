@@ -1,22 +1,7 @@
 
-<style scoped>
-.toutiaonew {
-  padding: 10px 10px 10px 210px;
-  overflow: auto;
-  height: 100%;
-  font-size: 14px;
-}
-.newtt {
-  padding: 20px;
-}
-.title {
-  font-size: 22px;
-}
-.w500 {
-  width: 400px;
-}
+<style>
+    @import "./style.less";
 </style>
-
 <template>
     <div class="toutiaonew ad">
         <!-- 导行 -->

@@ -1,64 +1,6 @@
 
 <style scoped>
-.toutiaonew {
-  padding: 10px 10px 10px 210px;
-  overflow: auto;
-  height: 100%;
-  font-size: 14px;
-}
-.newtt {
-  padding: 20px;
-}
-.txt-grey {
-  color: #999;
-}
-.city_main {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 50px;
-  line-height: 36px;
-  width: 250px;
-  border: solid 1px #dee4f5;
-}
-.city_title {
-  background-color: #fafbfe;
-  border-bottom: solid 1px #dee4f5;
-  padding: 0 15px;
-  height: 36px;
-}
-.city_box {
-  height: 600px;
-  overflow: auto;
-}
-.item {
-  padding: 0 15px;
-  cursor: pointer;
-}
-.item:hover {
-  background: #f8f8f8;
-}
-.more_icon {
-  float: right;
-  line-height: 36px;
-}
-.icon {
-  line-height: 36px;
-  float: left;
-  margin-right: 5px;
-}
-.clearcity {
-  float: right;
-  color: #2d8cf0;
-  cursor: pointer;
-}
-.grey {
-  color: #999;
-}
-.targeting_item {
-  line-height: 20px;
-  padding: 5px 0;
-}
+@import "./style.less";
 </style>
 <template>
     <div class="toutiaonew">
