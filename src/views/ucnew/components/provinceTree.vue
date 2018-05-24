@@ -76,7 +76,7 @@
             </span>
           </span>
         </div>
-      </div>    
+      </div>
       <div class="scroll-y">
         <Tree @on-check-change="handleChangeProvinceTree" :data="provinceTreeList" show-checkbox></Tree>
       </div>
@@ -84,12 +84,8 @@
   </div>
 </template>
 <script>
-import selected from './selected'
 export default {
   name: 'ProvinceTree',
-  components: {
-    selected
-  },
   props: {
     value: {
       type: Array,

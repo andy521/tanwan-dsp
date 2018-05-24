@@ -136,7 +136,7 @@ export const appRouter = [
         access: 0,      
         component: Main,
         children: [           
-            { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
+            // { path: 'index', title: '头条总览', name: 'tt_main', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/index.vue') },   
             { path: 'advertiser', title: '推广管理', name: 'tt_advertiser', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'campaign', title: '广告组', name: 'tt_campaign', icon: 'android-radio-button-off', component: () => import('@/views/toutiao/advertiser/campaign.vue')},
