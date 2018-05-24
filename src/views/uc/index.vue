@@ -1187,18 +1187,13 @@ export default {
         }
 
         //返回时获取保存数据
-        const planCache = this.$store.state.ucnew.planCache
+        const planCache = this.$store.state.uc.planCache
         if (this.$route.meta.keepAlive && JSON.stringify(planCache) !== '{}') {
             this.DateDomain = planCache.DateDomain
             this.page = planCache.page
-            this.page_size = planCache.page_size
-            this.game_id = planCache.game_id
-            this.checkCampaign = planCache.checkCampaign
-            this.checkId = planCache.checkId
-            this.uncheck = planCache.uncheck
-            this.orderField = planCache.orderField
-            this.orderDirection = planCache.orderDirection
-            this.author_model = planCache.author
+            this.page_size = planCache.pageSize
+            this.tableSize = planCache.tableSize
+            this.keyword = planCache.keyword
             this.getSpread(this.page)
         } else {
             this.getSpread()
@@ -1209,16 +1204,11 @@ export default {
             const cache = {
                 DateDomain: this.DateDomain, //时间
                 page: this.page, //页码
-                page_size: this.page_size, //每页数量
-                game_id: this.GameListIds, //游戏id
-                checkCampaign: this.checkCampaign, // 选中计划id
-                checkId: this.checkId, // 选中账户id
-                uncheck: this.uncheck, // 没选中的
-                orderField: this.orderField, //排序的orderField参数名
-                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-                author: this.author_model //负责人
+                pageSize: this.page_size, //每页数量
+                tableSize: this.tableSize,
+                keyword: this.keyword
             };
-            this.$store.commit('SAVE_PLAN_CACHE', cache)
+            this.$store.commit('SAVE_UC_PLAN_CACHE', cache)
         }
         from.meta.keepAlive = false
         next()

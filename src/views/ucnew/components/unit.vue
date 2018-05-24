@@ -38,13 +38,15 @@
   margin-left: 1rem;
   color: #a3a3a3;
 }
-.regions-box {
-  padding: 10px;
-  max-width: 800px;
-  max-height: 400px;
-  overflow-y: scroll;
-  border: 1px solid #eee;
-}
+// .regions-box {
+//   padding: 10px;
+//   max-width: 800px;
+//   border: 1px solid #eee;
+// }
+// .scroll-y{
+//   max-height: 400px;
+//   overflow-y: scroll;
+// }
 .evaluate-region {
   padding: 2px;
   letter-spacing: -2px;
@@ -92,7 +94,7 @@
     <Row type="flex" justify="start">
       <Col class-name="new-unit-panel">
       <Card dis-hover bordered>
-
+<selected></selected>
         <Button slot="title" type="text" @click="handleGoBack" class="padding-left-0 color-green">
           <Icon type="chevron-left"></Icon>
           返回单元列表
@@ -194,7 +196,7 @@
             <RadioGroup @on-change="handleAllRegion" v-model="targetingSetting.all_region">
               <Radio label="1">不限</Radio>
               <Radio label="0">省市</Radio>
-              <Radio label="2">
+              <!-- <Radio label="2">
                 <span>区县</span>
                 <Tooltip placement="top">
                   <Icon type="help-circled"></Icon>
@@ -203,11 +205,20 @@
                     <p>时位于该区县的人群。</p>
                   </div>
                 </Tooltip>
-              </Radio>
+              </Radio> -->
             </RadioGroup>
-            <div v-if="targetingSetting.all_region === '0'" class="regions-box">
-              <Tree @on-check-change="handleChangeProvinceTree" :data="provinceTreeList" show-checkbox></Tree>
+            <div v-if="targetingSetting.all_region === '0'">
+              <province-tree @on-change="handleProvinceChange" v-model="provinceTreeList"></province-tree>
             </div>
+            <!-- <div v-if="targetingSetting.all_region === '0'" class="regions-box">
+              <selected @on-change="handleChangeProvinceTree" @on-Clear-all="evaluate.provinceTxt=''" v-model="provinceTreeList"></selected>
+              <div class="scroll-y">
+                <Tree @on-check-change="handleChangeProvinceTree" :data="provinceTreeList" show-checkbox></Tree>
+              </div>
+            </div> -->
+            <!-- <div v-if="targetingSetting.all_region === '2'">
+              <country-tree v-model="cityList"></country-tree>
+            </div> -->
           </FormItem>
           <FormItem label="性别">
             <RadioGroup @on-change="handleGender" v-model="targetingSetting.gender">
@@ -558,6 +569,9 @@
 // import convertTypeList from '../simple/convertType.json'
 // import getAdConvert from '../simple/getAdConvert.json'
 // import getCampaignNameList from '../simple/getCampaignNameList.json'
+import selected from './selected'
+import countryTree from './countryTree'
+import provinceTree from './provinceTree'
 import typeTree from './typeTree'
 import Axios from '@/api/index'
 const ERR_OK = 1
@@ -578,6 +592,7 @@ export default {
         unitNameList: [] // 推广单元数据
       },
       currId: 0, // 在编辑状态下的id
+      accountId: '',
       campaignId: '', // 导入计划的id
       adgroupId: '', // 编辑时的推广单元id
       targetingId: '', // 编辑时的定向id
@@ -646,6 +661,7 @@ export default {
       // seleinterestAPPGameName: [], // 选中的app定向游戏类
       // seleinterestAPPSFName: [], // 选中的app定向软件类
       provinceList: [], // 获取同步的 省市地域列表
+      cityList: [], // 获取同步的 市地域列表
       provinceTreeList: [], // 省市Tree组件数据
       targetingAgeStatus: '-1', // 定向设置的年龄数据状态：-1为不限，1为自定义
       targetingCustomAgeList: [], // 自定义定向设置的年龄数据
@@ -689,9 +705,10 @@ export default {
       this.getAdResourceId()
     }
 
-      this.getProvince()
-      this.getInterestTypes()
-      this.getInterestAPP()
+    this.getProvince()
+    this.getCounty()
+    this.getInterestTypes()
+    this.getInterestAPP()
     })
   },
   created() {
@@ -1084,40 +1101,44 @@ export default {
         this.isEditTargetingChange += 1
       }
     },
-    // 事件：监听省市数据
-    handleChangeProvinceTree(provinceList) {
-      if (provinceList.length < 1) {
-        return
-      }
-      let retName = []
-      let retValue = []
-      let retTxt = ''
-      provinceList.forEach((city, index) => {
-        retName.push(city.title)
-        retValue.push(city.value)
-        console.log('region', typeof city.value, city.value)
-      })
-      this.targetingSetting.region = retValue
-      if (retName === '') {
-        retTxt = ''
-        return
-      } else if (retName.length > 3) {
-        retTxt = `${retName[0]}、${retName[1]}、${retName[2]}...等${
-          retName.length
-        }个地域`
-      } else {
-        retName.forEach(name => {
-          retTxt += name + '、'
-        })
-        retTxt = retTxt.substring(0, retTxt.length - 1)
-      }
-      this.evaluate.provinceTxt = retTxt
-
-      // 判断编辑状态下，定向更改
-      if (this.isEdit) {
-        this.isEditTargetingChange += 1
-      }
+    handleProvinceChange(provinceList, valueList, nameList) {
+      this.targetingSetting.region = valueList
+      this.evaluate.provinceTxt = this.normalizeTxtShow(nameList)
+      console.log(provinceList, valueList, nameList, '----handleProvinceChange-')
     },
+    // 事件：监听省市数据
+    // handleChangeProvinceTree(provinceList) {
+    //   console.log(provinceList, '-----')
+    //   if (provinceList.length === 0) {
+    //     this.evaluate.provinceTxt = ''
+    //     return
+    //   }
+    //   let retName = []
+    //   let retValue = []
+    //   let retTxt = ''
+    //   provinceList.forEach((city, index) => {
+    //     retName.push(city.title)
+    //     retValue.push(city.value)
+    //   })
+    //   this.targetingSetting.region = retValue
+    //   if (retName.length === '') {
+    //     retTxt = ''
+    //     return
+    //   } else if (retName.length > 3) {
+    //     retTxt = `${retName[0]}、${retName[1]}、${retName[2]}...等${retName.length}个地域`
+    //   } else {
+    //     retName.forEach(name => {
+    //       retTxt += name + '、'
+    //     })
+    //     retTxt = retTxt.substring(0, retTxt.length - 1)
+    //   }
+    //   this.evaluate.provinceTxt = retTxt
+
+    //   // 判断编辑状态下，定向更改
+    //   if (this.isEdit) {
+    //     this.isEditTargetingChange += 1
+    //   }
+    // },
     handleSearchApp() {
       this.getRecommend({type: 'app', seeds: [this.interestSearch]})
     },
@@ -1228,7 +1249,7 @@ export default {
       let params = Object.assign({}, this.targetingSetting, {
         action: 'ucAdPut',
         opt: 'addTargeting',
-        account_id: this.$route.query.account
+        account_id: this.accountId
       })
       console.log('定向params', params)
       Axios.post('api.php', params)
@@ -1336,14 +1357,7 @@ export default {
       let ageTxt = this.ageStrToArray(targeting.age).join('、')
       this.evaluate.ageTxt =
         targeting.age === '-1' ? '' : ageTxt.substring(0, ageTxt.length)
-      console.log(
-        'tar after',
-        targeting.age,
-        typeof targeting.age,
-        targeting.age === '-1',
-        this.targetingAgeStatus,
-        this.targetingSetting
-      )
+      console.log(this.targetingList,targeting)
       // 投放地域
       if (this.targetingSetting.region.length > 0) {
         const provinceList = []
@@ -1472,6 +1486,7 @@ export default {
       let update = Object.assign({}, this.unitSetting, {
         action: 'ucAdPut',
         opt: 'addAdgroup',
+        account_id : +this.accountId,
         campaign_id: parseInt(this.unitSetting.campaign_id),
         generalizeType: parseInt(this.unitSetting.generalizeType),
         adResourceId: parseInt(this.unitSetting.adResourceId),
@@ -1827,6 +1842,23 @@ export default {
       // this.evaluate.activeTxt = this.normalizeActiveTxt(this.evaluate.activeNum)
       // console.log("获取兴趣列表", this.interestTypesList);
     },
+    // 获取区县列表
+    getCounty() {
+      if (this.cityList.length > 0) {
+        return
+      }
+      Axios.post('api.php', {
+        action: 'ucAdPut',
+        opt: 'getCounty',
+        account_id: this.accountId+''
+      }).then(res => {
+        if (res.ret === 1) {
+          this.cityList = res.data.countyTrees
+        }
+      }).catch(err => {
+        console.log('获取区县列表错误', err)
+      })
+    },
     // 获取省市地域列表
     getProvince() {
       Axios.post('api.php', {
@@ -1836,7 +1868,7 @@ export default {
       })
         .then(res => {
           if (ERR_OK === res.ret) {
-            this.provinceList = res.data.provinces;
+            this.provinceList = res.data.provinces
             this.provinceTreeList = this.normalizeProvinceList(
               this.provinceList
             )
@@ -2031,7 +2063,7 @@ export default {
       this.unitSetting.account_id = query.account
       this.unitSetting.campaign_id = query.campaign_id
       this.targetingSetting.account_id = query.account
-
+      this.accountId = query.account
       if (query.id) {
         this.currId = query.id
         this.adgroupId = query.adgroup_id
@@ -2082,7 +2114,10 @@ export default {
     }
   },
   components: {
-    typeTree
+    typeTree,
+    selected,
+    countryTree,
+    provinceTree
   }
 }
 </script>
