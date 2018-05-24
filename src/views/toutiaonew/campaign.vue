@@ -1,14 +1,5 @@
-
-<style scoped>
-.toutiaonew {
-  padding: 10px 10px 10px 210px;
-  overflow: auto;
-  height: 100%;
-  font-size: 14px;
-}
-.newtt {
-  padding: 20px;
-}
+<style>
+    @import "./style.less";
 </style>
 <template>
     <div class="toutiaonew">
