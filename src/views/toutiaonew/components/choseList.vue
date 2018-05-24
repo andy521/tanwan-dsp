@@ -30,7 +30,7 @@
         </Input>
         <div class="panel" :style="{maxHeight:height+'px'}">
             <div @click="checked(item)" v-for="item in campaigns_list" :key="this" class="panel-item">
-                <div class="name">{{item.campaign_name}}</div>
+                <div>{{item.campaign_name}}</div>
                 <div class="type" v-for="subitem in toutiaoConfig.landing_type" v-if="item.landing_type==subitem.val_type">{{subitem.name}}</div>
             </div>
         </div>
@@ -59,10 +59,11 @@ export default {
         //选中广告组跳转
         checked(campaign) {
             this.$router.push({
-                name: 'ttad',
+                name: 'tttargeting',
                 query: {
-                    account_id:this.account_id,
-                    campaign_id: campaign.campaign_id
+                    account_id: this.account_id,
+                    campaign_id: campaign.campaign_id,
+                    landing_type: campaign.landing_type,
                 }
             })
         },

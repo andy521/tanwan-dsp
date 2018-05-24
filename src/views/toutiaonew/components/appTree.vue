@@ -18,6 +18,7 @@
 .item {
   padding: 0 15px;
   cursor: pointer;
+  display: block;
 }
 .item:hover {
   background: #f8f8f8;
@@ -40,19 +41,9 @@
 <template>
     <div>
         <div class="city_main">
-            <div class="city_title">按分类
-                <span class="clearcity" @click="AllProvince()">全选</span>
-            </div>
+            <div class="city_title">按分类</div>
             <div class="city_box">
-                <div class="item" v-for="item in adtags_list" @click="checkedprovince2(item)">
-                    <span @click="checkedprovince(item)" v-if="item.subItems">
-                        <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon" v-if="item.checked"></Icon>
-                        <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
-                    </span>
-                    <span v-else>
-                        <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon" v-if="item.checked"></Icon>
-                        <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
-                    </span>
+                <div class="item" v-for="item in datas" @click="checkedItem(item)">
                     {{item.name}}
                     <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subItems"></Icon>
                 </div>
@@ -61,178 +52,86 @@
 
         <div class="city_main" style="border-left:none;" v-if="adtags">
             <div class="city_title">{{adtags.name}}
-                <span class="clearcity" @click="AllCity()">全选</span>
+                <span class="clearcity" @click="AllProvince()">全选</span>
             </div>
             <div class="city_box">
-                <div class="item" v-for="item in adtags.subItems" @click="checkedcity(item)">
-                    <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon" v-if="item.checked"></Icon>
-                    <Icon type="android-checkbox-outline-blank" color="#dddee1" size="18" class="icon" v-else></Icon>
-                    {{item.name}}
-                    <Icon type="chevron-right" size="10" class="more_icon" v-if="item.subItems"></Icon>
-                </div>
+                <CheckboxGroup v-model="ids" @on-change="changeIds();">
+                    <label class="item" v-for="item in adtags.subItems">
+                        <Checkbox :label="item.value" :key="item.value">{{item.name}}</Checkbox>
+                    </label>
+                </CheckboxGroup>
             </div>
         </div>
 
-        <div class="city_main" style="margin-left:20px;" v-if="checked_list.length>0">
+        <div class="city_main" style="margin-left:20px;" v-if="ids.length>0">
             <div class="city_title">已选
-                <span class="clearcity" @click="removeAllcity()">全部清空</span>
+                <span class="clearcity" @click="removeAll()">全部清空</span>
             </div>
             <div class="city_box">
-                <div class="item" v-for="item in checked_list">
-                    <Icon type="android-checkbox" color="#2d8cf0" size="18" class="icon"></Icon>
-                    {{item.name}}
-                    <span @click="removecity(item)">
-                        <Icon type="close-round" size="10" class="more_icon"></Icon>
-                    </span>
-                </div>
+                <CheckboxGroup v-model="ids" @on-change="changeIds();">
+                    <template v-for="subitem in ids">
+                        <label class="item" v-for="item in datas">
+                            <template v-for="it in item.subItems" v-if="subitem==it.value">
+                                <Checkbox :label="it.value" :key="this">{{it.name}}</Checkbox>
+                                <Icon type="close-round" size="10" class="more_icon"></Icon>
+                            </template>
+                        </label>
+                    </template>
+                </CheckboxGroup>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import Axios from "@/api/index";
 export default {
     name: "appTree",
-    props: ["value"],
+    props: ["value", "datas"],
     data() {
         return {
             ids: [],
-            searchcity: "",
-            adtags_list: [],
             adtags: ""
         }
     },
     mounted() {
-        this.getTag();
         this.ids = this.value;
     },
-    methods: {
-        //获取app行为
-        getTag() {
-            Axios.post('api.php', {
-                action: 'ttAdPut',
-                opt: 'getAppType'
-            }).then(res => {
-                if (res.ret == 1) {
-                    this.ad_adtags(res.data.android);
-                    console.log(res.data.android)
-                }
-            }).catch(err => {
-                console.log('获取app行为' + err);
-            })
-        },
-        //省添加checked
-        ad_adtags(data) {
-            data.forEach(v => {
-                v.checked = false;
-                this.ids.forEach(item => {
-                    if (item == v.value) {
-                        v.checked = true;
-                    }
-                })
-                if (v.subItems) {
-                    v.subItems.forEach(v => {
-                        v.checked = false;
-                        this.ids.forEach(item => {
-                            if (item == v.value) {
-                                v.checked = true;
-                            }
-                        })
-                    })
-                }
-            })
-            this.adtags_list = data;
-        },
-        //选择省
-        checkedprovince(item) {
-            item.checked = !item.checked;
-            if (item.subItems) {
-                item.subItems.forEach(v => {
-                    v.checked = item.checked;
-                });
-                this.adtags = item;
-            } else {
-                this.adtags = "";
-            }
-        },
-        checkedprovince2(item) {
-            if (item.subItems) {
-                this.adtags = item;
-            } else {
-                item.checked = !item.checked;
-                this.adtags = "";
-            }
-        },
-        //选全省
-        AllProvince() {
-            this.adtags_list.forEach(item => {
-                item.checked = true;
-            });
-        },
-        //选全市
-        AllCity() {
-            this.adtags.subItems.forEach(item => {
-                item.checked = true;
-            });
-            this.citylen();
-        },
-        //选择城市
-        checkedcity(item) {
-            item.checked = !item.checked;
-            this.citylen();
-        },
-        //城市全选，父级加1
-        citylen() {
-            let len = 0;
-            this.adtags.subItems.forEach(item => {
-                if (item.checked) {
-                    len++;
-                }
-            });
-            if (this.adtags.subItems.length == len) {
-                this.adtags.checked = true;
-            } else {
-                this.adtags.checked = false;
-            }
-        },
-        //删除城市
-        removecity(v) {
-            v.checked = false;
-            if (v.subItems) {
-                v.subItems.forEach(v => {
-                    v.checked = false;
-                })
-            }
-        },
-        //全部清空
-        removeAllcity() {
-            this.ids=[];
-            this.ad_adtags(this.adtags_list);
+    watch: {
+        value() {
+            this.ids = this.value;
         }
     },
-    computed: {
-        checked_list() {
-            let list = [], ids = [];
-            this.adtags_list.forEach(v => {
-                if (v.checked) {
-                    list.push(v);
-                } else {
-                    if (v.subItems) {
-                        v.subItems.forEach(v => {
-                            if (v.checked) {
-                                list.push(v);
-                            }
-                        });
-                    }
-                }
+    methods: {
+        //选择一级
+        checkedItem(item) {
+            this.adtags = item;
+        },
+
+        //选择
+        changeIds() {
+            this.$emit('input', this.ids);
+        },
+
+        //选全
+        AllProvince() {
+            let ids = this.ids;
+            this.adtags.subItems.forEach(item => {
+                let have = false;
+                this.ids.forEach(v => {
+                    if (item.value == v) have = true;
+                })
+                if (!have) ids.push(item.value);
             });
-            list.forEach(v => {
-                ids.push(v.value);
-            })
-            this.$emit('input', ids)
-            return list;
+            this.ids = ids;
+            this.$emit('input', this.ids);
+        },
+
+        //全部清空
+        removeAll() {
+            this.ids = [];
+            this.$emit('input', this.ids);
         }
-    }
+    },
+
 }
 </script>
