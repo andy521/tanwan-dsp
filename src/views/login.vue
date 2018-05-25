@@ -177,7 +177,7 @@
 											name: 'home_index'
 										});
                                     }   
-                                    //location.reload();                             
+                                    //location.reload();                              
                             }
 
                         }).catch((err)=>{console.log(err)});
