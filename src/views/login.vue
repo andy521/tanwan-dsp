@@ -59,7 +59,7 @@
                             'uName' : userinfo.user,
                             'uPass' : userinfo.password,
                             'action' : 'sys',
-                            'opt' : 'userLogin'
+                            'opt' : 'login'
                         })
                         .then((data)=>{    
                             if(data.ret == 1){  
@@ -177,7 +177,7 @@
 											name: 'home_index'
 										});
                                     }   
-                                    //location.reload();                              
+                                    //location.reload();                         
                             }
 
                         }).catch((err)=>{console.log(err)});
