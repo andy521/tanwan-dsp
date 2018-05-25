@@ -50,7 +50,7 @@
                     <FormItem label="下载链接" v-if="landing_type=='APP'">
                         <Input v-model="url" placeholder="请填写应用下载链接" clearable size="large" class="w500"></Input>
                     </FormItem>
-                    <template v-show="pricing=='PRICING_OCPM'">
+                    <template v-if="pricing=='PRICING_OCPM'">
                         <FormItem label="转化元素">
                             <Select v-model="convert_id" size="large" class="w500" @on-change="changeConvert">
                                 <Option :value="item.convert_id" v-for="item in ConvertList" :key="item.convert_id">{{item.name}}</Option>
@@ -65,7 +65,7 @@
         </Card>
 
         <!-- 创意 -->
-        <targeting-details :apptype="app_type" class="margin-top-10"></targeting-details>
+        <targeting-details :apptype="app_type" :pricing="pricing" @on-change="getTargetingid" class="margin-top-10"></targeting-details>
 
         <Card dis-hover class="margin-top-10" style="position: inherit;">
             <div class="newtt">
@@ -150,7 +150,7 @@
 
         <Card dis-hover class="margin-top-10">
             <div class="newtt">
-                <Button type="primary" size="large" @click="submitad()">保存到下一步</Button>
+                <Button type="primary" size="large" @click="addAdgroup()">保存计划</Button>
             </div>
         </Card>
 
@@ -172,13 +172,12 @@ export default {
     },
     data() {
         return {
-            account_id: this.$route.query.account_id, //账户id
-            campaign_id: this.$route.query.campaign_id, //广告组id
-            id: this.$route.query.id, //
             toutiaoConfig: toutiaoConfig,
+            account_id: this.$route.query.account_id, //账户id
+            campaign_id: this.$route.query.campaign_id, //广告组id           
             landing_type: this.$route.query.landing_type,//推广目的
-
-            targeting_id: "",//定向id
+            targeting_id: this.$route.query.targeting_id,//定向id
+            adgroup_id: this.$route.query.adgroup_id,//广告计划id
 
             adgroup_name: "",//计划名称
             pricing: "PRICING_CPC",
@@ -201,20 +200,41 @@ export default {
                     return date && date.valueOf() < Date.now() - 86400000;
                 }
             },
-            schedule_time:
-                "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", //投放时间段
+            schedule_time: "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", //投放时间段
+            schedule_time1: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
             bid: "",//广告出价取值范围: ≥ 0
             schedule_type: "SCHEDULE_FROM_NOW",//广告投放时间类型
             flow_control_mode: "FLOW_CONTROL_MODE_SMOOTH",//广告投放速度类型
-
         };
     },
     mounted() {
+        if (this.adgroup_id) {
+            this.getAdgroups()
+        }
         this.getConvertList();
     },
     methods: {
-        //保存计划
-        submitad() {
+        //返回定向id
+        getTargetingid(id) {
+            this.targeting_id = id;
+        },
+        //广告计划详情
+        getAdgroups() {
+            Axios.post('api.php', {
+                action: 'ttAdPut',
+                opt: 'getAdgroups',
+                adgroup_id: this.adgroup_id,
+            }).then(res => {
+                if (res.ret == 1) {
+                    console.log(res.data)
+                }
+            }).catch(err => {
+                console.log('广告计划详情' + err);
+            })
+
+        },
+        //创建计划
+        addAdgroup() {
             let param = {
                 action: 'ttAdPut',
                 opt: 'addAdgroup',
@@ -226,7 +246,7 @@ export default {
                 start_time: "",
                 end_time: "",
                 bid: this.bid,
-                targeting_id: 3301,
+                targeting_id: this.targeting_id,
                 pricing: this.pricing,
                 schedule_type: this.schedule_type,//广告投放时间类型
                 flow_control_mode: this.flow_control_mode,//广告投放速度类型
@@ -246,7 +266,7 @@ export default {
             if (this.landing_type == "LINK") {
                 param.external_url = this.url;
             }
-            if (this.pricing == 'PRICING_OCPM') {
+            if (this.pricing == 'PRICING_OCPM') {//转换量convert_id必填
                 if (this.convert_id == "") {
                     this.$Message.info("请选择转化元素");
                     return;
@@ -256,6 +276,10 @@ export default {
                     param.package = this.package;
                 }
             }
+            if (!this.targeting_id) {
+                this.$Message.info("请保存定向");
+                return;
+            };
             if (this.budget < 100) {
                 this.$Message.info("最低预算100元,");
                 return;
@@ -266,6 +290,8 @@ export default {
             }
             if (this.timetype == "1") {
                 param.schedule_time = this.schedule_time;
+            } else {
+                param.schedule_time = this.schedule_time1;
             }
             if (this.pricing == "PRICING_OCPC" || this.pricing == "PRICING_OCPM") {
                 param.cpa_bid = this.bid;
@@ -284,14 +310,13 @@ export default {
             Axios.post('api.php', param).then(res => {
                 if (res.ret == 1) {
                     console.log(res)
-                    // this.$router.push({
-                    //     name: 'ttcreative',
-                    //     query: {
-                    //         account_id: this.account_id,
-                    //         campaign_id: this.campaign_id,
-                    //         adgroup_id: res.data.adgroup_id
-                    //     }
-                    // })
+                    this.$router.push({
+                        name: 'ttcreative',
+                        query: {
+                            account_id: this.account_id,
+                            adgroup_id: res.data.adgroup_id
+                        }
+                    })
                 }
             }).catch(err => {
                 console.log('创建计划' + err);
