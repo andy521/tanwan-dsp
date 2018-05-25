@@ -18,6 +18,7 @@
   border: solid 1px #dee4f5;
   background: #fff;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  z-index: 999;
 }
 .city_title {
   background-color: #fafbfe;
@@ -198,7 +199,7 @@
                     </div>
                 </FormItem>
 
-                <FormItem label="受众最低android版本" v-if="apptype=='APP_ANDROID'">
+                <FormItem label="受众最低android版本" v-if="apptype=='APP_ANDROID'&&pricing=='PRICING_OCPM'">
                     <Row>
                         <Col span="18">
                         <RadioGroup v-model="targeting.android_osv" size="large" type="button" vertical>
@@ -208,7 +209,7 @@
                     </Row>
                 </FormItem>
 
-                <FormItem label="受众最低ios版本" v-if="apptype=='APP_IOS'">
+                <FormItem label="受众最低ios版本" v-if="apptype=='APP_IOS'&&pricing=='PRICING_OCPM'">
                     <Row>
                         <Col span="18">
                         <RadioGroup v-model="targeting.ios_osv" size="large" type="button" vertical>
@@ -242,8 +243,8 @@
                 </FormItem>
 
                 <FormItem>
-                    <Button v-if="targeting_id==''" type="primary" size="large" @click="addTargeting()">保存到下一步</Button>
-                    <Button v-else type="primary" size="large" @click="updateTargeting()">修改定向到下一步</Button>
+                    <Button v-if="targeting_id==''" type="primary" size="large" @click="addTargeting()">保存定向</Button>
+                    <Button v-else type="primary" size="large" @click="updateTargeting()">修改定向</Button>
                 </FormItem>
 
             </Form>
@@ -258,10 +259,8 @@
                                 <template v-for="item in toutiaoConfig.district" v-if="item.val_type==targeting.district">
                                     {{item.name}}：
                                 </template>
-                                <template v-for="item in targeting.city">
-                                    <template v-for="subitem in province" v-if="item==subitem.value">
-                                        {{subitem.name}};
-                                    </template>
+                                <template v-for="item in cityname">
+                                    {{item}}
                                 </template>
                             </span>
                         </div>
@@ -382,7 +381,7 @@
                             </span>
                         </div>
 
-                        <div class="targeting_item" v-if="targeting.android_osv&&targeting.android_osv!='0.0'&&apptype=='APP_ANDROID'">
+                        <div class="targeting_item" v-if="targeting.android_osv&&targeting.android_osv!='0.0'&&apptype=='APP_ANDROID'&&pricing=='PRICING_OCPM'">
                             <span>受众最低android版本：</span>
                             <span class="grey">
                                 <template v-for="item in toutiaoConfig.android_osv" v-if="item.val_type==targeting.android_osv">
@@ -391,7 +390,7 @@
                             </span>
                         </div>
 
-                        <div class="targeting_item" v-if="targeting.ios_osv&&targeting.ios_osv!='0.0'&&apptype=='APP_IOS'">
+                        <div class="targeting_item" v-if="targeting.ios_osv&&targeting.ios_osv!='0.0'&&apptype=='APP_IOS'&&pricing=='PRICING_OCPM'">
                             <span>受众最低ios版本：</span>
                             <span class="grey">
                                 <template v-for="item in toutiaoConfig.ios_osv" v-if="item.val_type==targeting.ios_osv">
@@ -431,7 +430,7 @@ import copyTargeting from './copyTargeting.vue';
 
 export default {
     name: "targetingDetails",
-    props: ["apptype"],
+    props: ["apptype", "pricing"],
     components: {
         cityTree,
         countyTree,
@@ -454,7 +453,7 @@ export default {
             device_brand: "",//受众手机品牌
             article_category: "",//受众文章分类  
             targeting_name: "",
-            targeting_id: "",
+            targeting_id: this.$route.query.targeting_id,
             // 定向参数
             targeting: {
                 district: "", // 地域类型
@@ -487,7 +486,8 @@ export default {
         }
     },
     mounted() {
-        if (this.id) {
+        if (this.targeting_id) {
+            this.getTargeting()
         }
         this.getProvince();
         this.getTag();
@@ -497,6 +497,20 @@ export default {
 
     },
     methods: {
+        //获取定向详情
+        getTargeting() {
+            Axios.post('api.php', {
+                action: 'ttAdPut',
+                opt: 'getTargetingDetail',
+                targeting_id: this.targeting_id,
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.changetargeting(res.data);
+                }
+            }).catch(err => {
+                console.log('获取定向详情' + err);
+            })
+        },
         //获取省市区
         getProvince() {
             Axios.post('api.php', {
@@ -510,29 +524,7 @@ export default {
                 console.log('获取省市列表失败' + err);
             })
         },
-        //重新排区
-        ad_province() {
-            let province = [];
-            this.province.forEach(v => {
-                province.push(v);
-                if (v.countyList) {
-                    v.countyList.forEach(v => {
-                        province.push(v);
-                    })
-                }
-                if (v.cityList) {
-                    v.cityList.forEach(v => {
-                        province.push(v);
-                        if (v.countyList) {
-                            v.countyList.forEach(v => {
-                                province.push(v);
-                            })
-                        }
-                    })
-                }
-            })
-            return province;
-        },
+
         //获取兴趣分类
         getTag() {
             Axios.post('api.php', {
@@ -602,7 +594,6 @@ export default {
         },
         changetargeting(targeting) {
             this.targeting_name = targeting.targeting_name;
-            // this.targeting_id = targeting.targeting_id;
             if (targeting.targeting.district) {
                 this.targeting.district = targeting.targeting.district; // 地域类型
             } else {
@@ -749,19 +740,20 @@ export default {
             if (this.targeting.app_behavior_target != "NONE") {
                 params.app_category = this.targeting.app_category;
             }
-            if (apptype == "APP_ANDROID") {
-                params.android_osv = this.targeting.android_osv;
+            if (this.pricing == 'PRICING_OCPM') {
+                if (this.apptype == "APP_ANDROID") {
+                    params.android_osv = this.targeting.android_osv;
+                }
+                if (this.apptype == "APP_IOS") {
+                    params.ios_osv = this.targeting.ios_osv;
+                }
             }
-            if (apptype == "APP_IOS") {
-                params.ios_osv = this.targeting.ios_osv;
-            }
-
-
             Axios.post('api.php', params).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
-
-                    console.log(res.data.targeting_id)
+                    if (!this.targeting_id) {
+                        this.$emit("on-change", res.data.targeting_id);
+                    }
                 }
             }).catch(err => {
                 console.log("新建定向" + err);
@@ -815,19 +807,18 @@ export default {
             if (this.targeting.app_behavior_target != "NONE") {
                 params.app_category = this.targeting.app_category;
             }
-
+            if (this.pricing == 'PRICING_OCPM') {
+                if (this.apptype == "APP_ANDROID") {
+                    params.android_osv = this.targeting.android_osv;
+                }
+                if (this.apptype == "APP_IOS") {
+                    params.ios_osv = this.targeting.ios_osv;
+                }
+            }
+            
             Axios.post('api.php', params).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
-                    this.$router.push({
-                        name: 'ttad',
-                        query: {
-                            account_id: this.account_id,
-                            campaign_id: this.campaign_id,
-                            landing_type: this.landing_type,
-                            targeting_id: this.targeting_id
-                        }
-                    })
                 }
             }).catch(err => {
                 console.log("修改定向" + err);
@@ -835,7 +826,33 @@ export default {
         }
     },
     computed: {
-
+        //重新排区
+        cityname() {
+            let province = [];
+            if (this.province.length > 0 && this.targeting.city) {
+                this.targeting.city.forEach(id => {
+                    this.province.forEach(v => {
+                        if (id == v.value) province.push(v.name);
+                        if (v.countyList) {
+                            v.countyList.forEach(v => {
+                                if (id == v.value) province.push(v.name);
+                            })
+                        }
+                        if (v.cityList) {
+                            v.cityList.forEach(v => {
+                                if (id == v.value) province.push(v.name);
+                                if (v.countyList) {
+                                    v.countyList.forEach(v => {
+                                        if (id == v.value) province.push(v.name);
+                                    })
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+            return province;
+        },
     }
 
 }

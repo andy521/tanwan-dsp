@@ -42,9 +42,7 @@
                 <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCreatives"></view-tip>
                 <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
-                    <Option value="LINK">推广落地页</Option>
-                    <Option value="APP">推广应用下载</Option>
-                    <Option value="DPA">产品目录</Option>
+                    <Option :value="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="item.val_type">{{item.name}}</Option>
                 </Select>
                 <Select placeholder="操作状态" v-model="opt_status" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
@@ -127,6 +125,7 @@ export default {
     data() {
         return {
             toutiaoConfig: toutiaoConfig,
+            adgroup_id: this.$route.query.adgroup_id,
             height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
@@ -230,6 +229,7 @@ export default {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "searchCreatives",
+                adgroup_id: this.adgroup_id,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -242,23 +242,21 @@ export default {
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 page: this.page, //页码
                 page_size: this.page_size //每页数量
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        console.log(res.data.list);
-                        //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.push(res.data.curr_page_total);
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
-                        this.newAdList = res.data.list;
-                    }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("今日头条广告组" + err);
-                });
+            }).then(res => {
+                this.loading = false;
+                if (res.ret == 1) {
+                    console.log(res.data.list);
+                    //添加统计
+                    res.data.curr_page_total._disabled = true;
+                    res.data.list.push(res.data.curr_page_total);
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                    this.newAdList = res.data.list;
+                }
+            }).catch(err => {
+                this.loading = false;
+                console.log("今日头条广告组" + err);
+            });
         }
     },
     beforeMount() { },
@@ -277,16 +275,15 @@ export default {
                     width: 250,
                     render: (h, params) => {
                         if (params.row._disabled) {
-                        return h("span", "本页统计");
-                    }else{
-                        return h(createidea, {
-                            props: {
-                                title: params.row.title,
-                                image_info: params.row.image_info,
-                                // source:params.row.source
-                            }
-                        });
-                    }
+                            return h("span", "本页统计");
+                        } else {
+                            return h(createidea, {
+                                props: {
+                                    title: params.row.title,
+                                    image_info: params.row.image_info,
+                                }
+                            });
+                        }
                     }
                 },
                 {
@@ -329,41 +326,37 @@ export default {
                     key: "opt_status",
                     width: 100,
                     render: (h, params) => {
-                        console.log(params.row.opt_status)
-                        if (!params.row.opt_status) {
-                            return;
-                        } else {
-                            return h("div", [
-                                h("i-switch", {
-                                    props: {
-                                        size: "small",
-                                        value: params.row.opt_status == "CREATIVE_STATUS_ENABLE" ? true : false
-                                    },
-                                    style: {
-                                        marginRight: "10px"
-                                    },
-                                    on: {
-                                        "on-change": value => {
-                                            params.row.opt_status = value == true ? "CREATIVE_STATUS_ENABLE" : "CREATIVE_STATUS_DISABLE";
-                                            Axios.post("api.php", {
-                                                action: "ttAdPut",
-                                                opt: "updateCreativeStatus",
-                                                ids: params.row.id.split(","),
-                                                opt_status: value == true ? "enable" : "disable"
-                                            }).then(res => {
-                                                if (res.ret == 1) {
-                                                    this.$Message.info(res.msg);
-                                                    this.getCampaignsList(this.page);
-                                                }
-                                            }).catch(err => {
-                                                console.log("修改状态失败" + err);
-                                            });
-                                        }
+                        if (!params.row.opt_status) return;
+                        return h("div", [
+                            h("i-switch", {
+                                props: {
+                                    size: "small",
+                                    value: params.row.opt_status == "CREATIVE_STATUS_ENABLE" ? true : false
+                                },
+                                style: {
+                                    marginRight: "10px"
+                                },
+                                on: {
+                                    "on-change": value => {
+                                        params.row.opt_status = value == true ? "CREATIVE_STATUS_ENABLE" : "CREATIVE_STATUS_DISABLE";
+                                        Axios.post("api.php", {
+                                            action: "ttAdPut",
+                                            opt: "updateCreativeStatus",
+                                            ids: params.row.id.split(","),
+                                            opt_status: value == true ? "enable" : "disable"
+                                        }).then(res => {
+                                            if (res.ret == 1) {
+                                                this.$Message.info(res.msg);
+                                                this.getCampaignsList(this.page);
+                                            }
+                                        }).catch(err => {
+                                            console.log("修改状态失败" + err);
+                                        });
                                     }
-                                }),
-                                h("span", params.row.opt_status == "CREATIVE_STATUS_ENABLE" ? "开启" : "关闭")
-                            ]);
-                        }
+                                }
+                            }),
+                            h("span", params.row.opt_status == "CREATIVE_STATUS_ENABLE" ? "开启" : "关闭")
+                        ]);
                     }
                 },
                 {
@@ -546,7 +539,7 @@ export default {
                     key: "",
                     width: 130,
                     render: (h, params) => {
-                        if(params.row._disabled)return;
+                        if (params.row._disabled) return;
                         return h("span",
                             {
                                 class: "edit_link",
@@ -555,7 +548,7 @@ export default {
                                         this.$router.push({
                                             name: "ttcampaign",
                                             query: {
-                                                id: params.row.id
+                                                adcreative_id: params.row.adcreative_id
                                             }
                                         });
                                     }
