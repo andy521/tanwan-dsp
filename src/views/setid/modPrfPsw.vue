@@ -153,7 +153,7 @@
 		methods: {
 			getChangedPositions() {
 				if (this.modProfile.departmentSelected != "0") {
-					Axios.post('api.php', {
+					Axios.post('get.php', {
 						action: 'sys',
 						opt: 'getPositions',
 						dept: this.modProfile.departmentSelected,
@@ -178,7 +178,7 @@
 		    },
 			//获取登陆用户个人信息
 			getSelfUserInfo() {
-				Axios.post('api.php', {
+				Axios.post('get.php', {
 					action: 'sys',
 					opt: 'editUser',
 				}).then(
@@ -217,7 +217,7 @@
 				this.$refs[name].validate((valid) => {
                     if (valid) {
                     	if (name == 'modProfile') {
-	                    	Axios.post('api.php', {
+	                    	Axios.post('get.php', {
 								action: 'sys',
 								opt: 'editUser',
 								stage: 'info',
@@ -245,7 +245,7 @@
 								}
 							)
 						} else if (name == 'modPassword') {
-							Axios.post('api.php', {
+							Axios.post('get.php', {
 								action: 'sys',
 								opt: 'editUser',
 								stage: 'pass',
