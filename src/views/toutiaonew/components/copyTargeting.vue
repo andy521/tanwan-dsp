@@ -73,7 +73,7 @@
                                             {{item.name}}：
                                         </template>
                                         <template v-for="item in cityname">
-                                            {{cityname}}
+                                            {{item}}
                                         </template>
                                     </span>
                                 </div>
@@ -296,8 +296,8 @@ export default {
         //重新排区
         cityname() {
             let province = [];
-            if (this.province.length > 0 && this.targeting.city) {
-                this.targeting.city.forEach(id => {
+            if (this.province.length > 0 && this.targeting.targeting.city) {
+                this.targeting.targeting.city.forEach(id => {
                     this.province.forEach(v => {
                         if (id == v.value) province.push(v.name);
                         if (v.countyList) {

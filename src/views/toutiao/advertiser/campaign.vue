@@ -592,16 +592,16 @@ export default {
                                 },
                                 "编辑"
                             ),
-                            h(
-                                "span",
-                                {
-                                    class: "copy_link",
-                                    on: {
-                                        click: () => { }
-                                    }
-                                },
-                                "复制"
-                            ),
+                            // h(
+                            //     "span",
+                            //     {
+                            //         class: "copy_link",
+                            //         on: {
+                            //             click: () => { }
+                            //         }
+                            //     },
+                            //     "复制"
+                            // ),
                             h(
                                 "span",
                                 {
