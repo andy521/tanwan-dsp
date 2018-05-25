@@ -248,7 +248,7 @@ export default {
       const tableColumnList = [
         {
           type: 'selection',
-          width: 56,
+          width: 60,
           key: ''
         },
         {
