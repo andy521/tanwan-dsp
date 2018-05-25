@@ -41,7 +41,7 @@
 <template>
     <div>
         <div class="city_main">
-            <div class="city_title">手机品牌
+            <div class="city_title">{{title}}
                 <span class="clearcity" @click="AllProvince()">全选</span>
             </div>
             <div class="city_box">
@@ -73,7 +73,7 @@
 <script>
 export default {
     name: "deviceTree",
-    props: ["value", "datas"],
+    props: ["value","title", "datas"],
     data() {
         return {
             ids: [],

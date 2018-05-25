@@ -195,27 +195,27 @@
     ],
     "pricing": [{
             "name": "CPC",
-            "cname":"点击量",
+            "cname": "点击量",
             "val_type": "PRICING_CPC"
         },
         {
             "name": "OCPC",
-            "cname":"转换量",
+            "cname": "转换量",
             "val_type": "PRICING_OCPC"
         },
         {
             "name": "CPM",
-            "cname":"展示量",
+            "cname": "展示量",
             "val_type": "PRICING_CPM"
         },
         {
             "name": "CPV",
-            "cname":"有效播放量",
+            "cname": "有效播放量",
             "val_type": "PRICING_CPV"
         },
         {
             "name": "OCPM",
-            "cname":"转换量",
+            "cname": "转换量",
             "val_type": "PRICING_OCPM"
         }
     ],
@@ -350,17 +350,133 @@
             "name": "三个月或更早"
         }
     ],
-    "app_behavior_target": [{
-            "val_type": "NONE",
+    "android_osv": [{
+            "val_type": "0.0",
             "name": "不限"
         }, {
-            "val_type": "CATEGORY",
-            "name": "按分类"
+            "val_type": "2.0",
+            "name": "Android 2.0"
+        }, {
+            "val_type": "2.1",
+            "name": "Android 2.1"
+        },
+        {
+            "val_type": "2.2",
+            "name": "Android 2.2"
+        },
+        {
+            "val_type": "2.3",
+            "name": "Android 2.3"
+        }, {
+            "val_type": "3.0",
+            "name": "Android 3.0"
+        },
+        {
+            "val_type": "3.1",
+            "name": "Android 3.1"
+        },
+        {
+            "val_type": "3.2",
+            "name": "Android 3.2"
+        }, {
+            "val_type": "4.0",
+            "name": "Android 4.0"
+        },
+        {
+            "val_type": "4.1",
+            "name": "Android 4.1"
+        },
+        {
+            "val_type": "4.2",
+            "name": "Android 4.2"
+        },
+        {
+            "val_type": "4.3",
+            "name": "Android 4.3"
+        }, {
+            "val_type": "4.4",
+            "name": "Android 4.4"
+        },
+        {
+            "val_type": "4.5",
+            "name": "Android 4.5"
+        },
+        {
+            "val_type": "5.0",
+            "name": "Android 5.0"
         }
-    ]
-  
-
-
-
-
+    ],
+    "ios_osv": [{
+            "val_type": "0.0",
+            "name": "不限"
+        }, {
+            "val_type": "4.0",
+            "name": "iOS 4.0"
+        }, {
+            "val_type": "4.1",
+            "name": "iOS 4.1"
+        },
+        {
+            "val_type": "4.2",
+            "name": "iOS 4.2"
+        },
+        {
+            "val_type": "4.3",
+            "name": "iOS 4.3"
+        }, {
+            "val_type": "5.0",
+            "name": "iOS 5.0"
+        },
+        {
+            "val_type": "5.1",
+            "name": "iOS 5.1"
+        },
+        {
+            "val_type": "6.0",
+            "name": "iOS 6.0"
+        }, {
+            "val_type": "7.0",
+            "name": "iOS 7.0"
+        },
+        {
+            "val_type": "7.1",
+            "name": "iOS 7.1"
+        },
+        {
+            "val_type": "8.0",
+            "name": "iOS 8.0"
+        },
+        {
+            "val_type": "8.1",
+            "name": "iOS 8.1"
+        }, {
+            "val_type": "8.2",
+            "name": "iOS 8.2"
+        },
+        {
+            "val_type": "9.0",
+            "name": "iOS 9.0"
+        }
+    ],
+    "app_behavior_target": [{
+        "val_type": "NONE",
+        "name": "不限"
+    }, {
+        "val_type": "CATEGORY",
+        "name": "按分类"
+    }],
+    "flow_control_mode": [{
+        "val_type": "FLOW_CONTROL_MODE_SMOOTH",
+        "name": "标准投放"
+    }, {
+        "val_type": "FLOW_CONTROL_MODE_FAST",
+        "name": "尽快投放"
+    }],
+    "schedule_type": [{
+        "val_type": "SCHEDULE_FROM_NOW",
+        "name": "从现在开始一直投放"
+    }, {
+        "val_type": "SCHEDULE_START_END",
+        "name": "选择起始时间"
+    }]
 }
