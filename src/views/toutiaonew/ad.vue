@@ -59,6 +59,11 @@
                         <FormItem label="应用包名" v-show="app_type=='APP_ANDROID'">
                             <Input v-model="package" readonly placeholder="请输入应用包名" size="large" class="w500"></Input>
                         </FormItem>
+                        <FormItem label="下载类型">
+                            <RadioGroup v-model="app_type" type="button" size="large" class="w500">
+                                <Radio :value="item.val_type" disabled v-for="item in toutiaoConfig.app_type" :key="item.val_type">{{item.name}}</Radio>
+                            </RadioGroup>
+                        </FormItem>
                     </template>
                 </Form>
             </div>
@@ -85,7 +90,7 @@
                             <Radio :label="item.val_type" v-for="item in toutiaoConfig.schedule_type" :key="item.val_type">{{item.name}}</Radio>
                         </RadioGroup>
                         <div class="margin-top-20" v-show="schedule_type=='SCHEDULE_START_END'">
-                            <DatePicker :value="DateDomain" :options="options" type="datetimerange" format="yyyy-MM-dd HH:mm" placement="bottom-start" placeholder="在某日期范围内投放" size="large" @on-change="changedata" style="width:280px;"></DatePicker>
+                            <DatePicker :value="DateDomain" :options="options" type="datetimerange" format="yyyy-MM-dd HH:mm:ss" placement="bottom-start" placeholder="在某日期范围内投放" size="large" @on-change="changedata" style="width:280px;"></DatePicker>
                         </div>
                     </FormItem>
                     <FormItem label="投放时段">
@@ -94,7 +99,7 @@
                             <Radio label="1">指定时间段</Radio>
                         </RadioGroup>
                     </FormItem>
-                    <week-time v-model="schedule_time" v-show="timetype==1" style="margin-left:80px;"></week-time>
+                    <week-time v-model="schedule_time" v-if="timetype==1" style="margin-left:80px;"></week-time>
 
                     <FormItem label="付费方式" class="margin-top-20">
                         <ButtonGroup>
@@ -191,8 +196,8 @@ export default {
             budget_mode: "BUDGET_MODE_DAY",//广告预算类型(创建后不可修改)
             budget: "",//广告预算
             DateDomain: [
-                formatDate(new Date(), "yyyy-MM-dd hh:mm"),
-                formatDate(new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd hh:mm"),
+                formatDate(new Date(), "yyyy-MM-dd hh:mm:ss"),
+                formatDate(new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd hh:mm:ss"),
             ], //投放时间段
             timetype: "0",//投放时段类别
             options: {
@@ -227,10 +232,51 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     console.log(res.data)
+                    this.adgroups(res.data);
                 }
             }).catch(err => {
                 console.log('广告计划详情' + err);
             })
+
+        },
+        //填兖广告计划数据
+        adgroups(data) {
+            this.pricing = data.pricing;
+            this.adgroup_name = data.adgroup_name;
+            if (data.landing_type == "APP") {
+                this.url = download_url;
+                this.app_type = data.app_type;
+            }
+            if (this.landing_type == "LINK") {
+                this.url = data.external_url;
+            }
+
+
+            if (data.pricing == 'PRICING_OCPM') {
+                this.convert_id = data.convert_id;
+                this.package = data.package;
+            }
+
+
+
+
+            this.budget_mode = data.budget_mode;
+            this.budget = data.budget;
+            this.schedule_type = data.schedule_type;
+            this.DateDomain = [data.start_time, data.end_time]
+            if (data.schedule_time == "SCHEDULE_TIME_ALL_DAY") {
+                this.timetype = "0";
+                this.schedule_time = this.schedule_time1;
+            } else {
+                this.timetype = "1";
+                this.schedule_time = data.schedule_time;
+            }
+            if (data.pricing == "PRICING_OCPC" || data.pricing == "PRICING_OCPM") {
+                this.bid = data.cpa_bid
+            } else {
+                this.bid = data.bid
+            }
+            this.flow_control_mode = data.flow_control_mode;
 
         },
         //创建计划
@@ -250,6 +296,8 @@ export default {
                 pricing: this.pricing,
                 schedule_type: this.schedule_type,//广告投放时间类型
                 flow_control_mode: this.flow_control_mode,//广告投放速度类型
+                start_time: this.DateDomain[0],
+                end_time: this.DateDomain[1],
             }
 
             if (this.adgroup_name == "") {
@@ -262,11 +310,12 @@ export default {
             }
             if (this.landing_type == "APP") {
                 param.download_url = this.url;
+                param.app_type = this.app_type;
             }
             if (this.landing_type == "LINK") {
                 param.external_url = this.url;
             }
-            if (this.pricing == 'PRICING_OCPM') {//转换量convert_id必填
+            if (this.pricing == 'PRICING_OCPM') {//pricing == 'PRICING_OCPM'转换量convert_id必填
                 if (this.convert_id == "") {
                     this.$Message.info("请选择转化元素");
                     return;
@@ -283,10 +332,6 @@ export default {
             if (this.budget < 100) {
                 this.$Message.info("最低预算100元,");
                 return;
-            }
-            if (this.schedule_type == 'SCHEDULE_START_END') {
-                param.start_time = this.DateDomain[0];
-                param.end_time = this.DateDomain[1];
             }
             if (this.timetype == "1") {
                 param.schedule_time = this.schedule_time;
