@@ -59,7 +59,7 @@
                             'uName' : userinfo.user,
                             'uPass' : userinfo.password,
                             'action' : 'sys',
-                            'opt' : 'login'
+                            'opt' : 'userLogin'
                         })
                         .then((data)=>{    
                             if(data.ret == 1){  
@@ -106,15 +106,9 @@
                                             case '277': 
                                                 access.push('setid_modprfpsw');
                                             break;
-                                            // case '170': 
-                                            //     access.push('setid_adduser');
-                                            // break;
                                             case '171': 
                                                 access.push('setid_userlist');
                                             break;
-                                            // case '278': 
-                                            //     access.push('setid_addgroup');
-                                            // break;
                                             case '265': 
                                                 access.push('setid_grouplist');
                                             break;
