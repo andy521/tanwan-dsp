@@ -301,9 +301,9 @@ export default {
     data() {
         return {
             // toutiaoConfig: toutiaoConfig,
-            // account_id: this.$route.query.account_id, //账户id
             // id: this.$route.query.id, //行id
             // campaign_id: "", //广告组id
+            account_id:this.$route.query.account_id, //账户id
             addDescModel:false,
             locationSelectTt:true,
             showTt :false, //显示头条位置详情

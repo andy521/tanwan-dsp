@@ -279,5 +279,7 @@ util.removeItem = (a) => {
 	window.localStorage ? window.localStorage.removeItem("tw_" + a) : (b = new Date, b.setTime(b.getTime() - 1), c = H.getItem(a), null != c && (document.cookie = "tw_" + a + "=" + c + ";expires=" + b.toGMTString()))
 };
 
+//引用接口主域名
+util.baseURL =  'http://ads.tanwan.com/'
 
 export default util;

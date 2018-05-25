@@ -62,8 +62,15 @@ export default {
         uploadImg
     },
     name: "materialSmallImg",
+    // props:{
+    //     account:{
+    //         type: String,
+    //         default: ''
+    //     }
+    // },
     data() {
         return {
+            account_id:this.account, //账户id
             imgList:[
                 {title:'',desc:'宽高比1.52,大小500K以下最低尺寸456*300',img:''}
             ]
