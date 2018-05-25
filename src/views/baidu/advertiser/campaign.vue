@@ -38,7 +38,7 @@
         </Col>
         <Col class="manger-head-bar">
           <!-- 新建 -->
-          <new-edit to-route-name="bd_campaign" title="新建推广计划"></new-edit>
+          <new-edit to-route-name="bd_campaign" title="新建计划"></new-edit>
         </Col>
       </Row>
     </Card>
@@ -225,8 +225,9 @@ export default {
       const tableColumnList = [
         {
           type: 'selection',
-          width: 56,
-          key: ''
+          width: 60,
+          key: '',
+          className: 'no-ellipse'
         },
         {
           title: '计划名称',

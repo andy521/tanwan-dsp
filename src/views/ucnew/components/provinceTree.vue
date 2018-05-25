@@ -105,7 +105,7 @@ export default {
     value(val) {
       this.provinceTreeList = val
       this.countAllTotal(this.provinceTreeList)
-      this.countSelectTotal(this.provinceTreeList)
+      // this.countSelectTotal(this.provinceTreeList)
     }
   },
   mounted() {
@@ -165,35 +165,7 @@ export default {
       if (this.provinceTreeList.length === 0) {
         return
       }
-      // 情况1
-      // // 只修改原值
-      // if (typeof ic === 'undefined') {
-      //   const len = this.provinceTreeList[ip].children.length
-      //     this.provinceTreeList[ip].checked = false
-      //   for (let i = 0; i < len; i++) {
-      //     this.provinceTreeList[ip]['children'][i]['checked'] = false
-      //   }
-      // } else {
-      //   this.provinceTreeList[ip]['children'][ic]['checked'] = false
-      // }
 
-      // // 返回选择值
-      // const retChecked = []
-      // this.provinceTreeList.forEach((p, ip) => {
-      //   if (p.checked) {
-      //     retChecked.push(p)
-      //   } else {
-      //     p.children.forEach((c, ic) => {
-      //     if (c.checked) {
-      //       retChecked.push(c)
-      //     }
-      //    })
-      //   }
-      // })
-      // this._emit(this.provinceTreeList, this.retValue, this.retName)
-
-      // 情况2
-      // // 只修改原值
       if (typeof ic === 'undefined') {
         const len = this.provinceTreeList[ip].children.length
         this.provinceTreeList[ip].checked = false
@@ -205,41 +177,29 @@ export default {
       } 
 
       this.handleChangeProvinceTree()
-      this.countSelectTotal(this.provinceTreeList)
+      // this.countSelectTotal(this.provinceTreeList)
     },
     // tree
     handleChangeProvinceTree(provinceList) {
       let retName = []
       let retValue = []
 
-      // 情况1
-      // const len = provinceList.length
-      // provinceList.forEach((city, index) => {
-      //   retName.push(city.title)
-      //   retValue.push(city.value)
-      // })
-
-      // 情况2
-      let len = 0
       this.provinceTreeList.forEach((p, ip) => {
         if (p.checked && !p.indeterminate) {
           retValue.push(p.value)
           retName.push(p.title)
-          ++len
         } else if (!p.checked && p.indeterminate) {
           let cName = []
           p.children.forEach((c, ic) => {
             if (c.checked) {
               retValue.push(c.value)
-              cName.push(c.title)
-              ++len
             }
           })
           retName[ip] = `${p.title}(${cName.join('、')})`
         }
       })
 
-      this.selectTotal = len
+      this.selectTotal = retValue.length
       this.retValue = retValue
       this.retName = retName
 
