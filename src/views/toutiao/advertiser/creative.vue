@@ -546,7 +546,7 @@ export default {
                                 on: {
                                     click: () => {
                                         this.$router.push({
-                                            name: "ttcampaign",
+                                            name: "ttcreative",
                                             query: {
                                                 adcreative_id: params.row.adcreative_id
                                             }

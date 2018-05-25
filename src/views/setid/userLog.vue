@@ -186,7 +186,7 @@
                     };
                 }
                 //console.log(postParams);
-                Axios.post('api.php?action=sys&opt=logs',postParams)
+                Axios.post('get.php?action=sys&opt=logs',postParams)
                 .then(
                     res => {
                         //console.log(res);
