@@ -70,7 +70,7 @@
                     <copy-targeting @on-change="changetargeting" :province="province" :ad_tag="ad_tag" :app_category="app_category" :device_brand="device_brand" :article_category="article_category"></copy-targeting>
                 </FormItem>
                 <FormItem label="定向名字">
-                    <Input v-model="targeting_name" placeholder="请输入定向名字" size="large" style="width:300px;"></Input>
+                    <Input v-model="targeting_name" placeholder="请输入定向名字" size="large" style="width:500px;"></Input>
                 </FormItem>
                 <FormItem label="地域">
                     <RadioGroup v-model="targeting.district" size="large" type="button">
@@ -79,7 +79,7 @@
                     </RadioGroup>
                     <div class="margin-top-10">
                         <city-tree v-model="targeting.city" v-if="targeting.district=='CITY'"></city-tree>
-                        <county-tree v-model="targeting.city" v-if="targeting.district=='COUNTY'"></county-tree>
+                        <county-tree v-model="targeting.city" :datas="province" v-if="targeting.district=='COUNTY'"></county-tree>
                     </div>
                 </FormItem>
 
