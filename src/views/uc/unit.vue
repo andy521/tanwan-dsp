@@ -23,22 +23,30 @@
     color: #2b7ed1;
     font-weight: bold;
 }
+.manger-head-bar:first-of-type{
+    flex: 2;
+    text-align: left;
+}
+.manger-head-bar:last-of-type{
+    flex: 1;
+    text-align: right;
+}
 </style>
 <template>
     <div class="unit">
 
         <Card shadow>
-            <Row>
-                <Col span="19">
+            <Row type="flex" justify="space-between">
+                <Col class="manger-head-bar">
                 <Button type="primary" @click="back" v-show="isBack">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input v-model="keyword" class="inp" placeholder="请输入关键字"></Input>
                 <Button type="primary" icon="search" @click="getUnit()">搜索</Button>
                 </Col>
-                <Col span="5" style="text-align: right;">
+                <Col class="manger-head-bar">
                 <Button :loading="copyUnitLoading" type="ghost" icon="ios-copy" @click="copyUnit">复制单元</Button>
-                <new-edit title="新建单元" class="margin-left-5"></new-edit>
+                <new-edit :title="newTitle" :to-route-name="toRouteName" :query-params="queryParam" class="margin-left-5"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -329,6 +337,19 @@ export default {
             // 选择负责人
             author: []
         };
+    },
+    computed: {
+        newTitle() {
+            return this.$route.query.id ? '新建单元' : '新建计划'
+        },
+        toRouteName() {
+            return this.$route.query.id ? 'ucunit' : 'ucplan'
+        },
+        queryParam() {
+            const id = parseInt(this.$route.query.id)
+            const retParam = id ? {campaign_id: id} : {}
+            return retParam
+        }
     },
     methods: {
         //选择负责人
@@ -815,7 +836,8 @@ export default {
                                 on: {
                                     click: () => {
                                         let query = {
-                                            adgroup_id: params.row.adgroup_id
+                                            adgroup_id: params.row.adgroup_id,
+                                            campaign_id: params.row.campaign_id
                                         };
                                         this.$router.push({
                                             name: "uc_creativity",
@@ -1366,7 +1388,39 @@ export default {
             this.isBack = true;
         }
         this.changeTableColumns();
-        this.getUnit();
+        
+        // 返回时获取保存数据
+        const unitCache = this.$store.state.uc.unitCache
+        if (this.$route.meta.keepAlive && JSON.stringify(unitCache) !== '{}') {
+            this.DateDomain = unitCache.DateDomain
+            this.page = unitCache.page
+            this.page_size = unitCache.pageSize
+            this.tableSize = unitCache.tableSize
+            this.keyword = unitCache.keyword
+            this.getUnit(this.page)
+        } else {
+            this.getUnit()
+        }
+    },
+    beforeRouteLeave(to, from, next) {
+        if (to.name === 'uc_creativity') {
+            const cache = {
+                DateDomain: this.DateDomain, //时间
+                page: this.page, //页码
+                pageSize: this.page_size, //每页数量
+                tableSize: this.tableSize,
+                keyword: this.keyword
+            }
+            this.$store.commit('SAVE_UC_UNIT_CACHE', cache)
+        }
+        from.meta.keepAlive = false
+        next()
+    },
+    beforeRouteEnter(to, from, next) {
+        if (from.name === 'uc_creativity') {
+            to.meta.keepAlive = true
+        }
+        next()        
     }
 };
 </script>

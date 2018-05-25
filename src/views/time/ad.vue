@@ -103,7 +103,7 @@
             <Row>
                 <Col span="16">
                 <!--自定义指标-->
-                <view-tip @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-tip>
+                <view-popti @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-popti>
                 <!--选择负责人-->
                 <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
                 <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
@@ -200,14 +200,14 @@ import {
     changetime,
     deepClone
 } from "@/utils/DateShortcuts.js";
-import viewTip from "./components/viewPopti.vue";
+import viewPopti from "./components/viewPopti.vue";
 import searchTree from "@/components/select-tree/searchTree.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import creativity from "./components/creativity.vue";
 import newEdit from "./components/newEdit.vue";
 export default {
     components: {
-        viewTip,
+        viewPopti,
         searchTree,
         selectAuthor,
         newEdit
@@ -720,16 +720,7 @@ export default {
                     render: (h, params) => {
                         let value = params.row.daily_budget;
                         //三位数加逗号
-                        let newvalue = (value / 100)
-                            .toString()
-                            .split("")
-                            .reverse()
-                            .join("")
-                            .replace(/(\d{3})/g, "$1,")
-                            .replace(/\,$/, "")
-                            .split("")
-                            .reverse()
-                            .join("");
+                        let newvalue = String(value / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         return [
                             h(
                                 "Tooltip",

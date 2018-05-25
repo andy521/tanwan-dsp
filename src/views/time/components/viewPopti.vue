@@ -92,7 +92,7 @@
 <script>
 import Axios from "@/api/index";
 export default {
-    name: "viewTab",
+    name: "viewPopti",
     props: ["action", "opt", "check"],
     data() {
         return {
