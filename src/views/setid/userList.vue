@@ -578,6 +578,7 @@
                     opt: 'useradd',
                 }).then(
                     res => {
+                        // console.log(res);
                         if(res.ret == 1){
                             for(var i in res.data.pmData){
                                 this.editUserProfile.permissionGroup.push({"value":res.data.pmData[i].pmid,"label":res.data.pmData[i].name});
@@ -597,7 +598,7 @@
                     opt: 'getDepartments',
                 }).then(
                     res => {
-                        console.log()
+                        // console.log(res);
                         if (res.ret == 1) {
                             this.editUserProfile.departmentList = [];
                             for(var i=0;i<res.data.dpData.length;i++){
@@ -744,6 +745,7 @@
                         }
                     }
                 }
+                // console.log(res);
                 return res;
             },
             changeTreeData (data) {
@@ -770,8 +772,8 @@
                         this.editPermission[origin].push(parseInt(i));
                     }
                 }
-                //console.log(this.associate);
-                //console.log(this.editPermission);
+                // console.log(this.associate);
+                // console.log(this.editPermission);
             },
             //返回列表
             backListPage () {
@@ -795,9 +797,10 @@
                     state: this.searchUserCondition.statement
                 }).then(
                     res => {
+                        // console.log(res);
                         if (res.ret == 1) {
                             this.searchUserCondition.searchDataStatement = res.data.searchArr.state;
-                            this.recordTotalNumber = res.data.searchArr.totalCount;
+                            this.recordTotalNumber = parseInt(res.data.searchArr.totalCount);
                             this.page = res.data.searchArr.pageNum;
                             this.pageSize = parseInt(res.data.searchArr.numPerPage);
                             this.tableData = [];
@@ -831,8 +834,8 @@
                 Axios.get('get.php?action=sys&opt=editPermission&act=user&uid='+uid)
                 .then(
                     res => {
+                        // console.log(res); 
                         if (res.ret == 1) {
-                            // console.log(res);
                             this.editPermission.act = res.data.gData.act;
                             this.editPermission.uid = res.data.gData.uid;
                             this.editPermission.pmid = res.data.gData.pmid;
@@ -844,6 +847,7 @@
                             this.showPermissionSetting = true;
                             // console.log(this.editPermission); 
                             // console.log(this.associate); 
+                            // console.log(this.menu0); 
                         } else {
                             this.$Message.error(res.msg);
                         }
