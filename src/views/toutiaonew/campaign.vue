@@ -18,7 +18,7 @@
                                             <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this" v-if="item.val_type == landing_type">{{item.name}}</Radio>
                                         </template>
                                         <template v-else>
-                                            <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this" v-if="item.val_type!='DPA'">{{item.name}}</Radio>
+                                            <Radio :label="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="this">{{item.name}}</Radio>
                                         </template>
                                     </RadioGroup>
                                 </FormItem>

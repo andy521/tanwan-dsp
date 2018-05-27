@@ -15,10 +15,6 @@
         {
             "name": "推广应用下载",
             "val_type": "APP"
-        },
-        {
-            "name": "产品目录",
-            "val_type": "DPA"
         }
     ],
     "budget_mode": [{
@@ -127,7 +123,8 @@
         {
             "name": "暂停",
             "val_type": "AD_STATUS_DISABLE"
-        }, {
+        },
+        {
             "name": "删除",
             "val_type": "AD_STATUS_DELETE"
         }
@@ -478,5 +475,12 @@
     }, {
         "val_type": "SCHEDULE_START_END",
         "name": "选择起始时间"
+    }],
+    "app_type": [{
+        "val_type": "APP_ANDROID",
+        "name": "Android"
+    }, {
+        "val_type": "APP_IOS",
+        "name": "iOS"
     }]
 }

@@ -51,7 +51,7 @@
             <div class="newtt">
                 <div class="title">投放目标  <span @click="addDescModel = true" class="sm">广告位说明 <Icon  style="cursor:pointer;" type="document-text"></Icon></span></div>
                 <Row class="margin-top-10" style="margin-left:120px">
-                    <Col span="14">
+                    <Col span="16">
                         <p class="gray f12">建议您选择所有可选广告位，否则会减少覆盖人数，导致广告失去部分优质展示机会</p>                        
                         <div class="margin-top-10">
                             <div class="location">
@@ -61,7 +61,7 @@
                                     <Checkbox @on-change="selectToutiao" class="ivu-checkbox-group-item" v-model="locationSelectTt">
                                         今日头条系
                                     </Checkbox> 
-                                    <Checkbox-group v-model="locationSelect">                                                                        
+                                    <Checkbox-group @on-change="locationChange" v-model="locationSelect">                                                                        
                                         <Checkbox v-show="showTt" style="margin-left:10px" label="INVENTORY_FEED">头条信息流</Checkbox>
                                         <Checkbox v-show="showTt" style="margin-left:10px" label="INVENTORY_TEXT_LINK">头条详情页</Checkbox>
                                         <Checkbox label="INVENTORY_VIDEO_FEED">西瓜视频</Checkbox>
@@ -80,16 +80,26 @@
             <div class="newtt">
                 <div class="title">添加创意素材  <span @click="specialModel = true" class="sm">创意标题特殊符号说明 <Icon  style="cursor:pointer;" type="document-text"></Icon></span></div>
                 <Row class="margin-top-20">
-                    <Col span="14">
+                    <Col span="16">
                         <Form :label-width="120" :model="materialData">
-                            <Form-item label="上传创意素材">
-                                <RadioGroup v-model="material" type="button" size="large">
-                                    <Radio label="0">图片</Radio>
-                                    <Radio label="1">视频</Radio>
+                            <Form-item>
+                                <div slot="label">
+                                    <Tooltip content="火山小视频仅支持竖版视频，西瓜视频仅支持大图，横版视频，PC投放仅支持小图，大图" placement="top">
+                                        <Icon type="ios-help-outline" size="18" color="#999"></Icon>
+                                    </Tooltip>
+                                    上传创意素材
+                                    <b class="red">*</b>
+                                </div>
+                                <RadioGroup @on-change="currentMaterial" v-model="materialIndex" type="button" size="large">
+                                    <Radio label="0">小图</Radio>
+                                    <Radio label="1">大图</Radio>
+                                    <Radio label="2">组图</Radio>
+                                    <Radio label="3">视频</Radio>
                                 </RadioGroup>
-                                <div class="margin-top-10">
-                                    <material-img v-if="material==0"></material-img>
-                                    <material-video v-if="material==1"></material-video>
+                                <div class="margin-top-20">
+                                    <keep-alive> 
+                                        <component :is="material"></component>
+                                    </keep-alive>
                                 </div>                                
                             </Form-item>
                             <Form-item>
@@ -110,11 +120,14 @@
                                 <div>
                                     <Checkbox v-model="materialData.comment_video">关闭视频详情页落地页</Checkbox>  
                                     <Tooltip content="勾选该选项后，视频详情页中不默认弹出落地页，仅对视频广告生效" placement="top">
-                                        <Icon type="help-circled" size="14" color="#999"></Icon>
+                                        <Icon type="ios-help-outline" size="18" color="#999"></Icon>
                                     </Tooltip>
                                 </div>                                         
                             </Form-item>
                         </Form>
+                    </Col>
+                    <Col span="8">
+                        fdsfds
                     </Col>
                 </Row>
             </div>            
@@ -124,7 +137,7 @@
             <div class="newtt">
                 <div class="title">设置创意分类和标签</div>
                 <Row class="margin-top-20">
-                    <Col span="14">
+                    <Col span="16">
                         <Form :label-width="120" :model="sortData">
                             <Form-item>
                                 <div slot="label">
@@ -136,7 +149,7 @@
                             <Form-item>
                                 <div slot="label">
                                     <Tooltip content="请提供若干准确的词语，描述您的广告主体对的产品或服务的属性。长期将非常有助于提高广告预估点击率的精准性。如金属保险的基金，可以通过基金品牌，风险的等级，金融服务等方面的描述，越全面，精准，效果越好。例如：XX基金，中高风险，股票型." placement="top">                              
-                                        <Icon type="ios-help-outline" size="14" ></Icon>
+                                        <Icon type="ios-help-outline" size="18" ></Icon>
                                     </Tooltip>
                                     创意分类
                                     <b class="red">*</b>
@@ -153,13 +166,13 @@
             <div class="newtt">
                 <div class="title">设置广告监测</div>
                 <Row class="margin-top-20">
-                    <Col span="14">
+                    <Col span="16">
                         <Form :label-width="120" :model="monitorData">
                             <Form-item>
                                 <div slot="label">
                                     第三方展示监控链接
                                     <Tooltip content="用于监测广告点击的效果" placement="top">                              
-                                        <Icon type="ios-help-outline" size="14" ></Icon>
+                                        <Icon type="ios-help-outline" size="18" ></Icon>
                                     </Tooltip>
                                 </div>
                                 <Input v-model="monitorData.reveal" placeholder="请输入链接"></Input>
@@ -168,7 +181,7 @@
                                 <div slot="label">
                                     第三方点击监控链接
                                     <Tooltip content="用于监测广告的点击效果" placement="top">                              
-                                        <Icon type="ios-help-outline" size="14" ></Icon>
+                                        <Icon type="ios-help-outline" size="18" ></Icon>
                                     </Tooltip>
                                 </div>
                                 <Input v-model="monitorData.click" placeholder="请输入链接"></Input>
@@ -184,6 +197,12 @@
                 </Row>
             </div>
         </Card>
+
+        <div class="margin-top-20">
+            <div class="newtt tc">
+                <Button type="primary" size="large" @click="submitCreative()">提交</Button>
+            </div>
+        </div>
 
         <Modal v-model="addDescModel" width="1000px" title="广告位说明">
             <table class="table tc">
@@ -267,34 +286,39 @@
 <script>
 import Axios from "@/api/index";
 import sideBar from "./components/sideBar.vue";
-import materialImg from "./components/materialImg.vue";
+import materialBigImg from "./components/materialBigImg.vue";
+import materialSmallImg from "./components/materialSmallImg.vue";
+import materialGroupImg from "./components/materialGroupImg.vue";
 import materialVideo from "./components/materialVideo.vue";
 export default {
     components: {
         sideBar,
-        materialImg,
+        materialBigImg,
+        materialSmallImg,
+        materialGroupImg,
         materialVideo,
     },
     data() {
         return {
             // toutiaoConfig: toutiaoConfig,
-            // account_id: this.$route.query.account_id, //账户id
             // id: this.$route.query.id, //行id
             // campaign_id: "", //广告组id
+            account_id:this.$route.query.account_id, //账户id
             addDescModel:false,
             locationSelectTt:true,
             showTt :false, //显示头条位置详情
             seleStatue:true,
             iconType:'chevron-right',
             locationSelect:['INVENTORY_FEED','INVENTORY_TEXT_LINK','INVENTORY_VIDEO_FEED','INVENTORY_HOTSOON_FEED','INVENTORY_AWEME_FEED'],   //位置选择            
-            specialModel:false, //创意标题特殊符号说明            
+            specialModel:false, //创意标题特殊符号说明     
+            material:'materialSmallImg', // 创意素材默认选择  
+            materialIndex : '0',      
             materialData:{ //添加创意素材
                 source:'',
                 adjunction:'',
                 comment:false,
                 comment_video:true,
             },
-            material:"0",  //上传创意素材
             adjunctionList:[{value: 'ATTACHED_CREATIVE_NONE',label: '无'},{value: 'ATTACHED_CREATIVE_PHONE',label: '电话拨打'},{value: 'ATTACHED_CREATIVE_FORM',label: '表单收集'}], //附加创意类型
             sortData:{ //设置创意分类和标签
                 sort:'',
@@ -313,6 +337,7 @@ export default {
        
     },
     methods: {
+        //投放目标 -- 今日头条系展示与隐藏
         seleTuotiao(){
             if(this.seleStatue){
                 this.iconType = 'chevron-down';
@@ -322,13 +347,44 @@ export default {
                 this.showTt = false;
             }
             this.seleStatue = !this.seleStatue;
+            console.log(this.locationSelect)
         },
+        //投放目标 -- 今日头条系选择
         selectToutiao(val){
-            let location = this.locationSelect;
-            console.log(val)
+            let locat = this.locationSelect,
+                i = locat.length;
+            
+            if(val){
+                locat.splice(0,0,'INVENTORY_FEED','INVENTORY_TEXT_LINK')
+            }else{
+                while(i--){
+                    if( locat[i]=='INVENTORY_FEED' || locat[i]=='INVENTORY_TEXT_LINK'){
+                        locat.splice(i,1);
+                    }
+                }
+            };
+            console.log(locat)
         },
-        longsss(){
-            console.log('aaa')
+        //投放目标 change
+        locationChange(val){
+            if(val.indexOf('INVENTORY_FEED') == -1 && val.indexOf('INVENTORY_TEXT_LINK') == -1){
+                this.locationSelectTt = false;
+            }else{
+                this.locationSelectTt = true;
+            }
+        },
+        currentMaterial(val){
+            console.log(val)
+            switch (val) {
+                case "0": this.material = 'materialSmallImg'; break;
+                case "1": this.material = 'materialBigImg'; break;
+                case "2": this.material = 'materialGroupImg'; break;
+                case "3": this.material = 'materialVideo'; break;
+            }
+            this.materialIndex = val;
+        },
+        submitCreative(){
+            console.log('提交创意')
         }
     }
 };

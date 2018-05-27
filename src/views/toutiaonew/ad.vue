@@ -28,7 +28,15 @@
                 <Form :label-width="80" class="margin-top-20">
                     <FormItem label="投放目标">
                         <RadioGroup v-model="pricing" type="button" size="large">
-                            <Radio :label="item.val_type" v-for="item in toutiaoConfig.pricing" :key="item.val_type" v-if="item.val_type!='PRICING_OCPC'">{{item.cname}}</Radio>
+                            <template v-if="adgroup_id">
+                                <template v-for="item in toutiaoConfig.pricing">
+                                    <Radio :label="item.val_type" v-if="item.val_type==pricing">{{item.cname}}</Radio>
+                                    <Radio :label="item.val_type" disabled v-else>{{item.cname}}</Radio>
+                                </template>
+                            </template>
+                            <template v-else>
+                                <Radio :label="item.val_type" v-for="item in toutiaoConfig.pricing" :key="item.val_type" v-if="item.val_type!='PRICING_OCPC'">{{item.cname}}</Radio>
+                            </template>
                         </RadioGroup>
                     </FormItem>
 
@@ -50,42 +58,59 @@
                     <FormItem label="下载链接" v-if="landing_type=='APP'">
                         <Input v-model="url" placeholder="请填写应用下载链接" clearable size="large" class="w500"></Input>
                     </FormItem>
-                    <template v-show="pricing=='PRICING_OCPM'">
+
+                    <template v-if="pricing=='PRICING_OCPM'">
                         <FormItem label="转化元素">
                             <Select v-model="convert_id" size="large" class="w500" @on-change="changeConvert">
                                 <Option :value="item.convert_id" v-for="item in ConvertList" :key="item.convert_id">{{item.name}}</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="应用包名" v-show="app_type=='APP_ANDROID'">
+                        <FormItem label="应用包名" v-if="app_type=='APP_ANDROID'">
                             <Input v-model="package" readonly placeholder="请输入应用包名" size="large" class="w500"></Input>
                         </FormItem>
+                        <FormItem label="下载类型" v-if="app_type!=''">
+                            <RadioGroup v-model="app_type" type="button" size="large">
+                                <Radio :label="item.val_type" v-for="item in toutiaoConfig.app_type" :key="item.val_type" v-if="item.val_type==app_type">{{item.name}}</Radio>
+                            </RadioGroup>
+                        </FormItem>
+
                     </template>
                 </Form>
             </div>
         </Card>
 
         <!-- 创意 -->
-        <targeting-details :apptype="app_type" class="margin-top-10"></targeting-details>
+        <targeting-details :apptype="app_type" :pricing="pricing" @on-change="getTargetingid" class="margin-top-10"></targeting-details>
 
         <Card dis-hover class="margin-top-10" style="position: inherit;">
             <div class="newtt">
                 <div class="title">预算与出价</div>
                 <Form :label-width="80" class="margin-top-20">
                     <FormItem label="预算">
-                        <Input v-model="budget" placeholder="最低预算不能少于100元" clearable size="large" class="w500">
-                        <Select v-model="budget_mode" slot="prepend" style="width:80px;">
-                            <Option value="BUDGET_MODE_DAY">日预算</Option>
-                            <Option value="BUDGET_MODE_TOTAL">总预算</Option>
-                        </Select>
-                        <span slot="append">元</span>
-                        </Input>
+
+                        <RadioGroup v-model="budget_mode" size="large" type="button">
+                            <template v-if="adgroup_id">
+                                <template v-for="item in toutiaoConfig.budget_mode" v-if="item.val_type!='BUDGET_MODE_INFINITE'">
+                                    <Radio :label="item.val_type" v-if="item.val_type==budget_mode">{{item.name}}</Radio>
+                                    <Radio :label="item.val_type" disabled v-else>{{item.name}}</Radio>
+                                </template>
+                            </template>
+                            <template v-else>
+                                <Radio :label="item.val_type" v-for="item in toutiaoConfig.budget_mode" :key="item.val_type" v-if="item.val_type!='BUDGET_MODE_INFINITE'">{{item.name}}</Radio>
+                            </template>
+                        </RadioGroup>
+
+                        <div class="margin-top-10">
+                            <Input v-model="budget" placeholder="最低预算不能少于100元" clearable size="large" class="w500"></Input>
+                            <span class="margin-left-10">元</span>
+                        </div>
                     </FormItem>
                     <FormItem label="投放时间">
                         <RadioGroup v-model="schedule_type" type="button" size="large">
                             <Radio :label="item.val_type" v-for="item in toutiaoConfig.schedule_type" :key="item.val_type">{{item.name}}</Radio>
                         </RadioGroup>
                         <div class="margin-top-20" v-show="schedule_type=='SCHEDULE_START_END'">
-                            <DatePicker :value="DateDomain" :options="options" type="datetimerange" format="yyyy-MM-dd HH:mm" placement="bottom-start" placeholder="在某日期范围内投放" size="large" @on-change="changedata" style="width:280px;"></DatePicker>
+                            <DatePicker :value="DateDomain" :options="options" type="datetimerange" format="yyyy-MM-dd HH:mm:ss" placement="bottom-start" placeholder="在某日期范围内投放" size="large" @on-change="changedata" style="width:280px;"></DatePicker>
                         </div>
                     </FormItem>
                     <FormItem label="投放时段">
@@ -94,7 +119,7 @@
                             <Radio label="1">指定时间段</Radio>
                         </RadioGroup>
                     </FormItem>
-                    <week-time v-model="schedule_time" v-show="timetype==1" style="margin-left:80px;"></week-time>
+                    <week-time v-model="schedule_time" v-if="timetype==1" style="margin-left:80px;"></week-time>
 
                     <FormItem label="付费方式" class="margin-top-20">
                         <ButtonGroup>
@@ -150,7 +175,8 @@
 
         <Card dis-hover class="margin-top-10">
             <div class="newtt">
-                <Button type="primary" size="large" @click="submitad()">保存到下一步</Button>
+                <Button type="primary" v-if="adgroup_id==''" size="large" @click="addAdgroup()">保存计划</Button>
+                <Button type="primary" v-else size="large" @click="updateAdgroup()">修改计划</Button>
             </div>
         </Card>
 
@@ -172,13 +198,13 @@ export default {
     },
     data() {
         return {
-            account_id: this.$route.query.account_id, //账户id
-            campaign_id: this.$route.query.campaign_id, //广告组id
-            id: this.$route.query.id, //
             toutiaoConfig: toutiaoConfig,
+            account_id: this.$route.query.account_id, //账户id
+            campaign_id: this.$route.query.campaign_id, //广告组id           
             landing_type: this.$route.query.landing_type,//推广目的
-
-            targeting_id: "",//定向id
+            targeting_id: this.$route.query.targeting_id,//定向id
+            adgroup_id: this.$route.query.adgroup_id,//广告计划id
+            modify_time: "",//时间戳
 
             adgroup_name: "",//计划名称
             pricing: "PRICING_CPC",
@@ -192,8 +218,8 @@ export default {
             budget_mode: "BUDGET_MODE_DAY",//广告预算类型(创建后不可修改)
             budget: "",//广告预算
             DateDomain: [
-                formatDate(new Date(), "yyyy-MM-dd hh:mm"),
-                formatDate(new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd hh:mm"),
+                formatDate(new Date(), "yyyy-MM-dd hh:mm:ss"),
+                formatDate(new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30), "yyyy-MM-dd hh:mm:ss"),
             ], //投放时间段
             timetype: "0",//投放时段类别
             options: {
@@ -201,20 +227,83 @@ export default {
                     return date && date.valueOf() < Date.now() - 86400000;
                 }
             },
-            schedule_time:
-                "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", //投放时间段
+            schedule_time: "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", //投放时间段
+            schedule_time1: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
             bid: "",//广告出价取值范围: ≥ 0
             schedule_type: "SCHEDULE_FROM_NOW",//广告投放时间类型
             flow_control_mode: "FLOW_CONTROL_MODE_SMOOTH",//广告投放速度类型
-
         };
     },
     mounted() {
+        if (this.adgroup_id) {
+            this.getAdgroups()
+        }
         this.getConvertList();
     },
     methods: {
-        //保存计划
-        submitad() {
+        //返回定向id
+        getTargetingid(id) {
+            this.targeting_id = id;
+        },
+        //广告计划详情
+        getAdgroups() {
+            Axios.post('api.php', {
+                action: 'ttAdPut',
+                opt: 'getAdgroups',
+                adgroup_id: this.adgroup_id,
+            }).then(res => {
+                if (res.ret == 1) {
+                    console.log(res.data)
+                    this.adgroups(res.data);
+                }
+            }).catch(err => {
+                console.log('广告计划详情' + err);
+            })
+
+        },
+        //填兖广告计划数据
+        adgroups(data) {
+            this.modify_time = data.modify_time;
+            this.pricing = data.pricing;
+            this.adgroup_name = data.adgroup_name;
+            if (data.landing_type == "APP") {
+                this.url = download_url;
+                this.app_type = data.app_type;
+            }
+            if (this.landing_type == "LINK") {
+                this.url = data.external_url;
+            }
+
+
+            if (data.pricing == 'PRICING_OCPM') {
+                this.convert_id = data.convert_id;
+                this.package = data.package;
+            }
+
+
+
+
+            this.budget_mode = data.budget_mode;
+            this.budget = data.budget;
+            this.schedule_type = data.schedule_type;
+            this.DateDomain = [data.start_time, data.end_time]
+            if (data.schedule_time == "SCHEDULE_TIME_ALL_DAY") {
+                this.timetype = "0";
+                this.schedule_time = this.schedule_time1;
+            } else {
+                this.timetype = "1";
+                this.schedule_time = data.schedule_time;
+            }
+            if (data.pricing == "PRICING_OCPC" || data.pricing == "PRICING_OCPM") {
+                this.bid = data.cpa_bid
+            } else {
+                this.bid = data.bid
+            }
+            this.flow_control_mode = data.flow_control_mode;
+
+        },
+        //创建计划
+        addAdgroup() {
             let param = {
                 action: 'ttAdPut',
                 opt: 'addAdgroup',
@@ -226,10 +315,12 @@ export default {
                 start_time: "",
                 end_time: "",
                 bid: this.bid,
-                targeting_id: 3301,
+                targeting_id: this.targeting_id,
                 pricing: this.pricing,
                 schedule_type: this.schedule_type,//广告投放时间类型
                 flow_control_mode: this.flow_control_mode,//广告投放速度类型
+                start_time: this.DateDomain[0],
+                end_time: this.DateDomain[1],
             }
 
             if (this.adgroup_name == "") {
@@ -242,11 +333,13 @@ export default {
             }
             if (this.landing_type == "APP") {
                 param.download_url = this.url;
+                param.app_type = this.app_type;
             }
             if (this.landing_type == "LINK") {
                 param.external_url = this.url;
             }
-            if (this.pricing == 'PRICING_OCPM') {
+
+            if (this.pricing == 'PRICING_OCPM') {//pricing == 'PRICING_OCPM'转换量convert_id必填
                 if (this.convert_id == "") {
                     this.$Message.info("请选择转化元素");
                     return;
@@ -256,16 +349,18 @@ export default {
                     param.package = this.package;
                 }
             }
+            if (!this.targeting_id) {
+                this.$Message.info("请保存定向");
+                return;
+            };
             if (this.budget < 100) {
                 this.$Message.info("最低预算100元,");
                 return;
             }
-            if (this.schedule_type == 'SCHEDULE_START_END') {
-                param.start_time = this.DateDomain[0];
-                param.end_time = this.DateDomain[1];
-            }
             if (this.timetype == "1") {
                 param.schedule_time = this.schedule_time;
+            } else {
+                param.schedule_time = this.schedule_time1;
             }
             if (this.pricing == "PRICING_OCPC" || this.pricing == "PRICING_OCPM") {
                 param.cpa_bid = this.bid;
@@ -284,17 +379,106 @@ export default {
             Axios.post('api.php', param).then(res => {
                 if (res.ret == 1) {
                     console.log(res)
-                    // this.$router.push({
-                    //     name: 'ttcreative',
-                    //     query: {
-                    //         account_id: this.account_id,
-                    //         campaign_id: this.campaign_id,
-                    //         adgroup_id: res.data.adgroup_id
-                    //     }
-                    // })
+                    this.$router.push({
+                        name: 'ttcreative',
+                        query: {
+                            account_id: this.account_id,
+                            adgroup_id: res.data.adgroup_id
+                        }
+                    })
                 }
             }).catch(err => {
                 console.log('创建计划' + err);
+            })
+        },
+        //修改计划
+        updateAdgroup() {
+
+            let param = {
+                action: 'ttAdPut',
+                opt: 'updateAdgroup',
+                modify_time: this.modify_time,
+                adgroup_id: this.adgroup_id,
+                account_id: this.account_id,//账户id
+                campaign_id: this.campaign_id,//广告组id
+                adgroup_name: this.adgroup_name,//广告计划名称
+                budget_mode: this.budget_mode,//广告预算类型(创建后不可修改)
+                budget: this.budget,//广告预算
+                start_time: "",
+                end_time: "",
+                bid: this.bid,
+                targeting_id: this.targeting_id,
+                pricing: this.pricing,
+                schedule_type: this.schedule_type,//广告投放时间类型
+                flow_control_mode: this.flow_control_mode,//广告投放速度类型
+                start_time: this.DateDomain[0],
+                end_time: this.DateDomain[1],
+            }
+
+            if (this.adgroup_name == "") {
+                this.$Message.info("请输入计划名");
+                return;
+            }
+            if (this.url == "") {
+                this.$Message.info("请输入链接");
+                return;
+            }
+            if (this.landing_type == "APP") {
+                param.download_url = this.url;
+                param.app_type = this.app_type;
+            }
+            if (this.landing_type == "LINK") {
+                param.external_url = this.url;
+            }
+            if (this.pricing == 'PRICING_OCPM') {//pricing == 'PRICING_OCPM'转换量convert_id必填
+                if (this.convert_id == "") {
+                    this.$Message.info("请选择转化元素");
+                    return;
+                }
+                param.convert_id = this.convert_id;
+                if (this.app_type == 'APP_ANDROID') {
+                    param.package = this.package;
+                }
+            }
+            if (!this.targeting_id) {
+                this.$Message.info("请保存定向");
+                return;
+            };
+            if (this.budget < 100) {
+                this.$Message.info("最低预算100元,");
+                return;
+            }
+            if (this.timetype == "1") {
+                param.schedule_time = this.schedule_time;
+            } else {
+                param.schedule_time = this.schedule_time1;
+            }
+            if (this.pricing == "PRICING_OCPC" || this.pricing == "PRICING_OCPM") {
+                param.cpa_bid = this.bid;
+                param.bid = "";
+                if (this.bid < 100) {
+                    this.$Message.info("出价能少于100");
+                    return;
+                }
+            } else {
+                if (this.bid < 0.2) {
+                    this.$Message.info("出价不能少于0.2");
+                    return;
+                }
+            }
+
+            Axios.post('api.php', param).then(res => {
+                if (res.ret == 1) {
+                    this.$router.push({
+                        name: 'ttcreative',
+                        query: {
+                            account_id: this.account_id,
+                            adgroup_id: this.adgroup_id
+                        }
+                    })
+                }
+            }).catch(err => {
+                console.log('修改计划' + err);
             })
         },
         //转化列表

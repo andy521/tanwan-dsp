@@ -14,7 +14,6 @@
   text-align: left;
   width: 110px;
 }
-
 </style>
 <template>
     <div>
@@ -43,9 +42,7 @@
                 <view-tip @on-change="getuncheck" :check="checkAllGroup" action="ttAdPut" opt="searchCampaigns"></view-tip>
                 <Select placeholder="投放目的" v-model="landing_type" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
-                    <Option value="LINK">推广落地页</Option>
-                    <Option value="APP">推广应用下载</Option>
-                    <Option value="DPA">产品目录</Option>
+                    <Option :value="item.val_type" v-for="item in toutiaoConfig.landing_type" :key="item.val_type">{{item.name}}</Option>
                 </Select>
                 <Select placeholder="操作状态" v-model="status" class="sel_state" @on-change="getCampaignsList()">
                     <Option value="">不限</Option>
@@ -110,6 +107,7 @@ import {
 import searchTree from "@/components/select-tree/searchTree.vue";
 import campaignEcharts from "../components/campaignEcharts.vue";
 import selectAuthor from "@/components/select-author/index.vue";
+import toutiaoConfig from '@/utils/toutiaoConfig.json';
 export default {
     components: {
         viewTip,
@@ -120,6 +118,7 @@ export default {
     },
     data() {
         return {
+            toutiaoConfig: toutiaoConfig,
             height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
@@ -181,7 +180,7 @@ export default {
                 column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
         },
-         //表格高亮calss
+        //表格高亮calss
         rowClassName(row, index) {
             if (row._disabled) {
                 return "table-statistics";
@@ -270,82 +269,81 @@ export default {
                     width: 200,
                     render: (h, params) => {
                         if (params.row._disabled) {
-                        return h("span", "本页统计");
-                    }
-                    else{
-                        let value = params.row.campaign_name;
-                        return [
-                            h(
-                                "span",
-                                {
-                                    class: "name_text",
+                            return h("span", "本页统计");
+                        }
+                        else {
+                            let value = params.row.campaign_name;
+                            return [
+                                h(
+                                    "span",
+                                    {
+                                        class: "name_text",
+                                        on: {
+                                            click: () => {
+                                                this.$router.push({
+                                                    name: "tt_ad",
+                                                    query: {
+                                                        campaign_id: params.row.campaign_id
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    },
+                                    params.row.campaign_name
+                                ),
+                                h("i-button", {
+                                    props: {
+                                        icon: "edit",
+                                        type: "text",
+                                        size: "small"
+                                    },
+                                    class: ["edit"],
                                     on: {
                                         click: () => {
-                                            let query = {
-                                                id: params.row.id
-                                            };
-                                            this.$router.push({
-                                                name: "tt_ad",
-                                                query: query
+                                            this.$Modal.confirm({
+                                                render: h => {
+                                                    return h("Input", {
+                                                        props: {
+                                                            value: params.row.campaign_name,
+                                                            autofocus: true,
+                                                            placeholder: "请输入广告组名称"
+                                                        },
+                                                        on: {
+                                                            input: val => {
+                                                                value = val;
+                                                            }
+                                                        }
+                                                    });
+                                                },
+                                                onOk: () => {
+                                                    if (value == "") {
+                                                        this.$Message.info("请输入修改信息");
+                                                        return;
+                                                    }
+                                                    Axios.post("api.php", {
+                                                        action: "ttAdPut",
+                                                        opt: "updateCampaign",
+                                                        account_id: params.row.account_id,
+                                                        modify_time: params.row.modify_time,
+                                                        campaign_id: params.row.campaign_id,
+                                                        campaign_name: value
+                                                    })
+                                                        .then(res => {
+                                                            if (res.ret == 1) {
+                                                                this.$Message.info(res.msg);
+                                                                this.getCampaignsList(this.page);
+                                                            }
+                                                        })
+                                                        .catch(err => {
+                                                            console.log("修改广告组名失败" + err);
+                                                        });
+                                                }
                                             });
                                         }
                                     }
-                                },
-                                params.row.campaign_name
-                            ),
-                            h("i-button", {
-                                props: {
-                                    icon: "edit",
-                                    type: "text",
-                                    size: "small"
-                                },
-                                class: ["edit"],
-                                on: {
-                                    click: () => {
-                                        this.$Modal.confirm({
-                                            render: h => {
-                                                return h("Input", {
-                                                    props: {
-                                                        value: params.row.campaign_name,
-                                                        autofocus: true,
-                                                        placeholder: "请输入广告组名称"
-                                                    },
-                                                    on: {
-                                                        input: val => {
-                                                            value = val;
-                                                        }
-                                                    }
-                                                });
-                                            },
-                                            onOk: () => {
-                                                if (value == "") {
-                                                    this.$Message.info("请输入修改信息");
-                                                    return;
-                                                }
-                                                Axios.post("api.php", {
-                                                    action: "ttAdPut",
-                                                    opt: "updateCampaign",
-                                                    account_id: params.row.account_id,
-                                                    modify_time: params.row.modify_time,
-                                                    campaign_id: params.row.campaign_id,
-                                                    campaign_name: value
-                                                })
-                                                    .then(res => {
-                                                        if (res.ret == 1) {
-                                                            this.$Message.info(res.msg);
-                                                            this.getCampaignsList(this.page);
-                                                        }
-                                                    })
-                                                    .catch(err => {
-                                                        console.log("修改广告组名失败" + err);
-                                                    });
-                                            }
-                                        });
-                                    }
-                                }
-                            })
-                        ];
-                    }
+                                })
+                            ];
+                        }
                     }
                 },
                 {
@@ -574,7 +572,7 @@ export default {
                     key: "",
                     width: 130,
                     render: (h, params) => {
-                        if(params.row._disabled)return;
+                        if (params.row._disabled) return;
                         return [
                             h(
                                 "span",
@@ -585,7 +583,7 @@ export default {
                                             this.$router.push({
                                                 name: "ttcampaign",
                                                 query: {
-                                                    account_id:params.row.account_id,
+                                                    account_id: params.row.account_id,
                                                     id: params.row.id
                                                 }
                                             });
@@ -594,16 +592,16 @@ export default {
                                 },
                                 "编辑"
                             ),
-                            h(
-                                "span",
-                                {
-                                    class: "copy_link",
-                                    on: {
-                                        click: () => { }
-                                    }
-                                },
-                                "复制"
-                            ),
+                            // h(
+                            //     "span",
+                            //     {
+                            //         class: "copy_link",
+                            //         on: {
+                            //             click: () => { }
+                            //         }
+                            //     },
+                            //     "复制"
+                            // ),
                             h(
                                 "span",
                                 {

@@ -72,10 +72,8 @@
                                         <template v-for="item in toutiaoConfig.district" v-if="item.val_type==targeting.targeting.district">
                                             {{item.name}}：
                                         </template>
-                                        <template v-for="item in targeting.targeting.city">
-                                            <template v-for="subitem in province" v-if="item==subitem.value">
-                                                {{subitem.name}};
-                                            </template>
+                                        <template v-for="item in cityname">
+                                            {{item}}
                                         </template>
                                     </span>
                                 </div>
@@ -277,7 +275,7 @@ export default {
             this.loading = true;
             Axios.post('api.php', {
                 action: 'ttAdPut',
-                opt: 'getTargetingList',
+                opt: 'getTargetingDetail',
                 targeting_id: item.targeting_id,
             }).then(res => {
                 this.loading = false;
@@ -292,6 +290,35 @@ export default {
         //确定
         confirm() {
             this.$emit("on-change", this.targeting);
+        },
+    },
+    computed: {
+        //重新排区
+        cityname() {
+            let province = [];
+            if (this.province.length > 0 && this.targeting.targeting.city) {
+                this.targeting.targeting.city.forEach(id => {
+                    this.province.forEach(v => {
+                        if (id == v.value) province.push(v.name);
+                        if (v.countyList) {
+                            v.countyList.forEach(v => {
+                                if (id == v.value) province.push(v.name);
+                            })
+                        }
+                        if (v.cityList) {
+                            v.cityList.forEach(v => {
+                                if (id == v.value) province.push(v.name);
+                                if (v.countyList) {
+                                    v.countyList.forEach(v => {
+                                        if (id == v.value) province.push(v.name);
+                                    })
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+            return province;
         },
     }
 }

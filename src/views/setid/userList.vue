@@ -62,18 +62,12 @@
         </Row>
         <Row v-show="showPermissionSetting">
             <Col span="24">
-                <Tabs value="menu1">
-                    <Tab-pane label="综合业务后台">
+                <Tabs @on-click="changeTabs">
+                    <Tab-pane label="前台权限">
+                        <Tree :data="menu0" @on-check-change="changeTreeData" show-checkbox></Tree>
+                    </Tab-pane>
+                    <Tab-pane label="后台权限">
                         <Tree :data="menu1" @on-check-change="changeTreeData" show-checkbox></Tree>
-                    </Tab-pane>
-                    <Tab-pane label="手游后台">
-                        <Tree :data="menu2" @on-check-change="changeTreeData" show-checkbox></Tree>
-                    </Tab-pane>
-                    <Tab-pane label="海外游戏后台">
-                        <Tree :data="menu5" @on-check-change="changeTreeData" show-checkbox></Tree>
-                    </Tab-pane>
-                    <Tab-pane v-for="(item,index) in platformList" :key="index" :label="item.platformName">
-                        <Tree :data="item.menu" @on-check-change="changeTreeData" show-checkbox></Tree>
                     </Tab-pane>
                 </Tabs>
             </Col>
@@ -281,32 +275,50 @@
                     }
                 ],
                 tableData: [],
+                menu0: [],
                 menu1: [],
-                menu2: [],
-                menu5: [],
-                platformList: [],
                 //修改权限
                 associate: {
+                    menu0: {},
                     menu1: {},
-                    menu2: {},
-                    menu5: {},
-                    games: [],
                     groupMenu: {
+                        menu0: {},
                         menu1: {},
-                        menu2: {},
-                        menu5: {},
-                        games: []
                     }
                 },
                 editPermission: {
                     act: undefined,
                     uid: undefined,
                     pmid: undefined,
+                    menu0: [],
                     menu1: [],
-                    menu2: [],
-                    menu5: [],
-                    games: []
                 },
+                // tableData: [],
+                // menu1: [],
+                // menu2: [],
+                // menu5: [],
+                // platformList: [],
+                // associate: {
+                //     menu1: {},
+                //     menu2: {},
+                //     menu5: {},
+                //     games: [],
+                //     groupMenu: {
+                //         menu1: {},
+                //         menu2: {},
+                //         menu5: {},
+                //         games: []
+                //     }
+                // },
+                // editPermission: {
+                //     act: undefined,
+                //     uid: undefined,
+                //     pmid: undefined,
+                //     menu1: [],
+                //     menu2: [],
+                //     menu5: [],
+                //     games: []
+                // },
                 //编辑用户资料会话框
                 editProfileDialog: false,
                 editUserProfile: {
@@ -362,6 +374,8 @@
                 },
                 //添加or编辑用户
                 commitUserProfileType : '',
+                //当前标签页
+                currentTag : '0'
             }
         },
         mounted() {
@@ -370,6 +384,10 @@
             this.getDepartmentsList();
         },
         methods: {
+            //改变标签页
+            changeTabs (data) {
+                this.currentTag = data.toString();
+            },
             //添加用户 - 会话框
             arouseAddUserDialog () {
                 this.commitUserProfileType = 'add';
@@ -390,7 +408,7 @@
             },
             //恢复用户
             recoverUser (uid) {
-                Axios.get('api.php?action=sys&opt=useradd&stage=recover&uid='+uid)
+                Axios.get('get.php?action=sys&opt=useradd&stage=recover&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -408,7 +426,7 @@
             },
             //删除用户
             deleteUser (uid, userSN) {
-                Axios.get('api.php?action=sys&opt=useradd&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
+                Axios.get('get.php?action=sys&opt=useradd&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -426,7 +444,7 @@
             },
             //彻底删除用户
             deleteUserThoroughly () {
-                Axios.get('api.php?action=sys&opt=useradd&stage=delForever&uid='+this.deleteUserProfile.uid)
+                Axios.get('get.php?action=sys&opt=useradd&stage=delForever&uid='+this.deleteUserProfile.uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -454,7 +472,7 @@
                 this.$refs['editUserProfile'].validate((valid) => {
                     if (valid) {
                         if (this.commitUserProfileType == 'edit') {
-                            Axios.post('api.php?action=sys&opt=useradd', {
+                            Axios.post('get.php?action=sys&opt=useradd', {
                                 stage: 'edit',
                                 uId: this.editUserProfile.uid,
                                 uName: this.editUserProfile.userName,
@@ -483,7 +501,7 @@
                                 }
                             )
                         } else if (this.commitUserProfileType == 'add') {
-                            Axios.post('api.php', {
+                            Axios.post('get.php', {
                                 action: 'sys',
                                 opt: 'useradd',
                                 stage: 'add',
@@ -525,7 +543,7 @@
             //修改用户资料-会话框
             editUserProfileDialog (uid) {
                 this.commitUserProfileType = 'edit';
-                Axios.get('api.php?action=sys&opt=useradd&act=edit&uid='+uid)
+                Axios.get('get.php?action=sys&opt=useradd&act=edit&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -555,7 +573,7 @@
             },
             //获取权限组列表
             getPermissionGroup() {
-                Axios.post('api.php', {
+                Axios.post('get.php', {
                     action: 'sys',
                     opt: 'useradd',
                 }).then(
@@ -574,7 +592,7 @@
             },
             //获取部门列表
             getDepartmentsList() {
-                Axios.post('api.php', {
+                Axios.post('get.php', {
                     action: 'sys',
                     opt: 'getDepartments',
                 }).then(
@@ -595,7 +613,7 @@
             },
             getChangedPositions() {
                 if (this.editUserProfile.departmentSelected != "0") {
-                    Axios.post('api.php', {
+                    Axios.post('get.php', {
                         action: 'sys',
                         opt: 'getPositions',
                         dept: this.editUserProfile.departmentSelected,
@@ -618,16 +636,91 @@
                     this.editUserProfile.positionSelected = "0";
                 }
             },
+            // //权限修改
+            // commitUserPermission () {
+            //     //console.log(this.editPermission);
+            //     //console.log(this.associate);
+            //     Axios.post('get.php?action=sys&opt=permission&act='+this.editPermission.act, {
+            //         stage: 'yes',
+            //         pmid: this.editPermission.pmid,
+            //         uid: this.editPermission.uid,
+            //         mids: this.mergeMids(),
+            //         games: this.editPermission.games
+            //     }).then(
+            //         res => {
+            //             if (res.ret == 1) {
+            //                 this.$Message.success(res.data);
+            //             } else {
+            //                 this.$Message.error(res.msg);
+            //             }
+            //         }
+            //     ).catch(
+            //         err => {
+            //             console.log('请求失败' + err);
+            //         }
+            //     )
+            // },
+            // mergeMids () {
+            //     let res = [];
+            //     for (let k in this.editPermission) {
+            //         if (k.substr(0,4) == 'menu') {
+            //             for (let i in this.editPermission[k]) {
+            //                 res.push(this.editPermission[k][i]);
+            //             }
+            //         }
+            //     }
+            //     return res;
+            // },
+            // changeTreeData (data) {
+            //     let origin = undefined;
+            //     let idList = {};
+            //     data.forEach(item => {
+            //         if (origin == undefined) {
+            //             origin = item.origin;
+            //         }
+            //         let tmp = item.mark;
+            //         let cache = [];
+            //         if (typeof origin == 'object') { //platform
+            //             while (this.associate['games'][origin.games][tmp] != undefined) {
+            //                 cache.push(tmp);
+            //                 tmp = this.associate['games'][origin.games][tmp];
+            //             }
+            //         } else { //menu
+            //             while (this.associate[origin][tmp] != undefined) {
+            //                 cache.push(tmp);
+            //                 tmp = this.associate[origin][tmp];
+            //             }
+            //         }
+            //         idList[tmp] = undefined;
+            //         while ((tmp = cache.pop()) != undefined) {
+            //             idList[tmp] = undefined;
+            //         }
+            //     });
+            //     if (typeof origin == 'object') { //platform
+            //         this.editPermission['games'][origin.games] = [];
+            //         for (let i in idList) {
+            //             if (this.associate.groupMenu['games'][origin.games][i]!==true) {
+            //                 this.editPermission['games'][origin.games].push(parseInt(i));
+            //             }
+            //         }
+            //     } else { //menu
+            //         this.editPermission[origin] = [];
+            //         for (let i in idList) {
+            //             if (this.associate.groupMenu[origin][i]!==true) {
+            //                 this.editPermission[origin].push(parseInt(i));
+            //             }
+            //         }
+            //     }
+            //     //console.log(this.associate);
+            //     //console.log(this.editPermission);
+            // },
             //权限修改
             commitUserPermission () {
-                //console.log(this.editPermission);
-                //console.log(this.associate);
-                Axios.post('api.php?action=sys&opt=permission&act='+this.editPermission.act, {
+                Axios.post('get.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
                     stage: 'yes',
                     pmid: this.editPermission.pmid,
                     uid: this.editPermission.uid,
-                    mids: this.mergeMids(),
-                    games: this.editPermission.games
+                    mids: this.mergeMids()
                 }).then(
                     res => {
                         if (res.ret == 1) {
@@ -654,7 +747,7 @@
                 return res;
             },
             changeTreeData (data) {
-                let origin = undefined;
+                let origin = this.currentTag ? "menu" + this.currentTag : undefined;
                 let idList = {};
                 data.forEach(item => {
                     if (origin == undefined) {
@@ -662,35 +755,19 @@
                     }
                     let tmp = item.mark;
                     let cache = [];
-                    if (typeof origin == 'object') { //platform
-                        while (this.associate['games'][origin.games][tmp] != undefined) {
-                            cache.push(tmp);
-                            tmp = this.associate['games'][origin.games][tmp];
-                        }
-                    } else { //menu
-                        while (this.associate[origin][tmp] != undefined) {
-                            cache.push(tmp);
-                            tmp = this.associate[origin][tmp];
-                        }
+                    while (this.associate[origin][tmp] != undefined) {
+                        cache.push(tmp);
+                        tmp = this.associate[origin][tmp];
                     }
                     idList[tmp] = undefined;
                     while ((tmp = cache.pop()) != undefined) {
                         idList[tmp] = undefined;
                     }
                 });
-                if (typeof origin == 'object') { //platform
-                    this.editPermission['games'][origin.games] = [];
-                    for (let i in idList) {
-                        if (this.associate.groupMenu['games'][origin.games][i]!==true) {
-                            this.editPermission['games'][origin.games].push(parseInt(i));
-                        }
-                    }
-                } else { //menu
-                    this.editPermission[origin] = [];
-                    for (let i in idList) {
-                        if (this.associate.groupMenu[origin][i]!==true) {
-                            this.editPermission[origin].push(parseInt(i));
-                        }
+                this.editPermission[origin] = [];
+                for (let i in idList) {
+                    if (this.associate.groupMenu[origin][i]!==true) {
+                        this.editPermission[origin].push(parseInt(i));
                     }
                 }
                 //console.log(this.associate);
@@ -708,7 +785,7 @@
                 } else {
                     this.page = page;
                 }
-                Axios.post('api.php?action=sys&opt=userlist', {
+                Axios.post('get.php?action=sys&opt=userlist', {
                     act: 'search',
                     numPerPage: this.pageSize,
                     pageNum: this.page,
@@ -751,11 +828,11 @@
             },
             //获取权限列表
             getPermissionTree (uid) {
-                Axios.get('api.php?action=sys&opt=permission&act=user&uid='+uid)
+                Axios.get('get.php?action=sys&opt=editPermission&act=user&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
-                            //console.log(res);
+                            // console.log(res);
                             this.editPermission.act = res.data.gData.act;
                             this.editPermission.uid = res.data.gData.uid;
                             this.editPermission.pmid = res.data.gData.pmid;
@@ -763,18 +840,10 @@
                                 this['menu'+i] = [];
                                 this.buildPermissionTree(res.data.menuData[i], this['menu'+i], 'menu'+i);
                             }
-                            for (let i in res.data.plat_arr) {
-                                var tmp = {
-                                    platformId: res.data.plat_arr[i].id,
-                                    platformName: res.data.plat_arr[i].plat_name,
-                                    menu: []
-                                };
-                                this.buildPermissionTree(res.data.game_arr[res.data.plat_arr[i].id], tmp.menu, {games: res.data.plat_arr[i].id});
-                                this.platformList.push(tmp);
-                            }
                             this.showUserListTable = false;
                             this.showPermissionSetting = true;
-                            //console.log(this.editPermission);
+                            // console.log(this.editPermission); 
+                            // console.log(this.associate); 
                         } else {
                             this.$Message.error(res.msg);
                         }
@@ -802,10 +871,7 @@
                         delete defaultSet.disabled;
                     } else if (menuData[i].acstate == 1) {
                         delete defaultSet.disabled;
-                    }/* else if (menuData[i].acstate == 2) {
-                        delete defaultSet.checked;
-                        defaultSet.title = '√ ';
-                    }*/
+                    }
                     defaultSet.title += menuData[i].name;
                     defaultSet.mark = parseInt(menuData[i].id);
                     this.buildAssociate(origin, parseInt(menuData[i].id), father, menuData[i].acstate);
@@ -823,35 +889,118 @@
             },
             //创建节点联系表
             buildAssociate (origin, curID, faterID, type) {
-                if (typeof origin == 'object') {
-                    if (type == 2) {
-                        if (this.associate.groupMenu.games[origin.games] == undefined) {
-                            this.associate.groupMenu.games[origin.games] = {};
-                        }
-                        this.associate.groupMenu.games[origin.games][curID] = true;
-                    }
-                    if (this.associate.games[origin.games] == undefined) {
-                        this.associate.games[origin.games] = {};
-                    }
-                    this.associate.games[origin.games][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
-                } else {
-                    if (type == 2) {
-                        this.associate.groupMenu[origin][curID] = true;
-                    }
-                    this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
+                if (type == 2) {
+                    this.associate.groupMenu[origin][curID] = true;
                 }
+                this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
             },
             //创建用户目前权限列表
             buildUserPermission (origin, curID) {
-                if (typeof origin == 'object') {
-                    if (this.editPermission.games[origin.games] == undefined) {
-                        this.editPermission.games[origin.games] = [];
-                    }
-                    this.editPermission.games[origin.games].push(curID);
-                } else {
-                    this.editPermission[origin].push(curID);
-                }
+                this.editPermission[origin].push(curID);
             }
+            // //获取权限列表
+            // getPermissionTree (uid) {
+            //     Axios.get('get.php?action=sys&opt=permission&act=user&uid='+uid)
+            //     .then(
+            //         res => {
+            //             if (res.ret == 1) {
+            //                 //console.log(res);
+            //                 this.editPermission.act = res.data.gData.act;
+            //                 this.editPermission.uid = res.data.gData.uid;
+            //                 this.editPermission.pmid = res.data.gData.pmid;
+            //                 for (let i in res.data.menuData) {
+            //                     this['menu'+i] = [];
+            //                     this.buildPermissionTree(res.data.menuData[i], this['menu'+i], 'menu'+i);
+            //                 }
+            //                 for (let i in res.data.plat_arr) {
+            //                     var tmp = {
+            //                         platformId: res.data.plat_arr[i].id,
+            //                         platformName: res.data.plat_arr[i].plat_name,
+            //                         menu: []
+            //                     };
+            //                     this.buildPermissionTree(res.data.game_arr[res.data.plat_arr[i].id], tmp.menu, {games: res.data.plat_arr[i].id});
+            //                     this.platformList.push(tmp);
+            //                 }
+            //                 this.showUserListTable = false;
+            //                 this.showPermissionSetting = true;
+            //                 //console.log(this.editPermission);
+            //             } else {
+            //                 this.$Message.error(res.msg);
+            //             }
+            //         }
+            //     ).catch(
+            //         err => {
+            //             console.log('获取失败' + err);
+            //         }
+            //     )
+            // },
+            // //组装Tree
+            // buildPermissionTree (menuData, list, origin, father) {
+            //     for (let i in menuData) {
+            //         let defaultSet = {
+            //             mark: undefined,
+            //             origin: origin,
+            //             expand: true,
+            //             checked: true,
+            //             disabled: true,
+            //             title: '',
+            //             children: []
+            //         };
+            //         if (menuData[i].acstate == 0) {
+            //             delete defaultSet.checked;
+            //             delete defaultSet.disabled;
+            //         } else if (menuData[i].acstate == 1) {
+            //             delete defaultSet.disabled;
+            //         }/* else if (menuData[i].acstate == 2) {
+            //             delete defaultSet.checked;
+            //             defaultSet.title = '√ ';
+            //         }*/
+            //         defaultSet.title += menuData[i].name;
+            //         defaultSet.mark = parseInt(menuData[i].id);
+            //         this.buildAssociate(origin, parseInt(menuData[i].id), father, menuData[i].acstate);
+            //         if (defaultSet.checked && menuData[i].acstate!=2) {
+            //             this.buildUserPermission(origin, parseInt(menuData[i].id));
+            //         }
+            //         list.push(defaultSet);
+            //         if(menuData[i].list != undefined){
+            //             delete defaultSet.checked;
+            //             this.buildPermissionTree(menuData[i].list, list[list.length-1].children, origin, menuData[i].id);
+            //         } else {
+            //             delete list[list.length-1].children;
+            //         }
+            //     }
+            // },
+            // //创建节点联系表
+            // buildAssociate (origin, curID, faterID, type) {
+            //     if (typeof origin == 'object') {
+            //         if (type == 2) {
+            //             if (this.associate.groupMenu.games[origin.games] == undefined) {
+            //                 this.associate.groupMenu.games[origin.games] = {};
+            //             }
+            //             this.associate.groupMenu.games[origin.games][curID] = true;
+            //         }
+            //         if (this.associate.games[origin.games] == undefined) {
+            //             this.associate.games[origin.games] = {};
+            //         }
+            //         this.associate.games[origin.games][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
+            //     } else {
+            //         if (type == 2) {
+            //             this.associate.groupMenu[origin][curID] = true;
+            //         }
+            //         this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
+            //     }
+            // },
+            // //创建用户目前权限列表
+            // buildUserPermission (origin, curID) {
+            //     if (typeof origin == 'object') {
+            //         if (this.editPermission.games[origin.games] == undefined) {
+            //             this.editPermission.games[origin.games] = [];
+            //         }
+            //         this.editPermission.games[origin.games].push(curID);
+            //     } else {
+            //         this.editPermission[origin].push(curID);
+            //     }
+            // }
         }
     };
 </script>

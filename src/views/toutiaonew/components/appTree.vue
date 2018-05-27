@@ -57,7 +57,7 @@
             <div class="city_box">
                 <CheckboxGroup v-model="ids" @on-change="changeIds();">
                     <label class="item" v-for="item in adtags.subItems">
-                        <Checkbox :label="item.value" :key="item.value">{{item.name}}</Checkbox>
+                        <Checkbox :label="String(item.value)" :key="item.value">{{item.name}}</Checkbox>
                     </label>
                 </CheckboxGroup>
             </div>
@@ -69,14 +69,14 @@
             </div>
             <div class="city_box">
                 <CheckboxGroup v-model="ids" @on-change="changeIds();">
-                    <template v-for="subitem in ids">
-                        <label class="item" v-for="item in datas">
-                            <template v-for="it in item.subItems" v-if="subitem==it.value">
-                                <Checkbox :label="it.value" :key="this">{{it.name}}</Checkbox>
+                    <div v-for="subitem in ids" :key="subitem">
+                        <label class="item" v-for="item in datas" :key="this">
+                            <span v-for="it in item.subItems" v-if="subitem==it.value" :key="it.value">
+                                <Checkbox :label="String(it.value)">{{it.name}}{{it.value}}</Checkbox>
                                 <Icon type="close-round" size="10" class="more_icon"></Icon>
-                            </template>
+                            </span>
                         </label>
-                    </template>
+                    </div>
                 </CheckboxGroup>
             </div>
         </div>
@@ -94,10 +94,12 @@ export default {
         }
     },
     mounted() {
+        console.log(this.datas)
         this.ids = this.value;
     },
     watch: {
         value() {
+            console.log(this.datas)
             this.ids = this.value;
         }
     },
