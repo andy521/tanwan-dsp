@@ -401,7 +401,7 @@
             },
             //恢复用户
             recoverUser (uid) {
-                Axios.get('get.php?action=sys&opt=useradd&stage=recover&uid='+uid)
+                Axios.get('get.php?action=sys&opt=userEdit&stage=recover&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -419,7 +419,7 @@
             },
             //删除用户
             deleteUser (uid, userSN) {
-                Axios.get('get.php?action=sys&opt=useradd&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
+                Axios.get('get.php?action=sys&opt=userEdit&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -437,7 +437,7 @@
             },
             //彻底删除用户
             deleteUserThoroughly () {
-                Axios.get('get.php?action=sys&opt=useradd&stage=delForever&uid='+this.deleteUserProfile.uid)
+                Axios.get('get.php?action=sys&opt=userEdit&stage=delForever&uid='+this.deleteUserProfile.uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -465,7 +465,7 @@
                 this.$refs['editUserProfile'].validate((valid) => {
                     if (valid) {
                         if (this.commitUserProfileType == 'edit') {
-                            Axios.post('get.php?action=sys&opt=useradd', {
+                            Axios.post('get.php?action=sys&opt=userEdit', {
                                 stage: 'edit',
                                 uId: this.editUserProfile.uid,
                                 uName: this.editUserProfile.userName,
@@ -496,7 +496,7 @@
                         } else if (this.commitUserProfileType == 'add') {
                             Axios.post('get.php', {
                                 action: 'sys',
-                                opt: 'useradd',
+                                opt: 'userEdit',
                                 stage: 'add',
                                 uName: this.editUserProfile.userName,
                                 uPass: this.editUserProfile.password,
@@ -536,7 +536,7 @@
             //修改用户资料-会话框
             editUserProfileDialog (uid) {
                 this.commitUserProfileType = 'edit';
-                Axios.get('get.php?action=sys&opt=useradd&act=edit&uid='+uid)
+                Axios.get('get.php?action=sys&opt=userEdit&act=edit&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -568,7 +568,7 @@
             getPermissionGroup() {
                 Axios.post('get.php', {
                     action: 'sys',
-                    opt: 'useradd',
+                    opt: 'userEdit',
                 }).then(
                     res => {
                         // console.log(res);
@@ -780,7 +780,7 @@
                 } else {
                     this.page = page;
                 }
-                Axios.post('get.php?action=sys&opt=userlist', {
+                Axios.post('get.php?action=sys&opt=showUser', {
                     act: 'search',
                     numPerPage: this.pageSize,
                     pageNum: this.page,
@@ -801,11 +801,11 @@
                                 let userInfo = {
                                     uid: res.data.uData[i].uId,
                                     userName: res.data.uData[i].uName,
-                                    permissionGroup: (res.data.pmData[res.data.uData[i].uGid])?res.data.pmData[res.data.uData[i].uGid].name:'',
+                                    permissionGroup: res.data.uData[i].uGname,
                                     realName: res.data.uData[i].truename,
                                     sex: res.data.uData[i].sex,
-                                    department: (res.data.dpData==null)?'':((res.data.dpData[res.data.uData[i].dept])?res.data.dpData[res.data.uData[i].dept]:''),
-                                    position: (res.data.dpData==null)?'':((res.data.dpData[res.data.uData[i].position])?res.data.dpData[res.data.uData[i].position]:''),
+                                    department: res.data.uData[i].deptName,
+                                    position: res.data.uData[i].posName,
                                     mobile: res.data.uData[i].mobile,
                                     sn: res.data.uData[i].mb_isbn,
                                     loginCount: res.data.uData[i].logincount,
