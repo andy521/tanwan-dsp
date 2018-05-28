@@ -361,7 +361,7 @@ export default {
                 param.cpa_bid = this.bid;
                 param.bid = "";
                 if (this.bid < 100) {
-                    this.$Message.info("出价能少于100");
+                    this.$Message.info("出价不能少于100");
                     return;
                 }
             } else {
