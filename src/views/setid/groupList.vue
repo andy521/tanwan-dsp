@@ -52,9 +52,6 @@
                     <Tab-pane label="前台权限">
                         <Tree :data="menu0" @on-check-change="changeTreeData" show-checkbox></Tree>
                     </Tab-pane>
-                    <Tab-pane label="后台权限">
-                        <Tree :data="menu1" @on-check-change="changeTreeData" show-checkbox></Tree>
-                    </Tab-pane>
                 </Tabs>
             </Col>
         </Row>
@@ -172,17 +169,14 @@
                 // },
                 tableData: [],
                 menu0: [],
-                menu1: [],
                 //修改权限
                 associate: {
                     menu0: {},
-                    menu1: {},
                 },
                 editPermission: {
                     act: undefined,
                     pmid: undefined,
                     menu0: [],
-                    menu1: [],
                 },
                 //删除权限组
                 deleteGroupDialog: false,
