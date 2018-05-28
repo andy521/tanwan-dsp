@@ -66,9 +66,6 @@
                     <Tab-pane label="前台权限">
                         <Tree :data="menu0" @on-check-change="changeTreeData" show-checkbox></Tree>
                     </Tab-pane>
-                    <Tab-pane label="后台权限">
-                        <Tree :data="menu1" @on-check-change="changeTreeData" show-checkbox></Tree>
-                    </Tab-pane>
                 </Tabs>
             </Col>
         </Row>
@@ -276,14 +273,11 @@
                 ],
                 tableData: [],
                 menu0: [],
-                menu1: [],
                 //修改权限
                 associate: {
                     menu0: {},
-                    menu1: {},
                     groupMenu: {
                         menu0: {},
-                        menu1: {},
                     }
                 },
                 editPermission: {
@@ -291,7 +285,6 @@
                     uid: undefined,
                     pmid: undefined,
                     menu0: [],
-                    menu1: [],
                 },
                 // tableData: [],
                 // menu1: [],
@@ -408,7 +401,7 @@
             },
             //恢复用户
             recoverUser (uid) {
-                Axios.get('get.php?action=sys&opt=useradd&stage=recover&uid='+uid)
+                Axios.get('api.php?action=sys&opt=userEdit&stage=recover&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -426,7 +419,7 @@
             },
             //删除用户
             deleteUser (uid, userSN) {
-                Axios.get('get.php?action=sys&opt=useradd&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
+                Axios.get('api.php?action=sys&opt=userEdit&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -444,7 +437,7 @@
             },
             //彻底删除用户
             deleteUserThoroughly () {
-                Axios.get('get.php?action=sys&opt=useradd&stage=delForever&uid='+this.deleteUserProfile.uid)
+                Axios.get('api.php?action=sys&opt=userEdit&stage=delForever&uid='+this.deleteUserProfile.uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -472,7 +465,7 @@
                 this.$refs['editUserProfile'].validate((valid) => {
                     if (valid) {
                         if (this.commitUserProfileType == 'edit') {
-                            Axios.post('get.php?action=sys&opt=useradd', {
+                            Axios.post('api.php?action=sys&opt=userEdit', {
                                 stage: 'edit',
                                 uId: this.editUserProfile.uid,
                                 uName: this.editUserProfile.userName,
@@ -501,9 +494,9 @@
                                 }
                             )
                         } else if (this.commitUserProfileType == 'add') {
-                            Axios.post('get.php', {
+                            Axios.post('api.php', {
                                 action: 'sys',
-                                opt: 'useradd',
+                                opt: 'userEdit',
                                 stage: 'add',
                                 uName: this.editUserProfile.userName,
                                 uPass: this.editUserProfile.password,
@@ -543,7 +536,7 @@
             //修改用户资料-会话框
             editUserProfileDialog (uid) {
                 this.commitUserProfileType = 'edit';
-                Axios.get('get.php?action=sys&opt=useradd&act=edit&uid='+uid)
+                Axios.get('api.php?action=sys&opt=userEdit&act=edit&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -573,9 +566,9 @@
             },
             //获取权限组列表
             getPermissionGroup() {
-                Axios.post('get.php', {
+                Axios.post('api.php', {
                     action: 'sys',
-                    opt: 'useradd',
+                    opt: 'userEdit',
                 }).then(
                     res => {
                         // console.log(res);
@@ -593,7 +586,7 @@
             },
             //获取部门列表
             getDepartmentsList() {
-                Axios.post('get.php', {
+                Axios.post('api.php', {
                     action: 'sys',
                     opt: 'getDepartments',
                 }).then(
@@ -614,7 +607,7 @@
             },
             getChangedPositions() {
                 if (this.editUserProfile.departmentSelected != "0") {
-                    Axios.post('get.php', {
+                    Axios.post('api.php', {
                         action: 'sys',
                         opt: 'getPositions',
                         dept: this.editUserProfile.departmentSelected,
@@ -641,7 +634,7 @@
             // commitUserPermission () {
             //     //console.log(this.editPermission);
             //     //console.log(this.associate);
-            //     Axios.post('get.php?action=sys&opt=permission&act='+this.editPermission.act, {
+            //     Axios.post('api.php?action=sys&opt=permission&act='+this.editPermission.act, {
             //         stage: 'yes',
             //         pmid: this.editPermission.pmid,
             //         uid: this.editPermission.uid,
@@ -717,7 +710,7 @@
             // },
             //权限修改
             commitUserPermission () {
-                Axios.post('get.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
+                Axios.post('api.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
                     stage: 'yes',
                     pmid: this.editPermission.pmid,
                     uid: this.editPermission.uid,
@@ -787,7 +780,7 @@
                 } else {
                     this.page = page;
                 }
-                Axios.post('get.php?action=sys&opt=userlist', {
+                Axios.post('api.php?action=sys&opt=showUser', {
                     act: 'search',
                     numPerPage: this.pageSize,
                     pageNum: this.page,
@@ -808,11 +801,11 @@
                                 let userInfo = {
                                     uid: res.data.uData[i].uId,
                                     userName: res.data.uData[i].uName,
-                                    permissionGroup: (res.data.pmData[res.data.uData[i].uGid])?res.data.pmData[res.data.uData[i].uGid].name:'',
+                                    permissionGroup: res.data.uData[i].uGname,
                                     realName: res.data.uData[i].truename,
                                     sex: res.data.uData[i].sex,
-                                    department: (res.data.dpData==null)?'':((res.data.dpData[res.data.uData[i].dept])?res.data.dpData[res.data.uData[i].dept]:''),
-                                    position: (res.data.dpData==null)?'':((res.data.dpData[res.data.uData[i].position])?res.data.dpData[res.data.uData[i].position]:''),
+                                    department: res.data.uData[i].deptName,
+                                    position: res.data.uData[i].posName,
                                     mobile: res.data.uData[i].mobile,
                                     sn: res.data.uData[i].mb_isbn,
                                     loginCount: res.data.uData[i].logincount,
@@ -831,7 +824,7 @@
             },
             //获取权限列表
             getPermissionTree (uid) {
-                Axios.get('get.php?action=sys&opt=editPermission&act=user&uid='+uid)
+                Axios.get('api.php?action=sys&opt=editPermission&act=user&uid='+uid)
                 .then(
                     res => {
                         // console.log(res); 
@@ -904,7 +897,7 @@
             }
             // //获取权限列表
             // getPermissionTree (uid) {
-            //     Axios.get('get.php?action=sys&opt=permission&act=user&uid='+uid)
+            //     Axios.get('api.php?action=sys&opt=permission&act=user&uid='+uid)
             //     .then(
             //         res => {
             //             if (res.ret == 1) {

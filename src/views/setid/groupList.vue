@@ -52,9 +52,6 @@
                     <Tab-pane label="前台权限">
                         <Tree :data="menu0" @on-check-change="changeTreeData" show-checkbox></Tree>
                     </Tab-pane>
-                    <Tab-pane label="后台权限">
-                        <Tree :data="menu1" @on-check-change="changeTreeData" show-checkbox></Tree>
-                    </Tab-pane>
                 </Tabs>
             </Col>
         </Row>
@@ -172,17 +169,14 @@
                 // },
                 tableData: [],
                 menu0: [],
-                menu1: [],
                 //修改权限
                 associate: {
                     menu0: {},
-                    menu1: {},
                 },
                 editPermission: {
                     act: undefined,
                     pmid: undefined,
                     menu0: [],
-                    menu1: [],
                 },
                 //删除权限组
                 deleteGroupDialog: false,
@@ -233,7 +227,7 @@
                 this.$refs['editGroupInfo'].validate((valid) => {
                     if (valid) {
                         if (this.commitType == "edit") {
-                            Axios.post('get.php?action=sys&opt=pmgroup', {
+                            Axios.post('api.php?action=sys&opt=pmgroup', {
                                 stage: 'edit',
                                 pmid: this.editGroupInfo.groupID,
                                 name: this.editGroupInfo.groupName,
@@ -253,7 +247,7 @@
                                 }
                             )
                         } else if (this.commitType == "add") {
-                            Axios.post('get.php?action=sys&opt=pmgroup', {
+                            Axios.post('api.php?action=sys&opt=pmgroup', {
                                 stage: 'add',
                                 name: this.editGroupInfo.groupName,
                                 memo: this.editGroupInfo.groupDetail,
@@ -280,7 +274,7 @@
             //编辑权限组会话框
             showEditGroupDialog (gid) {
                 this.commitType = "edit";
-                Axios.get('get.php?action=sys&opt=pmgroup&act=edit&pmid='+gid)
+                Axios.get('api.php?action=sys&opt=pmgroup&act=edit&pmid='+gid)
                 .then(
                     res => {
                         //console.log(res);
@@ -302,7 +296,7 @@
             },
             //删除权限组
             deleteGroup () {
-                Axios.get('get.php?action=sys&opt=pmgroup&act=delete&pmid='+this.deleteGroupInfo.groupID)
+                Axios.get('api.php?action=sys&opt=pmgroup&act=delete&pmid='+this.deleteGroupInfo.groupID)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -328,7 +322,7 @@
             },
             //获取权限组列表
             getGroupList () {
-                Axios.get('get.php?action=sys&opt=pmgroup')
+                Axios.get('api.php?action=sys&opt=pmgroup')
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -351,7 +345,7 @@
             },
             // //权限修改
             // commitUserPermission () {
-            //     Axios.post('get.php?action=sys&opt=permission&act='+this.editPermission.act, {
+            //     Axios.post('api.php?action=sys&opt=permission&act='+this.editPermission.act, {
             //         stage: 'yes',
             //         pmid: this.editPermission.pmid,
             //         mids: this.mergeMids(),
@@ -420,7 +414,7 @@
             // },
             // //获取权限列表
             // getPermissionTree (pmid) {
-            //     Axios.get('get.php?action=sys&opt=permission&act=pm&pmid='+pmid)
+            //     Axios.get('api.php?action=sys&opt=permission&act=pm&pmid='+pmid)
             //     .then(
             //         res => {
             //             if (res.ret == 1) {
@@ -511,7 +505,7 @@
             // },
             //权限修改
             commitUserPermission () {
-                Axios.post('get.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
+                Axios.post('api.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
                     stage: 'yes',
                     pmid: this.editPermission.pmid,
                     mids: this.mergeMids()
@@ -569,7 +563,7 @@
             },
             //获取权限列表
             getPermissionTree (pmid) {
-                Axios.get('get.php?action=sys&opt=editPermission&act=pm&pmid='+pmid)
+                Axios.get('api.php?action=sys&opt=editPermission&act=pm&pmid='+pmid)
                 .then(
                     res => {
                         if (res.ret == 1) {
