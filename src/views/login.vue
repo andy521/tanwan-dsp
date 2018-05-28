@@ -57,7 +57,7 @@
 					if (valid) {                         
                         let userinfo = { 'user' : this.form.userName, 'password' : this.form.password, 'remember' : this.form.check};
                         this.loading = true;
-                        Axios.post('get.php',{
+                        Axios.post('api.php',{
                             'uName' : userinfo.user,
                             'uPass' : userinfo.password,
                             'action' : 'sys',
@@ -67,7 +67,7 @@
                             if (res.ret == 1) {
                                 let access = res.data.data.access,
                                     page = res.data.data.lastPage,
-                                    accessItem = []; //'setid_menu'
+                                    accessItem = ['tt_main']; //'setid_menu'
                                 access.forEach( (item,index) => {
                                     let path = item.path.split('/'),
                                         len = path.length-1;

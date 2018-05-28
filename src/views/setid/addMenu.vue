@@ -49,7 +49,7 @@ export default {
             this.$refs[name].validate((valid) => {
                 if(valid){
                     //菜单添加接口
-                    Axios.post('get.php', {
+                    Axios.post('api.php', {
                         action: 'sys',
                         opt: 'addMenu',
                         name : this.formItem.name,
