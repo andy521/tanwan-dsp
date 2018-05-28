@@ -62,13 +62,13 @@
 <template>
     <Card dis-hover>
         <div class="newtt">
-            <div class="title">用户定向</div>
+            <div class="title">
+                <span>用户定向</span>
+                <!-- 复制定向 -->
+                <copy-targeting @on-change="changetargeting" :province="province" :ad_tag="ad_tag" :app_category="app_category" :device_brand="device_brand" :article_category="article_category"></copy-targeting>
+            </div>
 
-            <Form :label-width="80" class="margin-top-20" onsubmit="return false;" label-position="left">
-                <FormItem>
-                    <!-- 复制定向 -->
-                    <copy-targeting @on-change="changetargeting" :province="province" :ad_tag="ad_tag" :app_category="app_category" :device_brand="device_brand" :article_category="article_category"></copy-targeting>
-                </FormItem>
+            <Form :label-width="80" class="margin-top-20" onsubmit="return false;" label-position="left">              
                 <FormItem label="定向名字">
                     <Input v-model="targeting_name" placeholder="请输入定向名字" size="large" style="width:500px;"></Input>
                 </FormItem>

@@ -318,14 +318,20 @@ export default {
                 end_time: this.DateDomain[1],
             }
 
+
             if (this.adgroup_name == "") {
                 this.$Message.info("请输入计划名");
                 return;
             }
+            var reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/;
             if (this.url == "") {
                 this.$Message.info("请输入链接");
                 return;
+            } else if (reg.test(this.url) == false && this.landing_type == "LINK") {
+                this.$Message.info("请输入有效的网址");
+                return;
             }
+
             if (this.landing_type == "APP") {
                 param.download_url = this.url;
                 param.app_type = this.app_type;
@@ -378,7 +384,8 @@ export default {
                         name: 'ttcreative',
                         query: {
                             account_id: this.account_id,
-                            adgroup_id: res.data.adgroup_id
+                            adgroup_id: res.data.adgroup_id,
+                            landing_type: this.landing_type
                         }
                     })
                 }
@@ -414,8 +421,12 @@ export default {
                 this.$Message.info("请输入计划名");
                 return;
             }
+            var reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/;
             if (this.url == "") {
                 this.$Message.info("请输入链接");
+                return;
+            } else if (reg.test(this.url) == false && this.landing_type == "LINK") {
+                this.$Message.info("请输入有效的网址");
                 return;
             }
             if (this.landing_type == "APP") {
@@ -468,7 +479,8 @@ export default {
                         name: 'ttcreative',
                         query: {
                             account_id: this.account_id,
-                            adgroup_id: this.adgroup_id
+                            adgroup_id: this.adgroup_id,
+                            landing_type: this.landing_type
                         }
                     })
                 }
