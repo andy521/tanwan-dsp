@@ -401,7 +401,7 @@
             },
             //恢复用户
             recoverUser (uid) {
-                Axios.get('get.php?action=sys&opt=userEdit&stage=recover&uid='+uid)
+                Axios.get('api.php?action=sys&opt=userEdit&stage=recover&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -419,7 +419,7 @@
             },
             //删除用户
             deleteUser (uid, userSN) {
-                Axios.get('get.php?action=sys&opt=userEdit&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
+                Axios.get('api.php?action=sys&opt=userEdit&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -437,7 +437,7 @@
             },
             //彻底删除用户
             deleteUserThoroughly () {
-                Axios.get('get.php?action=sys&opt=userEdit&stage=delForever&uid='+this.deleteUserProfile.uid)
+                Axios.get('api.php?action=sys&opt=userEdit&stage=delForever&uid='+this.deleteUserProfile.uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -465,7 +465,7 @@
                 this.$refs['editUserProfile'].validate((valid) => {
                     if (valid) {
                         if (this.commitUserProfileType == 'edit') {
-                            Axios.post('get.php?action=sys&opt=userEdit', {
+                            Axios.post('api.php?action=sys&opt=userEdit', {
                                 stage: 'edit',
                                 uId: this.editUserProfile.uid,
                                 uName: this.editUserProfile.userName,
@@ -494,7 +494,7 @@
                                 }
                             )
                         } else if (this.commitUserProfileType == 'add') {
-                            Axios.post('get.php', {
+                            Axios.post('api.php', {
                                 action: 'sys',
                                 opt: 'userEdit',
                                 stage: 'add',
@@ -536,7 +536,7 @@
             //修改用户资料-会话框
             editUserProfileDialog (uid) {
                 this.commitUserProfileType = 'edit';
-                Axios.get('get.php?action=sys&opt=userEdit&act=edit&uid='+uid)
+                Axios.get('api.php?action=sys&opt=userEdit&act=edit&uid='+uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -566,7 +566,7 @@
             },
             //获取权限组列表
             getPermissionGroup() {
-                Axios.post('get.php', {
+                Axios.post('api.php', {
                     action: 'sys',
                     opt: 'userEdit',
                 }).then(
@@ -586,7 +586,7 @@
             },
             //获取部门列表
             getDepartmentsList() {
-                Axios.post('get.php', {
+                Axios.post('api.php', {
                     action: 'sys',
                     opt: 'getDepartments',
                 }).then(
@@ -607,7 +607,7 @@
             },
             getChangedPositions() {
                 if (this.editUserProfile.departmentSelected != "0") {
-                    Axios.post('get.php', {
+                    Axios.post('api.php', {
                         action: 'sys',
                         opt: 'getPositions',
                         dept: this.editUserProfile.departmentSelected,
@@ -634,7 +634,7 @@
             // commitUserPermission () {
             //     //console.log(this.editPermission);
             //     //console.log(this.associate);
-            //     Axios.post('get.php?action=sys&opt=permission&act='+this.editPermission.act, {
+            //     Axios.post('api.php?action=sys&opt=permission&act='+this.editPermission.act, {
             //         stage: 'yes',
             //         pmid: this.editPermission.pmid,
             //         uid: this.editPermission.uid,
@@ -710,7 +710,7 @@
             // },
             //权限修改
             commitUserPermission () {
-                Axios.post('get.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
+                Axios.post('api.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
                     stage: 'yes',
                     pmid: this.editPermission.pmid,
                     uid: this.editPermission.uid,
@@ -780,7 +780,7 @@
                 } else {
                     this.page = page;
                 }
-                Axios.post('get.php?action=sys&opt=showUser', {
+                Axios.post('api.php?action=sys&opt=showUser', {
                     act: 'search',
                     numPerPage: this.pageSize,
                     pageNum: this.page,
@@ -824,7 +824,7 @@
             },
             //获取权限列表
             getPermissionTree (uid) {
-                Axios.get('get.php?action=sys&opt=editPermission&act=user&uid='+uid)
+                Axios.get('api.php?action=sys&opt=editPermission&act=user&uid='+uid)
                 .then(
                     res => {
                         // console.log(res); 
@@ -897,7 +897,7 @@
             }
             // //获取权限列表
             // getPermissionTree (uid) {
-            //     Axios.get('get.php?action=sys&opt=permission&act=user&uid='+uid)
+            //     Axios.get('api.php?action=sys&opt=permission&act=user&uid='+uid)
             //     .then(
             //         res => {
             //             if (res.ret == 1) {
