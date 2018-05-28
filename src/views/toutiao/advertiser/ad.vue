@@ -781,8 +781,7 @@ export default {
                                                     adgroup_id: params.row.adgroup_id,
                                                     campaign_id: params.row.campaign_id,
                                                     targeting_id: params.row.targeting_id,
-                                                    landing_type: params.row.landing_type,
-                                                    id: params.row.id
+                                                    landing_type: params.row.landing_type                                                  
                                                 }
                                             });
                                         }

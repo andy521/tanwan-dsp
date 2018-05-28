@@ -320,7 +320,9 @@ export default {
             toutiaoConfig: toutiaoConfig,
             account_id: this.$route.query.account_id,//账户id
             adgroup_id: this.$route.query.adgroup_id,//计划id
-
+            adcreative_id: this.$route.query.adcreative_id,//创意id
+            landing_type: this.$route.query.landing_type,
+            id: this.$route.query.id,
 
             locationSelectTt: true,
             showTt: false, //显示头条位置详情
@@ -413,12 +415,36 @@ export default {
 
             }).then((res) => {
                 if (res.ret === 1) {
-                    console.log(res.data)
+                    this.filldata(res.data.list[0]);
                 }
             }).catch((err) => {
                 console.error('广告创意详情', err)
             })
         },
+        filldata(data) {
+            console.log(data)
+            this.inventory_type = data.inventory_type.split(",")
+
+
+           this.image_mode=data.image_mode;
+
+            this.materialData.source = data.source;
+            this.materialData.advanced_creative_type = data.advanced_creative_type;
+
+            this.materialData.is_comment_disable = data.is_comment_disable == "1" ? true : false;
+            this.materialData.close_video_detail = data.close_video_detail == "1" ? true : false;
+
+            this.materialData.creative_display_mode = data.creative_display_mode;
+
+            this.monitorData.track_url = data.track_url;
+            this.monitorData.action_track_url = data.action_track_url;
+            this.monitorData.video_play_track_url = data.video_play_track_url;
+            this.monitorData.video_play_done_track_url = data.video_play_done_track_url;
+            this.monitorData.video_play_effective_track_url = data.video_play_effective_track_url;
+
+        },
+
+
         //图片id
         getimgid(image_id, imgUrl, ind, index) {
             this.image[ind].imgList[index].image_id = image_id;
