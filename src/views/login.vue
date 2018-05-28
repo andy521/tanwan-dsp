@@ -67,7 +67,7 @@
                             if (res.ret == 1) {
                                 let access = res.data.data.access,
                                     page = res.data.data.lastPage,
-                                    accessItem = [];              
+                                    accessItem = []; //'setid_menu'
                                 access.forEach( (item,index) => {
                                     let path = item.path.split('/'),
                                         len = path.length-1;
@@ -76,11 +76,8 @@
                                             accessItem.push(path[i])
                                         }
                                     }
-                                });     
-                                //console.log(accessItem)
-                                //生成菜单                           
-                                this.$store.dispatch('GetAccess', accessItem);
-                                //Util.setItem('access', accessItem); 
+                                });
+                                Util.setItem('access', accessItem); 
                                 Util.setItem('user', this.form.userName);
                                 Util.setItem('sessionid',res.data.sessionid);                                
                                 page ? this.$router.push({name: page}) : this.$router.push({name: 'home_index'}) ;

@@ -44,11 +44,10 @@ const app = {
         setTagsList (state, list) {
             state.tagsList.push(...list);
         },
-
         //更新菜单
-        updateMenulist ( state, list) {
+        updateMenulist ( state ) {
             let menuList = [],
-                accessList = list || [];  
+                accessList = Util.getItem('access') || [];  
             appRouter.forEach((item, index) => { 
                 if (item.children.length === 1) {
                     menuList.push(item);
@@ -132,9 +131,7 @@ const app = {
         },
     },
     actions : {
-        GetAccess( {commit}, data){
-            commit('updateMenulist', data)
-        }
+
     }
 };
 

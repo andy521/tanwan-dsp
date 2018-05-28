@@ -148,7 +148,7 @@ export default {
     methods: {
         init() {
             //更新菜单
-            //this.$store.commit("updateMenulist");
+            this.$store.commit("updateMenulist");
             this.userName = util.getItem("user");
             this.$store.commit("addOpenSubmenu", this.$route.name);
 
