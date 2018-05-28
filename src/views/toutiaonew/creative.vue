@@ -144,17 +144,17 @@
                                     创意分类
                                     <b class="red">*</b>
                                 </div>
-                                fdsfdsfds
+                                <creative-category @on-change="handleCategoryChange" :category="ad_category"></creative-category>
                             </Form-item>
                             <Form-item>
                                 <div slot="label">
                                     <Tooltip content="请提供若干准确的词语，描述您的广告主体对的产品或服务的属性。长期将非常有助于提高广告预估点击率的精准性。如金属保险的基金，可以通过基金品牌，风险的等级，金融服务等方面的描述，越全面，精准，效果越好。例如：XX基金，中高风险，股票型." placement="top">                              
                                         <Icon type="ios-help-outline" size="18" ></Icon>
                                     </Tooltip>
-                                    创意分类
+                                    创意标签
                                     <b class="red">*</b>
                                 </div>
-                                fdsfdsfds
+                                <creative-tag @on-change="handleTagChange" :tags="ad_keywords"></creative-tag>
                             </Form-item>
                         </Form>
                     </Col>
@@ -290,6 +290,8 @@ import materialBigImg from "./components/materialBigImg.vue";
 import materialSmallImg from "./components/materialSmallImg.vue";
 import materialGroupImg from "./components/materialGroupImg.vue";
 import materialVideo from "./components/materialVideo.vue";
+import creativeCategory from "./components/creativeCategory.vue";
+import creativeTag from "./components/creativeTag.vue";
 export default {
     components: {
         sideBar,
@@ -297,6 +299,8 @@ export default {
         materialSmallImg,
         materialGroupImg,
         materialVideo,
+        creativeCategory,
+        creativeTag
     },
     data() {
         return {
@@ -329,14 +333,23 @@ export default {
                 click:'',
                 playing:'',
                 playend:''
-            }
-            
+            },
+            ad_keywords: [], // 创意标签
+            ad_category: -1 // 	创意分类
         };
     },
     mounted() {
        
     },
     methods: {
+        // 创意分类 change
+        handleCategoryChange(value) {
+            this.ad_category = value
+        },
+        // 创意标签 change
+        handleTagChange(tagList) {
+            this.ad_keywords = tagList
+        },
         //投放目标 -- 今日头条系展示与隐藏
         seleTuotiao(){
             if(this.seleStatue){
