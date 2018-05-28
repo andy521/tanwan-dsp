@@ -148,7 +148,7 @@ export default {
     methods: {
         init() {
             //更新菜单
-            this.$store.commit("updateMenulist");
+            //this.$store.commit("updateMenulist");
             this.userName = util.getItem("user");
             this.$store.commit("addOpenSubmenu", this.$route.name);
 
@@ -158,7 +158,6 @@ export default {
                     this.openedSubmenuArr.push(v.name)
                 }
             });
-
             // let pathArr = util.setCurrentPath(this, this.$route.name);
             // if (pathArr.length >= 2) {
             //     this.$store.commit("addOpenSubmenu", pathArr[1].name);

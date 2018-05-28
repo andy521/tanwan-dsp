@@ -44,14 +44,11 @@ const app = {
         setTagsList (state, list) {
             state.tagsList.push(...list);
         },
+
         //更新菜单
-        updateMenulist (state) {
-            let menuList = [];            
-            let access = Util.getItem('access'), _this = this;   
-            if(!access){
-                return
-            }
-            access = access.split(',');
+        updateMenulist ( state, list) {
+            let menuList = [],
+                accessList = list || [];  
             appRouter.forEach((item, index) => { 
                 if (item.children.length === 1) {
                     menuList.push(item);
@@ -59,7 +56,7 @@ const app = {
                     let len = menuList.push(item);
                     let childrenArr = [];
                     childrenArr = item.children.filter(child => {
-                        if(access.indexOf(child.name) != -1 || access.indexOf('all') != -1){
+                        if(accessList.indexOf(child.name) != -1){
                             return child;
                         }
                     });
@@ -72,7 +69,6 @@ const app = {
                     }
                 }
             });
-            //console.log(menuList)
             state.menuList = menuList;
         },
         setOpenedList (state) {
@@ -134,6 +130,11 @@ const app = {
         setCurrentPageName (state, name) {
             state.currentPageName = name;
         },
+    },
+    actions : {
+        GetAccess( {commit}, data){
+            commit('updateMenulist', data)
+        }
     }
 };
 
