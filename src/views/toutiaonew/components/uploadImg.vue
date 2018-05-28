@@ -23,6 +23,7 @@
         line-height: 24px;
         font-size: 20px;
         display: none;
+        cursor: pointer;
     }
     .thumbnail{
         display: block;
@@ -46,21 +47,12 @@
         color: #222;
         font-size: 14px;
     }
-    .caption textarea{
-        display: block;
-        width: 100%;
-        background-color: #fff;
-        background-image: none;
-        border: 0;
-        overflow: hidden;
-        resize: none;
-        outline: 0;
-    }
     .text-num {
         position: absolute;
         bottom: 4px;
         right: 9px;
         z-index: 10;
+        background: white;
     }
     .alt-upload {
         display: block;
@@ -101,24 +93,32 @@
         -ms-overflow-style: none;
     }
 </style>
+<style>
+.caption textarea.ivu-input{
+        border: none
+    }
+.caption .ivu-input:focus{
+        box-shadow:none;
+    }
+</style>
 <template>
     <div class="creative">
-        <Icon class="remove tc" type="close-circled"></Icon>
+        <div @click="remove" class="remove tc"><Icon type="close-circled"></Icon></div>
         <div class="thumbnail">
             <div class="img">
                 <div class="alt-upload tc">
                     <Button @click="selectModal = true" type="primary">选择图片</Button>
-                    <p>宽高比1.52,大小500K以下最低尺寸456*300</p>
+                    <p>{{desc}}</p>
                 </div>
             </div>
             <div class="caption">
-                <textarea rows="2" placeholder="请输入创意标题（6~25个字符）"></textarea>
+                <Input type="textarea" :autosize="{minRows: 2,maxRows: 5}" :placeholder="title"></Input>
                 <span class="text-num">6/24</span>
             </div>
         </div>
 
         <Modal v-model="selectModal" width="720" @on-ok="modelOk" :mask-closable="false">
-            <Tabs :animated="false">                
+            <Tabs :animated="false" style="margin-right:10px;">                
                 <Tab-pane label="本地上传">
                     <div class="image-content">
                         <Upload 
@@ -134,7 +134,7 @@
                         >
                             <Button type="primary" icon="ios-upload">上传文件</Button>
                         </Upload>
-                        图片大小不能超过 500K，小图尺寸大于 456×300，小于 1368×900
+                        fdsfsdf
                     </div>
                 </Tab-pane>
                 <Tab-pane label="我的图库">
@@ -158,6 +158,19 @@ import Axios from "@/api/index";
 import Util from '@/utils/index';
 export default {
     name: "uploadImg",
+    props:{
+        ids:{
+            type: Number
+        },
+        desc:{
+            type: String,
+            default: ''
+        },
+        title:{
+            type: String,
+            default: ''
+        },
+    },
     data() {
         return {
             selectModal:false,
@@ -170,10 +183,15 @@ export default {
 
     },
     methods: {
+        remove(){
+            this.$emit('on-remove', this.ids);
+        },
         //图片上传成功            
         handleSuccess(filte){
             console.log(filte)
             
+        //http://localhost:8080/#/ttnew/creative?account_id=84069989750
+
             // this.loading = true;
             // if(filte.ret == '1'){
             //     this.loading = false;     
