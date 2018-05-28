@@ -175,8 +175,8 @@
 
         <Card dis-hover class="margin-top-10">
             <div class="newtt">
-                <Button type="primary" v-if="adgroup_id==''" size="large" @click="addAdgroup()">保存计划</Button>
-                <Button type="primary" v-else size="large" @click="updateAdgroup()">修改计划</Button>
+                <Button type="primary" v-if="adgroup_id" size="large" @click="updateAdgroup()">修改计划</Button>
+                <Button type="primary" v-else size="large" @click="addAdgroup()">保存计划</Button>
             </div>
         </Card>
 
@@ -266,6 +266,7 @@ export default {
             this.modify_time = data.modify_time;
             this.pricing = data.pricing;
             this.adgroup_name = data.adgroup_name;
+
             if (data.landing_type == "APP") {
                 this.url = download_url;
                 this.app_type = data.app_type;
@@ -273,16 +274,10 @@ export default {
             if (this.landing_type == "LINK") {
                 this.url = data.external_url;
             }
-
-
             if (data.pricing == 'PRICING_OCPM') {
                 this.convert_id = data.convert_id;
                 this.package = data.package;
             }
-
-
-
-
             this.budget_mode = data.budget_mode;
             this.budget = data.budget;
             this.schedule_type = data.schedule_type;

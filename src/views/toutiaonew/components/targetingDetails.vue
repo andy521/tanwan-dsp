@@ -243,8 +243,9 @@
                 </FormItem>
 
                 <FormItem>
-                    <Button v-if="targeting_id==''" type="primary" size="large" @click="addTargeting()">保存定向</Button>
-                    <Button v-else type="primary" size="large" @click="updateTargeting()">修改定向</Button>
+                    <Button v-if="targeting_id" type="primary" size="large" @click="updateTargeting()">修改定向</Button>
+                    <Button v-else type="primary" size="large" @click="addTargeting()">保存定向</Button>
+
                 </FormItem>
 
             </Form>
@@ -815,7 +816,7 @@ export default {
                     params.ios_osv = this.targeting.ios_osv;
                 }
             }
-            
+
             Axios.post('api.php', params).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
