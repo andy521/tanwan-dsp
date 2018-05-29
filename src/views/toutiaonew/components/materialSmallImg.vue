@@ -2,7 +2,7 @@
 <style scoped>
     .panel{
         position: relative;
-        /* min-height: 300px; */
+        min-height: 240px;
     }
     .btns{
         position: absolute;
@@ -44,9 +44,9 @@
             <Button type="ghost">创意<br>灵感</Button>
         </div>
         <div class="list">
-            <div class="image_box clearfix" style="width:10000px;">
-                <div class="image">
-                    <upload-img></upload-img>
+            <div class="image_box clearfix" :style=" 'width:' + ( imgList.length * 230) + 'px'">
+                <div class="image" v-for="(item,index) in imgList" >
+                    <upload-img @on-remove="removeMaterial" :ids="index" :desc="item.desc" :title="item.title"></upload-img>
                 </div>
             </div>
             
@@ -72,15 +72,21 @@ export default {
         return {
             account_id:this.account, //账户id
             imgList:[
-                {title:'',desc:'宽高比1.52,大小500K以下最低尺寸456*300',img:''}
+                {title:'请输入创意标题（6~25个字符）',desc:'宽高比1.52,大小500K以下最低尺寸456*300',img:'',min:6,max:25},
+                {title:'请输入创意标题（6~25个字符）',desc:'宽高比1.52,大小500K以下最低尺寸456*300',img:'',min:6,max:25},
+                {title:'请输入创意标题（6~25个字符）',desc:'宽高比1.52,大小500K以下最低尺寸456*300',img:'',min:6,max:25}
             ]
         }
     },
     mounted() {
+
     },
     methods: {
+        removeMaterial(val){
+            this.imgList.splice(val,1)
+        },
         addMaterial(){
-            console.log('添加图片')
+            this.imgList.push({title:'请输入创意标题（6~25个字符）',desc:'宽高比1.52,大小500K以下最低尺寸456*300',img:'',min:6,max:25})
         }
     }
 }

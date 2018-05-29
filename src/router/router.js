@@ -197,6 +197,7 @@ export const appRouter = [
         component: Main,
         children: [
             { path: 'modprfpsw', title: '修改个人信息', name: 'setid_modprfpsw', icon: 'android-radio-button-off', component: () => import('@/views/setid/modPrfPsw.vue') },
+            { path: 'addmenu', title: '菜单管理', name: 'setid_menu', icon: 'android-radio-button-off', component: () => import('@/views/setid/addMenu.vue') },
             { path: 'userlist', title: '账号管理', name: 'setid_userlist', icon: 'android-radio-button-off', component: () => import('@/views/setid/userList.vue') },
             { path: 'grouplist', title: '权限组管理', name: 'setid_grouplist', icon: 'android-radio-button-off', component: () => import('@/views/setid/groupList.vue') },
             { path: 'userlog', title: '账户日志', name: 'setid_userlog', icon: 'android-radio-button-off', component: () => import('@/views/setid/userLog.vue') },
