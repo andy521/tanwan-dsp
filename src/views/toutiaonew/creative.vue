@@ -1,8 +1,5 @@
 <style>
 @import "./style.less";
-.location .ivu-checkbox {
-  float: right;
-}
 </style>
 <style scoped>
 .location {
@@ -16,30 +13,12 @@
   position: relative;
 }
 .location .bd {
-  padding: 10px 0;
   max-height: 300px;
   overflow-y: scroll;
   position: relative;
+  line-height: 36px;
 }
-.location .ivu-checkbox-group-item {
-  display: block;
-  padding: 7px 10px 7px 25px;
-  font-size: 14px;
-}
-.location .sele {
-  cursor: pointer;
-  position: absolute;
-  left: 0;
-  top: 9px;
-  width: 35px;
-  height: 35px;
-  line-height: 35px;
-  text-align: center;
-}
-.panel {
-  position: relative;
-  min-height: 240px;
-}
+
 .list {
   border: 1px solid #ddd;
   float: left;
@@ -47,11 +26,10 @@
 .list li {
   float: left;
   margin: 1px;
-  width: 228px;
+  width: 200px;
 }
 
 .img {
-  height: 138px;
   width: 100%;
   position: relative;
   display: block;
@@ -94,12 +72,34 @@
 }
 .list li:hover .alt-upload1 {
   display: block;
+  color: #fff;
+}
+.item {
+  padding: 0 15px;
+  cursor: pointer;
+  display: block;
+}
+.item:hover {
+  background: #f8f8f8;
 }
 </style>
 <template>
     <div class="toutiaonew">
         <!-- 导行 -->
         <side-bar :step="2"></side-bar>
+
+        <Card dis-hover v-if="!this.adcreative_id" style="margin-bottom:10px">
+            <div class="newtt">
+                <Row>
+                    <Col span="16">
+                    <Select size="large" @on-change="getAdgroupsId" filterable>
+                        <Option v-for="item in adgroupsList" :value="item.adgroup_id" :key="item.adgroup_id" placeholder="请选择计划id">{{ item.adgroup_name }}</Option>
+                    </Select>
+                    </Col>
+                </Row>
+            </div>
+        </Card>
+
         <Card dis-hover>
             <div class="newtt">
                 <div class="title">
@@ -114,19 +114,12 @@
                         <div class="location">
                             <div class="hd">位置选择</div>
                             <div class="bd">
-                                <div @click="seleTuotiao" class="sele">
-                                    <Icon size="10" :type="iconType"></Icon>
-                                </div>
-                                <Checkbox @on-change="selectToutiao" class="ivu-checkbox-group-item" v-model="locationSelectTt">
-                                    今日头条系
-                                </Checkbox>
-                                <Checkbox-group @on-change="locationChange" v-model="inventory_type">
-                                    <Checkbox v-show="showTt" style="margin-left:10px" label="INVENTORY_FEED">头条信息流</Checkbox>
-                                    <Checkbox v-show="showTt" style="margin-left:10px" label="INVENTORY_TEXT_LINK">头条详情页</Checkbox>
-                                    <Checkbox label="INVENTORY_VIDEO_FEED">西瓜视频</Checkbox>
-                                    <Checkbox label="INVENTORY_HOTSOON_FEED">火山小视频</Checkbox>
-                                    <Checkbox label="INVENTORY_AWEME_FEED">抖音</Checkbox>
-                                </Checkbox-group>
+                                <CheckboxGroup v-model="inventory_type">
+                                    <label v-for="item in toutiaoConfig.inventory_type" :key="item.val_type" class="item">
+                                        <Checkbox :label="item.val_type">{{item.name}}</Checkbox>
+                                    </label>
+                                </CheckboxGroup>
+
                             </div>
                         </div>
                     </div>
@@ -154,34 +147,40 @@
                                 <b class="red">*</b>
                             </div>
                             <RadioGroup v-model="image_mode" type="button" size="large">
-                                <Radio :label="item.val_type" v-for="item in toutiaoConfig.image_mode" :key="item.val_type" v-if="item.val_type=='CREATIVE_IMAGE_MODE_SMALL'||item.val_type=='CREATIVE_IMAGE_MODE_LARGE'||item.val_type=='CREATIVE_IMAGE_MODE_GROUP'||item.val_type=='CREATIVE_IMAGE_MODE_VIDEO'">{{item.name}}</Radio>
+                                <Radio :label="item.val_type" v-for="item in toutiaoConfig.image_mode" :key="item.val_type" v-if="item.val_type!='CREATIVE_IMAGE_MODE_GIF'">{{item.name}}</Radio>
                             </RadioGroup>
 
-                            <div class="panel margin-top-10">
+                            <div class="margin-top-10">
                                 <div class="list" v-for="(it,ind) in image" v-if="it.value==image_mode">
                                     <ul class="clear">
                                         <li v-for="(item,index) in it.imgList">
-                                            <div class="img">
+                                            <div class="img" :style="{height: (it.height/it.width*200)+'px'}">
                                                 <template v-if="item.video_id||item.video_id==''">
-                                                    <img :src="item.imgUrl" v-if="item.imgUrl">
-                                                    <div class="alt-upload" :class="item.imgUrl? 'alt-upload1':''">
-                                                        <Button type="primary">选择视频</Button>
-                                                        <p>{{item.desc}}</p>
+                                                    <img :src="item.imgUrl" v-if="item.imgUrl!=''&&item.video_id!=''">
+                                                    <div class="alt-upload" :class="item.video_id? 'alt-upload1':''">
+                                                        <div class="margin-top-10">
+                                                            <!-- 上传视频 -->
+                                                            <uploadVideo :size="it.size" @on-change="getvideoid" :ind="ind" :index="index"></uploadVideo>
+                                                            <p class="margin-top-10">{{item.desc}}</p>
+                                                        </div>
                                                     </div>
                                                 </template>
                                                 <template v-else>
-                                                    <img :src="item.imgUrl" v-if="item.imgUrl">
+                                                    <img :src="item.imgUrl" v-if="item.imgUrl!=''">
                                                     <div class="alt-upload" :class="item.imgUrl? 'alt-upload1':''">
-                                                        <upload-img v-model="item.image_id" :imagemode="it.value" @on-change="getimgid" :ind="ind" :index="index"></upload-img>
-                                                        <p>{{item.desc}}</p>
+                                                        <div class="margin-top-10">
+                                                            <!-- 上传图片 -->
+                                                            <upload-img  :imagemode="it.value" @on-change="getimgid" :ind="ind" :index="index" :size="it.size" :width="it.width" :height="it.height"></upload-img>
+                                                        </div>
+                                                        <p class="margin-top-10">{{item.desc}}</p>
                                                     </div>
                                                 </template>
                                             </div>
                                         </li>
                                     </ul>
                                     <div class="caption">
-                                        <Input type="textarea" v-model="it.title" :autosize="{minRows: 2,maxRows: 5}" :placeholder="'请输入创意标题'+it.min+'-'+it.max+'个字符'"></Input>
-                                        <span class="text-num">{{it.title.length}}/{{it.max}}</span>
+                                        <Input type="textarea" v-model="it.title" :autosize="{minRows: 2,maxRows: 5}" :placeholder="'请输入创意标题6-25个字符'"></Input>
+                                        <span class="text-num">{{it.title.length}}/25</span>
                                     </div>
                                 </div>
                             </div>
@@ -193,13 +192,13 @@
                                 <b class="red">*</b>
                             </div>
                             <Input v-model="materialData.source" placeholder="请输入来源"></Input>
-                            <p class="red">4至20个字符,汉字占两个字符</p>
+                            <p class="red" v-show="GetCharLength(materialData.source)<4||GetCharLength(materialData.source)>20">4至20个字符,汉字占两个字符</p>
                         </Form-item>
                         <Form-item label="附加创意">
-                            <Select v-model="materialData.advanced_creative_type" style="width:200px">
+                            <Select v-model="materialData.advanced_creative_type" style="width:200px" v-if="landing_type=='LINK'">
                                 <Option v-for="item in toutiaoConfig.advanced_creative_type" :value="item.val_type" :key="item.val_type">{{ item.name }}</Option>
                             </Select>
-                            <div class="margin-top-8">
+                            <div>
                                 <Checkbox v-model="materialData.is_comment_disable">关闭广告评论</Checkbox>
                             </div>
                             <div>
@@ -235,17 +234,20 @@
                                 创意分类
                                 <b class="red">*</b>
                             </div>
-                            fdsfdsfds
+                            <!--  创意分类 -->
+                            <creativeCategory @on-change="handleCategoryChange" :category="sortData.ad_category"></creativeCategory>
+
                         </Form-item>
                         <Form-item>
                             <div slot="label">
                                 <Tooltip content="请提供若干准确的词语，描述您的广告主体对的产品或服务的属性。长期将非常有助于提高广告预估点击率的精准性。如金属保险的基金，可以通过基金品牌，风险的等级，金融服务等方面的描述，越全面，精准，效果越好。例如：XX基金，中高风险，股票型." placement="top">
                                     <Icon type="help-circled" size="14" color="#999"></Icon>
                                 </Tooltip>
-                                创意分类
+                                创意标签
                                 <b class="red">*</b>
                             </div>
-                            fdsfdsfds
+                            <!-- 创意标签 -->
+                            <creativeTag @on-change="handleTagChange" :tags="sortData.ad_keywords"></creativeTag>
                         </Form-item>
                     </Form>
                     </Col>
@@ -308,12 +310,18 @@ import sideBar from "./components/sideBar.vue";
 import creativeDescription from "./components/creativeDescription.vue";
 import titleDescription from "./components/titleDescription.vue";
 import uploadImg from './components/uploadImg.vue';
+import creativeCategory from './components/creativeCategory.vue';
+import creativeTag from './components/creativeTag.vue';
+import uploadVideo from './components/uploadVideo.vue';
 export default {
     components: {
         sideBar,
         uploadImg,
         creativeDescription,
-        titleDescription
+        titleDescription,
+        creativeCategory,
+        creativeTag,
+        uploadVideo
     },
     data() {
         return {
@@ -323,19 +331,11 @@ export default {
             adcreative_id: this.$route.query.adcreative_id,//创意id
             landing_type: this.$route.query.landing_type,
             id: this.$route.query.id,
+            adgroupsList: [],
+            modify_time: "",
+            inventory_type: [],   //位置选择      
 
-            locationSelectTt: true,
-            showTt: false, //显示头条位置详情
-            seleStatue: true,
-            iconType: "chevron-right",
-
-            inventory_type: ["INVENTORY_FEED", "INVENTORY_TEXT_LINK", "INVENTORY_VIDEO_FEED", "INVENTORY_HOTSOON_FEED", "INVENTORY_AWEME_FEED"],   //位置选择            
-
-
-            selectModal: false,
             image_mode: "CREATIVE_IMAGE_MODE_LARGE",//图片类别
-
-
             image: [
                 {
                     value: "CREATIVE_IMAGE_MODE_SMALL",
@@ -343,17 +343,19 @@ export default {
                         { desc: '宽高比1.52,大小500K以下最低尺寸456*300', image_id: "", imgUrl: "", }
                     ],
                     title: "",
-                    min: 6,
-                    max: 25
+                    width: 456,
+                    height: 300,
+                    size: 0.5
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_LARGE",
                     imgList: [
-                        { desc: '横版大图:宽高比1.78,最低尺寸1280*720,竖版图片:宽高比0.56,最低尺寸720*1280,大小500K以下', image_id: "web.business.image/201805225d0d65531f9f12c74ff892c0", imgUrl: "", }
+                        { desc: '宽高比1.78,最低尺寸1280*720,大小500K以下', image_id: "web.business.image/201805225d0d65531f9f12c74ff892c0", imgUrl: "", }
                     ],
                     title: "",
-                    min: 6,
-                    max: 25
+                    width: 1280,
+                    height: 720,
+                    size: 0.5
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_GROUP",
@@ -363,20 +365,44 @@ export default {
                         { desc: '宽高比1.52,大小500K以下最低尺寸456*300', image_id: "", imgUrl: "", }
                     ],
                     title: "",
-                    min: 6,
-                    max: 25
+                    width: 456,
+                    height: 300,
+                    size: 0.5
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_VIDEO",
                     imgList: [
-                        { desc: '视频码率 >=516kbps，横版分辨率>=1280*720，大小<=1000M，竖版分辨率>=720*1280，大小<=100M', video_id: "" },
-                        { desc: '需和视频同比例，大小不超过500K；横版16:9，最低尺寸1280*720，竖版9:16，最低尺寸720*1280', image_id: "", imgUrl: "", }
+                        { desc: '视频码率 >=516kbps，横版分辨率>=1280*720，大小<=1000M', video_id: "", imgUrl: "" },
+                        { desc: '需和视频同比例，大小不超过500K；横版16:9，最低尺寸1280*720', image_id: "", imgUrl: "", }
                     ],
                     title: "",
-                    min: 6,
-                    max: 25
+                    width: 1280,
+                    height: 720,
+                    size: 1000
+                },
+                {
+                    value: "CREATIVE_IMAGE_MODE_LARGE_VERTICAL",
+                    imgList: [
+                        { desc: '宽高比0.56,最低尺寸720*1280,大小500K以下', image_id: "web.business.image/201805225d0d65531f9f12c74ff892c0", imgUrl: "", }
+                    ],
+                    title: "",
+                    width: 720,
+                    height: 1280,
+                    size: 0.5
+                },
+                {
+                    value: "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL",
+                    imgList: [
+                        { desc: '视频码率 >=516kbps，竖版分辨率>=720*1280，大小<=100M', video_id: "", imgUrl: "" },
+                        { desc: '需和视频同比例，大小不超过500K；竖版9:16，最低尺寸720*1280', image_id: "", imgUrl: "", }
+                    ],
+                    title: "",
+                    width: 720,
+                    height: 1280,
+                    size: 100
                 }
             ],
+
 
             materialData: { //添加创意素材
                 source: "",
@@ -387,8 +413,8 @@ export default {
             },
 
             sortData: { //设置创意分类和标签
-                sort: "",
-                tag: ""
+                ad_category: "",
+                ad_keywords: []
             },
 
             monitorData: {  //设置广告监测
@@ -397,14 +423,25 @@ export default {
                 video_play_track_url: "",
                 video_play_done_track_url: "",
                 video_play_effective_track_url: ""
-            }
+            },
+
         };
     },
     mounted() {
         this.getCreatives();
+        if (!this.adcreative_id) {
+            this.getAdgroups();
+        }
     },
     methods: {
-
+        // 创意分类 change
+        handleCategoryChange(value) {
+            this.sortData.ad_category = value;
+        },
+        // 创意标签 change
+        handleTagChange(tagList) {
+            this.sortData.ad_keywords = tagList;
+        },
         //广告创意详情
         getCreatives() {
             Axios.post('api.php', {
@@ -421,76 +458,98 @@ export default {
                 console.error('广告创意详情', err)
             })
         },
+        //广告计划称列表
+        getAdgroups() {
+            Axios.post('api.php', {
+                action: 'ttAdPut',
+                opt: 'getAdgroups',
+                account_id: this.account_id,
+
+            }).then((res) => {
+                if (res.ret === 1) {
+                    this.adgroupsList = res.data;
+                }
+            }).catch((err) => {
+                console.error('广告计划称列表', err)
+            })
+        },
+        //选择谋划id
+        getAdgroupsId(id) {
+            this.adgroup_id = id;
+        },
         filldata(data) {
-            console.log(data)
+            this.modify_time = data.modify_time;
+            // 投放目标
             this.inventory_type = data.inventory_type.split(",")
-
-
-           this.image_mode=data.image_mode;
+            // 添加创意素材
+            this.image_mode = data.image_mode;
+            this.image.forEach((e, i) => {
+                if (data.image_mode == e.value) {
+                    if (data.image_mode == "CREATIVE_IMAGE_MODE_VIDEO" || data.image_mode == "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL") {
+                        this.image[i].title = data.title;
+                        this.image[i].imgList[0].video_id = data.video_id;
+                        this.image[i].imgList[0].imgUrl = data.image_info[0].url;
+                        this.image[i].imgList[1].image_id = data.image_id;
+                        this.image[i].imgList[1].imgUrl = data.image_info[0].url;
+                    } else {
+                        this.image[i].title = data.title;
+                        data.image_ids.forEach((v, j) => {
+                            this.image[i].imgList[j].image_id = v;
+                            this.image[i].imgList[j].imgUrl = data.image_info[j].url;
+                        })
+                    }
+                }
+            })
 
             this.materialData.source = data.source;
             this.materialData.advanced_creative_type = data.advanced_creative_type;
-
             this.materialData.is_comment_disable = data.is_comment_disable == "1" ? true : false;
             this.materialData.close_video_detail = data.close_video_detail == "1" ? true : false;
-
             this.materialData.creative_display_mode = data.creative_display_mode;
 
+            // 设置创意分类和标签
+            this.sortData.ad_category = data.ad_category;
+            this.sortData.ad_keywords = data.ad_keywords.split(",");
+            // 设置广告监测
             this.monitorData.track_url = data.track_url;
             this.monitorData.action_track_url = data.action_track_url;
             this.monitorData.video_play_track_url = data.video_play_track_url;
             this.monitorData.video_play_done_track_url = data.video_play_done_track_url;
             this.monitorData.video_play_effective_track_url = data.video_play_effective_track_url;
-
         },
-
-
+        //图片视频id
+        getvideoid(video_id, Url, ind, index) {
+            let item = this.image[ind].imgList[index];
+            item.video_id = video_id;
+        },
         //图片id
         getimgid(image_id, imgUrl, ind, index) {
-            this.image[ind].imgList[index].image_id = image_id;
-            this.image[ind].imgList[index].imgUrl = imgUrl;
+            let item = this.image[ind].imgList[index]
+            item.image_id = image_id;
+            item.imgUrl = imgUrl;
         },
-        //投放目标 -- 今日头条系展示与隐藏
-        seleTuotiao() {
-            if (this.seleStatue) {
-                this.iconType = "chevron-down";
-                this.showTt = true;
-            } else {
-                this.iconType = "chevron-right";
-                this.showTt = false;
-            }
-            this.seleStatue = !this.seleStatue;
-        },
-        //投放目标 -- 今日头条系选择
-        selectToutiao(val) {
-            let locat = this.inventory_type,
-                i = locat.length;
-            if (val) {
-                locat.splice(0, 0, "INVENTORY_FEED", "INVENTORY_TEXT_LINK")
-            } else {
-                while (i--) {
-                    if (locat[i] == "INVENTORY_FEED" || locat[i] == "INVENTORY_TEXT_LINK") {
-                        locat.splice(i, 1);
-                    }
-                }
-            };
-        },
-        //投放目标 change
-        locationChange(val) {
-            if (val.indexOf("INVENTORY_FEED") == -1 || val.indexOf("INVENTORY_TEXT_LINK") == -1) {
-                this.locationSelectTt = false;
-            } else {
-                this.locationSelectTt = true;
-            }
-        },
+
+
 
         submitCreative() {
             let param = {
                 action: "ttAdPut",
-                opt: "judgeCreative",
+
                 account_id: this.account_id,
                 adgroup_id: this.adgroup_id,
-                inventory_type: inventory_type,//创意投放位置
+                inventory_type: this.inventory_type,//创意投放位置
+
+                image_mode: this.image_mode,
+
+                source: this.materialData.source,
+                advanced_creative_type: this.materialData.advanced_creative_type,
+                is_comment_disable: this.materialData.is_comment_disable,
+                close_video_detail: this.materialData.close_video_detail,
+                creative_display_mode: this.materialData.creative_display_mode,
+
+
+                ad_category: this.sortData.ad_category,
+                ad_keywords: this.sortData.ad_keywords,
 
                 track_url: this.monitorData.track_url,
                 action_track_url: this.monitorData.action_track_url,
@@ -499,19 +558,80 @@ export default {
                 video_play_effective_track_url: this.monitorData.video_play_effective_track_url
             }
 
-            console.log(param)
+            if (this.GetCharLength(this.materialData.source) < 4 || this.GetCharLength(this.materialData.source) > 20) {
+                this.$Message.info("来源内容不正确");
+                return;
+            }
+            if (this.sortData.ad_category == "") {
+                this.$Message.info("请选择创意分类");
+                return;
+            }
 
-            Axios.post("api.php", param).then(res => {
-                if (res.ret == 1) {
-                    this.$router.push({
-                        name: "tt_creative",
-                    })
+            if (this.sortData.ad_keywords.length <= 0 || this.sortData.ad_keywords.length > 20) {
+                this.$Message.info("请添加创意标签");
+                return;
+            }
+
+
+            this.image.forEach((e, i) => {
+                if (this.image_mode == e.value) {
+                    param.title = e.title;
+                    if (this.image_mode == "CREATIVE_IMAGE_MODE_VIDEO" || this.image_mode == "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL") {
+                        param.video_id = e.imgList[0].video_id;
+                        param.image_id = e.imgList[1].image_id;
+                    } else {
+                        let ids = [];
+                        e.imgList.forEach(v => {
+                            ids.push(v.image_id);
+                        })
+                        param.image_ids = ids;
+                    }
                 }
-            }).catch(err => {
-                console.log("创意" + err);
             })
 
 
+            if (this.adcreative_id) {
+                param.opt = "judgeCreative";
+                param.adcreative_id = this.adcreative_id;
+                param.modify_time = this.modify_time;
+                Axios.post("api.php", param).then(res => {
+                    if (res.ret == 1) {
+                        this.$router.push({
+                            name: "tt_creative",
+                        })
+                    }
+                }).catch(err => {
+                    console.log("创意" + err);
+                })
+            } else {
+                param.opt = "judgeCreative";
+                Axios.post("api.php", param).then(res => {
+                    if (res.ret == 1) {
+                        this.$router.push({
+                            name: "tt_creative",
+                        })
+                    }
+                }).catch(err => {
+                    console.log("创意" + err);
+                })
+            }
+
+
+
+
+
+        },
+        //字符串
+        GetCharLength(str) {
+            var iLength = 0;
+            for (var i = 0; i < str.length; i++) {
+                if (str.charCodeAt(i) > 255) {
+                    iLength += 2;
+                } else {
+                    iLength += 1;
+                }
+            }
+            return iLength;
         }
     }
 };

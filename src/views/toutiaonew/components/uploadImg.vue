@@ -132,6 +132,17 @@
   float: left;
   margin: 6px 0 0 6px;
 }
+.filediv {
+  position: relative;
+}
+.file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
 </style>
 <style>
 .caption textarea.ivu-input {
@@ -143,14 +154,11 @@
 .ivu-modal-close {
   z-index: 999;
 }
-.alt-upload .ivu-btn {
-  margin: 20px 10px 20px;
-}
 </style>
 <template>
     <span>
         <Button @click="getImages();selectModal=true;" type="primary">选择图片</Button>
-        <Modal v-model="selectModal" width="720" @on-ok="modelOk">
+        <Modal v-model="selectModal" width="720" @on-ok="modelOk" @on-visible-change="visibleModal">
             <Tabs :animated="false">
                 <Tab-pane label="我的图库">
                     <div v-if="imglist.length>0">
@@ -171,9 +179,7 @@
 
                 <Tab-pane label="本地上传">
                     <div class="image-content">
-                        <Upload :format="accept" :show-upload-list="false" :max-size="imgSize" :action="actionUrl" :on-success="handleSuccess" :on-format-error="handleFormatError" :before-upload="handleBeforeUpload" :on-progress="handleProgress" :on-error="handleError">
-                            <Button type="primary" icon="ios-upload">上传文件</Button>
-                        </Upload>
+                        <Button type="primary" icon="ios-upload" class="filediv">上传文件<input type="file" accept="image/*" capture="camera" @change="readFile" class="file"></Button>
                     </div>
 
                 </Tab-pane>
@@ -199,7 +205,7 @@ import Axios from "@/api/index";
 import Util from '@/utils/index';
 export default {
     name: "uploadImg",
-    props: ["value", "imagemode", "ind", "index"],
+    props: ["imagemode", "ind", "index", "size", "width", "height"],
     data() {
         return {
             account_id: this.$route.query.account_id,//账户id
@@ -217,18 +223,9 @@ export default {
             total_page: 1, //总页数
         }
     },
-    mounted() {
-        this.image_id = this.value;
-    },
-    watch: {
-        value() {
-            this.image_id = this.value;
-        }
-    },
     methods: {
         //获取获取本地图库
         getImages() {
-            this.actionUrl = Util.baseURL + 'api.php?action=ttAdPut&opt=addImage&account_id=' + this.account_id + '&image_mode=' + this.imagemode + '&sessionid=' + Util.getItem('sessionid');
             Axios.post('api.php', {
                 action: 'ttAdPut',
                 opt: 'getImages',
@@ -256,34 +253,59 @@ export default {
             this.image_id = "";
             this.imgUrl = "";
         },
-        //图片上传成功            
-        handleSuccess(filte) {
-            this.$Message.info("文件上传成功");
-            this.image_id = filte.data.image_id;
-            this.imgUrl = filte.data.Url;
-        },
-        handleFormatError(file) {
-            this.$Notice.warning({
-                title: '文件格式不正确',
-                desc: '文件 ' + file.name + ' 格式不正确，请选择图片文件。'
-            });
-        },
-        handleBeforeUpload(file) {
-            // this.$Notice.warning({
-            //     title: '文件准备上传',
-            //     desc: '文件 ' + file.name + ' 准备上传。'
-            // });
-        },
-        handleProgress(event, file) {
-            console.log(event.percent)
-            // this.$Notice.info({
-            //     title: '文件正在上传',
-            //     desc: '文件 ' + file.name + ' 正在上传。'
-            // });
 
+        readFile(e) { //选择图片路径
+            var that = this;
+            var tmpFile = e.target.files;
+            for (var i = 0; i < tmpFile.length; i++) {
+                var file = tmpFile[i]
+                if (!/image\/\w+/.test(file.type)) { //判断是否是图片类型
+                    that.$Message.info("图片格式不对");
+                    return false;
+                }
+                var size = file.size / 1024 / 1024;
+                if (size > that.size) {
+                    that.$Message.info("图片大小超过限制");
+                    return;
+                }
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (e) {
+                    var img = new Image;
+                    img.src = this.result;
+                    img.onload = function () {
+                        if (img.width == that.width && img.height == that.height) {
+                            that.addVideo(img.src)
+                        } else {
+                            that.$Message.info("图片尺寸不正确");
+                        }
+                    }
+                }
+            }
         },
-        handleError(event, file) {
-            this.$Message.info("文件上传失败");
+        //上传图片路径
+        addVideo(url) {
+            Axios.post('api.php', {
+                action: 'ttAdPut',
+                opt: 'addImage',
+                account_id: this.account_id,
+                image_mode: this.imagemode,
+                image: url
+            }).then((res) => {
+                if (res.ret == 1) {
+                    this.$Message.info("图片上传成功");
+                    this.image_id = res.data.image_id;
+                    this.imgUrl = res.data.Url;
+                    this.getImages();
+                }
+            }).catch((err) => {
+                console.error('图片上传', err)
+            })
+        },
+        //清空选择
+        visibleModal(e) {
+            this.image_id = "";
+            this.imgUrl = "";
         },
 
         modelOk() {
