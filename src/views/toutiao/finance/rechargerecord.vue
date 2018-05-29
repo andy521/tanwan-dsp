@@ -174,6 +174,11 @@ export default {
                     }
                 },
                 {
+                    title: "充值时间",
+                    key: 'date',
+                    width: 100
+                },
+                {
                     title: "负责人",
                     key: "author"
                 },

@@ -5,6 +5,12 @@
                 <Option value="">全部帐号</Option>
                 <Option v-for="item in mediaList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
             </Select>
+            <RadioGroup v-model="fundType" @on-change="getfund()">
+                <Radio label="1">现金</Radio>
+                <Radio label="2">虚拟金额</Radio>
+                <Radio label="3">分成账户</Radio>
+                <Radio label="4">信用</Radio>
+            </RadioGroup>
         </div>
         <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10"></Table>
         <Row class="margin-top-10">
@@ -37,6 +43,14 @@ export default {
                 {
                     title: "帐户名",
                     key: "account_name"
+                },
+                {
+                    title: "代理简称",
+                    key: "agent"
+                },
+                {
+                    title: "代理全称",
+                    key: "agent_detail"
                 },
                 {
                     title: "用户",
@@ -92,6 +106,7 @@ export default {
                 }
             ],
             funddata: [],
+            fundType: '1',
             tableSize: "small",
             page: 1, //第N页
             page_size: 50, //每页数量
@@ -116,7 +131,8 @@ export default {
             Axios.post("api.php", {
                 action: "gdtaccount",
                 opt: "funds_get",
-                account_id: this.account_id
+                account_id: this.account_id,
+                fundType: this.fundType
             })
                 .then(res => {
                     this.loading = false;

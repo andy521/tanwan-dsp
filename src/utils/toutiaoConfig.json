@@ -482,5 +482,47 @@
     }, {
         "val_type": "APP_IOS",
         "name": "iOS"
-    }]
+    }],
+    "advanced_creative_type": [{
+            "val_type": "ATTACHED_CREATIVE_NONE",
+            "name": "无"
+        },
+        {
+            "val_type": "ATTACHED_CREATIVE_PHONE",
+            "name": "电话拨打"
+        },
+        {
+            "val_type": "ATTACHED_CREATIVE_FORM",
+            "name": "表单收集"
+        }
+    ],
+    "creative_display_mode": [{
+            "val_type": "CREATIVE_DISPLAY_MODE_CTR",
+            "name": "优选模式"
+        },
+        {
+            "val_type": "CREATIVE_DISPLAY_MODE_RANDOM",
+            "name": "轮播模式"
+        }
+    ],
+    "inventory_type": [{
+            "val_type": "INVENTORY_FEED",
+            "name": "头条信息流"
+        },
+        {
+            "val_type": "INVENTORY_TEXT_LINK",
+            "name": "头条文章详情页"
+        }, {
+            "val_type": "INVENTORY_VIDEO_FEED",
+            "name": "西瓜信息流"
+        },
+        {
+            "val_type": "INVENTORY_HOTSOON_FEED",
+            "name": "火山信息流"
+        },
+        {
+            "val_type": "INVENTORY_AWEME_FEED",
+            "name": "抖音信息流"
+        }
+    ]
 }

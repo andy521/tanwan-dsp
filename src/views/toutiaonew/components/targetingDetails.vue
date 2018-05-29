@@ -62,15 +62,15 @@
 <template>
     <Card dis-hover>
         <div class="newtt">
-            <div class="title">用户定向</div>
+            <div class="title">
+                <span>用户定向</span>
+                <!-- 复制定向 -->
+                <copy-targeting @on-change="changetargeting" :province="province" :ad_tag="ad_tag" :app_category="app_category" :device_brand="device_brand" :article_category="article_category"></copy-targeting>
+            </div>
 
-            <Form :label-width="80" class="margin-top-20" onsubmit="return false;" label-position="left">
-                <FormItem>
-                    <!-- 复制定向 -->
-                    <copy-targeting @on-change="changetargeting" :province="province" :ad_tag="ad_tag" :app_category="app_category" :device_brand="device_brand" :article_category="article_category"></copy-targeting>
-                </FormItem>
+            <Form :label-width="80" class="margin-top-20" onsubmit="return false;" label-position="left">              
                 <FormItem label="定向名字">
-                    <Input v-model="targeting_name" placeholder="请输入定向名字" size="large" style="width:300px;"></Input>
+                    <Input v-model="targeting_name" placeholder="请输入定向名字" size="large" style="width:500px;"></Input>
                 </FormItem>
                 <FormItem label="地域">
                     <RadioGroup v-model="targeting.district" size="large" type="button">
@@ -79,7 +79,7 @@
                     </RadioGroup>
                     <div class="margin-top-10">
                         <city-tree v-model="targeting.city" v-if="targeting.district=='CITY'"></city-tree>
-                        <county-tree v-model="targeting.city" v-if="targeting.district=='COUNTY'"></county-tree>
+                        <county-tree v-model="targeting.city" :datas="province" v-if="targeting.district=='COUNTY'"></county-tree>
                     </div>
                 </FormItem>
 
@@ -243,8 +243,9 @@
                 </FormItem>
 
                 <FormItem>
-                    <Button v-if="targeting_id==''" type="primary" size="large" @click="addTargeting()">保存定向</Button>
-                    <Button v-else type="primary" size="large" @click="updateTargeting()">修改定向</Button>
+                    <Button v-if="targeting_id" type="primary" size="large" @click="updateTargeting()">修改定向</Button>
+                    <Button v-else type="primary" size="large" @click="addTargeting()">保存定向</Button>
+
                 </FormItem>
 
             </Form>
@@ -815,7 +816,7 @@ export default {
                     params.ios_osv = this.targeting.ios_osv;
                 }
             }
-            
+
             Axios.post('api.php', params).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);

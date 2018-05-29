@@ -86,6 +86,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -93,7 +94,7 @@
 import Axios from "@/api/index";
 export default {
     name: "countyTree",
-    props: ["value"],
+    props: ["value", "datas"],
     data() {
         return {
             ids: [],
@@ -101,7 +102,7 @@ export default {
             province_list: [],
             province: "",
             county: "",
-            checked_list:[]
+            checked_list: []
         }
     },
     mounted() {
@@ -156,6 +157,7 @@ export default {
                 }
             })
             this.province_list = data;
+            this.get_checked_list();
         },
         //选择省
         checkedprovince(item) {
@@ -249,10 +251,10 @@ export default {
                 ids.push(v.value);
             })
             this.$emit('input', ids)
-            this.checked_list=list;
+            this.checked_list = list;
         }
     }
-   
-        
+
+
 }
 </script>

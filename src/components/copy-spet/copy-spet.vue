@@ -12,7 +12,7 @@ export default {
         };
     },
     mounted() {
-        this.check_author_tasck();
+       // this.check_author_tasck();
     },
     methods: {
         //查询用户是否有执行的任务

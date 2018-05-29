@@ -75,6 +75,14 @@ export default {
                     key: "account_id"
                 },
                 {
+                    title: "代理简称",
+                    key: "agent"
+                },
+                {
+                    title: "代理全称",
+                    key: "agent_detail"
+                },
+                {
                     title: "存入（元）",
                     key: "save",
                     render: (h, params) => {

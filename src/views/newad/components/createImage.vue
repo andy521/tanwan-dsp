@@ -355,7 +355,8 @@ export default {
             height = size[1];
         this.imgSize = parseInt(this.template.element.image.quality);
         this.actionUrl =
-            "http://ads.tanwan.com/api.php?action=gdtAdPut&opt=adsimg_doadd&account_id=" +
+            util.baseURL + 
+            "api.php?action=gdtAdPut&opt=adsimg_doadd&account_id=" +
             this.id +
             "&sessionid=" +
             util.getItem("sessionid") +
