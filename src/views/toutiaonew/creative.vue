@@ -170,7 +170,7 @@
                                                     <div class="alt-upload" :class="item.imgUrl? 'alt-upload1':''">
                                                         <div class="margin-top-10">
                                                             <!-- 上传图片 -->
-                                                            <upload-img v-model="item.image_id" :imagemode="it.value" @on-change="getimgid" :ind="ind" :index="index" :size="it.size" :width="it.width" :height="it.height"></upload-img>
+                                                            <upload-img  :imagemode="it.value" @on-change="getimgid" :ind="ind" :index="index" :size="it.size" :width="it.width" :height="it.height"></upload-img>
                                                         </div>
                                                         <p class="margin-top-10">{{item.desc}}</p>
                                                     </div>
