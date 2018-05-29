@@ -1,0 +1,58 @@
+{
+  "account_name": {
+    "key": "account_name",
+    "name": "账户名"
+  },
+  "agent": {
+    "key": "agent",
+    "name": "代理"
+  },
+  "balance": {
+    "key": "balance",
+    "name": "推广余额"
+  },
+  "cost": {
+    "key": "cost",
+    "name": "消耗"
+  },
+  "impression": {
+    "key": "impression",
+    "name": "曝光"
+  },
+  "click": {
+    "key": "click",
+    "name": "点击数"
+  },
+  "ctr": {
+    "key": "ctr",
+    "name": "点击率"
+  },
+  "cpm": {
+    "key": "cpm",
+    "name": "ecpm"
+  },
+  "activation": {
+    "key": "activation",
+    "name": "注册设备数"
+  },
+  "reg_cost": {
+    "key": "reg_cost",
+    "name": "注册成本"
+  },
+  "account_id": {
+    "key": "account_id",
+    "name": "账户ID"
+  },
+  "author": {
+    "key": "author",
+    "name": "负责人"
+  },
+  "date": {
+    "key": "date",
+    "name": "日期"
+  },
+  "over_day": {
+    "key": "over_day",
+    "name": "消耗预估天数"
+  }
+}

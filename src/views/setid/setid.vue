@@ -15,7 +15,7 @@
                 </Select>
                 </Col>
                 <Col span="14" style="text-align: right;">
-                <Page :total="total_number" :page-size="page_size" ref="pages" @on-change="getAdsAccount" show-elevator show-total></Page>
+                <Page :current="page" :total="total_number" :page-size="page_size" ref="pages" @on-change="getAdsAccount" show-elevator show-total></Page>
                 </Col>
             </Row>
         </Card>
@@ -127,14 +127,15 @@ export default {
                                                 opt: "updateAdsAccount",
                                                 ids: params.row.id.split(","),
                                                 agent: value,
-                                                rebate: params.row.rebate
+                                                rebate: params.row.rebate,
+                                                agent_detail: params.row.agent_detail
                                             }).then(res => {
                                                 if (res.ret == 1) {
                                                     this.$Message.info(res.msg);
-                                                    this.getAdsAccount();
+                                                    this.getAdsAccount(this.page);
                                                 }
                                             }).catch(err => {
-                                                console.log("修改账号代理商，返点比例失败" + err);
+                                                console.log("修改账号代理商失败" + err);
                                             });
                                         }
                                     });
@@ -142,6 +143,68 @@ export default {
                             }
                         })
                     ];
+                }
+            },
+            {
+                title: "代理全称",
+                key: "agent_detail",
+                render: (h, params) => {
+                    let value = params.row.agent_detail;
+                    return [
+                        h('span', value),
+                        h('i-button', {
+                            props: {
+                                icon: 'edit',
+                                type: 'text',
+                                // size: 'small'
+                            },
+                            class: ['edit'],
+                            on: {
+                                click: () => {
+                                    this.$Modal.confirm({
+                                        render: h=> {
+                                            return [
+                                                h('i-input', {
+                                                    props: {
+                                                        value: value,
+                                                        autofocus: true,
+                                                        placeholder: '请输入代理全称'
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            value = val
+                                                        }
+                                                    }
+                                                })
+                                            ]
+                                        },
+                                        onOk: () => {
+                                            if (value == '') {
+                                                this.$Message.info('请输入修改信息')
+                                                return
+                                            }
+
+                                            Axios.post('api.php', {
+                                                action: 'sys',
+                                                opt: 'updateAdsAccount',
+                                                ids: params.row.id.split(","),
+                                                agent: params.row.agent,
+                                                rebate: params.row.rebate,
+                                                agent_detail: value
+                                            }).then( res => {
+                                                if (res.ret === 1) {
+                                                    this.$Message.info(res.msg)
+                                                    this.getAdsAccount(this.page)
+                                                }
+                                            }).catch(err => {
+                                                console.error('修改账号代理全称失败', err)
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    ]
                 }
             },
             {
@@ -186,14 +249,15 @@ export default {
                                                 opt: "updateAdsAccount",
                                                 ids: params.row.id.split(","),
                                                 agent: params.row.agent,
-                                                rebate: value
+                                                rebate: value,
+                                                agent_detail: params.row.agent_detail
                                             }).then(res => {
                                                 if (res.ret == 1) {
                                                     this.$Message.info(res.msg);
-                                                    this.getAdsAccount();
+                                                    this.getAdsAccount(this.page);
                                                 }
                                             }).catch(err => {
-                                                console.log("修改账号代理商，返点比例失败" + err);
+                                                console.log("修改账号返点比例失败" + err);
                                             });
                                         }
                                     });
