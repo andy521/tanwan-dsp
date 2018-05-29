@@ -175,8 +175,8 @@
 
         <Card dis-hover class="margin-top-10">
             <div class="newtt">
-                <Button type="primary" v-if="adgroup_id==''" size="large" @click="addAdgroup()">保存计划</Button>
-                <Button type="primary" v-else size="large" @click="updateAdgroup()">修改计划</Button>
+                <Button type="primary" v-if="adgroup_id" size="large" @click="updateAdgroup()">修改计划</Button>
+                <Button type="primary" v-else size="large" @click="addAdgroup()">保存计划</Button>
             </div>
         </Card>
 
@@ -266,6 +266,7 @@ export default {
             this.modify_time = data.modify_time;
             this.pricing = data.pricing;
             this.adgroup_name = data.adgroup_name;
+
             if (data.landing_type == "APP") {
                 this.url = download_url;
                 this.app_type = data.app_type;
@@ -273,16 +274,10 @@ export default {
             if (this.landing_type == "LINK") {
                 this.url = data.external_url;
             }
-
-
             if (data.pricing == 'PRICING_OCPM') {
                 this.convert_id = data.convert_id;
                 this.package = data.package;
             }
-
-
-
-
             this.budget_mode = data.budget_mode;
             this.budget = data.budget;
             this.schedule_type = data.schedule_type;
@@ -323,14 +318,20 @@ export default {
                 end_time: this.DateDomain[1],
             }
 
+
             if (this.adgroup_name == "") {
                 this.$Message.info("请输入计划名");
                 return;
             }
+            var reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/;
             if (this.url == "") {
                 this.$Message.info("请输入链接");
                 return;
+            } else if (reg.test(this.url) == false && this.landing_type == "LINK") {
+                this.$Message.info("请输入有效的网址");
+                return;
             }
+
             if (this.landing_type == "APP") {
                 param.download_url = this.url;
                 param.app_type = this.app_type;
@@ -366,7 +367,7 @@ export default {
                 param.cpa_bid = this.bid;
                 param.bid = "";
                 if (this.bid < 100) {
-                    this.$Message.info("出价能少于100");
+                    this.$Message.info("出价不能少于100");
                     return;
                 }
             } else {
@@ -383,7 +384,8 @@ export default {
                         name: 'ttcreative',
                         query: {
                             account_id: this.account_id,
-                            adgroup_id: res.data.adgroup_id
+                            adgroup_id: res.data.adgroup_id,
+                            landing_type: this.landing_type
                         }
                     })
                 }
@@ -419,8 +421,12 @@ export default {
                 this.$Message.info("请输入计划名");
                 return;
             }
+            var reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/;
             if (this.url == "") {
                 this.$Message.info("请输入链接");
+                return;
+            } else if (reg.test(this.url) == false && this.landing_type == "LINK") {
+                this.$Message.info("请输入有效的网址");
                 return;
             }
             if (this.landing_type == "APP") {
@@ -473,7 +479,8 @@ export default {
                         name: 'ttcreative',
                         query: {
                             account_id: this.account_id,
-                            adgroup_id: this.adgroup_id
+                            adgroup_id: this.adgroup_id,
+                            landing_type: this.landing_type
                         }
                     })
                 }

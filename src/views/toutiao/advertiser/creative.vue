@@ -548,7 +548,11 @@ export default {
                                         this.$router.push({
                                             name: "ttcreative",
                                             query: {
-                                                adcreative_id: params.row.adcreative_id
+                                                account_id: params.row.account_id,
+                                                adgroup_id: params.row.adgroup_id,
+                                                adcreative_id: params.row.adcreative_id,
+                                                landing_type: params.row.landing_type,
+                                                id: params.row.id
                                             }
                                         });
                                     }
