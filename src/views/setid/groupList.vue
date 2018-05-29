@@ -15,7 +15,7 @@
         </Row>
         <Row v-show="showGroupListTable">
             <Col span="24">
-                <Table border :columns="tableColumns" :data="tableData" size="small" style="width:700px"></Table>
+                <Table border :columns="tableColumns" :data="tableData" size="small"></Table>
             </Col>
         </Row>
         <Row v-show="showPermissionSetting">
