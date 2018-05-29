@@ -296,7 +296,10 @@
 
         <Card dis-hover class="margin-top-10">
             <div class="newtt">
-                <Button type="primary" size="large" @click="submitCreative()">提交</Button>
+                <Button type="primary" size="large" @click="submitCreative()">
+                    <span  v-if="this.adcreative_id" >修改创意</span>
+                    <span v-else>新增创意</span>
+                </Button>
             </div>
         </Card>
 
@@ -593,7 +596,7 @@ export default {
             if (this.adcreative_id) {
                 param.opt = "judgeCreative";
                 param.adcreative_id = this.adcreative_id;
-                param.modify_time = this.modify_time;
+                param.modify_time=this.modify_time
                 Axios.post("api.php", param).then(res => {
                     if (res.ret == 1) {
                         this.$router.push({
