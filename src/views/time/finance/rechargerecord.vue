@@ -174,6 +174,11 @@ export default {
                     }
                 },
                 {
+                    title: "充值时间",
+                    key: 'date',
+                    width: 100
+                },
+                {
                     title: "负责人",
                     key: "author"
                 },
@@ -306,6 +311,8 @@ export default {
             }).then(res => {
                 this.loading = false;
                 if (res.ret == 1) {
+                    
+                console.log(res.data)
                     this.funddata = res.data.list;
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;
