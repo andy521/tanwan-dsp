@@ -797,7 +797,7 @@
                     res => {
                         if (res.ret == 1) {
                             this.searchUserCondition.searchDataStatement = res.data.searchArr.state;
-                            this.recordTotalNumber = res.data.searchArr.totalCount;
+                            this.recordTotalNumber = parseInt(res.data.searchArr.totalCount);
                             this.page = res.data.searchArr.pageNum;
                             this.pageSize = parseInt(res.data.searchArr.numPerPage);
                             this.tableData = [];

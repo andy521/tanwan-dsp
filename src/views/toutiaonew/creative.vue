@@ -365,8 +365,7 @@ export default {
         //投放目标 -- 今日头条系选择
         selectToutiao(val){
             let locat = this.locationSelect,
-                i = locat.length;
-            
+                i = locat.length;            
             if(val){
                 locat.splice(0,0,'INVENTORY_FEED','INVENTORY_TEXT_LINK')
             }else{
@@ -376,7 +375,6 @@ export default {
                     }
                 }
             };
-            console.log(locat)
         },
         //投放目标 change
         locationChange(val){
@@ -387,7 +385,6 @@ export default {
             }
         },
         currentMaterial(val){
-            console.log(val)
             switch (val) {
                 case "0": this.material = 'materialSmallImg'; break;
                 case "1": this.material = 'materialBigImg'; break;
