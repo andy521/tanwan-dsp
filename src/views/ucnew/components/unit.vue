@@ -191,7 +191,7 @@
             <RadioGroup @on-change="handleAllRegion" v-model="targetingSetting.all_region">
               <Radio label="1">不限</Radio>
               <Radio label="0">省市</Radio>
-              <!-- <Radio label="2">
+              <Radio label="2">
                 <span>区县</span>
                 <Tooltip placement="top">
                   <Icon type="help-circled"></Icon>
@@ -200,14 +200,14 @@
                     <p>时位于该区县的人群。</p>
                   </div>
                 </Tooltip>
-              </Radio> -->
+              </Radio>
             </RadioGroup>
             <div v-if="targetingSetting.all_region === '0'">
               <province-tree @on-change="handleProvinceChange" v-model="provinceTreeList"></province-tree>
             </div>
-            <!-- <div v-if="targetingSetting.all_region === '2'">
-              <country-tree v-model="cityList"></country-tree>
-            </div> -->
+            <div v-if="targetingSetting.all_region === '2'">
+              <country-tree @on-change="handleCountyChange" v-model="cityList"></country-tree>
+            </div>
           </FormItem>
 
           <FormItem label="性别">
@@ -269,6 +269,7 @@
                       <Input @on-enter="handlerInterestWord" v-model="interestWord" type="textarea" :rows="11"></Input>
                       <div class="interest-tip">已添加{{targetingSetting.word.length}}个，还可以添加{{200 -targetingSetting.word.length}}个。</div>
                     </div>
+                    <search-pop title="关键词推荐" :max-num="200" type="word" class="margin-top-10"></search-pop>
                   </div>
                   <div class="interest-item">
                     <h4 class="title">
@@ -292,6 +293,7 @@
                       <Input @on-enter="handlerInterestURL" v-model="interestURL" type="textarea" :rows="11"></Input>
                       <div class="interest-tip">已添加{{targetingSetting.url.length}}个，还可以添加{{200 - targetingSetting.url.length}}个。</div>
                     </div>
+                    <search-pop title="URL推荐" :max-num="150" type="url" class="margin-top-10"></search-pop>
                   </div>
                 </div>
               </TabPane>
@@ -1076,10 +1078,13 @@ export default {
         this.isEditTargetingChange += 1
       }
     },
+    handleCountyChange(countyList, valueList, nameList) {
+      this.targetingSetting.region = valueList
+      this.evaluate.provinceTxt = this.normalizeTxtShow(nameList)
+    },
     handleProvinceChange(provinceList, valueList, nameList) {
       this.targetingSetting.region = valueList
       this.evaluate.provinceTxt = this.normalizeTxtShow(nameList)
-      console.log(provinceList, valueList, nameList, '----handleProvinceChange-')
 
       // 判断编辑状态下，定向更改
       if (this.isEdit) {
@@ -1295,6 +1300,17 @@ export default {
         })
       } else if (this.targetingSetting.all_region === '2') {
         // 区县
+        this.targetingSetting.region.forEach(region => {
+          this.countyList.forEach((vp, ip) => {
+            vp.children.forEach((vc, ic) => {
+              vc.children.forEach(county => {
+                if (region === county.value) {
+                  county.checked = true
+                }
+              })
+            })
+          })
+        })
       }
 
       // 兴趣与行为定向
@@ -1631,24 +1647,62 @@ export default {
       }
       return ret
     },
+    // 初始化区县列表
+    normalizCountyList(countyList) {
+      if (countyList.length === 0) {
+        return
+      }
+      const ret = []
+      countyList.forEach((province, pi) => {
+        ret.push({
+          name: province.name,
+          value: province.value,
+          expand: false,
+          checked: false,
+          children: []
+        })
+        province.children.forEach((city, ci) => {
+          ret[pi].children.push({
+            name: city.name,
+            value: city.value,
+            expand: false,
+            checked: false,
+            children: []
+          })
+          city.children.forEach((county, cci) => {
+            ret[pi].children[ci].children.push({
+              name: county.name,
+              value: county.value,
+              expand: false,
+              checked: false
+            })
+          })
+        })
+      })
+      console.log(ret,'x')
+      return ret
+    },
     // 初始化省市地域列表
     normalizeProvinceList(provinceList) {
-      this.evaluate.activeNum = 0
+      if (provinceList.length === 0) {
+        return
+      }
       const ret = []
       provinceList.forEach((province, pi) => {
         ret.push({
           title: province.name,
           expand: false,
           value: province.value,
+          checked: false,
           children: []
         })
         province.cityList.forEach((city, ci) => {
           ret[pi].children.push({
             title: city.name,
             expand: false,
-            value: city.value
+            value: city.value,
+            checked: false
           })
-          this.evaluate.activeNum += city.value
         })
       })
       return ret
@@ -1786,7 +1840,7 @@ export default {
         account_id: this.accountId + ''
       }).then(res => {
         if (res.ret === 1) {
-          this.cityList = res.data.countyTrees
+          this.cityList = this.normalizCountyList(res.data.countyTrees)
         }
       }).catch(err => {
         console.log('获取区县列表错误', err)
@@ -1804,9 +1858,6 @@ export default {
             this.provinceList = res.data.provinces
             this.provinceTreeList = this.normalizeProvinceList(
               this.provinceList
-            )
-            this.evaluate.activeTxt = this.normalizeActiveTxt(
-              this.evaluate.activeNum
             )
             // console.log("获取省市地域列表", this.provinceList)
           }

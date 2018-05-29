@@ -17,12 +17,14 @@
             <Button type="primary" icon="search" @click="getfund()">搜索</Button>
             </Col>
             <Col span="10" style="text-align: right;">
-
+            <Poptip confirm title="您确认删除选中内容吗？" placement="bottom-end" @on-ok="removeRecharge()" style="text-align: left;">
+                <Button type="ghost" icon="trash-a">删除</Button>
+            </Poptip>
             <Button type="ghost" icon="document-text" @click="exportData()">下载报表</Button>
             </Col>
         </Row>
 
-        <Table :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10" ref="rechargetable"></Table>
+        <Table @on-selection-change="handleSelectionChange" :columns="fundcolumns" :data="funddata" :loading="loading" :size="tableSize" class="margin-top-10" ref="rechargetable"></Table>
 
         <Row class="margin-top-10">
             <Col span="10"> 表格尺寸
@@ -73,6 +75,11 @@ export default {
             taCheckids: [], //选中ids
             fundcolumns: [
                 {
+                    type: "selection",
+                    width: 58,
+                    key: ""
+                },
+                {
                     title: "账户名",
                     key: "account_name"
                 },
@@ -119,7 +126,11 @@ export default {
                     title: "备注",
                     key: "mark"
                 },
-
+                {
+                    title: '转账时间',
+                    key: 'date',
+                    width: 160
+                }
             ],
             funddata: [],
             tableSize: "small",
@@ -133,6 +144,32 @@ export default {
         this.getfund();
     },
     methods: {
+        // 批量删除
+        removeRecharge() {
+            if (this.taCheckids.length === 0) {
+                return this.$Message.info('请勾选内容')
+            }
+            Axios.post('api.php', {
+                action: 'sys',
+                opt: 'DeleteAccountTransfer',
+                ids: this.taCheckids
+            }).then(res => {
+                if (res.ret === 1) {
+                    this.$Message.info(res.msg)
+                    this.getfund(this.page)
+                }
+            }).catch(err => {
+                console.error('删除转账记录错误', err)
+            })
+        },
+        // 选择的所有数据
+        handleSelectionChange(rows) {
+            const ids = [];
+            rows.forEach(item => {
+                ids.push(item.id);
+            });
+            this.taCheckids = ids;            
+        },
         //获取转帐列表
         getfund(page) {
             if (page === undefined) {

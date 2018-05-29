@@ -1,3 +1,6 @@
+ul,li{
+    list-style: none;
+}
 .clear:after {
 	content: '\20';
 	display: block;
@@ -119,4 +122,11 @@
     line-height: 1.42857143;
     vertical-align: top;
     border: 1px solid #ddd;
+}
+.clearfix:before, .clearfix:after {
+    content: " ";
+    display: table;
+}
+.clearfix:after {
+    clear: both;
 }

@@ -125,16 +125,16 @@ button.ivu-btn {
       margin-bottom: 10px;
       margin: 10px;
       font-size: 15px;
-      max-height: 44px;
+      max-height: 86px;
       overflow: hidden;
-      height: 24px;
-      line-height: 24px;
+      // height: 24px;
+      // line-height: 24px;
       font-weight: 400;
       color: #333;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      text-overflow: ellipsis;
+      // display: -webkit-box;
+      // -webkit-line-clamp: 2;
+      // -webkit-box-orient: vertical;
+      // text-overflow: ellipsis;
     }
     .bg-image {
       width: 341px;
@@ -222,12 +222,6 @@ button.ivu-btn {
 
       <div class="g-style g-flex border-bottom padding-lr-30 padding-tb-20">
         <h3 class="sub-title color-green item">创意样式</h3>
-        <!-- <RadioGroup @on-change="handleChangeTemplate" v-model="creativeSetting.creativeTemplate_id">
-          <Radio :label="4" :class="{'btn-green': creativeSetting.creativeTemplate_id === 4}" :disabled="isEdit" class="item">信息流大图</Radio>
-          <Radio :label="5" :class="{'btn-green': creativeSetting.creativeTemplate_id === 5}" :disabled="isEdit" class="item">信息流小图</Radio>
-          <Radio :label="34" :class="{'btn-green': creativeSetting.creativeTemplate_id === 34}" :disabled="isEdit" class="item">信息流三图</Radio>
-        </RadioGroup> -->
-
         <RadioGroup @on-change="handleChangeTemplate" v-model="creativeSetting.creativeTemplate_id">
           <Radio v-if="creativeTemplates && creativeTemplates.length > 0" v-for="(template, index) in creativeTemplates" :key="index" :label="template.creativeTemplateId" :class="{'btn-green': creativeSetting.creativeTemplate_id === template.creativeTemplateId}" :disabled="isEdit" class="item">{{template.creativeTemplateName}}</Radio>
         </RadioGroup>
@@ -249,150 +243,98 @@ button.ivu-btn {
 
                     <!-- 创意样式 信息流大图与信息流小图-->
                     <div v-if="uploadBlock.style === 'big'"  class="updata_img">
-                        <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
-                        <div style="padding: 20px 0">
-                            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                                <p>点击或将文件拖拽到这里上传</p>
-                            </div>
-                        </Upload>
-                        <div v-show="pic1_img" ref="imageMask" class="mask">
-                            <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                            <img :src="pic1_img" alt="" class="image-view">
-                        </div>
+                      <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
+                      <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>点击或将文件拖拽到这里上传</p>
+                      </div>
+                      </Upload>
+                      <div v-show="pic1_img" ref="imageMask" class="mask">
+                        <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
+                        <img :src="pic1_img" alt="" class="image-view">
+                      </div>
                     </div>
 
                     <div v-if="uploadBlock.style === 'small'"  class="updata_img">
-                        <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
-                        <div style="padding: 20px 0">
-                            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                                <p>点击或将文件拖拽到这里上传</p>
-                            </div>
-                        </Upload>
-                        <div v-show="pic2_img" ref="imageMask" class="mask">
-                            <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                            <img :src="pic2_img" alt="" class="image-view">
-                        </div>
+                      <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
+                      <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                          <p>点击或将文件拖拽到这里上传</p>
+                      </div>
+                      </Upload>
+                      <div v-show="pic2_img" ref="imageMask" class="mask">
+                        <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
+                        <img :src="pic2_img" alt="" class="image-view">
+                      </div>
                     </div>
 
                     <!-- 创意样式 信息流大三图-->
                     <div v-if="uploadBlock.style == 'three' && image.key=== 'pic1_img' "  class="updata_img">
-                        <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess31" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
-                        <div style="padding: 20px 0">
-                            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                                <p>点击或将文件拖拽到这里上传</p>
-                            </div>
-                        </Upload>                                        
-                        <div v-show="pic31_img" ref="imageMask" class="mask">
-                            <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                            <img :src="pic31_img" alt="" class="image-view">
-                        </div>
+                      <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess31" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
+                      <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>点击或将文件拖拽到这里上传</p>
+                      </div>
+                      </Upload>                                        
+                      <div v-show="pic31_img" ref="imageMask" class="mask">
+                        <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
+                        <img :src="pic31_img" alt="" class="image-view">
+                      </div>
                     </div>
 
                     <div v-if="uploadBlock.style == 'three' && image.key=== 'pic2_img' "  class="updata_img">
-                        <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess32" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
-                        <div style="padding: 20px 0">
-                            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                                <p>点击或将文件拖拽到这里上传</p>
-                            </div>
-                        </Upload>                                 
-                        <div v-show="pic32_img" ref="imageMask" class="mask">
-                            <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                            <img :src="pic32_img" alt="" class="image-view">
-                        </div>
+                      <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess32" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
+                      <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>点击或将文件拖拽到这里上传</p>
+                      </div>
+                      </Upload>                                 
+                      <div v-show="pic32_img" ref="imageMask" class="mask">
+                        <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
+                        <img :src="pic32_img" alt="" class="image-view">
+                      </div>
                     </div>
 
                     <div v-if="uploadBlock.style == 'three' && image.key=== 'pic3_img' "  class="updata_img">
-                        <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess33" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
-                        <div style="padding: 20px 0">
-                            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                                <p>点击或将文件拖拽到这里上传</p>
-                            </div>
-                        </Upload>                                 
-                        <div v-show="pic33_img" ref="imageMask" class="mask">
-                            <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                            <img :src="pic33_img" alt="" class="image-view">
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-
-              <!-- <div :class="{'g-flex': uploadBlock.style === 'three'}">
-
-                <div v-for="(image, ii) in uploadBlock.image" v-if="uploadBlock.image.length > 0" :key="ii" :class="{'g-flex-item': uploadBlock.style === 'three'}">
-                  <p v-if="ii < 1" class="tip">{{image.tips}}</p>
-                  <Upload v-if="uploadBlock.style !== 'three'" type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" class="padding-top-30">
-                    <div style="padding: 20px 0">
-                      <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                      <p>点击或将文件拖住到此上传</p>
-                    </div>
-                  </Upload>
-                  <div v-show="pic1_img &&pic1_img.length > 0" ref="imageMask" class="mask">
-                    <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                    <img :src="pic1_img" alt="" class="image-view">
-                  </div>
-                  <div v-show="pic2_img &&pic2_img.length > 0" ref="imageMask" class="mask">
-                    <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                    <img :src="pic2_img" alt="" class="image-view">
-                  </div>
-                  <Upload v-if="uploadBlock.style === 'three' && image.key=== 'pic1_img'" type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess31" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" class="padding-top-30">
-                    <div style="padding: 20px 0">
-                      <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                      <p>点击或将文件拖住到此上传</p>
-                    </div>
-                  </Upload>
-                  <div v-show="uploadBlock.style === 'three' && pic31_img && pic31_img.length > 0" ref="imageMask" class="mask">
-                    <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                    <img :src="pic31_img" alt="" class="image-view">
-                  </div>
-                  <Upload v-if="uploadBlock.style === 'three' && image.key=== 'pic2_img'" type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess32" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" class="padding-top-30">
-                    <div style="padding: 20px 0">
-                      <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                      <p>点击或将文件拖住到此上传</p>
-                    </div>
-                  </Upload>
-                  <div v-show="uploadBlock.style === 'three' && pic32_img && pic32_img.length > 0" ref="imageMask" class="mask">
-                    <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                    <img :src="pic32_img" alt="" class="image-view">
-                  </div>
-                  <Upload v-if="uploadBlock.style === 'three' && image.key === 'pic3_img'" type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess33" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" class="padding-top-30">
-                    <div style="padding: 20px 0">
-                      <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                      <p>点击或将文件拖住到此上传</p>
-                    </div>
-                  </Upload>
-                  <div v-show="uploadBlock.style === 'three' && pic32_img && pic32_img.length > 0" ref="imageMask" class="mask">
-                    <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
-                    <img :src="pic33_img" alt="" class="image-view">
+                      <Upload type="drag" :action="actionUrl" accept="image/*" :format="['jpg','png']" :show-upload-list="false" :max-size="20" :on-success="handleSuccess33" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload" >
+                      <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>点击或将文件拖拽到这里上传</p>
+                      </div>
+                      </Upload>                                 
+                      <div v-show="pic33_img" ref="imageMask" class="mask">
+                        <div ref="btnClose" @click="handleCloseMask" class="btn-close">x</div>
+                        <img :src="pic33_img" alt="" class="image-view">
+                      </div>
                   </div>
                 </div>
-
-              </div> -->
-
             </div>
-
           </div>
- 
 
+        </div>
+          <!-- 文本 -->
           <div class="g-content padding-lr-30">
             <h3 class="sub-title color-green padding-tb-20">创意文本及URL</h3>
-            <!-- <Form v-show="template.creativeTemplateId === creativeSetting.creativeTemplate_id" v-if="creativeTemplates && creativeTemplates.length > 0" v-for="(template, ip) in creativeTemplates" :key="ip" :model="creativeSetting" :label-width="126" label-position="left"> -->
             <Form v-if="template.creativeTemplateId === creativeSetting.creativeTemplate_id" v-for="(template, ip) in creativeTemplates" :key="ip" :model="creativeSetting" :label-width="126" label-position="left">
               <FormItem v-if="field.alias !== '图片'" v-for="(field, ic) in template.creativeTemplateFields" :key="ic" :label="field.alias">
                 <Input @on-blur="handleField" v-model="fieldSetting[field.key]" :placeholder="field.alias" class="item-width"></Input>
+                <Button @click="isWordPackages=true" v-if="field.alias === '标题'" :disabled="packageWord.isDisable" type="ghost">插入词包</Button>
                 <p class="font-size-12 color-red">{{field.tips}}</p>
+                <div v-if="field.alias === '标题' && isWordPackages" class="margin-top-10">
+                  <word-packages @on-select="handlePackageChange"></word-packages>
+                </div>
               </FormItem>
             </Form>
 
           </div>
         </div>
+        <!-- 预览 -->
         <div class="phone-preview g-flex-rt padding-lr-30">
           <h3 class="sub-title color-green padding-tb-20">广告预览</h3>
-
+          <!-- 大图 -->
           <div v-for="(preView, ip) in creativeTemplatesFieldsList" v-if="creativeTemplatesFieldsList.length > 0" :key="ip">
             <div v-if="creativeSetting.creativeTemplate_id === preView.creativeTemplate_id" v-show="preView.style === 'big'" class="bg-phone phone-template1">
-              <div class="title">{{fieldSetting.title}}</div>
+              <div class="title">{{viewTitle}}</div>
               <div class="bg-image">
                 <img v-show="pic1_img" :src="pic1_img" alt="广告预览" class="image">
               </div>
@@ -404,7 +346,7 @@ button.ivu-btn {
               </div>
               <div class="phone-foot"></div>
             </div>
-
+            <!-- 小图 -->
             <div v-if="creativeSetting.creativeTemplate_id === preView.creativeTemplate_id" v-show="preView.style === 'small'" class="bg-phone phone-template2">
               <div class="content g-flex border-bottom">
                 <div class="item-lt">
@@ -424,7 +366,7 @@ button.ivu-btn {
               </div>
               <div class="phone-foot"></div>
             </div>
-
+            <!-- 三图 -->
             <div v-if="creativeSetting.creativeTemplate_id === preView.creativeTemplate_id" v-show="preView.style === 'three'" class="bg-phone phone-template3">
               <div class="title">{{fieldSetting.title}}</div>
               <div class="image-content g-flex">
@@ -451,6 +393,7 @@ button.ivu-btn {
       </div>
 
     </div>
+
     <div class="padding-lr-30 padding-tb-20">
       <Button @click="handleSumbit" type="primary">确认</Button>
       <Button @click="handleGoBack" type="ghost">取消</Button>
@@ -465,12 +408,14 @@ button.ivu-btn {
 import Axios from '@/api/index'
 import { deepClone } from '@/utils/DateShortcuts.js'
 import util from '@/utils/index'
+import wordPackages from './wordPackages'
 const ERR_OK = 1
 export default {
   // 图片模板类型： 大图：big，小图：small，三图：three
   data() {
     return {
       isEdit: false, // 判断当前推广计划状态：true为编辑状态，false为新建状态
+      isWordPackages: false, // 词包
       campaignNameList: [], // 计划名称列表
       campaignName: '', // 当前计划名称
       adgroupName: '', // 当前单元名称
@@ -505,13 +450,19 @@ export default {
         wildcardIds: 0,
         content: {}
       },
+      packageWord: {
+        packageName: '',
+        defaultWord: '',
+        isDisable: false 
+      },
+      viewTitle: '',
       fieldSetting: {
-        app_name: '贪玩', // APP名称
-        title: '贪玩',
-        source: '贪玩', // 推广来源
-        scheme_url: 'http://www.tanwan.com', // 直达链接
-        target_url: 'http://www.tanwan.com', // 点击URL
-        description: 'http://www.tanwan.com' // 描述
+        app_name: '', // APP名称
+        title: '',
+        source: '', // 推广来源
+        scheme_url: 'http://', // 直达链接
+        target_url: 'http://', // 点击URL
+        description: 'http://' // 描述
       },
       pic1_img: '',
       pic2_img: '',
@@ -546,6 +497,15 @@ export default {
     }
   },
   methods: {
+    // 获取词包
+    handlePackageChange(word) {
+      [this.packageWord] = [word]
+      this.isWordPackages = false
+
+      this.fieldSetting.title += this.packageWord.packageName
+      this.viewTitle += this.packageWord.defaultWord
+      console.log(this.packageWord)
+    },
     handleSuccess31(filte) {
       console.log('handleSuccess31')
       if (filte.ret == '1') {
@@ -556,7 +516,7 @@ export default {
         this.pic31_img = img.srcImageUrl    
       }
       if (filte.ret == '-1') {
-        this.$Notice.warning({
+        this.$Message.warning({
           desc: filte.msg
         })
       }
@@ -571,9 +531,7 @@ export default {
         this.pic32_img = img.srcImageUrl
       }
       if (filte.ret == '-1') {
-        this.$Notice.warning({
-          desc: filte.msg
-        })
+        this.$Message.warning(filte.msg)
       }
     },
     handleSuccess33(filte) {
@@ -586,9 +544,7 @@ export default {
         this.pic33_img = img.srcImageUrl
       }
       if (filte.ret == '-1') {
-        this.$Notice.warning({
-          desc: filte.msg
-        })
+        this.$Message.warning(filte.msg)
       }
     },
     handleSuccess(filte) {
@@ -620,16 +576,11 @@ export default {
         return
       }
       if (filte.ret == '-1') {
-        this.$Notice.warning({
-          desc: filte.msg
-        })
+        this.$Message.warning(filte.msg)
       }
     },
     handleFormatError(file) {
-      this.$Notice.warning({
-        title: '文件格式不正确',
-        desc: '文件' + file.name + '格式不正确，请选择图片文件。'
-      })
+      this.$Message.warning('文件' + file.name + '格式不正确，请选择图片文件。')
     },
     defaultList(list) {
       console.log('defaultList', list)
@@ -674,7 +625,7 @@ export default {
       // })
     },
     handleError(event, file) {
-      this.$Notice.error({
+      this.$Message.error({
         title: '文件上传失败',
         desc: '文件' + file.name + '上传失败。'
       })
@@ -720,10 +671,7 @@ export default {
       const reg = /^(http:\/\/|https:\/\/)/
       let currLen = this.getByteLen(currStr)
       if (len[0] < currLen) {
-        this.$Notice.warning({
-          title: '温馨提示：',
-          desc: '点击URL字符长度不能大于1024个字符'
-        })
+        this.$Message.warning('点击URL字符长度不能大于1024个字符')
         this.isUrlErr = true
       } else {
         this.isUrlErr = false
@@ -731,10 +679,7 @@ export default {
       if (reg.test(currStr)) {
         this.isUrlErr = false
       } else {
-        this.$Notice.warning({
-          title: '温馨提示：',
-          desc: 'URL必须以http或https开头'
-        });
+        this.$Message.warning('URL必须以http或https开头');
         this.isUrlErr = true
       }
       this.creativeSetting.clickMonitorUrl = currStr
@@ -745,10 +690,7 @@ export default {
       const reg = /^(http:\/\/|https:\/\/)/
       let currLen = this.getByteLen(currStr)
       if (len[0] < currLen) {
-        this.$Notice.warning({
-          title: '温馨提示：',
-          desc: '点击URL字符长度不能大于1024个字符'
-        })
+        this.$Message.warning('点击URL字符长度不能大于1024个字符')
         this.isUrlErr = true
       } else {
         this.isUrlErr = false
@@ -756,10 +698,7 @@ export default {
       if (reg.test(currStr)) {
         this.isUrlErr = false
       } else {
-        this.$Notice.warning({
-          title: '温馨提示：',
-          desc: 'URL必须以http或https开头'
-        });
+        this.$Message.warning('URL必须以http或https开头');
         this.isUrlErr = true
       }
       this.fieldSetting.scheme_url = currStr
@@ -769,16 +708,10 @@ export default {
       const len = [1, 16]
       let currLen = this.getByteLen(currStr)
       if (len[0] > currLen) {
-        this.$Notice.warning({
-          title: '温馨提示：',
-          desc: '推广来源字符长度不能低于1个字符'
-        })
+        this.$Message.warning('推广来源字符长度不能低于1个字符')
         this.isSourceErr = true
       } else if (len[1] < this.getByteLen(currStr)) {
-        this.$Notice.warning({
-          title: '温馨提示：',
-          desc: '推广来源字符长度不能大于16个字符'
-        })
+        this.$Message.warning('推广来源字符长度不能大于16个字符')
         this.isSourceErr = true
       } else {
         this.isSourceErr = false
@@ -789,17 +722,27 @@ export default {
       const len = [10, 70]
       let currLen = this.getByteLen(currStr)
       if (len[0] > currLen) {
-        this.$Notice.warning({
-          title: '温馨提示：',
-          desc: '标题字符长度不能低于10个字符'
-        })
+        this.$Message.warning('标题字符长度不能低于10个字符')
         this.isTitleErr = true
       } else if (len[1] < this.getByteLen(currStr)) {
         this.isTitleErr = true
       } else {
         this.isTitleErr = false
       }
-      this.fieldSetting.title = currStr
+      
+      if (this.packageWord.packageName !== '') {
+        if (currStr.indexOf(this.packageWord.packageName) > -1) {
+          this.fieldSetting.title = currStr
+          const reg = this.fieldSetting.title.split(this.packageWord.packageName)
+          this.viewTitle = reg[0] + this.packageWord.defaultWord + reg[1]
+        } else {
+          this.packageWord.packageName = ''
+          this.packageWord.defaultWord = ''
+          this.packageWord.isDisable = false
+        }
+      } else {
+        this.fieldSetting.title = this.viewTitle = currStr
+      }
     },
     handleAppName(currStr) {
       console.log('handleAppName', currStr)
@@ -1003,7 +946,6 @@ export default {
             if (res.data.length < 1) {
               location.reload()
             }
-            console.log('广告样式列表===== getCreativeTemplates', res.data)
             this.creativeTemplates = res.data
             this.creativeSetting.creativeTemplate_id = res.data[0].creativeTemplateId
 
@@ -1218,6 +1160,8 @@ export default {
     this.getCampaignNameList()
     this.getAdgroupNameList()
   },
-  components: {}
+  components: {
+    wordPackages
+  }
 }
 </script>

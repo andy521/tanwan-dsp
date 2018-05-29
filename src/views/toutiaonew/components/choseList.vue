@@ -88,7 +88,8 @@ export default {
         getCampaigns() {
             Axios.post('api.php', {
                 action: 'ttAdPut',
-                opt: 'getCampaigns'
+                opt: 'getCampaigns',
+                account_id:this.account_id
             }).then((res) => {
                 if (res.ret === 1) {
                     this.campaigns_list = res.data;

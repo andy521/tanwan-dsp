@@ -248,7 +248,7 @@ export default {
       const tableColumnList = [
         {
           type: 'selection',
-          width: 56,
+          width: 60,
           key: ''
         },
         {
@@ -261,20 +261,6 @@ export default {
             } else {
               let value = params.row.adgroup_name
               return [
-                h('span', {
-                  class: 'name_txt',
-                  on: {
-                    click: () => {
-                      const query = {
-                        id: params.row.id
-                      }
-                      this.$router.push({
-                        name: 'bd_creative',
-                        query: query
-                      })
-                    }
-                  }
-                }, params.row.adgroup_name),
                 h('i-button', {
                   props: {
                     icon: 'edit',

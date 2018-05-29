@@ -32,12 +32,7 @@
 
                 </div>
                 <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
-                    <Checkbox label="impression">曝光</Checkbox>
-                    <Checkbox label="click">点击数</Checkbox>
-                    <Checkbox label="ctr">点击率</Checkbox>
-                    <Checkbox label="cpm">ecpm</Checkbox>
-                    <Checkbox label="activation">注册设备数</Checkbox>
-                    <Checkbox label="reg_cost">注册成本</Checkbox>
+                    <Checkbox v-for="conf of viewPoptiConfig" :key="conf.key" :label="conf.key">{{conf.name}}</Checkbox>
                 </CheckboxGroup>
                 <div class="margin-top-20">
                     <Button type="ghost" @click="set_user_memo">保存操作</Button>
@@ -48,22 +43,17 @@
 </template>
 <script>
 import Axios from "@/api/index";
+import viewPoptiConfig from "@/utils/viewPoptiConfig.json";
 export default {
     name: "viewPopti",
     props: ["action", "opt", "check"],
     data() {
         return {
+            viewPoptiConfig: viewPoptiConfig,
             indeterminate: true,
             checkAll: false,
             checkAllGroup: [], //默认选中
-            checkAllGroups: [
-                "impression",
-                "click",
-                "ctr",
-                "cpm",
-                "activation",
-                "reg_cost"
-            ]
+            checkAllGroups: this.getcheckAllGroup()
         };
     },
     mounted() {
@@ -89,6 +79,13 @@ export default {
             });
     },
     methods: {
+        getcheckAllGroup() {
+            const ret = []
+            for(let key in viewPoptiConfig) {
+                ret.push(key)
+            }
+            return ret
+        },
         //保存自定义指标
         set_user_memo() {
             if (this.checkAllGroup.length == "0") {
@@ -103,9 +100,7 @@ export default {
                 memo: this.checkAllGroup.join(",")
             }).then(res => {
                 if (res.ret == 1) {
-                    const poptip = this.getPoptip().querySelector(
-                        ".ivu-poptip-popper"
-                    );
+                    const poptip = this.getPoptip().querySelector(".ivu-poptip-popper");
                     poptip.style.display = "none";
                     this.$Message.info(res.msg);
                 }

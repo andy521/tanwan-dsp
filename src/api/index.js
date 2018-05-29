@@ -72,7 +72,7 @@ Axios.interceptors.response.use(
 export default {
     get(url, opt) {
         return new Promise((resolve, reject) => {
-            let param = Object.assign({ 'sessionid': util.getItem('sessionid') }, opt);
+            let param = Object.assign({ 'sessionid': util.getItem('sessionid') , 'lastPage' : router.currentRoute.name }, opt);
             Axios({
                 method: 'get',
                 url,
@@ -91,7 +91,7 @@ export default {
     },
     post(url, opt) {
         return new Promise((resolve, reject) => {
-            let param = Object.assign({ 'sessionid': util.getItem('sessionid') }, opt);
+            let param = Object.assign({ 'sessionid': util.getItem('sessionid') , 'lastPage' : router.currentRoute.name }, opt);
             Axios({
                 method: 'post',
                 url,
