@@ -186,12 +186,12 @@
                     };
                 }
                 //console.log(postParams);
-                Axios.post('get.php?action=sys&opt=logs',postParams)
+                Axios.post('api.php?action=sys&opt=logs',postParams)
                 .then(
                     res => {
                         //console.log(res);
                         if (res.ret == 1) {
-                            this.recordTotalNumber = res.data.searchArr.totalCount;
+                            this.recordTotalNumber = parseInt(res.data.searchArr.totalCount);
                             this.page = res.data.searchArr.pageNum;
                             this.pageSize = parseInt(res.data.searchArr.numPerPage);
                             this.searchUserCondition.date = [res.data.searchArr.sdate,res.data.searchArr.edate];

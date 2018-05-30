@@ -58,10 +58,7 @@ export default {
                 this.$Message.info("请选择帐号");
                 return;
             }
-            this.$router.push({
-                name: "ttcampaign",
-                query: { account_id: this.account_id }
-            });
+            this.$emit("on-change", this.account_id);
             this.accountModal = false;
         }
     }

@@ -28,7 +28,7 @@
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
-                <new-edit title="新建广告组"></new-edit>
+                <new-edit title="新建广告组" @on-change="add"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -197,6 +197,13 @@ export default {
         changeDate(e) {
             this.DateDomain = e;
             this.getCampaignsList();
+        },
+        //新增
+        add(account_id) {
+            this.$router.push({
+                name: "ttcreative",
+                query: { account_id: account_id }
+            });
         },
         //修改状态
         editStatus() {
@@ -548,7 +555,11 @@ export default {
                                         this.$router.push({
                                             name: "ttcreative",
                                             query: {
-                                                adcreative_id: params.row.adcreative_id
+                                                account_id: params.row.account_id,
+                                                adgroup_id: params.row.adgroup_id,
+                                                adcreative_id: params.row.adcreative_id,
+                                                landing_type: params.row.landing_type,
+                                                id: params.row.id
                                             }
                                         });
                                     }
