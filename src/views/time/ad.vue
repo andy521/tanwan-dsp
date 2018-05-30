@@ -1,6 +1,4 @@
 <style >
-@import "../../styles/common.less";
-@import "../../styles/table.less";
 .sel {
     width: 220px;
 }
@@ -95,7 +93,7 @@
                 <Col span="6" style="text-align: right;">
                 <Button type="ghost" icon="log-in" @click="tologin">登陆</Button>
                 <Button type="ghost" icon="ios-copy" @click="copyAd">复制广告</Button>
-                <new-edit title="新建广告"></new-edit>
+                <selectAccount title="新建广告" @on-change="add" mediaType="1"></selectAccount>
                 </Col>
             </Row>
         </Card>
@@ -204,13 +202,13 @@ import viewPopti from "./components/viewPopti.vue";
 import searchTree from "@/components/select-tree/searchTree.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import creativity from "./components/creativity.vue";
-import newEdit from "./components/newEdit.vue";
+import selectAccount from "@/components/select-account/index.vue";
 export default {
     components: {
         viewPopti,
         searchTree,
         selectAuthor,
-        newEdit
+        selectAccount
     },
     data() {
         return {
@@ -1033,6 +1031,13 @@ export default {
             });
             this.taCheckitem = it;
             this.taCheckids = ids;
+        },
+        //新增
+        add(account_id) {
+            this.$router.push({
+                name: "newad",
+                query: { account_id: account_id }
+            });
         },
         //排序
         sortchange(column) {

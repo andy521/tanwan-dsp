@@ -28,7 +28,7 @@
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
-                <new-edit title="新建广告组"></new-edit>
+                <selectAccount title="新建创意" @on-change="add" mediaType="4"></selectAccount>
                 </Col>
             </Row>
         </Card>
@@ -101,7 +101,7 @@
 <script>
 import Axios from "@/api/index";
 import viewTip from "../components/viewPopti.vue";
-import newEdit from "../components/newEdit.vue";
+import selectAccount from "@/components/select-account/index.vue";
 import {
     DateShortcuts,
     formatDate,
@@ -118,7 +118,7 @@ export default {
         viewTip,
         searchTree,
         campaignEcharts,
-        newEdit,
+        selectAccount,
         selectAuthor,
         createidea
     },
@@ -197,6 +197,13 @@ export default {
         changeDate(e) {
             this.DateDomain = e;
             this.getCampaignsList();
+        },
+        //新增
+        add(account_id) {
+            this.$router.push({
+                name: "ttcreative",
+                query: { account_id: account_id }
+            });
         },
         //修改状态
         editStatus() {

@@ -170,7 +170,7 @@
                                                     <div class="alt-upload" :class="item.imgUrl? 'alt-upload1':''">
                                                         <div class="margin-top-10">
                                                             <!-- 上传图片 -->
-                                                            <upload-img  :imagemode="it.value" @on-change="getimgid" :ind="ind" :index="index" :size="it.size" :width="it.width" :height="it.height"></upload-img>
+                                                            <upload-img :imagemode="it.value" @on-change="getimgid" :ind="ind" :index="index" :size="it.size" :width="it.width" :height="it.height"></upload-img>
                                                         </div>
                                                         <p class="margin-top-10">{{item.desc}}</p>
                                                     </div>
@@ -297,7 +297,7 @@
         <Card dis-hover class="margin-top-10">
             <div class="newtt">
                 <Button type="primary" size="large" @click="submitCreative()">
-                    <span  v-if="this.adcreative_id" >修改创意</span>
+                    <span v-if="this.adcreative_id">修改创意</span>
                     <span v-else>新增创意</span>
                 </Button>
             </div>
@@ -431,8 +431,9 @@ export default {
         };
     },
     mounted() {
-        this.getCreatives();
-        if (!this.adcreative_id) {
+        if (this.adcreative_id) {
+            this.getCreatives();
+        } else {
             this.getAdgroups();
         }
     },
@@ -592,11 +593,16 @@ export default {
                 }
             })
 
+            if (param.title.length < 6 || param.title.length > 25) {
+                this.$Message.info("创意标题6-25个字符");
+                return;
+            }
+
 
             if (this.adcreative_id) {
                 param.opt = "judgeCreative";
                 param.adcreative_id = this.adcreative_id;
-                param.modify_time=this.modify_time
+                param.modify_time = this.modify_time
                 Axios.post("api.php", param).then(res => {
                     if (res.ret == 1) {
                         this.$router.push({

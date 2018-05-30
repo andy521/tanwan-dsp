@@ -37,7 +37,7 @@
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
-                <new-edit title="新建广告计划"></new-edit>
+                <selectAccount title="新建广告计划" @on-change="add" mediaType="4"></selectAccount>
                 </Col>
             </Row>
         </Card>
@@ -105,7 +105,7 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import newEdit from "../components/newEdit.vue";
+import selectAccount from "@/components/select-account/index.vue";
 import viewTip from "../components/viewPopti.vue";
 import {
     DateShortcuts,
@@ -119,7 +119,7 @@ import selectAuthor from "@/components/select-author/index.vue";
 import toutiaoConfig from '@/utils/toutiaoConfig.json';
 export default {
     components: {
-        newEdit,
+        selectAccount,
         viewTip,
         searchTree,
         campaignEcharts,
@@ -128,7 +128,7 @@ export default {
     data() {
         return {
             toutiaoConfig: toutiaoConfig,
-            campaign_id:this.$route.query.campaign_id,
+            campaign_id: this.$route.query.campaign_id,
             height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
@@ -201,6 +201,13 @@ export default {
             this.DateDomain = e;
             this.getCampaignsList();
         },
+        //新增
+        add(account_id) {
+            this.$router.push({
+                name: "ttcampaign",
+                query: { account_id: account_id }
+            });
+        },
         //修改状态
         editStatus() {
             Axios.post("api.php", {
@@ -232,7 +239,7 @@ export default {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "searchAdgroups",
-                campaign_id:this.campaign_id,
+                campaign_id: this.campaign_id,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -781,7 +788,7 @@ export default {
                                                     adgroup_id: params.row.adgroup_id,
                                                     campaign_id: params.row.campaign_id,
                                                     targeting_id: params.row.targeting_id,
-                                                    landing_type: params.row.landing_type                                                  
+                                                    landing_type: params.row.landing_type
                                                 }
                                             });
                                         }
