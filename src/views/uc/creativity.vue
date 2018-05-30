@@ -204,6 +204,7 @@ export default {
             creativeTemplate_id: "",
             //选中的ID
             checkId: [],
+            account_ids: [], // 用于批量权限控制的id
             author: []
         };
     },
@@ -292,7 +293,8 @@ export default {
             }
             let param = {
                 ids: this.checkId,
-                paused: this.setpaused
+                paused: this.setpaused,
+                account_ids: this.account_ids
             };
             this.updatePaused(param);
         },
@@ -318,10 +320,13 @@ export default {
                 this.operating = false;
             }
             let ids = [];
+            const account_ids = []
             row.forEach(item => {
                 ids.push(item.id);
+                account_ids.push(item.account_id)
             });
             this.checkId = ids;
+            this.account_ids = account_ids
         },
         setFilter() {
             this.filterLoading = true;
@@ -452,14 +457,12 @@ export default {
             let ids = this.checkId;
             this.deleteData(ids);
         },
-        deleteData(id) {
+        deleteData(ids) {
             let param = {
                 action: "ucAdPut",
                 opt: "deleteCreative",
-                do: "del",
-                ids: id
+                ids: ids
             };
-            console.log(param);
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == 1) {
@@ -514,7 +517,8 @@ export default {
                                             let paused = value ? "0" : "1";
                                             let param = {
                                                 ids: params.row.id.split(","),
-                                                paused: paused
+                                                paused: paused,
+                                                account_ids: params.row.account_id.split(",")
                                             };
                                             this.updatePaused(param);
                                         }

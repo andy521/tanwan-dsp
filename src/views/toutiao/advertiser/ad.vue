@@ -142,6 +142,7 @@ export default {
             total_page: 1, //总页数
             loading: false,
             taCheckids: [], //选中ids
+            account_ids: [], // 选中的账号id
             options: DateShortcuts, //日期辅助功能
             status: "", //状态
             landing_type: "", //推广目的
@@ -173,10 +174,13 @@ export default {
         //获取选中的id
         taCheck(row) {
             let ids = [];
+            let account_ids = [];
             row.forEach(item => {
                 ids.push(item.id);
+                account_ids.push(item.account_id)
             });
             this.taCheckids = ids;
+            this.account_ids = account_ids
         },
         //选择负责人
         authorChange(data) {
@@ -214,6 +218,7 @@ export default {
                 action: "ttAdPut",
                 opt: "updateAdgroupStatus",
                 ids: this.taCheckids,
+                account_ids: this.account_ids,
                 opt_status: this.edit_status
             })
                 .then(res => {
@@ -388,6 +393,7 @@ export default {
                                                 action: "ttAdPut",
                                                 opt: "updateAdgroupStatus",
                                                 ids: params.row.id.split(","),
+                                                account_ids: params.row.account_id.split(","),
                                                 opt_status: value == true ? "enable" : "disable"
                                             }).then(res => {
                                                 if (res.ret == 1) {
@@ -475,6 +481,7 @@ export default {
                                                             opt: "updateAdgroupBudget",
                                                             account_id: params.row.account_id,
                                                             adgroup_id: params.row.adgroup_id,
+                                                            account_ids: params.row.account_id,
                                                             budget: value //预算
                                                         }).then(res => {
                                                             if (
@@ -595,6 +602,7 @@ export default {
                                                     action: "ttAdPut",
                                                     opt: "updateAdgroupBid",
                                                     ids: params.row.id.split(","),
+                                                    account_ids: params.row.account_id.split(","),
                                                     is_stage2bid: is_stage2bid,
                                                     bid: value //预算
                                                 }).then(res => {
@@ -820,6 +828,7 @@ export default {
                                                         action: "ttAdPut",
                                                         opt: "updateAdgroupStatus",
                                                         ids: params.row.id.split(","),
+                                                        account_ids: params.row.account_id.split(","),
                                                         opt_status: "delete"
                                                     }).then(res => {
                                                         if (res.ret == 1) {

@@ -276,6 +276,8 @@ export default {
             campaign_id: "",
             //选中的id
             checkId: [],
+            // 选择的账号id
+            account_ids: [],
             //默认自定义指标选项
             checkAllGroup: [
                 "paused",
@@ -434,10 +436,13 @@ export default {
                 this.operating = false;
             }
             let ids = [];
+            const account_ids = []
             row.forEach(item => {
                 ids.push(item.id);
+                account_ids.push(item.account_id)
             });
             this.checkId = ids;
+            this.account_ids = account_ids
         },
         //排序
         sortchange(column) {
@@ -459,7 +464,8 @@ export default {
             }
             let param = {
                 ids: this.checkId,
-                paused: this.setpaused
+                paused: this.setpaused,
+                account_ids: this.account_ids
             };
             this.updatePaused(param);
         },
@@ -485,15 +491,16 @@ export default {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
-            let ids = this.checkId;
-            this.deleteData(ids);
+            const ids = this.checkId
+            const account_ids = this.account_ids
+            this.deleteData(ids, account_ids);
         },
-        deleteData(id) {
+        deleteData(ids, account_ids) {
             let param = {
                 action: "ucAdPut",
                 opt: "deleteAdgroup",
-                do: "del",
-                ids: id
+                ids: ids,
+                account_ids: account_ids
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -521,7 +528,8 @@ export default {
                 ids: this.checkId,
                 bidStage: 1,
                 operateNum: this.operateNum,
-                percentage: this.percentage
+                percentage: this.percentage,
+                account_ids: this.account_ids
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -598,7 +606,8 @@ export default {
                 action: "ucAdPut",
                 opt: "updateAdgroupNetworkEnv",
                 ids: this.checkId,
-                networkEnv: this.wifi
+                networkEnv: this.wifi,
+                account_ids: this.account_ids
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -626,7 +635,8 @@ export default {
                 opt: "updateAdgroupRegion",
                 ids: this.checkId,
                 allRegion: this.allRegion,
-                regions: this.regions
+                regions: this.regions,
+                account_ids: this.account_ids
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -829,25 +839,66 @@ export default {
                     key: "adgroup_name",
                     width: 200,
                     render: (h, params) => {
-                        return h(
-                            "span",
-                            {
-                                class: "name",
+                        let value = params.row.adgroup_name
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "name",
+                                    on: {
+                                        click: () => {
+                                            let query = {
+                                                adgroup_id: params.row.adgroup_id,
+                                                campaign_id: params.row.campaign_id
+                                            };
+                                            this.$router.push({
+                                                name: "uc_creativity",
+                                                query: query
+                                            });
+                                        }
+                                    }
+                                }, value),
+                            h('i-button', {
+                                props: {
+                                    icon: 'edit',
+                                    type: 'text',
+                                    size: 'small'
+                                },
+                                class: ['edit'],
                                 on: {
                                     click: () => {
-                                        let query = {
-                                            adgroup_id: params.row.adgroup_id,
-                                            campaign_id: params.row.campaign_id
-                                        };
-                                        this.$router.push({
-                                            name: "uc_creativity",
-                                            query: query
-                                        });
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return h('i-input', {
+                                                    props: {
+                                                        value: value,
+                                                        autofocus: true,
+                                                        placeholder: '请输入推广计划名称'
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            value = val
+                                                        }
+                                                    }
+                                                })
+                                            },
+                                            onOk: () => {
+                                                if (value === '') {
+                                                    return this.$Message.info('请输入修改信息')
+                                                }
+                                                Axios.post('api.php', {
+                                                    action: 'ucAdPut',
+                                                    opt: 'updateAdgroupName',                                            
+                                                    account_id: params.row.account_id,
+                                                    adgroup_id: params.row.adgroup_id,
+                                                    adgroup_name: value
+                                                })
+                                            }
+                                        })
                                     }
                                 }
-                            },
-                            params.row.adgroup_name
-                        );
+                            })
+                        ]
                     }
                 },
                 paused: {
@@ -873,7 +924,8 @@ export default {
                                             let paused = value ? "0" : "1";
                                             let param = {
                                                 ids: params.row.id.split(","),
-                                                paused: paused
+                                                paused: paused,
+                                                account_ids: [params.row.account_id]
                                             };
                                             this.updatePaused(param);
                                         }
@@ -1244,12 +1296,13 @@ export default {
                                     class: "del_link",
                                     on: {
                                         click: value => {
-                                            let ids = params.row.id.split(",");
+                                            const ids = params.row.id.split(",")
+                                            const account_ids = params.row.account_id.split(",")
                                             this.$Modal.confirm({
                                                 title: "操作提示",
                                                 content: "<p>确认删除</p>",
                                                 onOk: () => {
-                                                    this.deleteData(ids);
+                                                    this.deleteData(ids, account_ids)
                                                 },
                                                 onCancel: () => {}
                                             });
