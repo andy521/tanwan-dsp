@@ -2,7 +2,7 @@ import Axios from "@/api/index";
 
 const newad = {
     state: {
-        step: [0, 0], //导行定位
+        //step: [0, 0], //导行定位
         adgroup_detail: "", //定向详情
 
         ads_config: [], //所有状态

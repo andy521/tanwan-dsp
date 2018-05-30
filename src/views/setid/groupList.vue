@@ -15,7 +15,7 @@
         </Row>
         <Row v-show="showGroupListTable">
             <Col span="24">
-                <Table border :columns="tableColumns" :data="tableData" size="small"></Table>
+                <Table border :columns="tableColumns" :data="tableData" size="small" style="width:800px"></Table>
             </Col>
         </Row>
         <Row v-show="showPermissionSetting">
@@ -55,13 +55,16 @@
                 </Tabs>
             </Col>
         </Row>
-        <Modal v-model="editGroupDialog" :title="editGroupInfo.title" ok-text="修改" cancel-text="取消" @on-ok="editGroup" width="400">
+        <Modal v-model="editGroupDialog" :title="editGroupInfo.title" ok-text="修改" cancel-text="取消" @on-ok="editGroup" width="410">
             <Form ref="editGroupInfo" :model="editGroupInfo" :rules="editGroupRule" label-position="right" :label-width="110" style="width:340px">
                 <Form-item label="权限组名称：" prop="groupName">
                     <Input v-model="editGroupInfo.groupName" placeholder="请输入"></Input>
                 </Form-item>
                 <Form-item label="权限组描述：" prop="groupDetail">
                     <Input v-model="editGroupInfo.groupDetail" placeholder="请输入"></Input>
+                </Form-item>
+                <Form-item label="包含管理权限组：" prop="groupContain">
+                    <Input v-model="editGroupInfo.groupContain" placeholder="填写权限组ID，多个用半角逗号隔开"></Input>
                 </Form-item>
             </Form>
         </Modal>
@@ -91,8 +94,17 @@
                 //表格属性
                 tableColumns: [
                     {
+                        title: '权限组ID',
+                        key: 'groupID',
+                        width: 90
+                    },
+                    {
                         title: '权限组名称',
                         key: 'groupName'
+                    },
+                    {
+                        title: '包含管理权限组',
+                        key: 'groupContain'
                     },
                     {
                         title: '权限组描述',
@@ -189,7 +201,8 @@
                     title: '',
                     groupID: '',
                     groupName: '',
-                    groupDetail: ''
+                    groupDetail: '',
+                    groupContain: ''
                 },
                 editGroupRule: {
                     groupName: [
@@ -221,6 +234,7 @@
                 this.editGroupInfo.groupID = '';
                 this.editGroupInfo.groupName = '';
                 this.editGroupInfo.groupDetail = '';
+                this.editGroupInfo.groupContain = '';
             },
             //提交编辑权限组
             editGroup () {
@@ -231,7 +245,8 @@
                                 stage: 'edit',
                                 pmid: this.editGroupInfo.groupID,
                                 name: this.editGroupInfo.groupName,
-                                memo: this.editGroupInfo.groupDetail
+                                memo: this.editGroupInfo.groupDetail,
+                                extgid: this.editGroupInfo.groupContain
                             }).then(
                                 res => {
                                     if (res.ret == 1) {
@@ -251,6 +266,7 @@
                                 stage: 'add',
                                 name: this.editGroupInfo.groupName,
                                 memo: this.editGroupInfo.groupDetail,
+                                extgid: this.editGroupInfo.groupContain
                             }).then(
                                 res => {
                                     if (res.ret == 1) {
@@ -283,6 +299,7 @@
                             this.editGroupInfo.groupID = gid;
                             this.editGroupInfo.groupName = res.data.pdata.name;
                             this.editGroupInfo.groupDetail = res.data.pdata.memo;
+                            this.editGroupInfo.groupContain = res.data.pdata.exceed;
                             this.editGroupDialog = true;
                         } else {
                             this.$Message.error(res.msg);
@@ -331,7 +348,8 @@
                                 let groupInfo = {
                                     groupID: res.data.pmData[i].pmid,
                                     groupName: res.data.pmData[i].name,
-                                    groupDetail: res.data.pmData[i].memo
+                                    groupDetail: res.data.pmData[i].memo,
+                                    groupContain: res.data.pmData[i].extgname
                                 };
                                 this.tableData.push(groupInfo);
                             }

@@ -37,7 +37,7 @@
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
-                <new-edit title="新建广告计划"></new-edit>
+                <selectAccount title="新建广告计划" @on-change="add" mediaType="4"></selectAccount>
                 </Col>
             </Row>
         </Card>
@@ -105,7 +105,7 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import newEdit from "../components/newEdit.vue";
+import selectAccount from "@/components/select-account/index.vue";
 import viewTip from "../components/viewPopti.vue";
 import {
     DateShortcuts,
@@ -119,7 +119,7 @@ import selectAuthor from "@/components/select-author/index.vue";
 import toutiaoConfig from '@/utils/toutiaoConfig.json';
 export default {
     components: {
-        newEdit,
+        selectAccount,
         viewTip,
         searchTree,
         campaignEcharts,
@@ -128,7 +128,7 @@ export default {
     data() {
         return {
             toutiaoConfig: toutiaoConfig,
-            campaign_id:this.$route.query.campaign_id,
+            campaign_id: this.$route.query.campaign_id,
             height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
@@ -142,6 +142,7 @@ export default {
             total_page: 1, //总页数
             loading: false,
             taCheckids: [], //选中ids
+            account_ids: [], // 选中的账号id
             options: DateShortcuts, //日期辅助功能
             status: "", //状态
             landing_type: "", //推广目的
@@ -173,10 +174,13 @@ export default {
         //获取选中的id
         taCheck(row) {
             let ids = [];
+            let account_ids = [];
             row.forEach(item => {
                 ids.push(item.id);
+                account_ids.push(item.account_id)
             });
             this.taCheckids = ids;
+            this.account_ids = account_ids
         },
         //选择负责人
         authorChange(data) {
@@ -201,12 +205,20 @@ export default {
             this.DateDomain = e;
             this.getCampaignsList();
         },
+        //新增
+        add(account_id) {
+            this.$router.push({
+                name: "ttcampaign",
+                query: { account_id: account_id }
+            });
+        },
         //修改状态
         editStatus() {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "updateAdgroupStatus",
                 ids: this.taCheckids,
+                account_ids: this.account_ids,
                 opt_status: this.edit_status
             })
                 .then(res => {
@@ -232,7 +244,7 @@ export default {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "searchAdgroups",
-                campaign_id:this.campaign_id,
+                campaign_id: this.campaign_id,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -381,6 +393,7 @@ export default {
                                                 action: "ttAdPut",
                                                 opt: "updateAdgroupStatus",
                                                 ids: params.row.id.split(","),
+                                                account_ids: params.row.account_id.split(","),
                                                 opt_status: value == true ? "enable" : "disable"
                                             }).then(res => {
                                                 if (res.ret == 1) {
@@ -468,6 +481,7 @@ export default {
                                                             opt: "updateAdgroupBudget",
                                                             account_id: params.row.account_id,
                                                             adgroup_id: params.row.adgroup_id,
+                                                            account_ids: params.row.account_id,
                                                             budget: value //预算
                                                         }).then(res => {
                                                             if (
@@ -588,6 +602,7 @@ export default {
                                                     action: "ttAdPut",
                                                     opt: "updateAdgroupBid",
                                                     ids: params.row.id.split(","),
+                                                    account_ids: params.row.account_id.split(","),
                                                     is_stage2bid: is_stage2bid,
                                                     bid: value //预算
                                                 }).then(res => {
@@ -781,7 +796,7 @@ export default {
                                                     adgroup_id: params.row.adgroup_id,
                                                     campaign_id: params.row.campaign_id,
                                                     targeting_id: params.row.targeting_id,
-                                                    landing_type: params.row.landing_type                                                  
+                                                    landing_type: params.row.landing_type
                                                 }
                                             });
                                         }
@@ -813,6 +828,7 @@ export default {
                                                         action: "ttAdPut",
                                                         opt: "updateAdgroupStatus",
                                                         ids: params.row.id.split(","),
+                                                        account_ids: params.row.account_id.split(","),
                                                         opt_status: "delete"
                                                     }).then(res => {
                                                         if (res.ret == 1) {

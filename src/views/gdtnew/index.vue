@@ -124,6 +124,7 @@ export default {
 
             this.product_type = data.product_type;
             this.configured_status = data.configured_status;
+            
         },
         //第二步数据返回
         steptowcallback(targeting_id, product_refs_id, destination_url) {
