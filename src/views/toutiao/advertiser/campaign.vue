@@ -132,6 +132,7 @@ export default {
             total_page: 1, //总页数
             loading: false,
             taCheckids: [], //选中ids
+            account_ids: [], // 选中的账号id
             options: DateShortcuts, //日期辅助功能
             status: "", //状态
             landing_type: "", //推广目的
@@ -163,10 +164,13 @@ export default {
         //获取选中的id
         taCheck(row) {
             let ids = [];
+            let account_ids = []
             row.forEach(item => {
                 ids.push(item.id);
+                account_ids.push(item.account_id)
             });
             this.taCheckids = ids;
+            this.account_ids = account_ids
         },
         //选择负责人
         authorChange(data) {
@@ -205,7 +209,8 @@ export default {
                 action: "ttAdPut",
                 opt: "updateCampaignStatus",
                 ids: this.taCheckids,
-                opt_status: this.edit_status
+                opt_status: this.edit_status,
+                account_ids: this.account_ids
             })
                 .then(res => {
                     if (res.ret == 1) {
@@ -382,6 +387,7 @@ export default {
                                                 action: "ttAdPut",
                                                 opt: "updateCampaignStatus",
                                                 ids: params.row.id.split(","),
+                                                account_ids: params.row.account_id.split(","),
                                                 opt_status: value == true ? "enable" : "disable"
                                             }).then(res => {
                                                 if (res.ret == 1) {
@@ -622,8 +628,9 @@ export default {
                                                     Axios.post("api.php", {
                                                         action: "ttAdPut",
                                                         opt: "updateCampaignStatus",
+                                                        opt_status: "delete",
                                                         ids: params.row.id.split(","),
-                                                        opt_status: "delete"
+                                                        account_ids: params.row.account_id.split(",")
                                                     }).then(res => {
                                                         if (res.ret == 1) {
                                                             this.$Message.info(res.msg);
