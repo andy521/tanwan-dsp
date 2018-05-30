@@ -37,7 +37,7 @@
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
-                <new-edit title="新建广告计划"></new-edit>
+                <new-edit title="新建广告计划" @on-change="add"></new-edit>
                 </Col>
             </Row>
         </Card>
@@ -200,6 +200,13 @@ export default {
         changeDate(e) {
             this.DateDomain = e;
             this.getCampaignsList();
+        },
+         //新增
+        add(account_id) {
+            this.$router.push({
+                name: "ttcampaign",
+                query: { account_id: account_id }
+            });
         },
         //修改状态
         editStatus() {
