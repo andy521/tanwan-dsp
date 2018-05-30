@@ -1,10 +1,5 @@
-<style scoped>
-.new {
-    display: inline-block;
-}
-</style>
 <template>
-    <div class="new">
+    <span>
         <Button type="ghost" icon="android-add" :loading="loading" @click="newsEdit">{{title}}</Button>
         <Modal v-model="accountModal" title="选择新建计划帐号" @on-ok="setAccount" @on-cancel=" accountModal = false">
             <div class="select">
@@ -13,18 +8,13 @@
                 </Select>
             </div>
         </Modal>
-    </div>
+    </span>
 </template>
 <script>
 import Axios from "@/api/index";
 export default {
-    name: "newEdit",
-    props: {
-        title: {
-            type: String,
-            default: ""
-        }
-    },
+    name: "selectAccount",
+    props: ["title", "mediaType"],
     data() {
         return {
             loading: false,
@@ -39,7 +29,7 @@ export default {
             Axios.get("api.php", {
                 action: "api",
                 opt: "getAccount",
-                media_type: 4
+                media_type: this.mediaType
             })
                 .then(res => {
                     this.loading = false;
