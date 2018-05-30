@@ -345,18 +345,26 @@ export default {
                                 class: "name_text",
                                 on: {
                                     click: () => {
-                                        let query = {
-                                            id: params.row.account_id
-                                        };
-                                        if (params.row.media_name == "UC") {
-                                            this.$router.push({
-                                                name: "uc_plan",
-                                                query: query
-                                            });
-                                        } else {
+                                        if (params.row.media_type == "1") {
                                             this.$router.push({
                                                 name: "time_plan",
-                                                query: query
+                                                query: {
+                                                    id: params.row.account_id
+                                                }
+                                            });
+                                        } else if (params.row.media_type == "3") {
+                                            this.$router.push({
+                                                name: "uc_plan",
+                                                query: {
+                                                    id: params.row.account_id
+                                                }
+                                            });
+                                        } else if (params.row.media_type == "4") {
+                                            this.$router.push({
+                                                name: "tt_campaign",
+                                                query: {
+                                                    id: params.row.account_id
+                                                }
                                             });
                                         }
                                     }
