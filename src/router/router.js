@@ -29,12 +29,17 @@ export const loginRouter = {
 
 //新建广告
 export const newAd = {
-    path: '/newad',
-    name: 'newad',
+    path: '/gdtnew',
+    name: 'gdtnew',
     meta: {
-        title: '新建广告'
+        title: '新建广点通广告'
     },
-    component: () => import('@/views/newad/index.vue')
+    component: () => import('@/components/childrouter/childrouter.vue'),
+    children: [
+        { path: 'campaign', title: '新建广点通广告组', name: 'gdtcampaign', component: () => import('@/views/gdtnew/campaign.vue') },
+        { path: 'ad', title: '新建广点通广告计划', name: 'gdtad', component: () => import('@/views/gdtnew/ad.vue') },
+        { path: 'creative', title: '新建广点通创意', name: 'gdtcreative', component: () => import('@/views/gdtnew/creative.vue') },
+    ]
 };
 
 export const ucNew = {

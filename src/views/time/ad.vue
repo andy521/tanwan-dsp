@@ -1035,7 +1035,7 @@ export default {
         //新增
         add(account_id) {
             this.$router.push({
-                name: "newad",
+                name: "gdtcampaign",
                 query: { account_id: account_id }
             });
         },

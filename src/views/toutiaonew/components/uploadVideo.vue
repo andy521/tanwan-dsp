@@ -1,75 +1,66 @@
-<style scoped>
-.filediv {
-  position: relative;
-}
-.file {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-}
-</style>
 <template>
     <div>
-        <Button type="primary" :loading="loading" class="filediv">选择视频<input type="file" accept="video/*" capture="camera" @change="readFile" class="file"></Button>
-
+        <Upload v-show="!loading" :format="['mp4','avi','mkv','flv']" accept="video/*" :show-upload-list="false" :max-size="size" :action="actionUrl" :on-success="handleSuccess" :on-exceeded-size="handleMaxSize" :on-format-error="handleFormatError" :before-upload="handleBeforeUpload" :on-progress="handleProgress" :on-error="handleError" name="video">
+            <Button type="primary" icon="ios-cloud-upload-outline">上传视频</Button>
+        </Upload>
+        <Button type="primary" v-show="loading"  :loading="loading">视频上传中({{percent}}%)</Button>
     </div>
 </template>
 
 <script>
 import Axios from "@/api/index";
+import util from "@/utils/index";
 export default {
     name: "uploadVideo",
     props: ["size", "ind", "index"],
     data() {
         return {
             account_id: this.$route.query.account_id,//账户id
-            loading: false
+            loading: false,//上传图片loading
+            percent: 0,//进度
+            preview_url: "",//预览图片地址
+            actionUrl: "",//action 上传地址
         }
     },
+    mounted() {
+        this.actionUrl =
+            util.baseURL +
+            "api.php?action=ttAdPut&opt=addVideo&account_id=" +
+            this.account_id +
+            "&sessionid=" +
+            util.getItem("sessionid");
+    },
     methods: {
-        //上传视频
-        addVideo(url) {
-            this.loading = true;
-            Axios.post('api.php', {
-                action: 'ttAdPut',
-                opt: 'addVideo',
-                account_id: this.account_id,
-                video: url
-            }).then((res) => {
-                this.loading = false;
-                if (res.ret == 1) {
-                    this.$Message.info("视频上传成功");
-                    this.$emit('on-change', res.data.video_id, res.data.Url, this.ind, this.index);
-                }
-            }).catch((err) => {
-                this.loading = false;
-                console.error('视频上传', err)
-            })
-        },
-        readFile(e) { //上传图片路径
-            var that = this;
-            var tmpFile = e.target.files;
-            for (var i = 0; i < tmpFile.length; i++) {
-                var file = tmpFile[i]
-                if (!/video\/\w+/.test(file.type)) { //判断是否是视频类型
-                    that.$Message.info("视频格式不对");
-                    return false;
-                }
-                var size = file.size / 1024 / 1024;
-                if (size > that.size) {
-                    that.$Message.info("视频超过限制");
-                    return;
-                }
-                var reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function (e) {
-                    that.addVideo(this.result);
-                }
+        //图片上传成功
+        handleSuccess(response, file, fileList) {
+            if (response.ret == 1) {
+                this.$Message.info("视频上传成功");
+                this.$emit("on-change", response.data.video_id, response.data.Url, this.ind, this.index);
+            }
+            if (response.ret == -1) {
+                this.$Message.info(response.msg);
             }
         },
+        handleFormatError(file) {
+            this.$Message.info("文件格式不正确")
+        },
+        handleBeforeUpload(file) {
+            //文件准备上传
+        },
+        handleProgress(event, file) {
+            //文件正在上传
+            this.loading = true;
+            this.percent = parseInt(event.percent);
+            if (event.percent === 100) {
+                this.loading = false;
+            }
+        },
+        handleMaxSize(file) {
+            this.$Message.info("文件太大，不能超过" + this.size + "KB。")
+        },
+        handleError(error, file, fileList) {
+            this.$Message.info("视频上传失败");
+        }
     }
 }
 </script>
