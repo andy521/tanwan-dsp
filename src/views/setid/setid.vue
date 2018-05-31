@@ -1,7 +1,20 @@
+<style scoped>
+.width-250{
+    width: 250px;
+}
+</style>
+
 <template>
     <div class="ad">
         <Card shadow>
-            <Table :columns="columns" :size="tableSize" :data="AdsAccount" stripe></Table>
+            <div>
+                <select-agent @on-change="handleAgent"></select-agent>
+                <select-author @on-change="handleAuthor"></select-author>
+                <select-media @on-change="handleMedia" class="width-250"></select-media>
+                <Input @on-enter="getAdsAccount" v-model="searchVal" placeholder="请输入账号ID或账号名称搜索" class="width-250"></Input>
+                <Button @click="getAdsAccount"><Icon type="ios-search-strong"></Icon> &nbsp;搜索</Button>
+            </div>
+            <Table :columns="columns" :size="tableSize" :data="AdsAccount" stripe class="margin-top-10"></Table>
             <Row class="margin-top-10">
                 <Col span="10"> 表格尺寸
                 <Radio-group v-model="tableSize" type="button">
@@ -31,7 +44,15 @@
 
 <script>
 import Axios from '@/api/index';
+import selectAuthor from '@/components/select-author';
+import selectMedia from '@/components/select-media';
+import selectAgent from '@/components/select-agent';
 export default {
+    components: {
+        selectAuthor,
+        selectMedia,
+        selectAgent
+    },
     data() {
         return {
             uId: '',
@@ -44,6 +65,10 @@ export default {
             tableSize: 'small',
             AdsAthour: [],
             AdsAccount: [],
+            searchVal: '', // 搜索
+            authorList: [], // 刷选负责人
+            mediaList: [], // 刷选media
+            agentList: [], // 刷选agent
             columns: [{
                 title: 'ID',
                 key: 'id'
@@ -275,6 +300,21 @@ export default {
         this.getAdsAthour();
     },
     methods: {
+        // 媒体数据
+        handleMedia(mediaTypeList) {
+            this.mediaList = mediaTypeList
+            this.getAdsAccount()
+        },
+        // 代理商数据
+        handleAgent(agentList) {
+            this.agentList = agentList
+            this.getAdsAccount()            
+        },
+        // 负责人数据
+        handleAuthor(authorList) {
+            this.authorList = authorList
+            this.getAdsAccount()            
+        },
         //获取账号
         getAdsAccount(page) {
             if (page === undefined) {
@@ -287,7 +327,11 @@ export default {
                 action: 'sys',
                 opt: 'getAdsAccount',
                 page: this.page,
-                page_size: this.page_size
+                page_size: this.page_size,
+                authors: this.authorList,
+                agents: this.agentList,
+                media_types: this.mediaList,
+                word: this.searchVal
             }).then(res => {
                 if (res.ret == 1) {
                     this.AdsAccount = res.data.list;
