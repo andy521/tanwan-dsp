@@ -29,7 +29,7 @@
         <Card shadow class="margin-top-10">
             <Row>
                 <Col span="20">
-                <!-- <Button type="primary">返回</Button> -->
+                <Button type="primary" @click="back" v-if="campaign_id">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input class="inp" placeholder="请输入广告计划ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
@@ -37,7 +37,7 @@
                 </Col>
                 <Col span="4" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
-                <new-edit title="新建广告计划" @on-change="add"></new-edit>
+                <selectAccount title="新建广告计划" @on-change="add" mediaType="4"></selectAccount>
                 </Col>
             </Row>
         </Card>
@@ -105,7 +105,7 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import newEdit from "../components/newEdit.vue";
+import selectAccount from "@/components/select-account/index.vue";
 import viewTip from "../components/viewPopti.vue";
 import {
     DateShortcuts,
@@ -119,7 +119,7 @@ import selectAuthor from "@/components/select-author/index.vue";
 import toutiaoConfig from '@/utils/toutiaoConfig.json';
 export default {
     components: {
-        newEdit,
+        selectAccount,
         viewTip,
         searchTree,
         campaignEcharts,
@@ -128,7 +128,7 @@ export default {
     data() {
         return {
             toutiaoConfig: toutiaoConfig,
-            campaign_id:this.$route.query.campaign_id,
+            campaign_id: this.$route.query.campaign_id,
             height: document.body.clientHeight - 300,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
@@ -205,7 +205,7 @@ export default {
             this.DateDomain = e;
             this.getCampaignsList();
         },
-         //新增
+        //新增
         add(account_id) {
             this.$router.push({
                 name: "ttcampaign",
@@ -244,7 +244,7 @@ export default {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "searchAdgroups",
-                campaign_id:this.campaign_id,
+                campaign_id: this.campaign_id,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -256,24 +256,26 @@ export default {
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 page: this.page, //页码
                 page_size: this.page_size //每页数量
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        console.log(res.data.list);
-                        //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.push(res.data.curr_page_total);
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
-                        this.newAdList = res.data.list;
-                    }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("今日头条广告组" + err);
-                });
-        }
+            }).then(res => {
+                this.loading = false;
+                if (res.ret == 1) {
+                    console.log(res.data.list);
+                    //添加统计
+                    res.data.curr_page_total._disabled = true;
+                    res.data.list.push(res.data.curr_page_total);
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                    this.newAdList = res.data.list;
+                }
+            }).catch(err => {
+                this.loading = false;
+                console.log("今日头条广告组" + err);
+            });
+        },
+        //返回
+        back() {
+            this.$router.go(-1);
+        },
     },
     beforeMount() { },
     computed: {
@@ -288,7 +290,7 @@ export default {
                 {
                     title: "广告计划",
                     key: "adgroup_name",
-                    width: 250,
+                    width: 280,
                     render: (h, params) => {
                         if (params.row._disabled) {
                             return h("span", "本页统计");
@@ -366,8 +368,8 @@ export default {
                 },
                 {
                     title: "账户名",
-                    key: "account_id",
-                    width: 120
+                    key: "account_name",
+                    width: 300
                 },
                 {
                     title: "开关/状态",
@@ -796,7 +798,7 @@ export default {
                                                     adgroup_id: params.row.adgroup_id,
                                                     campaign_id: params.row.campaign_id,
                                                     targeting_id: params.row.targeting_id,
-                                                    landing_type: params.row.landing_type                                                  
+                                                    landing_type: params.row.landing_type
                                                 }
                                             });
                                         }

@@ -1,198 +1,198 @@
 <style scoped>
 ul,
 li {
-    list-style: none;
+  list-style: none;
 }
 .upload {
-    color: #a7abb1;
-    position: relative;
-    line-height: 1.8;
+  color: #a7abb1;
+  position: relative;
+  line-height: 1.8;
 }
 .size {
-    font-weight: 900;
-    font-size: 22px;
+  font-weight: 900;
+  font-size: 22px;
 }
 .way {
-    font-weight: 900;
-    font-size: 14px;
-    line-height: 2;
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 2;
 }
 
 .txtbox {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    transform: translateY(-50%);
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
 }
 .imgbox {
-    position: absolute;
-    display: block;
-    top: 0;
-    left: 0;
-    width: 100%;
-    bottom: 0;
-    z-index: 10;
-    overflow: hidden;
-    object-fit: scale-down;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  z-index: 10;
+  overflow: hidden;
+  object-fit: scale-down;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 .imgbox .ts {
-    display: none;
-    opacity: 0;
-    background: rgba(0, 0, 0, 0.5);
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    text-align: center;
-    color: #fff;
-    line-height: 1.6;
+  display: none;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  text-align: center;
+  color: #fff;
+  line-height: 1.6;
 }
 .imgbox:hover .ts {
-    display: block;
-    opacity: 1;
+  display: block;
+  opacity: 1;
 }
 .imgbox .ts p {
-    width: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+  width: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .upload_div {
-    position: relative;
+  position: relative;
 }
 .upload_div:hover .gallery_area {
-    display: block;
+  display: block;
 }
 .gallery_area {
-    display: none;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    line-height: 40px;
-    font-weight: 400;
-    font-size: 14px;
-    z-index: 10;
-    border: 1px solid #dbdee4;
-    text-align: center;
-    background: #fff;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
-    color: #a7abb1;
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 40px;
+  font-weight: 400;
+  font-size: 14px;
+  z-index: 10;
+  border: 1px solid #dbdee4;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+  color: #a7abb1;
 }
 .gallery_link {
-    font-size: 16px;
-    cursor: pointer;
+  font-size: 16px;
+  cursor: pointer;
 }
 .gallery_link:hover {
-    background-color: #f5f6f8;
+  background-color: #f5f6f8;
 }
 .created {
-    margin: 10px 0 10px 15px;
-    overflow: hidden;
+  margin: 10px 0 10px 15px;
+  overflow: hidden;
 }
 .created li {
-    height: 133px;
-    line-height: 128px;
-    width: 176px;
-    background: #f5f6f8;
-    cursor: pointer;
-    border: 2px solid #fff;
-    float: left;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    position: relative;
-    text-align: center;
-    vertical-align: middle;
+  height: 133px;
+  line-height: 128px;
+  width: 176px;
+  background: #f5f6f8;
+  cursor: pointer;
+  border: 2px solid #fff;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
 }
 .round_select {
-    display: none;
-    height: 26px;
-    width: 26px;
-    position: absolute;
-    z-index: 10;
-    top: 5px;
-    right: 5px;
-    border: 2px solid #fff;
-    border-radius: 13px;
-    background: #008fe4;
-    cursor: pointer;
+  display: none;
+  height: 26px;
+  width: 26px;
+  position: absolute;
+  z-index: 10;
+  top: 5px;
+  right: 5px;
+  border: 2px solid #fff;
+  border-radius: 13px;
+  background: #008fe4;
+  cursor: pointer;
 }
 .created .ivu-icon {
-    float: left;
-    color: #fff;
-    font-size: 14px;
-    margin: 4px 0 0 6px;
+  float: left;
+  color: #fff;
+  font-size: 14px;
+  margin: 4px 0 0 6px;
 }
 .created li.selected {
-    border-color: #008fe4;
+  border-color: #008fe4;
 }
 .created li.selected .round_select {
-    display: block;
+  display: block;
 }
 .created li img {
-    max-width: 172px;
-    max-height: 129px;
+  max-width: 172px;
+  max-height: 129px;
 }
 .created_img {
-    height: 100%;
+  height: 100%;
 }
 .created_img img,
 .select_img .simg img {
-    object-fit: contain;
-    width: 100%;
-    height: 100%;
-    background-color: #f5f6f8;
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f6f8;
 }
 .model_foot {
-    border-top: 1px solid #eee;
-    padding: 10px 0 0 0;
-    margin-left: 20px;
-    height: 75px;
+  border-top: 1px solid #eee;
+  padding: 10px 0 0 0;
+  margin-left: 20px;
+  height: 75px;
 }
 .model_foot .ivu-page {
-    margin-top: 20px;
-    float: right;
+  margin-top: 20px;
+  float: right;
 }
 .select_img {
-    float: left;
-    text-align: left;
+  float: left;
+  text-align: left;
 }
 .select_img .simg {
-    width: 62px;
-    height: 46px;
-    line-height: 45px;
-    background: #888;
-    position: relative;
+  width: 62px;
+  height: 46px;
+  line-height: 45px;
+  background: #888;
+  position: relative;
 }
 .select_close {
-    display: inline-block;
-    position: absolute;
-    height: 26px;
-    width: 26px;
-    top: -10px;
-    right: -7px;
-    background: red;
-    z-index: 30;
-    cursor: pointer;
-    border-radius: 50%;
-    border: 2px solid #fff;
+  display: inline-block;
+  position: absolute;
+  height: 26px;
+  width: 26px;
+  top: -10px;
+  right: -7px;
+  background: red;
+  z-index: 30;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #fff;
 }
 .select_close .ivu-icon {
-    color: #fff;
-    float: left;
-    margin: 6px 0 0 6px;
+  color: #fff;
+  float: left;
+  margin: 6px 0 0 6px;
 }
 
 .creative {
-    position: relative;
+  position: relative;
 }
 </style>
 <template>
@@ -342,7 +342,7 @@ export default {
                 //图库选择图片ID
                 image_id: ""
             },
-            gallery:"",
+            gallery: "",
             page: 1, //第N页
             page_size: 20, //每页数量
             total_number: 1, //总数量
@@ -355,7 +355,7 @@ export default {
             height = size[1];
         this.imgSize = parseInt(this.template.element.image.quality);
         this.actionUrl =
-            util.baseURL + 
+            util.baseURL +
             "api.php?action=gdtAdPut&opt=adsimg_doadd&account_id=" +
             this.id +
             "&sessionid=" +
@@ -375,7 +375,7 @@ export default {
         this.accept = accept;
     },
     watch: {
-        template1(id) {}
+        template1(id) { }
     },
     computed: {
         //实时获取id
@@ -388,7 +388,7 @@ export default {
             });
             this.preview_url = this.imgsrc;
         },
-      
+
     },
     methods: {
         //图库确认
@@ -399,7 +399,7 @@ export default {
         },
         //图库
         galleryLink(page) {
-            this.page = page;            
+            this.page = page;
             this.model.galleryModal = true;
             let size = this.template.element.image.size.split("*");
             Axios.get("api.php", {
@@ -412,7 +412,7 @@ export default {
                 page_size: this.page_size //每页数量
             })
                 .then(res => {
-                   this.gallery=res.data;
+                    this.gallery = res.data;
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;
                 })

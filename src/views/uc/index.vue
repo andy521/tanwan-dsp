@@ -1197,7 +1197,7 @@ export default {
             return date && date.valueOf() > Date.now() - 86400000;
         };
         this.options = setDate;
-        let query = this.$route.query.id;
+        let query = this.$route.query.account_id;
         if (!!query) {
             this.keyword = query.toString();
             this.isBack = true;
