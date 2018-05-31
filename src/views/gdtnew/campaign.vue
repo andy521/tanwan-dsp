@@ -174,13 +174,15 @@ export default {
                     }).then(res => {
                         if (res.ret == 1) {
                             this.$Message.success("提交成功");
+                            console.log(res.data)
                             this.$router.push({
                                 name: 'gdtad',
                                 query: {
                                     account_id: this.account_id,
                                     campaign_id: res.data.campaign_id,
-                                    product_type: res.data.product_type,
-                                    configured_status: res.data.configured_status
+                                    product_type: this.formCustom.product_type,
+                                    campaign_type:this.formCustom.campaign_type,
+                                    configured_status: this.formCustom.configured_status
                                 }
                             })
                         }

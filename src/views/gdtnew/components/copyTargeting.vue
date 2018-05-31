@@ -13,7 +13,7 @@
   height: 36px;
 }
 .city_box {
-  height: 310px;
+  height: 300px;
   overflow: auto;
 }
 .item {
@@ -65,7 +65,7 @@
                     <div class="city_title">{{targeting.targeting_name}}</div>
                     <div style="position: relative;">
                         <div class="city_box">
-                            <div class="padding-10 ">
+                            <!-- <div class="padding-10 ">
                                 <div class="targeting_item" v-if="targeting.targeting.district">
                                     <span>地域：</span>
                                     <span class="grey">
@@ -220,7 +220,7 @@
                                         </template>
                                     </span>
                                 </div>
-                            </div>
+                            </div> -->
                             <Spin size="small" fix v-if="loading"></Spin>
                         </div>
                     </div>
@@ -253,15 +253,15 @@ export default {
     },
     mounted() {
         this.getTargetingList();
-
     },
     methods: {
         //获取定向列表
         getTargetingList() {
             Axios.post('api.php', {
-                action: 'ttAdPut',
-                opt: 'getTargetingList',
+                action: 'api',
+                opt: 'getTargetings',
                 account_id: this.account_id,
+                media_type: 1
             }).then(res => {
                 if (res.ret == 1) {
                     this.TargetingList = res.data;
@@ -274,12 +274,15 @@ export default {
         getTargeting(item) {
             this.loading = true;
             Axios.post('api.php', {
-                action: 'ttAdPut',
-                opt: 'getTargetingDetail',
+                action: 'api',
+                opt: 'getTargetings',
+                account_id: this.account_id,
+                media_type:1,
                 targeting_id: item.targeting_id,
             }).then(res => {
                 this.loading = false;
                 if (res.ret == 1) {
+                    console.log(res)
                     this.targeting = res.data;
                 }
             }).catch(err => {

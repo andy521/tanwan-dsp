@@ -14,6 +14,7 @@
 .city_box {
   overflow: auto;
   height: 500px;
+  position: relative;
 }
 .item {
   padding: 0 15px;
@@ -52,12 +53,12 @@
         <Input v-model="search" placeholder="请输入计划名称" @on-change="filterData" @on-enter="filterData" size="large" style="width:700px;">
         <Button slot="append" icon="ios-search" @click="filterData">搜索</Button>
         </Input>
-        
+
         <div class="clear margin-top-10">
             <div class="city_main">
                 <div class="city_title">推广计划</div>
                 <div class="city_box" :style="{height:height+'px'}">
-                    <div class="item" v-for="item in campaigns_list" @click="changcampaigns(item)">{{item.campaign_name}}</div>
+                    <div class="item" v-for="item in campaigns_list" @click="getCampaignsDetails(item.campaign_id)">{{item.campaign_name}}</div>
                 </div>
             </div>
             <div class="city_main" style="border-left:none;">
@@ -96,6 +97,7 @@
                             </span>
                         </div>
                     </div>
+                    <Spin size="large" fix v-if="spinShow"></Spin>
                 </div>
             </div>
         </div>
@@ -126,7 +128,8 @@ export default {
                 product_type: "",
                 configured_status: "",
                 speed_mode: ""
-            }
+            },
+            spinShow: false
         };
     },
     mounted() {
@@ -138,7 +141,7 @@ export default {
             Axios.post("api.php", {
                 action: "api",
                 opt: "getcampaigns",
-                MeidaType: "Gdt",
+                media_type: 1,
                 account_id: this.account_id
             }).then(res => {
                 if (res.ret == 1) {
@@ -146,7 +149,7 @@ export default {
                     this.copyList = res.data;
                 }
             }).catch(err => {
-                console.log("获取推广计划" + err);
+                console.log("获取广告组" + err);
             });
         },
         //下一步
@@ -160,6 +163,7 @@ export default {
                         account_id: this.account_id,
                         campaign_id: this.campaign.campaign_id,
                         product_type: this.campaign.product_type,
+                        campaign_type:this.campaign.campaign_type,
                         configured_status: this.campaign.configured_status
                     }
                 })
@@ -183,8 +187,23 @@ export default {
             this.campaigns_list = filter.length < 1 ? retNull : filter
         },
         //选择推广计划
-        changcampaigns(item) {
-            this.campaign = item;
+        getCampaignsDetails(campaign_id) {
+            this.spinShow = true;
+            Axios.post("api.php", {
+                action: "api",
+                opt: "getCampaigns",
+                media_type: 1,
+                account_id: this.account_id,
+                campaign_id: campaign_id
+            }).then(res => {
+                this.spinShow = false;
+                if (res.ret == 1) {
+                    this.campaign = res.data;
+                }
+            }).catch(err => {
+                this.spinShow = false;
+                console.log("获取广告组详情" + err);
+            });
         }
     }
 };
