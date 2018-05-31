@@ -2,9 +2,10 @@
 <style scoped>
 .city_main {
   line-height: 36px;
-  width: 310px;
+  width: 350px;
   border: solid 1px #dee4f5;
   float: left;
+  word-break: break-all;
 }
 .city_title {
   background-color: #fafbfe;
@@ -13,7 +14,7 @@
   height: 36px;
 }
 .city_box {
-  height: 300px;
+  height: 350px;
   overflow: auto;
 }
 .item {
@@ -51,7 +52,7 @@
 <template>
     <span>
         <span class="name_text" @click="byted_modal=true">复制已有定向</span>
-        <Modal title="复制用户定向" v-model="byted_modal" :width="652" @on-ok="confirm()">
+        <Modal title="复制用户定向" v-model="byted_modal" :width="732" @on-ok="confirm()">
             <div class="clear">
                 <div class="city_main">
                     <div class="city_title">定向名称</div>
@@ -235,7 +236,7 @@ import Axios from "@/api/index";
 import toutiaoConfig from '@/utils/toutiaoConfig.json';
 export default {
     name: "copyTargeting",
-    props: ["province", "ad_tag", "app_category", "device_brand", "article_category"],
+    props: [],
     data() {
         return {
             account_id: this.$route.query.account_id, //账户id
@@ -267,7 +268,7 @@ export default {
                     this.TargetingList = res.data;
                 }
             }).catch(err => {
-                console.log('获取兴趣分类表失败' + err);
+                console.log('获取定向失败' + err);
             })
         },
         //获取定向详情
@@ -282,12 +283,11 @@ export default {
             }).then(res => {
                 this.loading = false;
                 if (res.ret == 1) {
-                    console.log(res)
                     this.targeting = res.data;
                 }
             }).catch(err => {
                 this.loading = false;
-                console.log('获取兴趣分类表失败' + err);
+                console.log('获取定向失败' + err);
             })
         },
         //确定

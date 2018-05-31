@@ -187,9 +187,9 @@
 
             <Row class="margin-top-20">
                 <Col span="16">
-                <Input v-model="targeting_item.targeting_name" size="large" placeholder="请输入定向包名称" class="margin-top-10">
+                <Input v-model="targeting_name" size="large" placeholder="请输入定向包名称" class="margin-top-10">
                 <span slot="prepend">定向包名称</span>
-                <span slot="append">{{targeting_item.targeting_name.length}}/30</span>
+                <span slot="append">{{targeting_name.length}}/30</span>
                 </Input>
                 <div class="ds_items margin-top-20">
                     <div class="ds_item" :class="{ ds_item_on: city_modeal }">
@@ -204,21 +204,21 @@
                                 <div v-if="regionsname.length>0">
                                     <p>已选择{{regionsname.length}}/{{citylistlength}}</p>
                                     <div class="ds_tag margin-top-10">
-                                        <Tag class="margin-top-10" v-for="(item,index) in regionsname" :key="this" closable color="default" @on-close="removecity(index)">{{item}}</Tag>
+                                        <Tag class="margin-top-10" v-for="(item,index) in regionsname" :key="this" closable color="default" type="dot" @on-close="removecity(index)">{{item}}</Tag>
                                         <p>
-                                            <Button type="text" @click="targeting_item.targeting.geo_location.regions=[]">清空</Button>
+                                            <Button type="text" @click="targeting.geo_location.regions=[]">清空</Button>
                                         </p>
                                     </div>
                                 </div>
                                 <!--城市选择-->
-                                <city-tree v-model="targeting_item.targeting.geo_location.regions"></city-tree>
-                                <CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types" v-if="campaign_type=='CAMPAIGN _TYPE_WECHAT_OFFICIAL_ ACCOUNTS'||campaign_type=='CAMPAIGN_TYPE_ WECHAT_MOMENTS'">
+                                <city-tree v-model="targeting.geo_location.regions"></city-tree>
+                                <CheckboxGroup class="margin-top-20" v-model="targeting.geo_location.location_types" v-if="campaign_type=='CAMPAIGN _TYPE_WECHAT_OFFICIAL_ ACCOUNTS'||campaign_type=='CAMPAIGN_TYPE_ WECHAT_MOMENTS'">
                                     <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.location_types" :key="this" v-if="item.val_type=='LIVE_IN'">{{item.name}}</Checkbox>
                                 </CheckboxGroup>
-                                <CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types" v-else-if="campaign_type=='CAMPAIGN _TYPE_NORMAL'">
+                                <CheckboxGroup class="margin-top-20" v-model="targeting.geo_location.location_types" v-else-if="campaign_type=='CAMPAIGN _TYPE_NORMAL'">
                                     <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.location_types" :key="this" v-if="item.val_type=='VISITED_IN'">{{item.name}}</Checkbox>
                                 </CheckboxGroup>
-                                <CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types" v-else>
+                                <CheckboxGroup class="margin-top-20" v-model="targeting.geo_location.location_types" v-else>
                                     <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.location_types" :key="this">{{item.name}}</Checkbox>
                                 </CheckboxGroup>
                             </div>
@@ -233,16 +233,16 @@
                         <div class="ds_box" v-if="age_modeal">
                             <Row :gutter="15">
                                 <Col span="12">
-                                <Select v-model="age[0]">
-                                    <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="item>age[1]" :key="this">
+                                <Select v-model="targeting.age[0]">
+                                    <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="item>targeting.age[1]" :key="this">
                                         <span v-if="item=='66'">{{ item }}岁以上</span>
                                         <span v-else>{{ item }}岁</span>
                                     </Option>
                                 </Select>
                                 </Col>
                                 <Col span="12">
-                                <Select v-model="age[1]">
-                                    <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="age[0]>item" :key="this">
+                                <Select v-model="targeting.age[1]">
+                                    <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="targeting.age[0]>item" :key="this">
                                         <span v-if="item=='66'">{{ item }}岁以上</span>
                                         <span v-else>{{ item }}岁</span>
                                     </Option>
@@ -259,7 +259,7 @@
                             <i-switch class="ds_item_bd" v-model="gender_modeal"></i-switch>
                         </div>
                         <div class="ds_box" v-if="gender_modeal">
-                            <RadioGroup v-model="targeting_item.targeting.gender[0]">
+                            <RadioGroup v-model="targeting.gender[0]">
                                 <Radio :label="item.val_type" size="large" v-for="item in gdtConfig.gender" :key="this">{{item.name}}</Radio>
                             </RadioGroup>
                         </div>
@@ -279,7 +279,7 @@
                                     <div class="ds_tag margin-top-10">
                                         <Tag class="margin-top-10" v-for="(item,index) in businessname" :key="this" closable type="dot" color="default" @on-close="removebusiness(index)">{{item}}</Tag>
                                         <p>
-                                            <Button type="text" @click="targeting_item.targeting.business_interest=[]">清空</Button>
+                                            <Button type="text" @click="targeting.business_interest=[]">清空</Button>
                                         </p>
                                     </div>
                                 </div>
@@ -299,7 +299,7 @@
                                 <i-switch class="ds_item_bd" v-model="appCategory_modeal"></i-switch>
                             </div>
                             <div class="ds_box" v-if="appCategory_modeal">
-                                <RadioGroup v-model="targeting_item.targeting.app_behavior.object_type" class="ds_tag margin-bottom-10">
+                                <RadioGroup v-model="targeting.app_behavior.object_type" class="ds_tag margin-bottom-10">
                                     <Radio size="large" label="APP_CLASS">按分类</Radio>
                                     <!--<Radio label="按App" size="large">按App</Radio>-->
                                 </RadioGroup>
@@ -308,16 +308,16 @@
                                     <div class="ds_tag margin-top-10">
                                         <Tag class="margin-top-10" v-for="(item,index) in appCategoryname" :key="this" closable type="dot" color="default" @on-close="removeappCategoryids(index)">{{item}}</Tag>
                                         <p>
-                                            <Button type="text" @click="targeting_item.targeting.app_behavior.object_id_list=[]">清空</Button>
+                                            <Button type="text" @click="targeting.app_behavior.object_id_list=[]">清空</Button>
                                         </p>
                                     </div>
                                 </div>
 
                                 <Tree class="citytree" :data="appCategory" show-checkbox @on-check-change="CategoryidsCallback"></Tree>
                                 <div class="margin-top-10">
-                                    <CheckboxGroup v-model="targeting_item.targeting.app_behavior.act_id_list">
+                                    <CheckboxGroup v-model="targeting.app_behavior.act_id_list">
                                         距离今天
-                                        <Input v-model="targeting_item.targeting.app_behavior.time_window" style="width: 50px;"></Input>天内，该类APP的
+                                        <Input v-model="targeting.app_behavior.time_window" style="width: 50px;"></Input>天内，该类APP的
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.act_id_list" :key="this">{{item.name}}</Checkbox>
                                         类型
                                     </CheckboxGroup>
@@ -334,7 +334,7 @@
                                 <i-switch class="ds_item_bd" v-model="app_install_status_modeal"></i-switch>
                             </div>
                             <div class="ds_box" v-if="app_install_status_modeal">
-                                <RadioGroup v-model="targeting_item.targeting.app_install_status[0]">
+                                <RadioGroup v-model="targeting.app_install_status[0]">
                                     <Radio :label="item.val_type" size="large" v-for="item in gdtConfig.app_install_status" :key="this">{{item.name}}</Radio>
                                 </RadioGroup>
                             </div>
@@ -348,7 +348,7 @@
                                 <i-switch class="ds_item_bd" v-model="network_modeal"></i-switch>
                             </div>
                             <div class="ds_box" v-if="network_modeal">
-                                <CheckboxGroup v-model="targeting_item.targeting.network_type">
+                                <CheckboxGroup v-model="targeting.network_type">
                                     <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.network_type" :key="this">{{item.name}}</Checkbox>
                                 </CheckboxGroup>
                             </div>
@@ -373,15 +373,15 @@
                                         </div>
                                     </Tooltip>
                                 </div>
-                                <div class="margin-top-10" v-if="targeting_item.targeting.customized_audience.length>0">
+                                <div class="margin-top-10" v-if="targeting.customized_audience.length>0">
                                     <p>已选择</p>
                                     <div class="ds_tag margin-top-10">
 
                                         <template v-for="subitem in customized_audience">
-                                            <Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+                                            <Tag class="margin-top-10" v-for="(item ,index) in targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
                                         </template>
                                         <p>
-                                            <Button type="text" @click="targeting_item.targeting.customized_audience=[]">清空</Button>
+                                            <Button type="text" @click="targeting.customized_audience=[]">清空</Button>
                                         </p>
                                     </div>
                                 </div>
@@ -400,14 +400,14 @@
                                         </div>
                                     </Tooltip>
                                 </div>
-                                <div class="ds_tag margin-top-10" v-if="targeting_item.targeting.excluded_custom_audience.length>0">
+                                <div class="ds_tag margin-top-10" v-if="targeting.excluded_custom_audience.length>0">
                                     <p>已选择</p>
 
                                     <template v-for="subitem in customized_audience">
-                                        <Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+                                        <Tag class="margin-top-10" v-for="(item ,index) in targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
                                     </template>
                                     <p>
-                                        <Button type="text" @click="targeting_item.targeting.excluded_custom_audience=[]">清空</Button>
+                                        <Button type="text" @click="targeting.excluded_custom_audience=[]">清空</Button>
                                     </p>
                                 </div>
                                 <Row>
@@ -428,7 +428,7 @@
                                 <i-switch class="ds_item_bd" v-model="paying_user_type_modeal"></i-switch>
                             </div>
                             <div class="ds_box" v-if="paying_user_type_modeal">
-                                <CheckboxGroup v-model="targeting_item.targeting.paying_user_type">
+                                <CheckboxGroup v-model="targeting.paying_user_type">
                                     <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.paying_user_type" :key="this">{{item.name}}</Checkbox>
                                 </CheckboxGroup>
                             </div>
@@ -437,7 +437,10 @@
                     <Button class="margin-top-10" long icon="compose" size="large" @click="winshow=true">全部定向</Button>
                     <p class="margin-top-10" style="color: #e88e00;">推广iOS应用，广告只会在iOS操作系统上展现</p>
 
-                    <Button type="primary" size="large" @click="addTargeting" class="margin-top-20">保存定向</Button>
+                    <Button type="primary" size="large" @click="addTargeting" class="margin-top-20">
+                        <span v-if="targeting_id">修改定向</span>
+                        <span v-else>保存定向</span>
+                    </Button>
                 </div>
 
                 <div class="ritht_fixed">
@@ -450,24 +453,24 @@
                         <p v-if="city_modeal">
                             <span>地点类型：</span>
                             <em v-for="item in gdtConfig.location_types">
-                                <var v-for="subitem in targeting_item.targeting.geo_location.location_types">
+                                <var v-for="subitem in targeting.geo_location.location_types">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
                         </p>
                         <p v-if="age_modeal">
                             <span>年龄：</span>
-                            <em v-if="age[1]=='66'">
-                                {{age[1]}}岁以上
+                            <em v-if="targeting.age[1]=='66'">
+                                {{targeting.age[1]}}岁以上
                             </em>
                             <em v-else>
-                                {{age[0]}}至{{age[1]}}岁
+                                {{targeting.age[0]}}至{{targeting.age[1]}}岁
                             </em>;
                         </p>
                         <p v-if="gender_modeal">
                             <span>性别：</span>
                             <em v-for="item in gdtConfig.gender">
-                                <var v-if="targeting_item.targeting.gender[0]==item.val_type">{{item.name}}</var>
+                                <var v-if="targeting.gender[0]==item.val_type">{{item.name}}</var>
                             </em>;
                         </p>
                         <p v-if="business_modeal">
@@ -477,9 +480,9 @@
                         <p v-if="appCategory_modeal">
                             <span>App行为：</span>
                             <em v-for="item in appCategoryname">{{item}},</em>
-                            <em>距离今天{{targeting_item.targeting.app_behavior.time_window}}天内，该类APP的</em>
+                            <em>距离今天{{targeting.app_behavior.time_window}}天内，该类APP的</em>
                             <em v-for="item in gdtConfig.act_id_list">
-                                <var v-for="subitem in targeting_item.targeting.app_behavior.act_id_list">
+                                <var v-for="subitem in targeting.app_behavior.act_id_list">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>用户
@@ -487,20 +490,20 @@
                         <p v-if="app_install_status_modeal">
                             <span>App安装：</span>
                             <em v-for="item in gdtConfig.app_install_status">
-                                <var v-if="targeting_item.targeting.app_install_status[0]==item.val_type">{{item.name}}</var>
+                                <var v-if="targeting.app_install_status[0]==item.val_type">{{item.name}}</var>
                             </em>;
                         </p>
                         <p v-if="network_modeal">
                             <span>联网方式：</span>
                             <em v-for="item in gdtConfig.network_type">
-                                <var v-for="subitem in targeting_item.targeting.network_type">
+                                <var v-for="subitem in targeting.network_type">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
                         </p>
                         <p v-if="Audiences_modeal">
                             <span>定向用户群：</span>
-                            <em v-for="item in targeting_item.targeting.customized_audience">
+                            <em v-for="item in targeting.customized_audience">
                                 <var v-for="subitem in customized_audience">
                                     <var v-if="subitem.audience_id==item">{{subitem.name}},</var>
                                 </var>
@@ -508,7 +511,7 @@
                         </p>
                         <p v-if="Audiences_modeal">
                             <span>排除用户群 ：</span>
-                            <em v-for="item in targeting_item.targeting.excluded_custom_audience">
+                            <em v-for="item in targeting.excluded_custom_audience">
                                 <var v-for="subitem in customized_audience">
                                     <var v-if="subitem.audience_id==item">{{subitem.name}},</var>
                                 </var>
@@ -517,7 +520,7 @@
                         <p v-if="education_modeal">
                             <span>婚恋状态：</span>
                             <em v-for="item in gdtConfig.education">
-                                <var v-for="subitem in targeting_item.targeting.education">
+                                <var v-for="subitem in targeting.education">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
@@ -525,20 +528,20 @@
                         <p v-if="living_status_modeal">
                             <span>工作状态：</span>
                             <em v-for="item in gdtConfig.living_status">
-                                <var v-for="subitem in targeting_item.targeting.living_status">
+                                <var v-for="subitem in targeting.living_status">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
                         </p>
                         <p v-if="word_modeal">
                             <span>关键词 ：</span>
-                            <em v-for="item in targeting_item.targeting.keyword.words">{{item}},</em>
+                            <em v-for="item in targeting.keyword.words">{{item}},</em>
                         </p>
 
                         <p v-if="paying_user_type_modeal">
                             <span>付费用户：</span>
                             <em v-for="item in gdtConfig.paying_user_type">
-                                <var v-for="subitem in targeting_item.targeting.paying_user_type">
+                                <var v-for="subitem in targeting.paying_user_type">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
@@ -546,7 +549,7 @@
                         <p v-if="shopping_capability_modeal">
                             <span>消费状态：</span>
                             <em v-for="item in gdtConfig.shopping_capability">
-                                <var v-for="subitem in targeting_item.targeting.shopping_capability">
+                                <var v-for="subitem in targeting.shopping_capability">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
@@ -554,7 +557,7 @@
                         <p v-if="network_operator_modeal">
                             <span>移动运营商：</span>
                             <em v-for="item in gdtConfig.network_operator">
-                                <var v-for="subitem in targeting_item.targeting.network_operator">
+                                <var v-for="subitem in targeting.network_operator">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
@@ -562,7 +565,7 @@
                         <p v-if="device_price_modeal">
                             <span>设备价格：</span>
                             <em v-for="item in gdtConfig.device_price">
-                                <var v-for="subitem in targeting_item.targeting.device_price">
+                                <var v-for="subitem in targeting.device_price">
                                     <var v-if="subitem==item.val_type">{{item.name}},</var>
                                 </var>
                             </em>
@@ -595,14 +598,14 @@
                                         <div class="ds_tag margin-top-10">
                                             <Tag class="margin-top-10" v-for="(item,index) in regionsname" :key="this" closable type="dot" color="default" @on-close="removecity(index)">{{item}}</Tag>
                                             <p>
-                                                <Button type="text" @click="targeting_item.targeting.geo_location.regions=[]">清空</Button>
+                                                <Button type="text" @click="targeting.geo_location.regions=[]">清空</Button>
                                             </p>
                                         </div>
                                     </div>
                                     <!--城市选择-->
-                                    <city-tree v-model="targeting_item.targeting.geo_location.regions"></city-tree>
+                                    <city-tree v-model="targeting.geo_location.regions"></city-tree>
 
-                                    <CheckboxGroup class="margin-top-20" v-model="targeting_item.targeting.geo_location.location_types">
+                                    <CheckboxGroup class="margin-top-20" v-model="targeting.geo_location.location_types">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.location_types" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -617,16 +620,16 @@
                             <div class="ds_box" v-if="age_modeal">
                                 <Row :gutter="15">
                                     <Col span="12">
-                                    <Select v-model="age[0]">
-                                        <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="item>age[1]" :key="this">
+                                    <Select v-model="targeting.age[0]">
+                                        <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="item>targeting.age[1]" :key="this">
                                             <span v-if="item=='66'">{{ item }}岁以上</span>
                                             <span v-else>{{ item }}岁</span>
                                         </Option>
                                     </Select>
                                     </Col>
                                     <Col span="12">
-                                    <Select v-model="age[1]">
-                                        <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="age[0]>item" :key="this">
+                                    <Select v-model="targeting.age[1]">
+                                        <Option v-for="item in 66" :value="item" v-if="item>=5" :disabled="targeting.age[0]>item" :key="this">
                                             <span v-if="item=='66'">{{ item }}岁以上</span>
                                             <span v-else>{{ item }}岁</span>
                                         </Option>
@@ -643,7 +646,7 @@
                                 <i-switch class="ds_item_bd" v-model="gender_modeal"></i-switch>
                             </div>
                             <div class="ds_box" v-if="gender_modeal">
-                                <RadioGroup v-model="targeting_item.targeting.gender[0]">
+                                <RadioGroup v-model="targeting.gender[0]">
                                     <Radio :label="item.val_type" size="large" v-for="item in gdtConfig.gender" :key="this">{{item.name}}</Radio>
                                 </RadioGroup>
                             </div>
@@ -656,7 +659,7 @@
                                     <i-switch class="ds_item_bd" v-model="education_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="education_modeal">
-                                    <CheckboxGroup v-model="targeting_item.targeting.education">
+                                    <CheckboxGroup v-model="targeting.education">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.education" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -670,7 +673,7 @@
                                     <i-switch class="ds_item_bd" v-model="living_status_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="living_status_modeal">
-                                    <CheckboxGroup v-model="targeting_item.targeting.living_status">
+                                    <CheckboxGroup v-model="targeting.living_status">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.living_status" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -692,7 +695,7 @@
                                         <div class="ds_tag margin-top-10">
                                             <Tag class="margin-top-10" v-for="(item,index) in businessname" :key="this" closable type="dot" color="default" @on-close="removebusiness(index)">{{item}}</Tag>
                                             <p>
-                                                <Button type="text" @click="targeting_item.targeting.business_interest=[]">清空</Button>
+                                                <Button type="text" @click="targeting.business_interest=[]">清空</Button>
                                             </p>
                                         </div>
                                     </div>
@@ -711,12 +714,12 @@
                                     <i-switch class="ds_item_bd" v-model="word_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="word_modeal">
-                                    <div v-if="targeting_item.targeting.keyword.words.length>0">
-                                        <p>已输入{{targeting_item.targeting.keyword.words.length}}</p>
+                                    <div v-if="targeting.keyword.words.length>0">
+                                        <p>已输入{{targeting.keyword.words.length}}</p>
                                         <div class="ds_tag">
-                                            <Tag class="margin-top-10" v-for="(item,index) in targeting_item.targeting.keyword.words" :key="this" closable type="dot" color="default" @on-close="removeword(index)">{{item}}</Tag>
+                                            <Tag class="margin-top-10" v-for="(item,index) in targeting.keyword.words" :key="this" closable type="dot" color="default" @on-close="removeword(index)">{{item}}</Tag>
                                             <p>
-                                                <Button type="text" @click="targeting_item.targeting.keyword.words=[]">清空</Button>
+                                                <Button type="text" @click="targeting.keyword.words=[]">清空</Button>
                                             </p>
                                         </div>
                                     </div>
@@ -746,7 +749,7 @@
                                     <i-switch class="ds_item_bd" v-model="appCategory_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="appCategory_modeal">
-                                    <RadioGroup v-model="targeting_item.targeting.app_behavior.object_type" class="ds_tag margin-bottom-10">
+                                    <RadioGroup v-model="targeting.app_behavior.object_type" class="ds_tag margin-bottom-10">
                                         <Radio size="large" label="APP_CLASS">按分类</Radio>
                                         <!--<Radio label="按App" size="large">按App</Radio>-->
                                     </RadioGroup>
@@ -755,16 +758,16 @@
                                         <div class="ds_tag margin-top-10">
                                             <Tag class="margin-top-10" v-for="(item,index) in appCategoryname" :key="this" closable type="dot" color="default" @on-close="removeappCategoryids(index)">{{item}}</Tag>
                                             <p>
-                                                <Button type="text" @click="targeting_item.targeting.app_behavior.object_id_list=[]">清空</Button>
+                                                <Button type="text" @click="targeting.app_behavior.object_id_list=[]">清空</Button>
                                             </p>
                                         </div>
                                     </div>
 
                                     <Tree class="citytree" :data="appCategory" show-checkbox @on-check-change="CategoryidsCallback"></Tree>
                                     <div class="margin-top-10">
-                                        <CheckboxGroup v-model="targeting_item.targeting.app_behavior.act_id_list">
+                                        <CheckboxGroup v-model="targeting.app_behavior.act_id_list">
                                             距离今天
-                                            <Input v-model="targeting_item.targeting.app_behavior.time_window" style="width: 50px;"></Input>天内，该类APP的
+                                            <Input v-model="targeting.app_behavior.time_window" style="width: 50px;"></Input>天内，该类APP的
                                             <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.act_id_list" :key="this">{{item.name}}</Checkbox>
                                             类型
                                         </CheckboxGroup>
@@ -781,7 +784,7 @@
                                     <i-switch class="ds_item_bd" v-model="app_install_status_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="app_install_status_modeal">
-                                    <RadioGroup v-model="targeting_item.targeting.app_install_status[0]">
+                                    <RadioGroup v-model="targeting.app_install_status[0]">
                                         <Radio :label="item.val_type" size="large" v-for="item in gdtConfig.app_install_status" :key="this">{{item.name}}</Radio>
                                     </RadioGroup>
                                 </div>
@@ -807,14 +810,14 @@
                                             </div>
                                         </Tooltip>
                                     </div>
-                                    <div class="margin-top-10" v-if="targeting_item.targeting.customized_audience.length>0">
+                                    <div class="margin-top-10" v-if="targeting.customized_audience.length>0">
                                         <p>已选择</p>
                                         <div class="ds_tag margin-top-10">
                                             <template v-for="subitem in customized_audience">
-                                                <Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+                                                <Tag class="margin-top-10" v-for="(item ,index) in targeting.customized_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
                                             </template>
                                             <p>
-                                                <Button type="text" @click="targeting_item.targeting.customized_audience=[]">清空</Button>
+                                                <Button type="text" @click="targeting.customized_audience=[]">清空</Button>
                                             </p>
                                         </div>
                                     </div>
@@ -833,14 +836,14 @@
                                             </div>
                                         </Tooltip>
                                     </div>
-                                    <div class="ds_tag margin-top-10" v-if="targeting_item.targeting.excluded_custom_audience.length>0">
+                                    <div class="ds_tag margin-top-10" v-if="targeting.excluded_custom_audience.length>0">
                                         <p>已选择</p>
 
                                         <template v-for="subitem in customized_audience">
-                                            <Tag class="margin-top-10" v-for="(item ,index) in targeting_item.targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
+                                            <Tag class="margin-top-10" v-for="(item ,index) in targeting.excluded_custom_audience" :key="this" closable type="dot" color="default" @on-close="removeAudiencesids_ex(index)" v-if="item==subitem.audience_id">{{ subitem.name }}</Tag>
                                         </template>
                                         <p>
-                                            <Button type="text" @click="targeting_item.targeting.excluded_custom_audience=[]">清空</Button>
+                                            <Button type="text" @click="targeting.excluded_custom_audience=[]">清空</Button>
                                         </p>
                                     </div>
                                     <Row>
@@ -863,7 +866,7 @@
                                     <i-switch class="ds_item_bd" v-model="paying_user_type_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="paying_user_type_modeal">
-                                    <CheckboxGroup v-model="targeting_item.targeting.paying_user_type">
+                                    <CheckboxGroup v-model="targeting.paying_user_type">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.paying_user_type" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -876,7 +879,7 @@
                                     <i-switch class="ds_item_bd" v-model="shopping_capability_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="shopping_capability_modeal">
-                                    <CheckboxGroup v-model="targeting_item.targeting.shopping_capability">
+                                    <CheckboxGroup v-model="targeting.shopping_capability">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.shopping_capability" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -890,7 +893,7 @@
                                     <i-switch class="ds_item_bd" v-model="network_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="network_modeal">
-                                    <CheckboxGroup v-model="targeting_item.targeting.network_type">
+                                    <CheckboxGroup v-model="targeting.network_type">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.network_type" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -904,7 +907,7 @@
                                     <i-switch class="ds_item_bd" v-model="network_operator_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="network_operator_modeal">
-                                    <CheckboxGroup v-model="targeting_item.targeting.network_operator">
+                                    <CheckboxGroup v-model="targeting.network_operator">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.network_operator" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -918,7 +921,7 @@
                                     <i-switch class="ds_item_bd" v-model="device_price_modeal"></i-switch>
                                 </div>
                                 <div class="ds_box" v-if="device_price_modeal">
-                                    <CheckboxGroup v-model="targeting_item.targeting.device_price">
+                                    <CheckboxGroup v-model="targeting.device_price">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.device_price" :key="this">{{item.name}}</Checkbox>
                                     </CheckboxGroup>
                                 </div>
@@ -951,48 +954,42 @@ export default {
             product_type: this.$route.query.product_type,
             campaign_type: this.$route.query.campaign_type,
             targeting_id: this.$route.query.targeting_id,
-            targetings: [],
-            targeting_item: {
-                account_id: "",
-                targeting_id: "", //定向id
-                targeting_name: "", //定向名称
-                targeting: {
-                    age: ["5~60"],
-                    gender: ["FEMALE"],
-                    education: [],
-                    relationship_status: [],
-                    living_status: [],
-                    geo_location: {
-                        regions: [],
-                        location_types: [],
-                        business_districts: []
-                    },
-                    app_behavior: {
-                        object_type: "APP_CLASS",
-                        object_id_list: [],
-                        time_window: 1,
-                        act_id_list: []
-                    },
-                    app_install_status: [],
-                    network_type: [],
-                    business_interest: [],
-                    network_operator: [],
-                    device_price: [],
-                    shopping_capability: [],
-                    paying_user_type: [],
-                    keyword: {
-                        words: []
-                    },
-                    player_consupt: [],
-                    residential_community_price: [],
-                    customized_audience: [],
-                    excluded_custom_audience: [],
-                    description: []
-                }
+            targeting_name: "", //定向名称
+            targeting: {
+                geo_location: {
+                    regions: [],
+                    location_types: [],
+                    business_districts: []
+                },
+                age: [5, 60],
+                gender: ["FEMALE"],
+                education: [],
+                relationship_status: [],
+                living_status: [],
+                app_behavior: {
+                    object_type: "APP_CLASS",
+                    object_id_list: [],
+                    time_window: 1,
+                    act_id_list: []
+                },
+                app_install_status: [],
+                network_type: [],
+                business_interest: [],
+                network_operator: [],
+                device_price: [],
+                shopping_capability: [],
+                paying_user_type: [],
+                keyword: {
+                    words: []
+                },
+                player_consupt: [],
+                residential_community_price: [],
+                customized_audience: [],
+                excluded_custom_audience: [],
+                description: []
             },
             citylistlength: 0,
             city_modeal: false, //城市switch
-            age: [5, 60], //年龄
             age_modeal: false, //年龄switch
             gender: [],
             gender_modeal: false, //性别switch
@@ -1038,31 +1035,16 @@ export default {
         };
     },
     mounted() {
-
-        this.get_estimation();
-
-        // let query = this.$route.query;
-        // if (query.account_id) {
-        //     this.account_id = query.account_id;
-        // }
-        // if (query.targeting_id) {
-        //     this.targeting_id = query.targeting_id;
-        // }
-        // if (query.product_refs_id) {
-        //     this.product_refs_id = query.product_refs_id;
-        // }
-        // if (query.product_type) {
-        //     this.product_type = query.product_type;
-        // }
-
+        if (this.targeting_id) {
+            this.getTargeting();
+        }
         //请求定向标签(地域)
         this.$store.dispatch("get_targeting_tags");
         //获取商业兴趣
         this.$store.dispatch("get_business_interest");
         //app行为按分类
         this.$store.dispatch("get_appCategory");
-        //获取定向列表
-        this.get_targetings();
+
         //获取自定义人群
         this.getAudiences();
         this.getAudiences_ex();
@@ -1070,11 +1052,11 @@ export default {
     methods: {
         //获取预估覆盖人数、出价
         get_estimation() {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtAdput",
                 opt: "get_estimation",
                 account_id: this.account_id,
-                targeting: JSON.stringify(this.targeting_item.targeting)
+                targeting: JSON.stringify(this.targeting)
             }).then(res => {
                 if (res.ret == 1) {
                     this.approximate_count = res.data.approximate_count;
@@ -1101,176 +1083,196 @@ export default {
             };
             this.$store.dispatch("get_CustomAudiences_ex", data);
         },
-        //获取定向
-        get_targetings() {
-            Axios.get("api.php", {
-                action: "gdtAdPut",
-                opt: "targetings",
-                account_id: this.account_id
+
+
+        //获取定向详情
+        getTargeting(item) {
+            Axios.post('api.php', {
+                action: 'api',
+                opt: 'getTargetings',
+                account_id: this.account_id,
+                media_type: 1,
+                targeting_id: item.targeting_id,
             }).then(res => {
                 if (res.ret == 1) {
-                    res.data.list.unshift({
-                        account_id: "",
-                        targeting_id: 0, //定向id
-                        targeting_name: "新建定向", //定向名称
-                        targeting: {
-                            age: [],
-                            gender: [],
-                            education: [],
-                            relationship_status: [],
-                            living_status: [],
-                            geo_location: {
-                                regions: [],
-                                location_types: [],
-                                business_districts: []
-                            },
-                            app_behavior: {
-                                object_type: "APP_CLASS",
-                                object_id_list: [],
-                                time_window: 1,
-                                act_id_list: []
-                            },
-                            app_install_status: [],
-                            network_type: [],
-                            business_interest: [],
-                            network_operator: [],
-                            device_price: [],
-                            shopping_capability: [],
-                            paying_user_type: [],
-                            keyword: {
-                                words: []
-                            },
-                            player_consupt: [],
-                            residential_community_price: [],
-                            customized_audience: [],
-                            excluded_custom_audience: [],
-                            description: []
-                        }
-                    });
-                    this.targetings = res.data.list;
-                    this.changetargetings();
+                    this.changeTargeting(res.data);
                 }
             }).catch(err => {
-                console.log("获取定向" + err);
-            });
+                console.log('获取定向失败' + err);
+            })
         },
+
         //选择定向
         changeTargeting(item) {
-            console.log(item)
-        },
-        changetargetings() {
-            this.targetings.forEach(item => {
-                if (item.targeting_id == this.targeting_id) {
-                    if (!item.targeting) {
-                        this.targeting_item.targeting_name = item.targeting_name;
-                        return;
-                    }
-                    this.targeting_item = item;
-                    //地域
-                    if (
-                        item.targeting.geo_location.regions.length > 0 ||
-                        item.targeting.geo_location.location_types.length > 0
-                    ) {
-                        this.city_modeal = true;
-                    } else {
-                        this.city_modeal = false;
-                    }
-                    //年龄
-                    if (item.targeting.age.length > 0) {
-                        var result = item.targeting.age[0].split("~");
-                        this.age = [parseInt(result[0]), parseInt(result[1])];
-                        this.age_modeal = true;
-                    } else {
-                        this.age_modeal = false;
-                    }
-                    //性别
-                    if (item.targeting.gender[0]) {
-                        this.gender_modeal = true;
-                    } else {
-                        this.gender_modeal = false;
-                    }
-                    //商业兴趣
-                    if (item.targeting.business_interest.length > 0) {
-                        this.business_modeal = true;
-                    } else {
-                        this.business_modeal = false;
-                    }
-                    //App行为
-                    if (item.targeting.app_behavior.object_id_list.length > 0) {
-                        this.appCategory_modeal = true;
-                    } else {
-                        this.appCategory_modeal = false;
-                    }
-                    //app安装
-                    if (item.targeting.app_install_status[0]) {
-                        this.app_install_status_modeal = true;
-                    } else {
-                        this.app_install_status_modeal = false;
-                    }
-                    //联网方式
-                    if (item.targeting.network_type.length > 0) {
-                        this.network_modeal = true;
-                    } else {
-                        this.network_modeal = false;
-                    }
-                    //付费用户
-                    if (item.targeting.paying_user_type.length > 0) {
-                        this.paying_user_type_modeal = true;
-                    } else {
-                        this.paying_user_type_modeal = false;
-                    }
-                    //自定义人群
-                    if (
-                        item.targeting.customized_audience.length > 0 ||
-                        item.targeting.excluded_custom_audience.length > 0
-                    ) {
-                        this.Audiences_modeal = true;
-                    } else {
-                        this.Audiences_modeal = false;
-                    }
-                    //婚恋状态
-                    if (item.targeting.education.length > 0) {
-                        this.education_modeal = true;
-                    } else {
-                        this.education_modeal = false;
-                    }
-                    //工作状态
-                    if (item.targeting.living_status.length > 0) {
-                        this.living_status_modeal = true;
-                    } else {
-                        this.living_status_modeal = false;
-                    }
-                    //关键字
-                    if (item.targeting.keyword.words.length > 0) {
-                        this.word_modeal = true;
-                    } else {
-                        this.word_modeal = false;
-                    }
-                    //消费状态
-                    if (item.targeting.shopping_capability.length > 0) {
-                        this.shopping_capability_modeal = true;
-                    } else {
-                        this.shopping_capability_modeal = false;
-                    }
-                    //移动运营商
-                    if (item.targeting.network_operator.length > 0) {
-                        this.network_operator_modeal = true;
-                    } else {
-                        this.network_operator_modeal = false;
-                    }
-                    //设备价格
-                    if (item.targeting.device_price.length > 0) {
-                        this.device_price_modeal = true;
-                    } else {
-                        this.device_price_modeal = false;
-                    }
+            this.targeting_name = item.targeting_name;
+            //地域       
+            if (item.targeting.geo_location) {
+                if (item.targeting.geo_location.regions) {
+                    this.targeting.geo_location.regions = item.targeting.geo_location.regions;
+                } else {
+                    this.targeting.geo_location.regions = [];
                 }
-            });
+                if (item.targeting.geo_location.location_types) {
+                    this.targeting.geo_location.location_types = item.targeting.geo_location.location_types;
+                } else {
+                    this.targeting.geo_location.location_types = [];
+                }
+                this.city_modeal = true;
+            } else {
+                this.targeting.geo_location.regions = [];
+                this.targeting.geo_location.location_types = [];
+                this.city_modeal = false;
+            }
+            //年龄
+            if (item.targeting.age) {
+                var result = item.targeting.age[0].split("~");
+                this.targeting.age = [parseInt(result[0]), parseInt(result[1])];
+                this.age_modeal = true;
+            } else {
+                this.targeting.age = [5, 60];
+                this.age_modeal = false;
+            }
+            //性别
+            if (item.targeting.gender) {
+                this.targeting.gender = item.targeting.gender;
+                this.gender_modeal = true;
+            } else {
+                this.targeting.gender = ["FEMALE"];
+                this.gender_modeal = false;
+            }
+            //商业兴趣
+            if (item.targeting.business_interest) {
+                this.targeting.business_interest = item.targeting.business_interest;
+                this.business_modeal = true;
+            } else {
+                this.targeting.business_interest = [];
+                this.business_modeal = false;
+            }
+            //App行为
+            if (item.targeting.app_behavior) {
+                if (item.targeting.app_behavior.object_id_list && item.targeting.app_behavior.object_id_list.length > 0) {
+                    this.targeting.app_behavior.object_id_list = item.targeting.app_behavior.object_id_list;
+                } else {
+                    this.targeting.app_behavior.object_id_list = [];
+                }
+                if (item.targeting.app_behavior.object_type) {
+                    this.targeting.app_behavior.object_type = item.targeting.app_behavior.object_type;
+                } else {
+                    this.targeting.app_behavior.object_type = "APP_CLASS";
+                }
+                if (item.targeting.app_behavior.time_window) {
+                    this.targeting.app_behavior.time_window = item.targeting.app_behavior.time_window;
+                } else {
+                    this.targeting.app_behavior.time_window = 1;
+                }
+                if (item.targeting.app_behavior.act_id_list) {
+                    this.targeting.app_behavior.act_id_list = item.targeting.app_behavior.act_id_list;
+                } else {
+                    this.targeting.app_behavior.act_id_list = [];
+                }
+                this.appCategory_modeal = true;
+            } else {
+                this.targeting.app_behavior.object_id_list = [];
+                this.targeting.app_behavior.object_type = "APP_CLASS";
+                this.targeting.app_behavior.time_window = 1;
+                this.targeting.app_behavior.act_id_list = [];
+                this.appCategory_modeal = false;
+            }
+            //app安装
+            if (item.targeting.app_install_status) {
+                this.targeting.app_install_status = item.targeting.app_install_status;
+                this.app_install_status_modeal = true;
+            } else {
+                this.targeting.app_install_status = [];
+                this.app_install_status_modeal = false;
+            }
+            //联网方式
+            if (item.targeting.network_type) {
+                this.targeting.network_type = item.targeting.network_type;
+                this.network_modeal = true;
+            } else {
+                this.targeting.network_type = [];
+                this.network_modeal = false;
+            }
+            //付费用户
+            if (item.targeting.paying_user_type) {
+                this.targeting.paying_user_type = item.targeting.paying_user_type;
+                this.paying_user_type_modeal = true;
+            } else {
+                this.targeting.paying_user_type = [];
+                this.paying_user_type_modeal = false;
+            }
+            //自定义人群
+            if (item.targeting.customized_audience || item.targeting.excluded_custom_audience) {
+                if (item.targeting.customized_audience) {
+                    this.targeting.customized_audience = item.targeting.customized_audience;
+                } else {
+                    this.targeting.customized_audience = [];
+                }
+                if (item.targeting.excluded_custom_audience) {
+                    this.targeting.excluded_custom_audience = item.targeting.excluded_custom_audience;
+                } else {
+                    this.targeting.excluded_custom_audience = [];
+                }
+                this.Audiences_modeal = true;
+            } else {
+                this.targeting.excluded_custom_audience = [];
+                this.targeting.customized_audience = [];
+                this.Audiences_modeal = false;
+            }
+            //婚恋状态
+            if (item.targeting.education) {
+                this.targeting.education = item.targeting.education;
+                this.education_modeal = true;
+            } else {
+                this.targeting.education = [];
+                this.education_modeal = false;
+            }
+            //工作状态
+            if (item.targeting.living_status) {
+                this.targeting.living_status = item.targeting.living_status;
+                this.living_status_modeal = true;
+            } else {
+                this.targeting.living_status = [];
+                this.living_status_modeal = false;
+            }
+            //关键字
+            if (item.targeting.keyword && item.targeting.keyword.words) {
+                this.targeting.keyword.words = item.targeting.keyword.words;
+                this.word_modeal = true;
+            } else {
+                this.targeting.keyword.words = [];
+                this.word_modeal = false;
+            }
+            //消费状态
+            if (item.targeting.shopping_capability) {
+                this.targeting.shopping_capability = item.targeting.shopping_capability;
+                this.shopping_capability_modeal = true;
+            } else {
+                this.targeting.shopping_capability == [];
+                this.shopping_capability_modeal = false;
+            }
+            //移动运营商
+            if (item.targeting.network_operator) {
+                this.targeting.network_operator = item.targeting.network_operator;
+                this.network_operator_modeal = true;
+            } else {
+                this.targeting.network_operator = [];
+                this.network_operator_modeal = false;
+            }
+            //设备价格
+            if (item.targeting.device_price) {
+                this.targeting.device_price = item.targeting.device_price;
+                this.device_price_modeal = true;
+            } else {
+                this.targeting.device_price = [];
+                this.device_price_modeal = false;
+            }
             this.get_estimation();
         },
         //删除城市
         removecity(index) {
-            this.targeting_item.targeting.geo_location.regions.splice(index, 1);
+            this.targeting.geo_location.regions.splice(index, 1);
             this.get_estimation();
         },
         //商业兴趣返回ids
@@ -1282,17 +1284,17 @@ export default {
                     ids.push(item.label);
                 }
             });
-            this.targeting_item.targeting.business_interest = ids;
+            this.targeting.business_interest = ids;
             this.get_estimation();
         },
         //删除商业兴趣
         removebusiness(index) {
-            this.targeting_item.targeting.business_interest.splice(index, 1);
+            this.targeting.business_interest.splice(index, 1);
             this.get_estimation();
         },
         //删除app行为
         removeappCategoryids(index) {
-            this.targeting_item.targeting.app_behavior.object_id_list.splice(index, 1);
+            this.targeting.app_behavior.object_id_list.splice(index, 1);
             this.get_estimation();
         },
         //app行为返回ids
@@ -1304,25 +1306,25 @@ export default {
                     ids.push(item.label);
                 }
             });
-            this.targeting_item.targeting.app_behavior.object_id_list = ids;
+            this.targeting.app_behavior.object_id_list = ids;
             this.get_estimation();
         },
         //删除关健词
         removeword(index) {
-            this.targeting_item.targeting.keyword.words.splice(index, 1);
+            this.targeting.keyword.words.splice(index, 1);
             this.get_estimation();
         },
         //添加关健词
         addword() {
             let has = false;
             //关健词是否已有
-            this.targeting_item.targeting.keyword.words.forEach(item => {
+            this.targeting.keyword.words.forEach(item => {
                 if (item == this.newword) {
                     has = true;
                 }
             });
             if (!has && this.newword != "" && this.newword.length <= 30) {
-                this.targeting_item.targeting.keyword.words.push(this.newword);
+                this.targeting.keyword.words.push(this.newword);
                 this.newword = "";
             }
             this.get_estimation();
@@ -1344,7 +1346,7 @@ export default {
                     var fileText = e.target.result.split("\n");
                     for (var j = 0; j < fileText.length; j++) {
                         if (fileText[j].length <= 30) {
-                            that.targeting_item.targeting.keyword.words.push(
+                            that.targeting.keyword.words.push(
                                 fileText[j]
                             );
                         }
@@ -1359,12 +1361,12 @@ export default {
             row.forEach(item => {
                 ids.push(item.audience_id);
             });
-            this.targeting_item.targeting.customized_audience = ids;
+            this.targeting.customized_audience = ids;
             this.get_estimation();
         },
         //删除自定义人群选中的id
         removeAudiencesids(index) {
-            this.targeting_item.targeting.customized_audience.splice(index, 1);
+            this.targeting.customized_audience.splice(index, 1);
             this.get_estimation();
         },
         //获取自定义人群选中的id排除
@@ -1373,39 +1375,32 @@ export default {
             row.forEach(item => {
                 ids.push(item.audience_id);
             });
-            this.targeting_item.targeting.excluded_custom_audience = ids;
+            this.targeting.excluded_custom_audience = ids;
             this.get_estimation();
         },
 
         //删除自定义人群选中的id排除
         removeAudiencesids_ex(index) {
-            this.targeting_item.targeting.excluded_custom_audience.splice(index, 1);
+            this.targeting.excluded_custom_audience.splice(index, 1);
             this.get_estimation();
         },
         //保存定向
         addTargeting() {
-            if (this.targeting_item.targeting_name == "") {
+            if (this.targeting_name == "") {
                 this.$Message.info("请输入定向包名称");
                 return;
             }
-            if (this.targeting_item.targeting_name.length > 30) {
+            if (this.targeting_name.length > 30) {
                 this.$Message.info("定向包名称超出字数限制");
                 return;
             }
 
-            // if (this.product_refs_id == "") {
-            //     this.$Message.info("请输入标的物id");
-            //     return;
-            // }
-            // if (this.product_refs_id.length > 15) {
-            //     this.$Message.info("请输入标的物id超出字数限制");
-            //     return;
-            // }
             let targeting = {};
+
             //验证地理位置
             if (this.city_modeal) {
                 if (this.verify_geo_location) {
-                    targeting.geo_location = this.targeting_item.targeting.geo_location;
+                    targeting.geo_location = this.targeting.geo_location;
                 } else {
                     return;
                 }
@@ -1413,13 +1408,13 @@ export default {
             //年龄
             if (this.age_modeal) {
                 let age = [];
-                age.push(this.age[0] + "~" + this.age[1]);
+                age.push(this.targeting.age[0] + "~" + this.targeting.age[1]);
                 targeting.age = age;
             }
             //验证商业兴趣
             if (this.business_modeal) {
                 if (this.verify_business_interest) {
-                    targeting.business_interest = this.targeting_item.targeting.business_interest;
+                    targeting.business_interest = this.targeting.business_interest;
                 } else {
                     return;
                 }
@@ -1427,7 +1422,7 @@ export default {
             //验证app行为
             if (this.appCategory_modeal) {
                 if (this.verify_app_behavior) {
-                    targeting.app_behavior = this.targeting_item.targeting.app_behavior;
+                    targeting.app_behavior = this.targeting.app_behavior;
                 } else {
                     return;
                 }
@@ -1435,7 +1430,7 @@ export default {
             //验证app安装
             if (this.app_install_status_modeal) {
                 if (this.verify_app_install_status) {
-                    targeting.app_install_status = this.targeting_item.targeting.app_install_status;
+                    targeting.app_install_status = this.targeting.app_install_status;
                 } else {
                     return;
                 }
@@ -1443,7 +1438,7 @@ export default {
             //验证联网方式
             if (this.network_modeal) {
                 if (this.verify_network_type) {
-                    targeting.network_type = this.targeting_item.targeting.network_type;
+                    targeting.network_type = this.targeting.network_type;
                 } else {
                     return;
                 }
@@ -1451,7 +1446,7 @@ export default {
             //验证付费用户
             if (this.paying_user_type_modeal) {
                 if (this.verify_paying_user_type) {
-                    targeting.paying_user_type = this.targeting_item.targeting.paying_user_type;
+                    targeting.paying_user_type = this.targeting.paying_user_type;
                 } else {
                     return;
                 }
@@ -1459,8 +1454,8 @@ export default {
             //验证自定义人群
             if (this.Audiences_modeal) {
                 if (this.verify_Audiences) {
-                    targeting.customized_audience = this.targeting_item.targeting.customized_audience;
-                    targeting.excluded_custom_audience = this.targeting_item.targeting.excluded_custom_audience;
+                    targeting.customized_audience = this.targeting.customized_audience;
+                    targeting.excluded_custom_audience = this.targeting.excluded_custom_audience;
                 } else {
                     return;
                 }
@@ -1468,7 +1463,7 @@ export default {
             //验证婚恋状态
             if (this.education_modeal) {
                 if (this.verify_education) {
-                    targeting.education = this.targeting_item.targeting.education;
+                    targeting.education = this.targeting.education;
                 } else {
                     return;
                 }
@@ -1476,7 +1471,7 @@ export default {
             //验证工作状态
             if (this.living_status_modeal) {
                 if (this.verify_living_status) {
-                    targeting.living_status = this.targeting_item.targeting.living_status;
+                    targeting.living_status = this.targeting.living_status;
                 } else {
                     return;
                 }
@@ -1484,7 +1479,7 @@ export default {
             //验证关键字
             if (this.word_modeal) {
                 if (this.verify_words) {
-                    targeting.keyword = this.targeting_item.targeting.keyword;
+                    targeting.keyword = this.targeting.keyword;
                 } else {
                     return;
                 }
@@ -1492,7 +1487,7 @@ export default {
             //验证消费状态
             if (this.shopping_capability_modeal) {
                 if (this.verify_shopping_capability) {
-                    targeting.shopping_capability = this.targeting_item.targeting.shopping_capability;
+                    targeting.shopping_capability = this.targeting.shopping_capability;
                 } else {
                     return;
                 }
@@ -1500,7 +1495,7 @@ export default {
             //验证移动运营商
             if (this.network_operator_modeal) {
                 if (this.verify_network_operator) {
-                    targeting.network_operator = this.targeting_item.targeting.network_operator;
+                    targeting.network_operator = this.targeting.network_operator;
                 } else {
                     return;
                 }
@@ -1508,20 +1503,18 @@ export default {
             //验证设备价格
             if (this.device_price_modeal) {
                 if (this.verify_device_price) {
-                    targeting.device_price = this.targeting_item.targeting.device_price;
+                    targeting.device_price = this.targeting.device_price;
                 } else {
                     return;
                 }
             }
-
             Axios.post("api.php", {
                 action: "gdtAdPut",
                 opt: "targetings_add",
                 do: "edit",
                 account_id: this.account_id,
-                targeting_id: this.MediaListModel == "0" ? "" : this.targeting_id,
-                //id: this.targeting_item.id,
-                targeting_name: this.targeting_item.targeting_name,
+                targeting_id: this.targeting_id,
+                targeting_name: this.targeting_name,
                 targeting: JSON.stringify(targeting)
             }).then(res => {
                 if (res.ret == 1) {
@@ -1531,21 +1524,11 @@ export default {
             }).catch(err => console.log("添加/修改定向" + err));
         }
     },
-    watch: {
-
-        age(val) {
-            let age = [];
-            age.push(val[0] + "~" + val[1]);
-            this.targeting_item.targeting.age = age;
-            this.get_estimation();
-        },
-
-    },
     computed: {
         //获取自定义人群
         customized_audience() {
             let list = this.$store.state.newad.CustomAudiences.list;
-            let ids = this.targeting_item.targeting.customized_audience;
+            let ids = this.targeting.customized_audience;
             list.forEach(item => {
                 let checked = false;
                 ids.forEach(v => {
@@ -1560,7 +1543,7 @@ export default {
         //获取自定义人群排除
         excluded_custom_audience() {
             let list = this.$store.state.newad.CustomAudiences_ex.list;
-            let ids = this.targeting_item.targeting.excluded_custom_audience;
+            let ids = this.targeting.excluded_custom_audience;
             list.forEach(item => {
                 ids.forEach(v => {
                     if (item.audience_id == v) {
@@ -1577,7 +1560,7 @@ export default {
         //商业兴趣转码
         businessname() {
             var name = [];
-            let ids = this.targeting_item.targeting.business_interest;
+            let ids = this.targeting.business_interest;
             ids.forEach(id => {
                 for (var i in this.business) {
                     var e = this.business[i];
@@ -1603,7 +1586,7 @@ export default {
         //获取商业兴趣
         business() {
             let list = this.$store.state.newad.business_interest;
-            let ids = this.targeting_item.targeting.business_interest;
+            let ids = this.targeting.business_interest;
             let n = 0;
             let newlist = [];
             list.forEach((item, i) => {
@@ -1674,7 +1657,7 @@ export default {
         //省市区转码(地域)
         regionsname() {
             let name = [];
-            let ids = this.targeting_item.targeting.geo_location.regions;
+            let ids = this.targeting.geo_location.regions;
             ids.forEach(id => {
                 for (var i in this.targeting_tags) {
                     var e = this.targeting_tags[i].children;
@@ -1691,7 +1674,7 @@ export default {
         //获取定向标签(地域)
         targeting_tags() {
             let list = this.$store.state.newad.targeting_tags;
-            let ids = this.targeting_item.targeting.geo_location.regions;
+            let ids = this.targeting.geo_location.regions;
             let n = 0;
             let newlist = [];
             list.forEach((item, i) => {
@@ -1730,7 +1713,7 @@ export default {
         //app定向转码
         appCategoryname() {
             var name = [];
-            let ids = this.targeting_item.targeting.app_behavior.object_id_list;
+            let ids = this.targeting.app_behavior.object_id_list;
             ids.forEach(id => {
                 for (var i in this.appCategory) {
                     var e = this.appCategory[i].children;
@@ -1753,7 +1736,7 @@ export default {
         //app行为按分类
         appCategory() {
             let list = this.$store.state.newad.appCategory;
-            let ids = this.targeting_item.targeting.app_behavior.object_id_list;
+            let ids = this.targeting.app_behavior.object_id_list;
             let newlist = [];
             list.forEach((item, i) => {
                 let children = [];
@@ -1821,7 +1804,7 @@ export default {
 
         //验证地理位置
         verify_geo_location() {
-            let geo_location = this.targeting_item.targeting.geo_location;
+            let geo_location = this.targeting.geo_location;
             if (!this.city_modeal) {
                 return true;
             } else if (
@@ -1845,7 +1828,7 @@ export default {
         },
         //验证app行为
         verify_app_behavior() {
-            let app_behavior = this.targeting_item.targeting.app_behavior;
+            let app_behavior = this.targeting.app_behavior;
             if (!this.appCategory_modeal) {
                 return true;
             } else if (
@@ -1861,7 +1844,7 @@ export default {
         },
         //验证app安装
         verify_app_install_status() {
-            let app_install_status = this.targeting_item.targeting
+            let app_install_status = this.targeting
                 .app_install_status;
             if (!this.app_install_status_modeal) {
                 return true;
@@ -1873,7 +1856,7 @@ export default {
         },
         //验证联网方式
         verify_network_type() {
-            let network_type = this.targeting_item.targeting.network_type;
+            let network_type = this.targeting.network_type;
             if (!this.network_modeal) {
                 return true;
             } else if (network_type.length <= 0) {
@@ -1884,7 +1867,7 @@ export default {
         },
         //验证付费用户
         verify_paying_user_type() {
-            let paying_user_type = this.targeting_item.targeting
+            let paying_user_type = this.targeting
                 .paying_user_type;
             if (!this.paying_user_type_modeal) {
                 return true;
@@ -1896,9 +1879,9 @@ export default {
         },
         //验证自定义人群
         verify_Audiences() {
-            let customized_audience = this.targeting_item.targeting
+            let customized_audience = this.targeting
                 .customized_audience;
-            let excluded_custom_audience = this.targeting_item.targeting
+            let excluded_custom_audience = this.targeting
                 .excluded_custom_audience;
             if (!this.Audiences_modeal) {
                 return true;
@@ -1914,7 +1897,7 @@ export default {
 
         //验证婚恋状态
         verify_education() {
-            let education = this.targeting_item.targeting.education;
+            let education = this.targeting.education;
             if (!this.education_modeal) {
                 return true;
             } else if (education.length <= 0) {
@@ -1925,7 +1908,7 @@ export default {
         },
         //验证工作状态
         verify_living_status() {
-            let living_status = this.targeting_item.targeting.living_status;
+            let living_status = this.targeting.living_status;
             if (!this.living_status_modeal) {
                 return true;
             } else if (living_status.length <= 0) {
@@ -1936,7 +1919,7 @@ export default {
         },
         //验证关键字
         verify_words() {
-            let words = this.targeting_item.targeting.keyword.words;
+            let words = this.targeting.keyword.words;
             if (!this.word_modeal) {
                 return true;
             } else if (words.length <= 0 || words.length >= 500) {
@@ -1947,7 +1930,7 @@ export default {
         },
         //验证消费状态
         verify_shopping_capability() {
-            let shopping_capability = this.targeting_item.targeting
+            let shopping_capability = this.targeting
                 .shopping_capability;
             if (!this.shopping_capability_modeal) {
                 return true;
@@ -1959,7 +1942,7 @@ export default {
         },
         //验证移动运营商
         verify_network_operator() {
-            let network_operator = this.targeting_item.targeting
+            let network_operator = this.targeting
                 .network_operator;
             if (!this.network_operator_modeal) {
                 return true;
@@ -1971,7 +1954,7 @@ export default {
         },
         //验证设备价格
         verify_device_price() {
-            let device_price = this.targeting_item.targeting.device_price;
+            let device_price = this.targeting.device_price;
             if (!this.device_price_modeal) {
                 return true;
             } else if (device_price.length <= 0) {
