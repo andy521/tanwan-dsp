@@ -53,7 +53,10 @@
     <span>
         <span class="name_text" @click="byted_modal=true">复制已有定向</span>
         <Modal title="复制用户定向" v-model="byted_modal" :width="732" @on-ok="confirm()">
-            <div class="clear">
+            <Input v-model="search" placeholder="请输入定向名称" @on-change="filterData" @on-enter="filterData" size="large">
+            <Button slot="append" icon="ios-search" @click="filterData">搜索</Button>
+            </Input>
+            <div class="clear margin-top-10">
                 <div class="city_main">
                     <div class="city_title">定向名称</div>
 
@@ -243,7 +246,9 @@ export default {
             toutiaoConfig: toutiaoConfig,
             byted_modal: false,
             loading: false,
+            search: "",
             TargetingList: "",
+            copyList: "",
             targeting: {
                 account_id: "",
                 targeting: "",
@@ -266,6 +271,7 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     this.TargetingList = res.data;
+                    this.copyList = res.data;
                 }
             }).catch(err => {
                 console.log('获取定向失败' + err);
@@ -278,7 +284,7 @@ export default {
                 action: 'api',
                 opt: 'getTargetings',
                 account_id: this.account_id,
-                media_type:1,
+                media_type: 1,
                 targeting_id: item.targeting_id,
             }).then(res => {
                 this.loading = false;
@@ -294,34 +300,22 @@ export default {
         confirm() {
             this.$emit("on-change", this.targeting);
         },
-    },
-    computed: {
-        //重新排区
-        cityname() {
-            let province = [];
-            if (this.province.length > 0 && this.targeting.targeting.city) {
-                this.targeting.targeting.city.forEach(id => {
-                    this.province.forEach(v => {
-                        if (id == v.value) province.push(v.name);
-                        if (v.countyList) {
-                            v.countyList.forEach(v => {
-                                if (id == v.value) province.push(v.name);
-                            })
-                        }
-                        if (v.cityList) {
-                            v.cityList.forEach(v => {
-                                if (id == v.value) province.push(v.name);
-                                if (v.countyList) {
-                                    v.countyList.forEach(v => {
-                                        if (id == v.value) province.push(v.name);
-                                    })
-                                }
-                            })
-                        }
-                    })
-                })
+        //搜索
+        filterData() {
+            if (this.search === "") {
+                this.TargetingList = this.copyList;
+                return
             }
-            return province;
+            const all = this.copyList
+            const filter = []
+            const searchTxt = new RegExp(this.search, 'gmi');
+            all.forEach(item => {
+                if (item.targeting_name.search(searchTxt) != -1) {
+                    filter.push(item)
+                }
+            })
+            const retNull = [{ targeting_name: '无搜索结果,请重新搜索', targeting_id: '' }]
+            this.TargetingList = filter.length < 1 ? retNull : filter
         },
     }
 }

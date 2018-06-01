@@ -1,3 +1,4 @@
+
 <style scoped>
 .gdtnew {
   padding: 10px 10px 10px 210px;
@@ -11,115 +12,118 @@
 .week {
   margin: 0 0 20px 90px;
 }
-.fl {
-  float: left;
-}
 </style>
 <template>
     <div class="gdtnew ad">
         <!-- 导行 -->
-        <side-bar :step="1"></side-bar>
-        <!-- 定向 -->
-        <targetingDetails @on-change="getTargetingid"></targetingDetails>
+        <side-bar :step="step"></side-bar>
+        <div v-if="step==1">
+            <!-- 定向 -->
+            <targetingDetails @on-change="getTargetingid"></targetingDetails>
 
-        <Card dis-hover class="margin-top-10">
-            <div class="padding-20">
-                <div class="title">目标详情</div>
-                <Row class="margin-top-20">
-                    <Col span="16">
-                    <Select filterable size="large" placeholder="请选择标的物id" v-model="product_refs_id" @on-change="change_product_refs_id">
-                        <Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="item.product_refs_id">{{item.product_name}}</Option>
-                    </Select>
-                    </Col>
-                </Row>
-            </div>
-        </Card>
+            <Card dis-hover class="margin-top-10">
+                <div class="padding-20">
+                    <div class="title">目标详情</div>
+                    <Row class="margin-top-20">
+                        <Col span="16">
+                        <Select filterable size="large" placeholder="请选择标的物id" v-model="product_refs_id">
+                            <Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="item.product_refs_id">{{item.product_name}}</Option>
+                        </Select>
+                        </Col>
+                    </Row>
+                </div>
+            </Card>
 
-        <Card dis-hover class="margin-top-10" style="position: inherit;">
-            <div class="padding-20">
-                <div class="title">排期与出价</div>
-                <Row class="margin-top-20" style="position: inherit;">
-                    <Col span="16" style="position: inherit;">
-                    <Form :model="adgroup" :label-width="90" style="position: inherit;">
-                        <FormItem label="投放日期：">
-                            <div>
-                                <RadioGroup v-model="datetype">
-                                    <Radio label="1">长期投放</Radio>
-                                    <Radio label="2">在某日期范围内投放</Radio>
+            <Card dis-hover class="margin-top-10" style="position: inherit;">
+                <div class="padding-20">
+                    <div class="title">排期与出价</div>
+                    <Row class="margin-top-20" style="position: inherit;">
+                        <Col span="16" style="position: inherit;">
+                        <Form :model="adgroup" :label-width="90" style="position: inherit;">
+                            <FormItem label="广告组名称">
+                                <Input v-model="adgroup.adgroup_name" :maxlength="40" style="width: 450px" size="large"></Input>
+                                <span class="input-ts">{{adgroup.adgroup_name.length}}/40</span>
+                            </FormItem>
+                            <FormItem label="投放日期：">
+                                <div>
+                                    <RadioGroup v-model="datetype" type="button" size="large">
+                                        <Radio label="1">长期投放</Radio>
+                                        <Radio label="0">日期范围内投放</Radio>
+                                    </RadioGroup>
+                                </div>
+                                <div class="margin-top-20">
+                                    <DatePicker v-if="datetype==1" v-model="adgroup.begin_date" :options="options" type="date" format="yyyy-MM-dd" placeholder="长期投放" size="large"></DatePicker>
+                                    <DatePicker v-if="datetype==0" v-model="DateDomain" :options="options" type="daterange" format="yyyy-MM-dd" placement="bottom-start" placeholder="日期范围内投放" size="large"></DatePicker>
+                                </div>
+                            </FormItem>
+                            <FormItem label="投放时间：">
+                                <RadioGroup v-model="allDay" type="button" size="large">
+                                    <Radio label="1">全天</Radio>
+                                    <Radio label="0">时间段投放</Radio>
                                 </RadioGroup>
+                            </FormItem>
+                            <div class="week" v-if="allDay==0">
+                                <week-time v-model="adgroup.time_series"></week-time>
                             </div>
-                            <DatePicker v-if="datetype==1" v-model="adgroup.begin_date" :options="options" type="date" format="yyyy-MM-dd" placeholder="长期投放"></DatePicker>
-                            <DatePicker v-if="datetype==2" v-model="DateDomain" :options="options" type="daterange" format="yyyy-MM-dd" placement="bottom-start" placeholder="在某日期范围内投放"></DatePicker>
-                        </FormItem>
-                        <FormItem label="投放时间：">
-                            <div class="fl">
-                                <Checkbox v-model="allDay">
-                                    <span>全天</span>
-                                </Checkbox>
-                                <span style="margin:0 20px; color:#999">/</span>
-                            </div>
-                            <div class="fl" v-if="allDay" @click="period">特定时间段</div>
-                            <div class="fl" v-else>
-                                <TimePicker :value="timeState" format="HH:mm" type="timerange" placeholder="请选择时间段" :steps="[1, 30]" style="width: 168px"></TimePicker>
-                                <Button @click="showWeek" type="dashed">{{isWeekText}}</Button>
-                            </div>
-                        </FormItem>
-                        <div class="week" v-if="isWeek">
-                            <week-time v-model="adgroup.time_series"></week-time>
-                        </div>
-                        <FormItem label="出价方式：">
-                            <Select @on-change="getStyle" v-model="adgroup.optimization_goal" style="width:180px;margin-right:15px;" placeholder="请选择优化目标">
-                                <Option v-for="item in gdtConfig.optimization_goal" :value="item.val_type" :key="this">{{ item.name }}</Option>
-                            </Select>
-                            <RadioGroup v-model="adgroup.billing_event" type="button">
-                                <Radio label="BILLINGEVENT_CLICK" :disabled="disabled_cpc">按CPC扣费</Radio>
-                                <Radio label="BILLINGEVENT_IMPRESSION" :disabled="disabled_cpm">按CPM扣费</Radio>
-                            </RadioGroup>
-                            <span style="color:#ccc;">（请先选优化目录，然后才可选择出价方式）</span>
-                        </FormItem>
-                        <FormItem label="出价：">
-                            <Input v-model="adgroup.bid_amount" placeholder="输入价格" number style="width:180px" @on-blur="getPrice" icon=""></Input>
-                            <span class="input-ts">元/点击</span>
-                        </FormItem>
-                        <FormItem label="日限额：" v-if="campaign_type=='CAMPAIGN_TYPE_WECHAT_MOMENTS'">
-                            <Input v-model="adgroup.daily_budget" placeholder="输入日限额" number style="width:180px" icon=""></Input>
-                            <span class="input-ts">分</span>
-                        </FormItem>
+                            <FormItem label="出价方式：">
+                                <Select @on-change="getStyle" v-model="adgroup.optimization_goal" style="width:200px;margin-right:15px;" placeholder="请选择优化目标" size="large">
+                                    <Option v-for="item in gdtConfig.optimization_goal" :value="item.val_type" :key="this">{{ item.name }}</Option>
+                                </Select>
+                                <RadioGroup v-model="adgroup.billing_event" type="button" size="large">
+                                    <Radio label="BILLINGEVENT_CLICK" :disabled="disabled_cpc">按CPC扣费</Radio>
+                                    <Radio label="BILLINGEVENT_IMPRESSION" :disabled="disabled_cpm">按CPM扣费</Radio>
+                                </RadioGroup>
+                                <span style="color:#ccc;">（请先选优化目录，然后才可选择出价方式）</span>
+                            </FormItem>
+                            <FormItem label="出价：">
+                                <InputNumber :max="100000" :min="10" :step="100" v-model="adgroup.bid_amount" placeholder="输入价格" style="width:200px;" size="large"></InputNumber>
+                                <span>元/点击</span>
+                                <span style="color:#ccc;">单位为分</span>
+                            </FormItem>
+                            <FormItem label="日限额：" v-if="campaign_type=='CAMPAIGN_TYPE_WECHAT_MOMENTS'">
+                                <InputNumber :max="1000000000" :min="100000" :step="10000" v-model="adgroup.daily_budget" placeholder="输入日限额" style="width:200px;"></InputNumber>
+                                <span style="color:#ccc;">分</span>
+                            </FormItem>
+                        </Form>
+                        </Col>
+                    </Row>
+                </div>
+            </Card>
 
-                        <FormItem label="广告组名称">
-                            <Input v-model="adgroup.adgroup_name" :maxlength="40" style="width: 450px"></Input>
-                            <span class="input-ts">{{adgroup.adgroup_name.length}}/40</span>
-                        </FormItem>
-                    </Form>
-                    </Col>
-                </Row>
-            </div>
-        </Card>
+            <Card dis-hover class="margin-top-10">
+                <div class="padding-20">
+                    <Button type="primary" size="large" @click="adgroups_add()">
+                        <span v-if="adgroup_id">修改广告</span>
+                        <span v-else>下一步</span>
+                    </Button>
+                </div>
+            </Card>
+        </div>
 
-        <Card dis-hover class="margin-top-10">
-            <div class="padding-20">
-                <Button type="primary" size="large" @click="adgroups_add()">
-                    <span v-if="adgroup_id">修改广告</span>
-                    <span v-else>下一步</span>
-                </Button>
-            </div>
-        </Card>
+        <div v-if="step==2">
+            <advertisingPosition :id="adcreative_template_id" @on-change="getPosition"></advertisingPosition>
+            <upCreative :id="adcreative_template_id" class="margin-top-10" @on-change="submit_adgroups"></upCreative>
+        </div>
 
     </div>
 </template>
 <script>
 import Axios from "@/api/index";
 import gdtConfig from "@/utils/gdtConfig.json";
-import { formatDate, changetime, deepClone, toHourMinute } from "@/utils/DateShortcuts.js";
+import { formatDate, changetime } from "@/utils/DateShortcuts.js";
 import sideBar from "./components/sideBar.vue";
 import targetingDetails from "./components/targetingDetails.vue";
 import weekTime from "./components/weekTime.vue";
+import advertisingPosition from "./components/advertisingPosition.vue";
+import upCreative from "./components/upCreative.vue";
 
 export default {
     components: {
         sideBar,
         targetingDetails,
-        weekTime
+        weekTime,
+        advertisingPosition,
+        upCreative
     },
     data() {
         return {
@@ -129,10 +133,14 @@ export default {
             campaign_type: this.$route.query.campaign_type,
             targeting_id: this.$route.query.targeting_id,
             adgroup_id: this.$route.query.adgroup_id,
+            adcreative_id: this.$route.query.adcreative_id,
 
-            product_refs_id: "",
-            destination_url: "",
+            product_refs_id: "",//标物物id
+            sub_product_refs_id: "",//子标的物 id
             product_refs_ids: [],
+            destination_url: "",//落地页 url
+            step: 1,
+
             options: {
                 disabledDate(date) {
                     return date && date.valueOf() < Date.now() - 86400000;
@@ -151,34 +159,87 @@ export default {
                 //结束投放日期
                 end_date: "",
                 //投放时间段
-                time_series: "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                time_series: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+                time_series1: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
                 billing_event: "",
-                //出价
-                bid_amount: "",
+                bid_amount: 0,//出价
                 adgroup_name: "",
-                daily_budget: ""
+                daily_budget: 0//出价方式
             },
-            time_series: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
-            //投放时间
-            allDay: true,
-            //特定时间段-开始时间
-            timeStateList: [],
-            //特定时间段-结束时间
-            timeEndList: [],
-            //特定时段间
-            timeState: ["00:00", "10:00"],
-            //出价方式
+            allDay: "1",//特定时间段
             disabled_cpc: true,
             disabled_cpm: true,
-            //是否显示高级设置
-            isWeek: false,
-            isWeekText: "高级设置",
+
+            adcreative_template_id: 184,
+            site_set: "",//投放站点集合
+            adgroups_param: "",//广告组数据
+            adgroup_detail: ""
         };
     },
     mounted() {
         this.products_info_get();
+        if (this.adgroup_id) {
+            this.get_adgroup_detail();
+        }
+        if (this.adcreative_id) {
+            this.step = 2;
+        }
+
     },
     methods: {
+
+        //获取详情
+        get_adgroup_detail() {
+            Axios.post("api.php", {
+                action: "gdtAdPut",
+                opt: "get_adgroup_detail",
+                account_id: this.account_id,
+                adgroup_id: this.adgroup_id
+            }).then(res => {
+                if (res.ret == 1) {
+                    console.log(res.data)
+                    this.adgroup_detail = res.data;
+                    this.fill_adgroup_detail(res.data);
+                }
+            }).catch(err => {
+                console.log("获取详情失败" + err);
+            });
+        },
+
+        //详情传过来的参数
+        fill_adgroup_detail(adgroup_detail) {
+
+            this.adgroup.adgroup_name = adgroup_detail.adgroup_name; //广告组名称
+
+            this.adgroup.time_series = adgroup_detail.time_series; //投放时间
+            if (changetime(adgroup_detail.time_series) != "全部时间点") {
+                this.allDay = "0";
+            }
+
+            this.adgroup.begin_date = adgroup_detail.begin_date; //投放日期开始
+            this.adgroup.end_date = adgroup_detail.end_date; //投放日期始束
+            this.DateDomain = [adgroup_detail.begin_date, adgroup_detail.end_date];
+            if (this.adgroup.end_date == "1970-01-01") {
+                //是否是长期投放
+                this.datetype = "0";
+            }
+            this.adgroup.bid_amount = Number(adgroup_detail.bid_amount); //出价
+
+            this.adgroup.optimization_goal = adgroup_detail.optimization_goal; //优化目标
+
+            this.adgroup.billing_event = adgroup_detail.billing_event; //付费方式
+
+            this.adgroup.daily_budget = Number(adgroup_detail.daily_budget);
+
+            this.product_refs_id = adgroup_detail.product_refs_id;
+
+            this.sub_product_refs_id = adgroup_detail.sub_product_refs_id;
+
+            this.destination_url = adgroup_detail.destination_url;
+
+            //this.adcreative_template_id = adgroup_detail.adcreative_template_id
+        },
+
         //返回定向id
         getTargetingid(id) {
             this.targeting_id = id;
@@ -197,36 +258,6 @@ export default {
             }).catch(err => {
                 console.log("获取标的物id" + err);
             });
-        },
-        //选择标的物
-        change_product_refs_id(val) {
-            this.product_refs_ids.forEach(element => {
-                if (val == element.product_refs_id) {
-                    this.destination_url = JSON.parse(element.product_info).product_type_app_android_open_platform.app_property_pkg_url;
-                }
-            });
-        },
-        //出价 正则过滤非数字
-        getPrice() {
-            let patrn = /^\d+(\.\d+)?$/;
-            if (!patrn.exec(this.adgroup.bid_amount)) {
-                //this.$Message.error('请输入正确价格！');
-                this.adgroup.bid_amount = "";
-            }
-        },
-        //特定时间段
-        period() {
-            this.allDay = false;
-        },
-        //显示高级设置
-        showWeek() {
-            if (!this.isWeek) {
-                this.isWeek = true;
-                this.isWeekText = "退出高级设置";
-            } else {
-                this.isWeek = false;
-                this.isWeekText = "高级设置";
-            }
         },
         //选择优化目标
         getStyle(val) {
@@ -252,10 +283,8 @@ export default {
                 this.disabled_cpc = false;
             }
         },
-
         //提交
         adgroups_add() {
-
             //提交数据
             let param = {
                 action: "gdtAdPut",
@@ -264,96 +293,131 @@ export default {
                 account_id: this.account_id,
                 campaign_id: this.campaign_id,
                 adgroup_id: this.adgroup_id,
-                adgroup_name: this.adgroup.adgroup_name,
                 product_type: this.product_type,
+                targeting_id: this.targeting_id,
+                adgroup_name: this.adgroup.adgroup_name,
+                optimization_goal: this.adgroup.optimization_goal,
+                billing_event: this.adgroup.billing_event,
+                bid_amount: this.adgroup.bid_amount,
+                configured_status: this.configured_status,
+                product_refs_id: this.product_refs_id,
+                sub_product_refs_id: this.sub_product_refs_id//为空
+                // site_set:""投放站点集合
             }
-
-            if (this.datetype == "2") {
+            if (this.datetype == 0) {
                 param.begin_date = this.DateDomain[0];
                 param.end_date = this.DateDomain[1];
             } else {
                 param.begin_date = this.adgroup.begin_date;
                 param.end_date = "";
             }
-
-            if (this.adgroup.time_series) {
+            if (this.allDay == 1) {
+                param.time_series = this.adgroup.time_series1;
+            } else {
                 param.time_series = this.adgroup.time_series;
-            } else {
-                param.time_series = this.time_series;
             }
-
-
-
-
-
-            // site_set	string	是	投放站点集合
-
-
-
-            // billing_event	string	是	计费类型
-            // bid_amount	string	是	广告出价，单位为分
-            // optimization_goal	string	是	广告优化目标类型
-            // daily_budget	string	是	日限额，单位为分
-            // product_refs_id	string	是	标的物 id
-            // sub_product_refs_id	string	是	子标的物 id
-            // targeting_id	string	是	定向 id
-            // time_series	string	是	投放时间段
-            // configured_status	string	是	客户设置的状态
-            // customized_category  自定义分类，
-
-
-
-
-            if (this.adgroup.begin_date == "") {
-                this.$Message.info("请设置投放日期");
+            if (this.campaign_type == "CAMPAIGN_TYPE_WECHAT_MOMENTS") {
+                param.daily_budget = this.adgroup.daily_budget;
+            }
+            if (this.targeting_id == undefined || this.targeting_id == "") {
+                this.$Message.info("请先保存定向");
                 return;
             }
-
-            if (
-                this.adgroup.bid_amount < 0.1 ||
-                this.adgroup.bid_amount > 1000
-            ) {
-                this.$Message.info("出价需介于10分-100,000分之间");
-                return;
-            }
-            if (this.plandata.campaign_type == "CAMPAIGN_TYPE_WECHAT_MOMENTS") {
-                if (
-                    this.adgroup.daily_budget < 100000 ||
-                    this.adgroup.daily_budget > 1000000000
-                ) {
-                    this.$Message.info(
-                        "日预算要求介于 100,000 – 1,000,000,000 分之间"
-                    );
-                    return;
-                }
-            } else {
-                this.adgroup.daily_budget == "";
-            }
-            // if (this.adgroup.destination_url == "") {
-            //     this.$Message.info("请填写落地页 url");
-            //     return;
-            // }
-            if (this.adgroup.adcreative_name == "") {
-                this.$Message.info("请填写广告名称");
-                return;
-            }
-            if (this.adgroup.adgroup_name == "") {
-                this.$Message.info("请填写广告组名称");
-                return;
-            }
-
-
-        }
-
-    }
-};
-          // if (this.product_refs_id == "") {
+            // if (this.product_refs_id == "") {
             //     this.$Message.info("请输入标的物id");
             //     return;
             // }
-            // if (this.product_refs_id.length > 15) {
-            //     this.$Message.info("请输入标的物id超出字数限制");
-            //     return;
-            // }
+            if (this.product_refs_id.length > 15) {
+                this.$Message.info("标的物id超出字数限制");
+                return;
+            }
+            if (param.adgroup_name == "") {
+                this.$Message.info("请填写广告组名称");
+                return;
+            }
+            if (param.begin_date == "") {
+                this.$Message.info("请设置投放日期");
+                return;
+            }
+            if (param.optimization_goal == "") {
+                this.$Message.info("选择广告优化类型");
+                return;
+            }
+            if (param.bid_amount < 0.1 || param.bid_amount > 1000) {
+                this.$Message.info("出价需介于10分-100,000分之间");
+                return;
+            }
+            if (param.daily_budget < 100000 || param.daily_budget > 1000000000) {
+                this.$Message.info("日预算要求介于 100,000 – 1,000,000,000 分之间");
+                return;
+            }
+            this.adgroups_param = param;
+            this.step = 2;
+        },
+        get_destination_url(val) {
+            this.product_refs_ids.forEach(element => {
+                if (val == element.product_refs_id) {
+                    this.destination_url = JSON.parse(element.product_info).product_type_app_android_open_platform.app_property_pkg_url;
+                }
+            });
+        },
+        //选择广告版位
+        getPosition(id, site_set) {
+            this.adcreative_template_id = id;
+            this.site_set = site_set;
+        },
+        //提交
+        submit_adgroups() {
+
+            let param = {
+                action: "gdtAdPut",
+                opt: "ads_cre_add",
+                account_id: this.account_id,
+                campaign_id: this.campaign_id,
+                product_type: this.product_type,
+                product_refs_id: this.product_refs_id,
+                site_set: this.site_set,
+                destination_url: this.destination_url,
+                adcreative_template_id: this.adcreative_template_id,
+                site_set: this.site_set,
+                product_type: this.product_type,
+                product_refs_id: this.product_refs_id,
+
+
+                // adcreative_name	string	是	广告创意名称		
+                // adcreative_elements	string	是	创意元素
+                 //adcreative_id	string	是	广告创意 id 有是编辑更新，没有则是添加			
+            };
+
+
+
+
+           	
+           
+
+
+
+            console.log(param);
+            Axios.post("api.php", param).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                }
+            }).catch(err => console.log("广告组" + err));
+
+
+
+            let adgroups_param = this.adgroups_param;
+            adgroups_param.site_set = this.site_set;
+            console.log(adgroups_param);
+            Axios.post("api.php", adgroups_param).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                }
+            }).catch(err => console.log("广告组" + err));
+
+
+        }
+    }
+};
 </script>
 

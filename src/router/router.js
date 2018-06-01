@@ -37,8 +37,7 @@ export const newAd = {
     component: () => import('@/components/childrouter/childrouter.vue'),
     children: [
         { path: 'campaign', title: '新建广点通广告组', name: 'gdtcampaign', component: () => import('@/views/gdtnew/campaign.vue') },
-        { path: 'ad', title: '新建广点通广告计划', name: 'gdtad', component: () => import('@/views/gdtnew/ad.vue') },
-        { path: 'creative', title: '新建广点通创意', name: 'gdtcreative', component: () => import('@/views/gdtnew/creative.vue') },
+        { path: 'ad', title: '新建广点通广告计划', name: 'gdtad', component: () => import('@/views/gdtnew/ad.vue') }
     ]
 };
 

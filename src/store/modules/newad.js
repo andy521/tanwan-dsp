@@ -3,7 +3,7 @@ import Axios from "@/api/index";
 const newad = {
     state: {
         //step: [0, 0], //导行定位
-        adgroup_detail: "", //定向详情
+        // adgroup_detail: "", //定向详情
 
         ads_config: [], //所有状态
         product_type: [], //标的物类型       
@@ -18,9 +18,9 @@ const newad = {
         save_step(state, step) {
             state.step = step;
         },
-        save_adgroup_detail(state, adgroup_detail) {
-            state.adgroup_detail = adgroup_detail;
-        },
+        // save_adgroup_detail(state, adgroup_detail) {
+        //     state.adgroup_detail = adgroup_detail;
+        // },
         GET_ADS_CONFIG(state, data) {
             state.ads_config = data;
         },
