@@ -6,7 +6,7 @@
         <!-- 导行 -->
         <side-bar :step="0"></side-bar>
         <Card dis-hover>
-            <div class="newtt">
+            <div class="padding-20">
                 <Tabs :animated="false">
                     <TabPane label="创建新广告组">
                         <Row>
