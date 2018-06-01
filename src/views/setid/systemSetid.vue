@@ -1,8 +1,8 @@
 <style>
-@import "../../styles/table.less";
+/* @import "../../styles/table.less";
 .ivu-modal-confirm-body.ivu-modal-confirm-body-render{
     text-align: center;
-}
+} */
 </style>
 <style scoped>
 .width-tab{
@@ -12,11 +12,11 @@
     flex: 1;
     text-align: left;
 }
-.manger-head-bar:last-of-type{
+/* .manger-head-bar:last-of-type{
     flex: 0 0 160px;
     width: 160px;
     text-align: right;
-}
+} */
 </style>
 
 <template>
@@ -30,10 +30,9 @@
                     <Input @on-enter="getAdsAccount" v-model="searchVal" placeholder="支持账号名短语搜索" class="width-tab"></Input>
                     <Button @click="getAdsAccount"><Icon type="ios-search-strong"></Icon> &nbsp;搜索</Button>
                 </Col>
-                <Col class="manger-head-bar">
-                    <Button @click="handleViewAccount"><Icon type="ios-eye"></Icon> &nbsp;查看</Button>
+                <!-- <Col class="manger-head-bar">
                     <Button @click="handleEdieAccount"><Icon type="edit"></Icon> &nbsp;编辑</Button>
-                </Col>
+                </Col> -->
             </Row>
 
             <Table :columns="columns" :size="tableSize" :data="AdsAccount" stripe class="margin-top-10"></Table>
@@ -54,28 +53,9 @@
                 <Page :current="page" :total="pageTotalNum" :page-size="pageSize" ref="pages" @on-change="getAdsAccount" show-elevator show-total></Page>
                 </Col>
             </Row>
-
-            <!-- <Select v-model="uId" style="width:200px" @on-change="getOpAccountUId" placeholder="请选择负责人">
-                <Option v-for="item in AdsAthour" :value="item.uId" :key="this">{{ item.uName }}</Option>
-            </Select>
-            <Tree :data="newAdsAcccountJson" show-checkbox multiple class="margin-top-20" @on-check-change="handleCheckChange"></Tree>
-            <Button type="primary" class="margin-top-20" :loading="loading" @click="submitform" style="width: 100px;">
-                <span v-if="!loading">确定</span>
-                <span v-else>提交中...</span>
-            </Button> -->
-        
-        
+            
         </Card>
 
-        <Modal v-model="isModal" title="权限修改" @on-ok="handleModalOk">
-            <Transfer
-                :data="permissionAccount"
-                :target-keys="permissionAssignAccount"
-                filterable
-                :filter-method="filterMethod"
-                @on-change="handleAccountChange">
-            </Transfer>
-        </Modal>
     </div>
 </template>
 
@@ -94,12 +74,6 @@ export default {
         return {
             isModal: false,
             loading: false,
-            permissionAccount: [
-                { "key": "1", "label": "Content 1", "disabled": false },
-                { "key": "2", "label": "Content 2", "disabled": true },
-                { "key": "3", "label": "Content 3", "disabled": false }
-            ],
-            permissionAssignAccount: ["1","2"],
             searchVal: '', // 搜索
             authorList: [], // 刷选负责人
             mediaList: [], // 刷选media
@@ -123,14 +97,14 @@ export default {
                     title: '账号名',
                     key: 'account_name'
                 },
-                // {
-                //     title: '代理',
-                //     key: 'agent'
-                // },
-                // {
-                //     title: '负责人',
-                //     key: 'author'
-                // },
+                {
+                    title: '代理',
+                    key: 'agent'
+                },
+                {
+                    title: '负责人',
+                    key: 'author'
+                },
                 {
                     title: '职位',
                     key: 'position'
@@ -139,64 +113,64 @@ export default {
                     title: '媒体',
                     key: 'media_name'
                 },
-                {
-                    title: '可查看',
-                    key: 'show',
-                    render: (h, params) => {
-                        return h('span', {
-                                class: 'name_text',
-                                on: {
-                                    click: () => {
-                                        this.$Modal.confirm({
-                                            title: '权限修改',
-                                            width: 520,
-                                            render: h => {
-                                                return h('Transfer', {
-                                                    props: {
-                                                        data: [],
-                                                        targetKeys: [],
-                                                    },
-                                                    class: ['margin-top-20', 'inline-block', 'text-left']
-                                                })
-                                            },
-                                            onOK: () => {
+                // {
+                //     title: '可查看',
+                //     key: 'show',
+                //     render: (h, params) => {
+                //         return h('span', {
+                //                 class: 'name_text',
+                //                 on: {
+                //                     click: () => {
+                //                         this.$Modal.confirm({
+                //                             title: '权限修改',
+                //                             width: 520,
+                //                             render: h => {
+                //                                 return h('Transfer', {
+                //                                     props: {
+                //                                         data: [],
+                //                                         targetKeys: [],
+                //                                     },
+                //                                     class: ['margin-top-20', 'inline-block', 'text-left']
+                //                                 })
+                //                             },
+                //                             onOK: () => {
                                                 
-                                            }
-                                        })
-                                    }
-                                },
-                            }, '编辑')
-                    }
-                },
-                {
-                    title: '可编辑',
-                    key: 'edit',
-                    render: (h, params) => {
-                        return h('span', {
-                                class: 'name_text',
-                                on: {
-                                    click: () => {
-                                        this.$Modal.confirm({
-                                            title: '权限修改',
-                                            width: 520,
-                                            render: h => {
-                                                return h('Transfer', {
-                                                    props: {
-                                                        data: [],
-                                                        targetKeys: [],
-                                                    },
-                                                    class: ['margin-top-20', 'inline-block', 'text-left']
-                                                })
-                                            },
-                                            onOK: () => {
+                //                             }
+                //                         })
+                //                     }
+                //                 },
+                //             }, '编辑')
+                //     }
+                // },
+                // {
+                //     title: '可编辑',
+                //     key: 'edit',
+                //     render: (h, params) => {
+                //         return h('span', {
+                //                 class: 'name_text',
+                //                 on: {
+                //                     click: () => {
+                //                         this.$Modal.confirm({
+                //                             title: '权限修改',
+                //                             width: 520,
+                //                             render: h => {
+                //                                 return h('Transfer', {
+                //                                     props: {
+                //                                         data: [],
+                //                                         targetKeys: [],
+                //                                     },
+                //                                     class: ['margin-top-20', 'inline-block', 'text-left']
+                //                                 })
+                //                             },
+                //                             onOK: () => {
 
-                                            }
-                                        })
-                                    }
-                                },
-                            }, '编辑')
-                    }
-                },
+                //                             }
+                //                         })
+                //                     }
+                //                 },
+                //             }, '编辑')
+                //     }
+                // },
             ],
             tableSize: 'small',
             pageTotalNum: 0, // 总数量
@@ -229,19 +203,19 @@ export default {
             this.authorList = authorList
             this.getAdsAccount()            
         },
-        handleCheckChange() {},
-        handleViewAccount() {},
-        handleEdieAccount() {},
-        handleModalOk() {
+        // handleCheckChange() {},
+        // handleViewAccount() {},
+        // handleEdieAccount() {},
+        // handleModalOk() {
 
-        },
-        handleAccountChange(seleAccount) {
-            this.permissionAssignAccount = seleAccount
-        },
+        // },
+        // handleAccountChange(seleAccount) {
+        //     this.permissionAssignAccount = seleAccount
+        // },
         // 搜索权限账号
-        filterMethod(data, query) {
-            return data.label.indexOf(query) > -1
-        },
+        // filterMethod(data, query) {
+        //     return data.label.indexOf(query) > -1
+        // },
         getAdsAccount() {},
         //获取管理员
         getAdsAthour() {
