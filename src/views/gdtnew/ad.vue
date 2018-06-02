@@ -196,9 +196,10 @@ export default {
         //获取详情
         get_adgroup_detail() {
             Axios.post("api.php", {
-                action: "gdtAdPut",
-                opt: "get_adgroup_detail",
+                action: "api",
+                opt: "getAdgroups",
                 account_id: this.account_id,
+                media_type:1,
                 adgroup_id: this.adgroup_id
             }).then(res => {
                 if (res.ret == 1) {
@@ -210,6 +211,7 @@ export default {
                 console.log("获取详情失败" + err);
             });
         },
+
         //详情传过来的参数
         fill_adgroup_detail(adgroup_detail) {
 

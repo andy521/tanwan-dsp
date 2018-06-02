@@ -104,7 +104,7 @@ export const appRouter = [
             { path: 'ad', title: '实时投放广告', name: 'time_ad', icon: 'android-radio-button-off', component: () => import('@/views/time/ad.vue') },
             { path: 'finance', title: '财务', name: 'time_finance', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
-                { path: 'journal', title: '资金流水', name: 'time_journal',icon: 'android-radio-button-off',  component: () => import('@/views/time/finance/journal.vue')},
+                { path: 'journal', title: '财务记录', name: 'time_journal',icon: 'android-radio-button-off',  component: () => import('@/views/time/finance/journal.vue')},
                 { path: 'funds', title: '财务信息', name: 'time_funds',icon: 'android-radio-button-off', component: () => import('@/views/time/finance/funds.vue') }, 
                 { path: 'rechargeRecord', title: '充值记录', name: 'time_rechargeRecord',icon: 'android-radio-button-off', component: () => import('@/views/time/finance/rechargeRecord.vue') } ,
                 { path: 'transferAccounts', title: '转帐记录', name: 'time_transferAccounts',icon: 'android-radio-button-off', component: () => import('@/views/time/finance/transferAccounts.vue') } 
