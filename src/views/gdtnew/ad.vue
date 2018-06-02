@@ -142,6 +142,7 @@ export default {
             campaign_type: this.$route.query.campaign_type,
             targeting_id: this.$route.query.targeting_id,
             adgroup_id: this.$route.query.adgroup_id,
+            configured_status: this.$route.query.configured_status,
 
             product: {//添加标的物 
                 product_name: "",
@@ -190,6 +191,7 @@ export default {
         this.products_info_get();
         if (this.adgroup_id) {
             this.get_adgroup_detail();
+            this.getAdgroupTemplateId();
         }
     },
     methods: {
@@ -203,7 +205,6 @@ export default {
                 adgroup_id: this.adgroup_id
             }).then(res => {
                 if (res.ret == 1) {
-                    console.log(res.data)
                     this.adgroup_detail = res.data;
                     this.fill_adgroup_detail(res.data);
                 }
@@ -211,10 +212,23 @@ export default {
                 console.log("获取详情失败" + err);
             });
         },
+        //获取版位adcreative_template_id
+        getAdgroupTemplateId() {
+            Axios.post("api.php", {
+                action: "gdtAdPut",
+                opt: "getAdgroupTemplateId",
+                adgroup_id: this.adgroup_id
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.adcreative_template_id = res.data.adcreative_template_id;
+                }
+            }).catch(err => {
+                console.log("获取版位失败" + err);
+            });
+        },
         //详情传过来的参数
         fill_adgroup_detail(adgroup_detail) {
             this.site_set = adgroup_detail.site_set;
-            this.adcreative_template_id = adgroup_detail.adcreative_template_id;
 
             this.adgroup.adgroup_name = adgroup_detail.adgroup_name; //广告组名称
             this.adgroup.time_series = adgroup_detail.time_series; //投放时间
@@ -404,7 +418,7 @@ export default {
                             product_type: this.product_type,
                             site_set: this.site_set,
                             adcreative_template_id: this.adcreative_template_id,
-                            destination_url:this.destination_url
+                            destination_url: this.destination_url
                         }
                     })
                 }

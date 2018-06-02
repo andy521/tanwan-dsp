@@ -9,7 +9,7 @@
 }
 .adspace {
   position: relative;
-  margin-right:200px;
+  margin-right: 200px;
 }
 
 .ta {
@@ -135,7 +135,7 @@ export default {
             this.$emit("on-change", row.id, row.site_set);
         },
         getimgSrc(id) {
-            switch (id) {
+            switch (parseInt(id)) {
                 case 65:
                     this.imgSrc = p65;
                     break;
@@ -161,7 +161,7 @@ export default {
                     this.imgSrc = p487;
                     break;
                 default:
-                this.imgSrc=""
+                    this.imgSrc = ""
 
             }
         }

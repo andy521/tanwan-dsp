@@ -65,6 +65,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.w500 {
+  width: 500px;
+}
 </style>
 <template>
     <div class="gdtnew ad">
@@ -90,11 +93,15 @@
                         <create-image type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url"></create-image>
                         <Row>
                             <Col span="16">
-                            <Input v-model="item.adcreative_elements.title" class="margin-top-10">
+                            <Input v-model="item.adcreative_name" class="margin-top-10 w500">
+                            <span slot="prepend">创意名称</span>
+                            <span slot="append">{{item.adcreative_name.length}}/30</span>
+                            </Input>
+                            <Input v-model="item.adcreative_elements.title" class="margin-top-10 w500">
                             <span slot="prepend">广告文案</span>
                             <span slot="append">{{item.adcreative_elements.title.length}}/30</span>
                             </Input>
-                            <Input v-model="item.adcreative_elements.corporate.corporate_name" class="margin-top-10">
+                            <Input v-model="item.adcreative_elements.corporate.corporate_name" class="margin-top-10 w500">
                             <span slot="prepend">广告主名称</span>
                             <span slot="append">{{item.adcreative_elements.corporate.corporate_name.length}}/30</span>
                             </Input>
@@ -190,8 +197,7 @@ export default {
                 return;
             }
             let data = {
-                adcreative_name:
-                    "创意" + (parseInt(this.adcreative.length) + 1),
+                adcreative_name: "创意" + (parseInt(this.adcreative.length) + 1),
                 adcreative_id: "",
                 adcreative_elements: {
                     image: "",
@@ -211,15 +217,11 @@ export default {
         },
         //提交
         submit() {
-            //验证数据是否正确
-            // 问题
-            // 传过来要修改的创意，修改规则是什么
-            // 数据格式与原来规则的格式不一样
             console.log(this.adcreative)
 
             let param = {
                 action: "gdtAdPut",
-                opt: "ads_cre_add",
+                opt: "adcre_add",
                 account_id: this.account_id,
                 campaign_id: this.campaign_id,
                 product_type: this.product_type,
@@ -229,7 +231,6 @@ export default {
                 product_refs_id: this.product_refs_id,
                 adcreative_template_id: this.adcreative_template_id,
                 destination_url: this.destination_url,
-
                 adcreative: {
                     adcreative_name: "创意1",
                     adcreative_id: "",
@@ -243,12 +244,7 @@ export default {
                         image_url: ""
                     }
                 }
-
-
             };
-
-
-
 
             Axios.post("api.php", param).then(res => {
                 if (res.ret == 1) {
