@@ -181,7 +181,7 @@ export default {
             disabled_cpc: true,
             disabled_cpm: true,
 
-            adcreative_template_id: 184,
+            adcreative_template_id: 65,
             site_set: ["SITE_SET_MOBILE_INNER"],//投放站点集合
             adgroup_detail: ""
         };
@@ -211,17 +211,16 @@ export default {
                 console.log("获取详情失败" + err);
             });
         },
-
         //详情传过来的参数
         fill_adgroup_detail(adgroup_detail) {
+            this.site_set = adgroup_detail.site_set;
+            this.adcreative_template_id = adgroup_detail.adcreative_template_id;
 
             this.adgroup.adgroup_name = adgroup_detail.adgroup_name; //广告组名称
-
             this.adgroup.time_series = adgroup_detail.time_series; //投放时间
             if (changetime(adgroup_detail.time_series) != "全部时间点") {
                 this.allDay = "0";
             }
-
             this.adgroup.begin_date = adgroup_detail.begin_date; //投放日期开始
             this.adgroup.end_date = adgroup_detail.end_date; //投放日期始束
             this.DateDomain = [adgroup_detail.begin_date, adgroup_detail.end_date];
@@ -230,22 +229,14 @@ export default {
                 this.datetype = "0";
             }
             this.adgroup.bid_amount = Number(adgroup_detail.bid_amount); //出价
-
             this.adgroup.optimization_goal = adgroup_detail.optimization_goal; //优化目标
-
             this.adgroup.billing_event = adgroup_detail.billing_event; //付费方式
-
             this.adgroup.daily_budget = Number(adgroup_detail.daily_budget);
 
-            this.product_refs_id = adgroup_detail.product_refs_id;
-
+            this.product_refs_id = adgroup_detail.product_refs_id;//标的物
             this.sub_product_refs_id = adgroup_detail.sub_product_refs_id;
-
             this.destination_url = adgroup_detail.destination_url;
-
-            //this.adcreative_template_id = adgroup_detail.adcreative_template_id
         },
-
         //返回定向id
         getTargetingid(id) {
             this.targeting_id = id;
@@ -265,7 +256,6 @@ export default {
                 console.log("获取标的物id" + err);
             });
         },
-
         //添加标的物
         products_add() {
             if (this.product.product_name.length == "") {
@@ -352,6 +342,7 @@ export default {
                 configured_status: this.configured_status,
                 product_refs_id: this.product_refs_id,
                 sub_product_refs_id: this.sub_product_refs_id,//为空
+                adcreative_template_id: this.adcreative_template_id,
                 site_set: this.site_set//投放站点集合
             }
             if (this.datetype == 0) {
@@ -412,7 +403,8 @@ export default {
                             account_id: this.account_id,
                             product_type: this.product_type,
                             site_set: this.site_set,
-                            adcreative_template_id: this.adcreative_template_id
+                            adcreative_template_id: this.adcreative_template_id,
+                            destination_url:this.destination_url
                         }
                     })
                 }

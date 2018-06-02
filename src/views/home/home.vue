@@ -9,7 +9,7 @@
 <template>
     <div id="home">
         <Row class-name="home-page-row1" class="margin-top-10">
-            <Card dis-hover shadow class="card-title-small">
+            <Card dis-hover class="card-title-small">
                 <div slot="title" class="card-title">
                     <Icon type="ios-paper"></Icon>
                     所选账户在所选时段数据汇总

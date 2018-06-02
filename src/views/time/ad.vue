@@ -62,7 +62,7 @@
 
 <template>
     <div class="time">
-        <Card shadow>
+        <Card dis-hover>
             <Row>
                 <Col span="18">
                 <div v-if="params.campaign_name">
@@ -91,7 +91,7 @@
                 </Col>
             </Row>
         </Card>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="16">
                 <!--自定义指标-->

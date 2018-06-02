@@ -68,10 +68,10 @@
 </style>
 <template>
     <div class="gdtnew ad">
-        
+
         <!-- 导行 -->
         <side-bar :step="2"></side-bar>
-       <Card dis-hover>
+        <Card dis-hover>
             <div class="padding-20">
                 <div class="title">上传创意</div>
                 <ul class="nav-tabs margin-top-20">
@@ -87,7 +87,7 @@
                 </ul>
                 <ul class="nav-main">
                     <li v-for="(item,index) in adcreative" v-show="index==current">
-                        <create-image type="image" @on-change="imgChange" :id="id" :imgsrc="item.adcreative_elements.image_url"></create-image>
+                        <create-image type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url"></create-image>
                         <Row>
                             <Col span="16">
                             <Input v-model="item.adcreative_elements.title" class="margin-top-10">
@@ -124,8 +124,10 @@ export default {
     data() {
         return {
             account_id: this.$route.query.account_id,
-            adcreativeId: this.$route.query.adcreativeId,
-            id: this.$route.query.adcreative_template_id,
+            adcreative_id: this.$route.query.adcreative_id,
+            adcreative_template_id: this.$route.query.adcreative_template_id,
+            site_set: this.$route.query.site_set,
+            destination_url: this.$route.query.destination_url,
             //创意数据
             adcreative: [
                 {
@@ -142,32 +144,14 @@ export default {
                     }
                 }
             ],
-            adcreative1: [
-                {
-                    adcreative_name: "创意1",
-                    adcreative_id: "",
-                    adcreative_elements: {
-                        image: "",
-                        title: "",
-                        corporate: {
-                            corporate_name: "",
-                            corporate_img: ""
-                        },
-                        image_url: ""
-                    }
-                }
-            ],
             //当前创意索引
             current: 0,
-            adgroup_detail: ""
+            creatives: "",//创意详情
         };
     },
     mounted() {
-        this.getCreatives();
-    },
-    watch: {
-        id() {
-            this.adcreative = this.adcreative1;
+        if (this.adcreative_id) {
+            this.getCreatives();
         }
     },
     methods: {
@@ -178,11 +162,11 @@ export default {
                 opt: "getCreatives",
                 account_id: this.account_id,
                 media_type: 1,
-                adcreativeId: this.adcreativeId
+                adcreative_id: this.adcreative_id
             }).then(res => {
                 if (res.ret == 1) {
                     console.log(res.data)
-                    this.adgroup_detail = res.data;
+                    this.creatives = res.data;
                     this.fill_adgroup_detail(res.data);
                 }
             }).catch(err => {
@@ -241,19 +225,32 @@ export default {
                 product_type: this.product_type,
                 product_refs_id: this.product_refs_id,
                 site_set: this.site_set,
-                destination_url: this.destination_url,
-                adcreative_template_id: this.adcreative_template_id,
-                site_set: this.site_set,
                 product_type: this.product_type,
                 product_refs_id: this.product_refs_id,
+                adcreative_template_id: this.adcreative_template_id,
+                destination_url: this.destination_url,
+
+                adcreative: {
+                    adcreative_name: "创意1",
+                    adcreative_id: "",
+                    adcreative_elements: {
+                        image: "",
+                        title: "",
+                        corporate: {
+                            corporate_name: "",
+                            corporate_img: ""
+                        },
+                        image_url: ""
+                    }
+                }
 
 
-                // adcreative_name	string	是	广告创意名称		
-                // adcreative_elements	string	是	创意元素
-                 //adcreative_id	string	是	广告创意 id 有是编辑更新，没有则是添加			
             };
 
-             Axios.post("api.php", param).then(res => {
+
+
+
+            Axios.post("api.php", param).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
                 }

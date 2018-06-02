@@ -122,7 +122,7 @@ export default {
             ],
             modify: false,//是否修改版位
             imgSrc: "",
-            edit: false
+            adgroup_id: this.$route.query.adgroup_id
         };
     },
     mounted() {
@@ -160,6 +160,9 @@ export default {
                 case 487:
                     this.imgSrc = p487;
                     break;
+                default:
+                this.imgSrc=""
+
             }
         }
     },
@@ -173,7 +176,7 @@ export default {
                     edition.push(e);
                 }
             });
-            if (this.edit) {
+            if (this.adgroup_id) {
                 return edition;
             } else {
                 return this.edition;

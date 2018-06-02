@@ -60,7 +60,7 @@
 
 <template>
     <div class="time">
-        <Card shadow>
+        <Card dis-hover>
             <Row>
                 <Col span="19">
                 <Button type="primary" @click="back" v-if="account_id">返回</Button>
@@ -83,7 +83,7 @@
             </Row>
         </Card>
 
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="16">
                 <!--自定义指标-->
