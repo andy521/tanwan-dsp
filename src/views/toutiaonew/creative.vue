@@ -89,7 +89,7 @@
         <side-bar :step="2"></side-bar>
 
         <Card dis-hover v-if="!this.adcreative_id" style="margin-bottom:10px">
-            <div class="newtt">
+            <div class="padding-20">
                 <Row>
                     <Col span="16">
                     <Select size="large" @on-change="getAdgroupsId" filterable>
@@ -101,7 +101,7 @@
         </Card>
 
         <Card dis-hover>
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">
                     <span>投放目标</span>
                     <!-- 广告位说明 -->
@@ -129,7 +129,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">
                     <span>添加创意素材</span>
                     <!-- 创意标题特殊符号说明 -->
@@ -227,7 +227,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">设置创意分类和标签</div>
                 <Row class="margin-top-20">
                     <Col span="16">
@@ -259,7 +259,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">设置广告监测</div>
                 <Row class="margin-top-20">
                     <Col span="16">
@@ -298,7 +298,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <Button type="primary" size="large" @click="submitCreative()">
                     <span v-if="this.adcreative_id">修改创意</span>
                     <span v-else>新增创意</span>

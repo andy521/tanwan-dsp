@@ -37,8 +37,7 @@ export const newAd = {
     component: () => import('@/components/childrouter/childrouter.vue'),
     children: [
         { path: 'campaign', title: '新建广点通广告组', name: 'gdtcampaign', component: () => import('@/views/gdtnew/campaign.vue') },
-        { path: 'ad', title: '新建广点通广告计划', name: 'gdtad', component: () => import('@/views/gdtnew/ad.vue') },
-        { path: 'creative', title: '新建广点通创意', name: 'gdtcreative', component: () => import('@/views/gdtnew/creative.vue') },
+        { path: 'ad', title: '新建广点通广告计划', name: 'gdtad', component: () => import('@/views/gdtnew/ad.vue') }
     ]
 };
 
@@ -157,7 +156,8 @@ export const appRouter = [
             { path: 'finance', title: '财务', name: 'tt_finance', icon: 'android-radio-button-on', component: () => import('@/components/childrouter/childrouter.vue'),
             children: [ 
                 { path: 'rechargeRecord', title: '充值记录', name: 'tt_rechargeRecord',icon: 'android-radio-button-off', component: () => import('@/views/toutiao/finance/rechargeRecord.vue') }, 
-                { path: 'transferAccounts', title: '转帐记录', name: 'tt_transferAccounts',icon: 'android-radio-button-off', component: () => import('@/views/toutiao/finance/transferAccounts.vue') } 
+                { path: 'transferAccounts', title: '转帐记录', name: 'tt_transferAccounts',icon: 'android-radio-button-off', component: () => import('@/views/toutiao/finance/transferAccounts.vue') }, 
+                { path: 'funds', title: '资金流水', name: 'tt_funds',icon: 'android-radio-button-off', component: () => import('@/views/toutiao/finance/fundsList.vue') }                 
             ]},
         ]
     },
@@ -208,6 +208,7 @@ export const appRouter = [
             { path: 'userlog', title: '账户日志', name: 'setid_userlog', icon: 'android-radio-button-off', component: () => import('@/views/setid/userLog.vue') },
             { path: 'principal', title: '负责人管理', name: 'setid_principal', icon: 'android-radio-button-off', component: () => import('@/views/setid/setid.vue') },
             { path: 'systemsetid', title: '系统账号管理', name: 'setid_systemsetid', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemSetid.vue') },
+            { path: 'systemstatussetid', title: '系统账号权限管理', name: 'setid_systemstatussetid', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemStatusSetid.vue') },
             { path: 'systemmsg', title: '系统消息', name: 'setid_systemmsg', icon: 'android-radio-button-off', component: () => import('@/views/setid/systemMsg.vue') }
         ]
     }

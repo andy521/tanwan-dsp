@@ -81,11 +81,6 @@
                         <Option v-for="item in campaignslist" :value="item.campaign_id" :key="this">{{ item.campaign_name }}</Option>
                     </Select>
 
-                    <!-- <Select value="ad"  style="width:70px" >
-                        <Option value="ad">广告</Option>
-                        <Option value="product">标的物</Option>
-                    </Select> -->
-
                     <Input v-model="campaign_name" class="inp" placeholder="请输入关键字"></Input>
                     <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </div>

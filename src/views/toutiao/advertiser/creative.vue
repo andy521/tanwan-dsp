@@ -20,7 +20,7 @@
         <Card shadow class="margin-top-10">
             <Row>
                 <Col span="20">
-                <!-- <Button type="primary">返回</Button> -->
+                <Button type="primary" @click="back" v-if="adgroup_id">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input class="inp" clearable placeholder="请输入创意ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
@@ -269,7 +269,11 @@ export default {
                 this.loading = false;
                 console.log("今日头条广告组" + err);
             });
-        }
+        },
+        //返回
+        back() {
+            this.$router.go(-1);
+        },
     },
     beforeMount() { },
     computed: {
@@ -284,7 +288,7 @@ export default {
                 {
                     title: "创意",
                     key: "content",
-                    width: 250,
+                    width: 280,
                     render: (h, params) => {
                         if (params.row._disabled) {
                             return h("span", "本页统计");
@@ -316,8 +320,8 @@ export default {
 
                 {
                     title: "账户名",
-                    key: "account_id",
-                    width: 120
+                    key: "account_name",
+                    width: 300
                 },
                 {
                     title: "状态",

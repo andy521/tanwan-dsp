@@ -29,7 +29,7 @@
         <Card shadow class="margin-top-10">
             <Row>
                 <Col span="20">
-                <!-- <Button type="primary">返回</Button> -->
+                <Button type="primary" @click="back" v-if="campaign_id">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input class="inp" placeholder="请输入广告计划ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
@@ -256,24 +256,26 @@ export default {
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 page: this.page, //页码
                 page_size: this.page_size //每页数量
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        console.log(res.data.list);
-                        //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.push(res.data.curr_page_total);
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
-                        this.newAdList = res.data.list;
-                    }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("今日头条广告组" + err);
-                });
-        }
+            }).then(res => {
+                this.loading = false;
+                if (res.ret == 1) {
+                    console.log(res.data.list);
+                    //添加统计
+                    res.data.curr_page_total._disabled = true;
+                    res.data.list.push(res.data.curr_page_total);
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                    this.newAdList = res.data.list;
+                }
+            }).catch(err => {
+                this.loading = false;
+                console.log("今日头条广告组" + err);
+            });
+        },
+        //返回
+        back() {
+            this.$router.go(-1);
+        },
     },
     beforeMount() { },
     computed: {
@@ -288,7 +290,7 @@ export default {
                 {
                     title: "广告计划",
                     key: "adgroup_name",
-                    width: 250,
+                    width: 280,
                     render: (h, params) => {
                         if (params.row._disabled) {
                             return h("span", "本页统计");
@@ -366,8 +368,8 @@ export default {
                 },
                 {
                     title: "账户名",
-                    key: "account_id",
-                    width: 120
+                    key: "account_name",
+                    width: 300
                 },
                 {
                     title: "开关/状态",

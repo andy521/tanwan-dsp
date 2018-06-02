@@ -1,7 +1,35 @@
+<style scoped>
+.width-250{
+    width: 170px;
+}
+.manger-head-bar:first-of-type{
+    flex: 1;
+    text-align: left;
+}
+.manger-head-bar:last-of-type{
+    flex: 0 0 110px;
+    width: 110px;
+    text-align: right;
+}
+</style>
+
 <template>
     <div class="ad">
         <Card shadow>
-            <Table :columns="columns" :size="tableSize" :data="AdsAccount" stripe></Table>
+            <Row type="flex" justify="space-between">
+                <Col class="manger-head-bar">
+                <select-agent @on-change="handleAgent"></select-agent>
+                <select-author @on-change="handleAuthor"></select-author>
+                <select-media @on-change="handleMedia" class="width-250"></select-media>
+                <Input @on-enter="getAdsAccount" v-model="searchVal" placeholder="支持账号ID或账号名称搜索" class="width-250"></Input>
+                <Button @click="getAdsAccount"><Icon type="ios-search-strong"></Icon> &nbsp;搜索</Button>
+                </Col>
+                <Col class="manger-head-bar">
+                    <Button @click="handleBatchEdit"><Icon type="edit"></Icon> &nbsp;批量修改</Button>
+                </Col>
+            </Row>
+
+            <Table @on-selection-change="handleSelectionChange" :columns="columns" :size="tableSize" :data="AdsAccount" stripe class="margin-top-10"></Table>
             <Row class="margin-top-10">
                 <Col span="10"> 表格尺寸
                 <Radio-group v-model="tableSize" type="button">
@@ -19,6 +47,7 @@
                 </Col>
             </Row>
         </Card>
+
         <Modal v-model="author_modal" title="选择管理员" @on-ok="changeauthor">
             <div class="padding-10">
                 <Select v-model="uId">
@@ -26,16 +55,46 @@
                 </Select>
             </div>
         </Modal>
+        <Modal v-model="batch_modal" title="批量修改" @on-ok="changeBatchEdit">
+            <div class="padding-10">
+                <Row type="flex" align="middle">
+                    <Col>修改的指标：</Col>
+                    <Col class="flex-1">
+                        <Select @on-change="handleBatchIndexChange" v-model="currBatchIndex.type" placeholder="请选择修改指标">
+                            <Option v-for="item in batchIndex" :value="item.type" :key="this">{{ item.name }}</Option>
+                        </Select>
+                    </Col>
+                </Row>
+                <Row v-if="currBatchIndex.type !== ''" type="flex" align="middle" class="margin-top-20">
+                    <Col>{{currBatchIndex.name}}修改为：</Col>
+                    <Col class="flex-1">
+                        <Input v-if="currBatchIndex.type !== 'author'" v-model="currBatchIndex.value" :placeholder="`请输入${currBatchIndex.name}内容...`"></Input>
+                        <Select v-if="currBatchIndex.type === 'author'" v-model="currBatchIndex.value" placeholder="请选择负责人">
+                            <Option v-for="item in AdsAthour" :value="item.uName" :key="this">{{ item.uName }}</Option>
+                        </Select>
+                    </Col>
+                </Row>
+            </div>
+        </Modal>
     </div>
 </template>
 
 <script>
 import Axios from '@/api/index';
+import selectAuthor from '@/components/select-author';
+import selectMedia from '@/components/select-media';
+import selectAgent from '@/components/select-agent';
 export default {
+    components: {
+        selectAuthor,
+        selectMedia,
+        selectAgent
+    },
     data() {
         return {
             uId: '',
             author_modal: false,
+            batch_modal: false,
             row: '',
             page: 1, //第N页
             page_size: 50, //每页数量
@@ -44,7 +103,46 @@ export default {
             tableSize: 'small',
             AdsAthour: [],
             AdsAccount: [],
-            columns: [{
+            checkedIdList: [], // 选中的id列表
+            searchVal: '', // 搜索
+            authorList: [], // 筛选负责人
+            mediaList: [], // 筛选media
+            agentList: [], // 筛选agent
+            // 批量修改指标结构
+            batchIndex: [
+                {
+                    type: 'agent',
+                    name: '代理商',
+                    value: ''
+                },
+                {
+                    type: 'agent_detail',
+                    name: '代理全称',
+                    value: ''
+                },
+                {
+                    type: 'author',
+                    name: '负责人',
+                    value: ''
+                },
+                {
+                    type: 'rebate',
+                    name: '返点',
+                    value: ''
+                },
+            ],
+            currBatchIndex: {
+                type: '',
+                name: '',
+                value: ''
+            },
+            columns: [
+            {
+                type: 'selection',
+                width: 60,
+                align: 'center'
+            },
+            {
                 title: 'ID',
                 key: 'id'
             },
@@ -275,42 +373,63 @@ export default {
         this.getAdsAthour();
     },
     methods: {
-        //获取账号
-        getAdsAccount(page) {
-            if (page === undefined) {
-                this.$refs['pages'].currentPage = 1;
-                this.page = 1;
-            } else {
-                this.page = page;
+        handleBatchEdit() {
+            if (this.checkedIdList.length === 0) {
+                this.$Message.info('请勾选用户')
+                return
             }
-            Axios.get('api.php', {
-                action: 'sys',
-                opt: 'getAdsAccount',
-                page: this.page,
-                page_size: this.page_size
-            }).then(res => {
-                if (res.ret == 1) {
-                    this.AdsAccount = res.data.list;
-                    this.total_number = res.data.total_number;
-                    this.total_page = res.data.total_page;
-                }
-            }).catch(
-                err => {
-                    console.log('帐号列表' + err)
-                }
-            )
+            this.batch_modal = !this.batch_modal
         },
-        //获取管理员
-        getAdsAthour() {
-            Axios.post('api.php', {
-                action: 'sys',
-                opt: 'getAdsAthour'
-            }).then(res => {
-                if (res.ret == 1) {
-                    this.AdsAthour = res.data;
+        // 批量修改指标
+        handleBatchIndexChange(indexType) {
+            for (let currIndex of this.batchIndex) {
+                if (currIndex.type == indexType) {
+                    this.currBatchIndex.name = currIndex.name
                 }
+            }
+        },
+        // 表单选中项
+        handleSelectionChange(checkedList) {
+            if (checkedList.length === 1) {
+                this.checkedIdList = [checkedList.id]
+                return
+            }
+            const ret = []
+            checkedList.forEach(checked => {
+                ret.push = checked.id
+            })
+            this.checkedIdList = ret
+        },
+        // 媒体数据
+        handleMedia(mediaTypeList) {
+            this.mediaList = mediaTypeList
+            this.getAdsAccount()
+        },
+        // 代理商数据
+        handleAgent(agentList) {
+            this.agentList = agentList
+            this.getAdsAccount()            
+        },
+        // 负责人数据
+        handleAuthor(authorList) {
+            this.authorList = authorList
+            this.getAdsAccount()            
+        },
+        // 批量修改指定指标
+        changeBatchEdit() {
+            if (this.currBatchIndex.value === '') {
+                this.$Message.info(`${this.currBatchIndex.name}不能为空，请输入内容`)
+                this.$nextTick(() => {
+                    this.batch_modal = true
+                })
+                return
+            }
+            console.log(this.currBatchIndex)
+            Axios.post('api.php', {
+            }).then(res => {
+               this.$Message.info(res.msg)
             }).catch(err => {
-                console.log('获取管理员' + err)
+                console.trace('%c批量修改错误', err)
             })
         },
         //修改管理员
@@ -336,6 +455,48 @@ export default {
                     console.log('修改帐户失败' + err)
                 }
             )
+        },
+        //获取账号
+        getAdsAccount(page) {
+            if (page === undefined) {
+                this.$refs['pages'].currentPage = 1;
+                this.page = 1;
+            } else {
+                this.page = page;
+            }
+            Axios.get('api.php', {
+                action: 'sys',
+                opt: 'getAdsAccount',
+                page: this.page,
+                page_size: this.page_size,
+                authors: this.authorList,
+                agents: this.agentList,
+                media_types: this.mediaList,
+                word: this.searchVal
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.AdsAccount = res.data.list;
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                }
+            }).catch(
+                err => {
+                    console.log('帐号列表' + err)
+                }
+            )
+        },
+        //获取管理员
+        getAdsAthour() {
+            Axios.post('api.php', {
+                action: 'sys',
+                opt: 'getAdsAthour'
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.AdsAthour = res.data;
+                }
+            }).catch(err => {
+                console.log('获取管理员' + err)
+            })
         }
     }
 };

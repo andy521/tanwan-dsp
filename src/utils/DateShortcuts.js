@@ -55,7 +55,7 @@ export const DateShortcuts = {
 	]
 }
 
-//时间转换
+//时间转换formate(new Date(),'yyyy-MM-DD hh:mm:ss')
 export function formatDate(date, fmt) {
 	if(/(y+)/.test(fmt)) {
 		fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
@@ -76,11 +76,12 @@ export function formatDate(date, fmt) {
 	return fmt;
 };
 
+//自动补0
 function padLeftZero(str) {
 	return('00' + str).substr(str.length);
 }
 
-//一周投放时间转码
+//一周投放时间转码1111111转成时间段
 export function changetime(time) {
 	if(!time) return;
 	var weektime = [];

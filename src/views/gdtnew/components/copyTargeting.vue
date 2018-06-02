@@ -56,7 +56,7 @@
             <Input v-model="search" placeholder="请输入定向名称" @on-change="filterData" @on-enter="filterData" size="large">
             <Button slot="append" icon="ios-search" @click="filterData">搜索</Button>
             </Input>
-            <div class="clear">
+            <div class="clear margin-top-10">
                 <div class="city_main">
                     <div class="city_title">定向名称</div>
 
@@ -69,7 +69,7 @@
                     <div class="city_title">{{targeting.targeting_name}}</div>
                     <div style="position: relative;">
                         <div class="city_box">
-                            <div class="padding-10 ">
+                            <!-- <div class="padding-10 ">
                                 <div class="targeting_item" v-if="targeting.targeting.district">
                                     <span>地域：</span>
                                     <span class="grey">
@@ -224,7 +224,7 @@
                                         </template>
                                     </span>
                                 </div>
-                            </div>
+                            </div> -->
                             <Spin size="small" fix v-if="loading"></Spin>
                         </div>
                     </div>
@@ -239,7 +239,7 @@ import Axios from "@/api/index";
 import toutiaoConfig from '@/utils/toutiaoConfig.json';
 export default {
     name: "copyTargeting",
-    props: ["province", "ad_tag", "app_category", "device_brand", "article_category"],
+    props: [],
     data() {
         return {
             account_id: this.$route.query.account_id, //账户id
@@ -259,15 +259,15 @@ export default {
     },
     mounted() {
         this.getTargetingList();
-
     },
     methods: {
         //获取定向列表
         getTargetingList() {
             Axios.post('api.php', {
-                action: 'ttAdPut',
-                opt: 'getTargetingList',
+                action: 'api',
+                opt: 'getTargetings',
                 account_id: this.account_id,
+                media_type: 1
             }).then(res => {
                 if (res.ret == 1) {
                     this.TargetingList = res.data;
@@ -281,8 +281,10 @@ export default {
         getTargeting(item) {
             this.loading = true;
             Axios.post('api.php', {
-                action: 'ttAdPut',
-                opt: 'getTargetingDetail',
+                action: 'api',
+                opt: 'getTargetings',
+                account_id: this.account_id,
+                media_type: 1,
                 targeting_id: item.targeting_id,
             }).then(res => {
                 this.loading = false;
@@ -293,6 +295,10 @@ export default {
                 this.loading = false;
                 console.log('获取定向失败' + err);
             })
+        },
+        //确定
+        confirm() {
+            this.$emit("on-change", this.targeting);
         },
         //搜索
         filterData() {
@@ -310,39 +316,6 @@ export default {
             })
             const retNull = [{ targeting_name: '无搜索结果,请重新搜索', targeting_id: '' }]
             this.TargetingList = filter.length < 1 ? retNull : filter
-        },
-        //确定
-        confirm() {
-            this.$emit("on-change", this.targeting);
-        },
-    },
-    computed: {
-        //重新排区
-        cityname() {
-            let province = [];
-            if (this.province.length > 0 && this.targeting.targeting.city) {
-                this.targeting.targeting.city.forEach(id => {
-                    this.province.forEach(v => {
-                        if (id == v.value) province.push(v.name);
-                        if (v.countyList) {
-                            v.countyList.forEach(v => {
-                                if (id == v.value) province.push(v.name);
-                            })
-                        }
-                        if (v.cityList) {
-                            v.cityList.forEach(v => {
-                                if (id == v.value) province.push(v.name);
-                                if (v.countyList) {
-                                    v.countyList.forEach(v => {
-                                        if (id == v.value) province.push(v.name);
-                                    })
-                                }
-                            })
-                        }
-                    })
-                })
-            }
-            return province;
         },
     }
 }
