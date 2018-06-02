@@ -1,120 +1,120 @@
 <style scoped>
 .detail {
-    background: #fff;
-    width: 500px;
-    padding: 20px;
+  background: #fff;
+  width: 500px;
+  padding: 20px;
 }
 
 .w_flex {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-    padding: 5px 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  padding: 5px 0;
 }
 
 .w_flex_hd {
-    width: 6em;
-    font-weight: bold;
-    text-align: right;
-    padding-right: 10px;
+  width: 6em;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 10px;
 }
 
 .w_flex_bd {
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-    flex: 1;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
 }
 
 .w_flex_bd_div {
-    padding-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 .grey {
-    color: #999;
+  color: #999;
 }
 
 .carousel_ad {
-    width: 250px;
-    border: solid 1px #eee;
-    position: relative;
+  width: 250px;
+  border: solid 1px #eee;
+  position: relative;
 }
 
 .carouselitem {
-    position: relative;
+  position: relative;
 }
 
 .carouselbox {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    transform: translateY(-50%);
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
 }
 
 .carouselbox img {
-    display: block;
+  display: block;
 }
 .img_operation {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 99;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 99;
 }
 .w_img_operation {
-    padding: 5px;
-    cursor: pointer;
-    display: inline-block;
+  padding: 5px;
+  cursor: pointer;
+  display: inline-block;
 }
 
 .txt {
-    padding: 5px;
-    word-break: break-word;
+  padding: 5px;
+  word-break: break-word;
 }
 
 em {
-    font-style: normal;
+  font-style: normal;
 }
 
 .Preview_bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 99;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 99;
 }
 
 .Preview {
-    position: fixed;
-    width: 750px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    z-index: 100;
+  position: fixed;
+  width: 750px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  z-index: 100;
 }
 
 .Preview_name {
-    padding: 12px 24px;
-    font-size: 30px;
+  padding: 12px 24px;
+  font-size: 30px;
 }
 
 .flex {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
 }
 
 .ta {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    margin-top: -20px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  margin-top: -20px;
 }
 
 .ta tr td:last-child {
-    width: auto;
+  width: auto;
 }
 </style>
 <template>
@@ -465,42 +465,43 @@ export default {
         };
     },
     mounted() {
-        Axios.post("api.php", {
-            action: "gdtAdPut",
-            opt: "get_adgroup_detail",
-            account_id: this.row.account_id,
-            adgroup_id: this.row.adgroup_id
-        })
-            .then(res => {
-                if (res.ret == 1) {
-                    this.adgroup_detail = res.data;
-                }
-            })
-            .catch(err => {
-                console.log("获取详情失败" + err);
-            });
+        this.get_adgroup_detail();
     },
     methods: {
+        //获取详情
+        get_adgroup_detail() {
+            Axios.post("api.php", {
+                action: "gdtAdPut",
+                opt: "get_adgroup_detail",
+                account_id: this.row.account_id,
+                adgroup_id: this.row.adgroup_id
+            }).then(res => {
+                if (res.ret == 1) {
+                    console.log(res)
+                    this.adgroup_detail = res.data;
+                }
+            }).catch(err => {
+                console.log("获取详情失败" + err);
+            });
+        },
         //编辑
         editTargeting(e) {
             this.detailswin = false;
-            this.$store.commit("save_adgroup_detail", this.adgroup_detail);
-            let query = {
-                account_id: this.adgroup_detail.account_id,
-                campaign_id: this.adgroup_detail.campaign_id,
-                targeting_id: this.adgroup_detail.targeting_id,
-                product_refs_id: this.adgroup_detail.product_refs_id,
-                product_type: this.adgroup_detail.product_type,
-                adgroup_id: this.adgroup_detail.adgroup_id,
-            };
-            if (e == 0) {
-                this.$store.commit("save_step", [1, 0]);
-            } else if (e == 1) {
-                this.$store.commit("save_step", [2, 0]);
-            }
+
+            // this.$store.commit("save_adgroup_detail", this.adgroup_detail);
+
             this.$router.push({
-                name: "newad",
-                query: query
+                name: "gdtad",
+                query: {
+                    account_id: this.adgroup_detail.account_id,
+                    campaign_id: this.adgroup_detail.campaign_id,
+                    targeting_id: this.adgroup_detail.targeting_id,
+                    product_refs_id: this.adgroup_detail.product_refs_id,
+                    product_type: this.adgroup_detail.product_type,
+                    adgroup_id: this.adgroup_detail.adgroup_id,
+                    campaign_type: this.adgroup_detail.campaign_type,
+                    adcreative_id: this.adgroup_detail.adcreative_id
+                }
             });
         },
         funpreview(item) {
@@ -605,7 +606,7 @@ export default {
             return name.toString();
         },
         //投放时间转换
-        weektime: function() {
+        weektime: function () {
             let time = this.adgroup_detail.time_series;
             return changetime(time);
         }

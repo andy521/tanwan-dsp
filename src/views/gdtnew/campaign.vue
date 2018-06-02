@@ -48,7 +48,7 @@
                                     </Select>
                                 </FormItem>
                                 <FormItem>
-                                    <Button type="primary" size="large" @click="handleSubmit()">下一步</Button>
+                                    <Button type="primary" size="large" @click="handleSubmit()">保存并下一步</Button>
                                 </FormItem>
                             </Form>
                             </Col>

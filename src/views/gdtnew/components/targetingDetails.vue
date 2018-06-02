@@ -1038,6 +1038,7 @@ export default {
         if (this.targeting_id) {
             this.getTargeting();
         }
+
         //请求定向标签(地域)
         this.$store.dispatch("get_targeting_tags");
         //获取商业兴趣
@@ -1086,13 +1087,13 @@ export default {
 
 
         //获取定向详情
-        getTargeting(item) {
+        getTargeting() {
             Axios.post('api.php', {
                 action: 'api',
                 opt: 'getTargetings',
                 account_id: this.account_id,
                 media_type: 1,
-                targeting_id: item.targeting_id,
+                targeting_id: this.targeting_id,
             }).then(res => {
                 if (res.ret == 1) {
                     this.changeTargeting(res.data);
@@ -1105,6 +1106,7 @@ export default {
         //选择定向
         changeTargeting(item) {
             this.targeting_name = item.targeting_name;
+           // this.targeting_id = item.targeting_id;
             //地域       
             if (item.targeting.geo_location) {
                 if (item.targeting.geo_location.regions) {
@@ -1528,6 +1530,7 @@ export default {
         //获取自定义人群
         customized_audience() {
             let list = this.$store.state.newad.CustomAudiences.list;
+            if(!list)return;
             let ids = this.targeting.customized_audience;
             list.forEach(item => {
                 let checked = false;
@@ -1543,6 +1546,7 @@ export default {
         //获取自定义人群排除
         excluded_custom_audience() {
             let list = this.$store.state.newad.CustomAudiences_ex.list;
+            if(!list)return;
             let ids = this.targeting.excluded_custom_audience;
             list.forEach(item => {
                 ids.forEach(v => {
@@ -1561,6 +1565,7 @@ export default {
         businessname() {
             var name = [];
             let ids = this.targeting.business_interest;
+    
             ids.forEach(id => {
                 for (var i in this.business) {
                     var e = this.business[i];
@@ -1586,6 +1591,7 @@ export default {
         //获取商业兴趣
         business() {
             let list = this.$store.state.newad.business_interest;
+            if(!list)return;
             let ids = this.targeting.business_interest;
             let n = 0;
             let newlist = [];
@@ -1674,6 +1680,7 @@ export default {
         //获取定向标签(地域)
         targeting_tags() {
             let list = this.$store.state.newad.targeting_tags;
+            if(!list)return;
             let ids = this.targeting.geo_location.regions;
             let n = 0;
             let newlist = [];
@@ -1714,6 +1721,7 @@ export default {
         appCategoryname() {
             var name = [];
             let ids = this.targeting.app_behavior.object_id_list;
+     
             ids.forEach(id => {
                 for (var i in this.appCategory) {
                     var e = this.appCategory[i].children;
@@ -1736,6 +1744,7 @@ export default {
         //app行为按分类
         appCategory() {
             let list = this.$store.state.newad.appCategory;
+            if(!list)return;
             let ids = this.targeting.app_behavior.object_id_list;
             let newlist = [];
             list.forEach((item, i) => {
