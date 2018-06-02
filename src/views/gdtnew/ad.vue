@@ -249,7 +249,8 @@ export default {
 
             this.product_refs_id = adgroup_detail.product_refs_id;//标的物
             this.sub_product_refs_id = adgroup_detail.sub_product_refs_id;
-            this.destination_url = adgroup_detail.destination_url;
+            this.get_destination_url(this.product_refs_id);
+           // this.destination_url = adgroup_detail.destination_url;
         },
         //返回定向id
         getTargetingid(id) {
