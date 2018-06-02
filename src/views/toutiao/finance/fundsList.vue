@@ -1,7 +1,7 @@
 <style scoped>
 </style>
 <template>
-    <Card shadow>
+    <Card dis-hover>
         <Row>
             <Col span="14">
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>

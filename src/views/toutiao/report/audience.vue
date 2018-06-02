@@ -21,7 +21,7 @@
     <div>
         <!-- 获取帐号 -->
         <account-id></account-id>
-        <Card shadow class="margin-top-10" v-if="get_account_id">
+        <Card dis-hover class="margin-top-10" v-if="get_account_id">
             <Menu mode="horizontal" active-name="audienceAccount" @on-select="totab">
                 <MenuItem name="audienceAccount">帐户</MenuItem>
                 <MenuItem name="audienceAd">广告组</MenuItem>

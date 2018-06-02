@@ -199,7 +199,7 @@ export default {
                 action: "api",
                 opt: "getAdgroups",
                 account_id: this.account_id,
-                media_type:1,
+                media_type: 1,
                 adgroup_id: this.adgroup_id
             }).then(res => {
                 if (res.ret == 1) {

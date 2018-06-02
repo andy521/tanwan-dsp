@@ -17,7 +17,7 @@
 </style>
 <template>
     <div>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <Button type="primary" @click="back" v-if="account_id">返回</Button>
@@ -32,10 +32,10 @@
                 </Col>
             </Row>
         </Card>
-        <Card shadow class="margin-top-10" v-if="Echartsmodel">
+        <Card dis-hover class="margin-top-10" v-if="Echartsmodel">
             <campaign-echarts></campaign-echarts>
         </Card>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <!--自定义指标-->

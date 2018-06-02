@@ -5,7 +5,7 @@
 }
 </style>
 <template>
-    <Card shadow>
+    <Card dis-hover>
         <Row>
             <Col span="14">
             <!--选择负责人-->
