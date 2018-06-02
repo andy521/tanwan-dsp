@@ -9,7 +9,7 @@
 </style>
 <template>
     <Poptip placement="bottom-start" trigger="hover">
-        <Button type="ghost">选择代理商</Button>
+        <Button type="ghost">选择媒体</Button>
         <div slot="content">
             <Card dis-hover :bordered="false">
                 <div slot="title">
