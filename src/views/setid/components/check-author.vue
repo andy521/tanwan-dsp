@@ -1,78 +1,96 @@
 <style scoped>
-.author-btn{width: 100%; margin-top: 10px;}
-.author-btn>.ivu-btn{width: 50%;}
-.author-item{display: block;padding: 10px 0;border-bottom: 1px solid #f5f5f5;}
-.author .ivu-poptip-body-content{overflow: initial;}
-.author-list{max-height: 300px; overflow-y: auto;}
+.campaign {
+  max-height: 200px;
+  overflow: auto;
+}
+.select-list {
+  line-height: 24px;
+}
 </style>
 <template>
-
-  <Poptip class="author" placement="bottom-start" width="200" trigger="hover">
-        <Button type="ghost"><Icon type="person-stalker"></Icon> 选择负责人</Button>
-        <div class="api" slot="content">      
-            <div class="author-list">      
-                <Checkbox-group v-model="value" @on-change="authorChange">
-                    <Checkbox class="author-item" v-for="(item,index) in authorList" :key="index" :label="item.inChargeId">{{item.inChargeName}}</Checkbox>
-                </Checkbox-group>
-            </div>
-            <Button-group class="author-btn" long>
-                <Button type="ghost" @click="handleSelectAll"> 全选 </Button>
-                <Button type="ghost" @click="handleClearAll"> 取消 </Button>
-            </Button-group>
+    <Poptip placement="bottom-start" trigger="hover">
+        <Button type="ghost">选择负责人</Button>
+        <div slot="content">
+            <Card dis-hover :bordered="false">
+                <div slot="title">
+                    <Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
+                </div>
+                <div class="campaign">
+                    <CheckboxGroup v-model="authorIdList" @on-change="checkAllGroupChange">
+                        <div v-for="item in authorList" :key="this" class="select-list">
+                            <Checkbox :label="item.inChargeId">{{item.inChargeName}}</Checkbox>
+                        </div>
+                    </CheckboxGroup>
+                </div>
+            </Card>
         </div>
     </Poptip>
-
 </template>
 <script>
-import  Axios  from '@/api/index'
+import Axios from "@/api/index";
 export default {
-    name: 'selectAuthor',
+    name: "selectAgent",
     data() {
         return {
-            value:[],
-            authorList: []
-        }
+            authorIdList: [],
+            authorList: [],
+            indeterminate: false,
+            checkAll: false,
+        };
+    },
+    mounted() {
+        this.getMedia();
     },
     methods: {
-        handleSelectAll(){
-            if(this.value.length == this.authorList.length){
-                return
-            }
-            let a = []
-            this.authorList.forEach(item => {
-                a.push(item.inChargeId)
-            })
-            this.value = a
-            this.authorChange()
-        },
-        handleClearAll(){
-            if(this.value.length === 0){
-                return
-            }
-            this.value = []
-            this.authorChange()
-        },
-        // 获取负责人列表    
-        getAuthor(){
-            Axios.get('api.php',{'action':'sys','opt':'getInCharge'})
-            .then(res => { 
-                if(res.ret == '1'){
-                    this.authorList = res.data
+        //获取代理商
+        getMedia() {
+            Axios.post("api.php", {
+                action: "sys",
+                opt: "getInCharge",
+            }).then(
+                res => {
+                    if (res.ret == 1) {
+                        this.authorList = res.data;
+                        this.indeterminate = false;
+                    }
                 }
-            }).catch( 
-                err=>{
-                    console.log('获取负责人列表错误', err)
-                }
-            )
+            ).catch(err => { console.log(err) });
         },
-        //点击树节点时触发
-        authorChange() {
-            console.log(this.val)
-            this.$emit('on-change', this.value)
+        confirmids() {
+            this.$emit("on-change", this.authorIdList);
+        },
+        handleCheckAll() {
+            if (this.indeterminate) {
+                this.checkAll = false;
+            } else {
+                this.checkAll = !this.checkAll;
+            }
+            this.indeterminate = false;
+            if (this.checkAll) {
+                let ids = [];
+                this.authorList.forEach(v => {
+                    ids.push(v.inChargeId)
+                });
+                this.authorIdList = ids;
+            } else {
+                this.authorIdList = [];
+            }
+            this.confirmids();
+        },
+        checkAllGroupChange() {
+            let data=this.authorList;
+            if (data.length === this.authorIdList.length) {
+                this.indeterminate = false;
+                this.checkAll = true;
+            } else if (data.length > 0) {
+                this.indeterminate = true;
+                this.checkAll = false;
+            } else {
+                this.indeterminate = false;
+                this.checkAll = false;
+            }
+            this.confirmids();
         }
-    },
-    mounted(){   
-        this.getAuthor()
     }
-}
+};
 </script>
