@@ -1,7 +1,21 @@
 <style scoped>
+.tip-txt{
+    width: 100%;
+    color: #777;
+    font-size: 12px;
+}
+.tip-txt p{
+    display: inline-block;
+    text-indent: 60px;
+}
+.tip-txt p:first-of-type{
+    text-indent: 0;
+}
 </style>
 <template>
-    <Card dis-hover>
+<div>
+
+    <Card shadow>
         <Row>
             <Col span="14">
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
@@ -29,6 +43,18 @@
             </Col>
         </Row>
     </Card>
+
+    <Card>
+        <div class="tip-txt margin-top-10">
+            <p>数据说明：1.总支出：所有广告计划的消耗</p>
+            <p>2.总存入：包括充值、赠款、返点</p>
+            <p>3.总转入：广告主与代理商之间的转账收入</p>
+            <p>4.总转出：广告主与代理商之间的转账支出</p>
+            <p>5.日终结余：当日账户总余额，包括冻结款</p>
+        </div>
+        
+    </Card>
+</div>
 </template>
 <script>
 import Axios from "@/api/index";
@@ -54,6 +80,22 @@ export default {
                             return h("span", params.row.date);
                         }
                     }
+                },
+                {
+                    title: '账户id',
+                    key: 'account_id'
+                },
+                {
+                    title: '账号名',
+                    key: 'account_name'
+                },
+                {
+                    title: '代理',
+                    key: 'agent'
+                },
+                {
+                    title: '代理全称',
+                    key: 'agent_detail'
                 },
                 {
                     title: "总支出",
@@ -94,7 +136,7 @@ export default {
                     title: '冻结',
                     sortable: "custom",
                     key: 'frozen',
-                    width: 160
+                    width: 140
                 }
             ],
             fundsData: [],
