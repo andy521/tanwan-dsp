@@ -87,6 +87,7 @@ export default {
             Axios.post('api.php', param).then(
                 res => {
                     if (res.ret == '1') {
+                        console.log(res)
                         let data = res.data;
                         this.echart = data.echart;
                         this.total = {
