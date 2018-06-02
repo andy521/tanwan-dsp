@@ -9,6 +9,7 @@
 }
 .adspace {
   position: relative;
+  margin-right:200px;
 }
 
 .ta {
@@ -69,7 +70,7 @@
     <Card dis-hover>
         <div class="padding-20">
             <div class="title">广告版位</div>
-            <div id="J_edition" class="adspace margin-top-20">
+            <div class="adspace margin-top-20">
                 <div class="ta">
                     <Table :columns="columnsAdSpace" :data="newEition" highlight-row @on-row-click="rowClick" size="small"></Table>
                     <div class="preview" v-show="imgSrc">

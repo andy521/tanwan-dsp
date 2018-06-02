@@ -1,63 +1,62 @@
 <style >
 .sel {
-    width: 220px;
+  width: 220px;
 }
 
 .time .ivu-poptip {
-    display: inline-block;
+  display: inline-block;
 }
 
 .tipbtn {
-    text-align: right;
+  text-align: right;
 }
 
 .clear:after {
-    content: "\20";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
+  content: "\20";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
 }
 
 .ivu-table .ivu-col span {
-    line-height: 24px;
+  line-height: 24px;
 }
 
 .inp {
-    display: inline-block;
-    width: 150px;
+  display: inline-block;
+  width: 150px;
 }
 
 .sel_state {
-    text-align: left;
-    width: 110px;
+  text-align: left;
+  width: 110px;
 }
 
 .sel_state1 {
-    text-align: left;
-    width: 300px;
+  text-align: left;
+  width: 300px;
 }
 
 .sel_state1.ivu-select-multiple .ivu-select-selection {
-    overflow: auto;
-    height: 32px;
+  overflow: auto;
+  height: 32px;
 }
 
 .namediv {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .namediv:hover {
-    color: #57a3f3;
+  color: #57a3f3;
 }
-
 
 .campaign_name {
-    font-size: 18px;
-    margin-left: 20px;
+  font-size: 18px;
+  margin-left: 20px;
 }
 .ivu-tooltip-inner {
-    white-space: normal;
+  white-space: normal;
 }
 </style>
 
@@ -98,9 +97,9 @@
                 <!--自定义指标-->
                 <view-popti @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-popti>
                 <!--选择负责人-->
-                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
+                <select-author :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
                 <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
-                <Select v-model="configured_status"  class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
+                <Select v-model="configured_status" class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
                     <Option value="">不限</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
@@ -379,7 +378,7 @@ export default {
                                                     .catch(err => {
                                                         console.log(
                                                             "修改删除广告计划失败" +
-                                                                err
+                                                            err
                                                         );
                                                     });
                                             }
@@ -651,7 +650,7 @@ export default {
                                         size: "small",
                                         value:
                                             params.row.configured_status ==
-                                            "AD_STATUS_NORMAL"
+                                                "AD_STATUS_NORMAL"
                                                 ? true
                                                 : false
                                     },
@@ -688,7 +687,7 @@ export default {
                                                 .catch(err => {
                                                     console.log(
                                                         "修改删除投放计划失败" +
-                                                            err
+                                                        err
                                                     );
                                                 });
                                         }
@@ -697,7 +696,7 @@ export default {
                                 h(
                                     "span",
                                     params.row.configured_status ==
-                                    "AD_STATUS_NORMAL"
+                                        "AD_STATUS_NORMAL"
                                         ? "开启"
                                         : "关闭"
                                 )
@@ -789,7 +788,7 @@ export default {
                                                             .catch(err => {
                                                                 console.log(
                                                                     "修改删除投放计划失败" +
-                                                                        err
+                                                                    err
                                                                 );
                                                             });
                                                     }
@@ -806,6 +805,70 @@ export default {
                     title: "产品名称",
                     key: "game_name",
                     width: 200
+                },
+                {
+                    title: "操作",
+                    key: "",
+                    width: 130,
+                    render: (h, params) => {
+                        if (params.row._disabled) return;
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "edit_link",
+                                    on: {
+                                        click: () => {
+                                            this.$router.push({
+                                                name: "gdtad",
+                                                query: {
+                                                    account_id: params.row.account_id,
+                                                    adgroup_id: params.row.adgroup_id,
+                                                    campaign_id: params.row.campaign_id,
+                                                    targeting_id: params.row.targeting_id,
+                                                    product_type: params.row.product_type,
+                                                    campaign_type: params.row.campaign_type,
+                                                    configured_status: params.row.configured_status
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                "编辑"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "del_link",
+                                    on: {
+                                        click: value => {
+                                            this.$Modal.confirm({
+                                                title: "操作提示",
+                                                content: "<p>确认删除</p>",
+                                                onOk: () => {
+                                                    Axios.get("api.php", {
+                                                        action: "gdtAdPut",
+                                                        opt: "adgroups_add",
+                                                        do: "edits",
+                                                        id: params.row.id.split(","), //必传[13,12,12]
+                                                        type: 3, //1 修改状态  3 删除 type   
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList();
+                                                        }
+                                                    }).catch(err => {
+                                                        console.log("批量修改删除投放计划" + err);
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                "删除"
+                            )
+                        ];
+                    }
                 }
             ]
         };
@@ -970,16 +1033,14 @@ export default {
                 id: this.taCheckids, //必传[13,12,12]
                 type: type, //1 修改状态  3 删除 type
                 configured_status: this.edit_status //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.getCampaignsList(this.page);
-                    }
-                })
-                .catch(err => {
-                    console.log("批量修改删除投放计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getCampaignsList();
+                }
+            }).catch(err => {
+                console.log("批量修改删除投放计划" + err);
+            });
         },
         //批量修改目期
         DateChanged() {
@@ -1005,16 +1066,14 @@ export default {
                 type: 1, //1 修改状态  3 删除 type
                 begin_date: begin_date, //开始投放日期
                 end_date: end_date //结束投放日期
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.getCampaignsList(this.page);
-                    }
-                })
-                .catch(err => {
-                    console.log("批量修改日期" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getCampaignsList();
+                }
+            }).catch(err => {
+                console.log("批量修改日期" + err);
+            });
         },
         //获取选中的id
         taCheck(row) {
