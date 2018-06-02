@@ -81,7 +81,8 @@ export default {
                     const word = {
                       packageName: `{${params.row.packageName}}`,
                       defaultWord: params.row.defaultWord,
-                      isDisable: true
+                      isDisable: true,
+                      id: params.row.id
                     }
                     this.$emit('on-select', word)
                   }
@@ -106,9 +107,6 @@ export default {
     this.getWordPackage()
   },
   methods: {
-    checkAllGroupChange (data) {
-      console.log(data, typeof data)
-    },
     getWordPackage() {
       Axios.post('api.php', {
         action: 'ucAdPut',

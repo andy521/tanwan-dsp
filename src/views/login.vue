@@ -67,7 +67,7 @@
                             if (res.ret == 1) {
                                 let access = res.data.data.access,
                                     page = res.data.data.lastPage,
-                                    accessItem = ['tt_main']; //'setid_menu'
+									accessItem = ['setid_systemstatussetid']; //'setid_menu'
                                 access.forEach( (item,index) => {
                                     let path = item.path.split('/'),
                                         len = path.length-1;
@@ -76,7 +76,7 @@
                                             accessItem.push(path[i])
                                         }
                                     }
-                                });
+								});
                                 Util.setItem('access', accessItem); 
                                 Util.setItem('user', this.form.userName);
                                 Util.setItem('sessionid',res.data.sessionid);                                

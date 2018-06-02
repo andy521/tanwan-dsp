@@ -1,3 +1,27 @@
+<style scoped>
+.ds_box {
+  padding: 20px 30px;
+}
+
+.ds_tag {
+  overflow: auto;
+  max-height: 200px;
+  margin-bottom: 20px;
+}
+
+.ds_tag p {
+  font-weight: bold;
+}
+
+.citytree {
+  background: #fff;
+  border: solid 1px #eee;
+  padding: 15px;
+  max-height: 200px;
+  overflow: auto;
+}
+</style>
+
 <template>
 	<div>
 		<Row>

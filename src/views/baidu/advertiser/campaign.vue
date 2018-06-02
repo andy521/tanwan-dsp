@@ -279,7 +279,7 @@ export default {
                         },
                         onOk: () => {
                           if (value === '') {
-                            return this.$$Message.info('请输入修改信息')
+                            return this.$Message.info('请输入修改信息')
                           }
 
                           Axios.post('api.php', {

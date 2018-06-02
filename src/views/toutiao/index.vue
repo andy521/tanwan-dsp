@@ -24,7 +24,7 @@
 </style>
 <template>
     <div class="ad">
-        <Card :bordered="false" :dis-hover="true" class="tip-txt">
+        <Card dis-hover class="tip-txt">
             <p slot="title" class="card-title">
                 <Icon type="ios-paper"></Icon>
                 账户数据汇总
@@ -53,7 +53,7 @@
 
         </Card>
 
-        <Card :bordered="false" :dis-hover="true" class="tip-txt margin-top-10">
+        <Card dis-hover class="tip-txt margin-top-10">
             <p slot="title" class="card-title">
                 <Icon type="ios-paper"></Icon>
                 广告统计
@@ -77,7 +77,7 @@
             </Row>
         </Card>
 
-        <Card :bordered="false" :dis-hover="true" class="tip-txt margin-top-10">
+        <Card dis-hover class="tip-txt margin-top-10">
             <div slot="title" class="card-title .ivu-card-head-inner, .ivu-card-head g-flex">
                 <p>
                     <Icon type="ios-paper"></Icon>

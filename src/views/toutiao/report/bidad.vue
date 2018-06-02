@@ -18,7 +18,7 @@
 }
 </style>
 <template>
-    <div shadow class="margin-top-10">
+    <div class="margin-top-10">
         <span>时间范围</span>
         <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
         <span class="margin-left-10">汇总方式</span>

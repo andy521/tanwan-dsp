@@ -26,7 +26,8 @@
                 </center>
             </div>
             <div class="padding-10" v-if="MeidaType=='Baidu'">
-                <Input v-model="baidu.account_name" placeholder="请输入百度的账户名称"></Input>
+                <Input v-model="baidu.op_username" placeholder="请输入百度账户管家的名称"></Input>
+                <Input v-model="baidu.account_name" placeholder="请输入百度的账户名称" class="margin-top-20"></Input>
             </div>
             <div class="padding-10" v-if="MeidaType=='Uc'">
                 <Input v-model="uc.account_id" placeholder="请输入UC账户id"></Input>
@@ -133,7 +134,8 @@ export default {
                 Axios.post('api.php', {
                     action: 'bdAdPut',
                     opt: 'bindAccount',
-                    account_name: this.baidu.account_name
+                    account_name: this.baidu.account_name,
+                    op_username: this.baidu.op_username
                 }).then(res => {
                     if (res.ret == 1) {
                         this.addBindIdwin = false;

@@ -17,10 +17,10 @@
 </style>
 <template>
     <div>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
-                <!-- <Button type="primary">返回</Button> -->
+                <Button type="primary" @click="back" v-if="adgroup_id">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input class="inp" clearable placeholder="请输入创意ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
@@ -32,10 +32,10 @@
                 </Col>
             </Row>
         </Card>
-        <Card shadow class="margin-top-10" v-if="Echartsmodel">
+        <Card dis-hover class="margin-top-10" v-if="Echartsmodel">
             <campaign-echarts></campaign-echarts>
         </Card>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <!--自定义指标-->
@@ -139,6 +139,7 @@ export default {
             total_page: 1, //总页数
             loading: false,
             taCheckids: [], //选中ids
+            account_ids: [], // 选中的账号id
             options: DateShortcuts, //日期辅助功能
             status: "",//审核状态
             opt_status: "", //操作状态
@@ -171,10 +172,13 @@ export default {
         //获取选中的id
         taCheck(row) {
             let ids = [];
+            let account_ids = [];
             row.forEach(item => {
                 ids.push(item.id);
+                account_ids.push(item.account_id)
             });
             this.taCheckids = ids;
+            this.account_ids = account_ids;
         },
         //选择负责人
         authorChange(data) {
@@ -211,6 +215,7 @@ export default {
                 action: "ttAdPut",
                 opt: "updateCreativeStatus",
                 ids: this.taCheckids,
+                account_ids: this.account_ids,
                 opt_status: this.edit_status
             })
                 .then(res => {
@@ -264,7 +269,11 @@ export default {
                 this.loading = false;
                 console.log("今日头条广告组" + err);
             });
-        }
+        },
+        //返回
+        back() {
+            this.$router.go(-1);
+        },
     },
     beforeMount() { },
     computed: {
@@ -279,7 +288,7 @@ export default {
                 {
                     title: "创意",
                     key: "content",
-                    width: 250,
+                    width: 280,
                     render: (h, params) => {
                         if (params.row._disabled) {
                             return h("span", "本页统计");
@@ -311,8 +320,8 @@ export default {
 
                 {
                     title: "账户名",
-                    key: "account_id",
-                    width: 120
+                    key: "account_name",
+                    width: 300
                 },
                 {
                     title: "状态",
@@ -350,6 +359,7 @@ export default {
                                             action: "ttAdPut",
                                             opt: "updateCreativeStatus",
                                             ids: params.row.id.split(","),
+                                            account_ids: params.row.account_id.split(","),
                                             opt_status: value == true ? "enable" : "disable"
                                         }).then(res => {
                                             if (res.ret == 1) {

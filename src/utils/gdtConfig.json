@@ -1,0 +1,608 @@
+{
+    "campaign_type": [{
+        "name": "普通展示广告",
+        "dsc": "普通展示广告",
+        "val_type": "CAMPAIGN_TYPE_NORMAL"
+    }, {
+        "name": "微信公众号广告",
+        "dsc": "微信公众号广告",
+        "val_type": "CAMPAIGN_TYPE_WECHAT_OFFICIAL_ACCOUNTS"
+    }, {
+        "name": "微信朋友圈广告",
+        "dsc": "微信朋友圈广告",
+        "val_type": "CAMPAIGN_TYPE_WECHAT_MOMENTS"
+    }, {
+        "name": "合约广告",
+        "dsc": "合约广告",
+        "val_type": "CAMPAIGN_TYPE_CONTRACT"
+    }],
+    "speed_mode": [{
+        "name": "加速投放",
+        "dsc": "广告会以较快的速度获得曝光，选择加速投放可能会导致您的预算较快地耗尽",
+        "val_type": "SPEED_MODE_FAST"
+    }, {
+        "name": "标准投放",
+        "dsc": "系统会优化您的广告的投放，让您的预算在设定的投放时段内较为平稳地消耗，默认为标准投放",
+        "val_type": "SPEED_MODE_STANDARD"
+    }],
+    "product_type": [{
+        "name": "腾讯开放平台移动应用",
+        "dsc": "创建广告前需通过 [product 模块] 登记腾讯开放平台的应用 id，创建广告时需填写之前登记的应用 id，仅普通展示广告（ campaign_type = CAMPAIGN_TYPE_NORMAL ）支持",
+        "val_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM"
+    }, {
+        "name": "苹果应用",
+        "dsc": "创建广告前需通过 [product 模块] 登记 App Store 的应用 id，创建广告时需填写之前登记的应用 id，仅普通展示广告（ campaign_type = CAMPAIGN_TYPE_NORMAL ）支持",
+        "val_type": "PRODUCT_TYPE_APP_IOS"
+    }, {
+        "name": "应用宝APP",
+        "dsc": "应用宝APP",
+        "val_type": "PRODUCT_TYPE_APP_ANDROID_MYAPP_PROMOTION"
+    }, {
+        "name": "移动联盟APP",
+        "dsc": "移动联盟APP",
+        "val_type": "PRODUCT_TYPE_APP_ANDROID_UNION"
+    }, {
+        "name": "电商推广",
+        "dsc": "创建广告时无需创建和指定标的物，所有的 campaign_type 均支持投放",
+        "val_type": "PRODUCT_TYPE_ECOMMERCE"
+    }, {
+        "name": "微信品牌页",
+        "dsc": "创建广告时无需创建和指定标的物，仅微信公众号广告（ campaign_type = CAMPAIGN_TYPE_WECHAT_OFFICIAL_ACCOUNTS ）以及微信朋友圈广告（ campaign_type = CAMPAIGN_TYPE_WECHAT_MOMENTS ）支持",
+        "val_type": "PRODUCT_TYPE_LINK_WECHAT"
+    }, {
+        "name": "\t微信本地门店推广",
+        "dsc": "创建广告前需在对应的微信公众号中注册登记门店信息，创建广告时需填写之前登记的门店 id，仅微信朋友圈广告（ campaign_type = CAMPAIGN_TYPE_WECHAT_MOMENTS ）支持门店信息的登记及获取可以通过微信公众平台提供的接口进行操作，具体方式可以参考 [本地门店的创建及获取]",
+        "val_type": "PRODUCT_TYPE_LBS_WECHAT"
+    }, {
+        "name": "\t普通链接",
+        "dsc": "创建广告时无需创建和指定标的物，仅普通展示广告（ campaign_type = CAMPAIGN_TYPE_NORMAL ）支持",
+        "val_type": "PRODUCT_TYPE_LINK"
+    }],
+    "configured_status": [{
+        "name": "有效",
+        "style": "color: green",
+        "val_type": "AD_STATUS_NORMAL"
+    }, {
+        "name": "暂停",
+        "style": "color: red",
+        "val_type": "AD_STATUS_SUSPEND"
+    }],
+    "site_set": [{
+        "name": "QQ 空间",
+        "val_type": "SITE_SET_QZONE"
+    }, {
+        "name": "QQ 客户端",
+        "val_type": "SITE_SET_QQCLIENT"
+    }, {
+        "name": "QQ 音乐",
+        "val_type": "SITE_SET_MUSIC"
+    }, {
+        "name": "移动联盟",
+        "val_type": "SITE_SET_MOBILE_UNION"
+    }, {
+        "name": "腾讯网",
+        "val_type": "SITE_SET_QQCOM"
+    }, {
+        "name": "微信",
+        "val_type": "SITE_SET_WECHAT"
+    }, {
+        "name": "移动内部站点",
+        "val_type": "SITE_SET_MOBILE_INNER"
+    }, {
+        "name": "腾讯新闻",
+        "val_type": "SITE_SET_TENCENT_NEWS"
+    }, {
+        "name": "腾讯视频",
+        "val_type": "SITE_SET_TENCENT_VIDEO"
+    }],
+    "billing_event": [{
+        "name": "按 CPC 扣费",
+        "dsc": "优化目标为根据点击量优化（ optimization_goal = OPTIMIZATIONGOAL_CLICK 时）使用",
+        "val_type": "BILLINGEVENT_CLICK"
+    }, {
+        "name": "按 CPM 扣费",
+        "dsc": "优化目标为根据曝光量优化（ optimization_goal = OPTIMIZATIONGOAL_IMPRESSION 时）使用",
+        "val_type": "BILLINGEVENT_IMPRESSION"
+    }, {
+        "name": "按照转化扣费",
+        "dsc": "",
+        "val_type": "BILLINGEVENT_APP_INSTALL"
+    }],
+    "optimization_goal": [{
+        "name": "根据点击量优化",
+        "val_type": "OPTIMIZATIONGOAL_CLICK"
+    }, {
+        "name": "根据曝光量优化",
+        "val_type": "OPTIMIZATIONGOAL_IMPRESSION"
+    }, {
+        "name": "\tApp 安装",
+        "val_type": "OPTIMIZATIONGOAL_APP_INSTALL"
+    }, {
+        "name": "根据移动 App 激活优化",
+        "val_type": "OPTIMIZATIONGOAL_APP_ACTIVATE"
+    }, {
+        "name": "根据App 注册优化",
+        "val_type": "OPTIMIZATIONGOAL_APP_REGISTER"
+    }, {
+        "name": "根据\tApp 购买优化",
+        "val_type": "OPTIMIZATIONGOAL_APP_PURCHASE"
+    }, {
+        "name": "根据下单优化",
+        "val_type": "OPTIMIZATIONGOAL_ECOMMERCE_ORDER"
+    }, {
+        "name": "根据\tH5 购买优化",
+        "val_type": "OPTIMIZATIONGOAL_ECOMMERCE_CHECKOUT"
+    }, {
+        "name": "根据\tH5 注册优化",
+        "val_type": "OPTIMIZATIONGOAL_PROMOTION_CLICK_KEY_PAGE"
+    }, {
+        "name": "根据表单预约优化",
+        "val_type": "OPTIMIZATIONGOAL_PAGE_RESERVATION"
+    }],
+    "system_status": [{
+        "name": "有效",
+        "color": "green",
+        "val_type": "AD_STATUS_NORMAL"
+    }, {
+        "name": "待审核",
+        "color": "#7568d4",
+        "val_type": "AD_STATUS_PENDING"
+    }, {
+        "name": "审核不通过",
+        "color": "red",
+        "val_type": "AD_STATUS_DENIED"
+    }, {
+        "name": "封停",
+        "color": "red",
+        "val_type": "AD_STATUS_FROZEN"
+    }, {
+        "name": "准备资源",
+        "color": "blue",
+        "val_type": "AD_STATUS_PREPARE"
+    }],
+    "gender": [{
+        "name": "男性",
+        "val_type": "MALE"
+    }, {
+        "name": "女性",
+        "val_type": "FEMALE"
+    }],
+    "education": [{
+        "name": "单身",
+        "val_type": "SINGLE"
+    }, {
+        "name": "育儿",
+        "val_type": "PARENTING"
+    }, {
+        "name": "新婚",
+        "val_type": "NEWLY_MARRIED"
+    }, {
+        "name": "已婚",
+        "val_type": "MARRIED"
+    }, {
+        "name": "育儿（孕育中）",
+        "val_type": "PARENTING_0"
+    }, {
+        "name": "育儿（宝宝 0-6 个月）",
+        "val_type": "PARENTING_0_6"
+    }, {
+        "name": "育儿（宝宝 6-12 个月）",
+        "val_type": "PARENTING_6_12"
+    }, {
+        "name": "育儿（宝宝 1-2 岁）",
+        "val_type": "PARENTING_12_24"
+    }, {
+        "name": "育儿（宝宝 2-3 岁）",
+        "val_type": "PARENTING_24_36"
+    }],
+    "living_status": [{
+        "name": "在校大学生",
+        "val_type": "COLLEGE_STUDENT"
+    }, {
+        "name": "商旅用户",
+        "val_type": "BUSINESS_USER"
+    }, {
+        "name": "政府公职人员",
+        "val_type": "GOVERNMENT_OFFICER"
+    }, {
+        "name": "科研教育者",
+        "val_type": "SCIENCE_EDUCATOR"
+    }, {
+        "name": "IT 互联网工作者",
+        "val_type": "IT_WORKER"
+    }, {
+        "name": "医护工作者",
+        "val_type": "HEALTH_CARE_WORKER"
+    }],
+    "device_price": [{
+        "name": "\t￥ 1500 以下",
+        "val_type": "INEXPENSIVE"
+    }, {
+        "name": "￥ 1500 ~ 2500",
+        "val_type": "AFFORDABLE"
+    }, {
+        "name": "￥ 2500 以上",
+        "val_type": "EXPENSIVE"
+    }],
+    "network_type": [{
+        "name": "未知联网方式",
+        "val_type": "UNKNOWN"
+    }, {
+        "name": "无线网络",
+        "val_type": "WIFI"
+    }, {
+        "name": "2G 网络",
+        "val_type": "NET_2G"
+    }, {
+        "name": "3G 网络",
+        "val_type": "NET_3G"
+    }, {
+        "name": "4G 网络",
+        "val_type": "NET_4G"
+    }],
+    "network_operator": [{
+        "name": "中国移动",
+        "val_type": "CMCC"
+    }, {
+        "name": "中国联通",
+        "val_type": "CUC"
+    }, {
+        "name": "中国电信",
+        "val_type": "CTC"
+    }, {
+        "name": "未知运营商，仅可读",
+        "val_type": "UNKNOWN"
+    }],
+    "app_install_status": [{
+        "name": "未安装",
+        "val_type": "NOT_INSTALLED"
+    }, {
+        "name": "已安装",
+        "val_type": "INSTALLED"
+    }],
+    "shopping_capability": [{
+        "name": "高消费",
+        "val_type": "HIGH"
+    }, {
+        "name": "低消费",
+        "val_type": "LOW"
+    }],
+    "location_types": [{
+        "name": "\t近期",
+        "val_type": "RECENTLY_IN"
+    }, {
+        "name": "去过",
+        "val_type": "VISITED_IN"
+    }, {
+        "name": "\t常住",
+        "val_type": "LIVE_IN"
+    }, {
+        "name": "\t旅行",
+        "val_type": "TRAVEL_IN"
+    }],
+    "paying_user_type": [{
+        "name": "APP 付费用户",
+        "val_type": "APP_PAID"
+    }, {
+        "name": "潜在虚拟付费用户",
+        "val_type": "ECOMMERCE_PAID"
+    }, {
+        "name": "已有电商付费用户",
+        "val_type": "LATENT_VIR_PAY"
+    }],
+    "act_id_list": [{
+        "name": "活跃",
+        "val_type": "ACTIVE"
+    }, {
+        "name": "\t付费",
+        "val_type": "PAID"
+    }],
+    "adcreative_template": [{
+        "name": "移动原生-1280×720多图(文)-原生广告位",
+        "id": 148,
+        "site_set": ["SITE_SET_MOBILE_UNION", "SITE_SET_MOBILE_INNER"],
+        "product_type": ["PRODUCT_TYPE_APP_IOS", "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM", "PRODUCT_TYPE_LINK", "PRODUCT_TYPE_ECOMMERCE"],
+        "adcreative_elements": ["title", "description", "image", "image2", "deep_link_url"],
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 148
+    }, {
+        "name": "移动Banner-640×100单图(文)-Banner广告位",
+        "id": 10,
+        "adcreative_elements": ["image", "deep_link_url"],
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 10
+    }, {
+        "name": "Feed消息流-1000×560单图(文)-好友动态消息流",
+        "id": 65,
+        "site_set": [],
+        "product_type": [],
+        "adcreative_elements": {
+            "title": [],
+            "0": "image",
+            "1": "deep_link_url",
+            "2": "button_text",
+            "3": "bottom_text",
+            "corporate": ["corporate_name", "corporate_img"]
+        },
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 65
+    }, {
+        "name": "微信-582×166单图(文)-公众号、新闻插件底部",
+        "id": 133,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 133
+    }, {
+        "name": "移动原生-800×1200多图(文)-原生广告位",
+        "id": 150,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 150
+    }, {
+        "name": "手机QQ及浏览器-240×180单图(文)-看点及兴趣部落，浏览器信息流",
+        "id": 184,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 184
+    }, {
+        "name": "浏览器、手腾网、手机QQ-640×288单图(文)-资讯信息流、资讯文章页、焦点图",
+        "id": 210,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 210
+    }, {
+        "name": "手机QQ-147×147单图(文)-附近的人、QQ天气、Feeds沉浸视频流",
+        "id": 194,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 194
+    }, {
+        "name": "移动开屏-640×960单图(文)-开屏广告位",
+        "id": 79,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 79
+    }, {
+        "name": "移动Banner-15字+15字文字链-Banner广告位",
+        "id": 71,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 71
+    }, {
+        "name": "浏览器及手腾网-240×180多图(文)-资讯信息流",
+        "id": 285,
+        "billing_event": ["BILLINGEVENT_CLICK", "BILLINGEVENT_IMPRESSION "],
+        "val_type": 285
+    }, {
+        "name": "移动插屏-600×500单图(文)-插屏广告位",
+        "id": 59,
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 59
+    }, {
+        "name": "Feed视频流-640×360视频-沉浸视频流",
+        "id": 185,
+        "site_set": ["SITE_SET_MOBILE_INNER"],
+        "product_type": ["PRODUCT_TYPE_LINK", "PRODUCT_TYPE_APP_IOS", "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM", "PRODUCT_TYPE_ECOMMERCE"],
+        "adcreative_elements": ["title", "image", "video", "deep_link_url", "corporate"],
+        "billing_event": ["BILLINGEVENT_CLICK"],
+        "val_type": 185
+    }],
+    "adcreative_templates": [{
+        "advertisement": "QQ空间及QQ",
+        "creativeform": "1000×560单图(文)",
+        "description": "好友动态及QQ看点、QQ动漫等优质广告位",
+        "site_set": "SITE_SET_MOBILE_INNER",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：1~40"
+            },
+            "image": {
+                "name": "图片",
+                "des": "尺寸：1000*560，大小：不超过90 KB，格式：*.jpg|*.jpeg|*.png"
+            },
+            "button_text": {
+                "name": "按钮文字",
+                "des": "字数：2~4"
+            },
+            "bottom_text": {
+                "name": "左下辅助文字",
+                "des": "字数：1~10"
+            },
+            "deep_link": {
+                "name": "应用直达",
+                "des": "(可选)"
+            }
+        },
+        "val_type": 65
+    }, {
+        "advertisement": "手机QQ及浏览器",
+        "creativeform": "240×180单图(文)",
+        "description": "看点及兴趣部落，浏览器信息流",
+        "site_set": "SITE_SET_MOBILE_INNER",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：1~20"
+            },
+            "image": {
+                "name": "图片",
+                "des": "尺寸：240*180，大小：不超过30 KB，格式：*.jpg|*.jpeg|*.png；"
+            },
+            "deep_link": {
+                "name": "应用直达",
+                "des": "(可选)"
+            }
+        },
+        "val_type": 184
+    }, {
+        "advertisement": "浏览器、手腾网、手机QQ",
+        "creativeform": "640×288单图(文)",
+        "description": "资讯信息流、资讯文章页、焦点图",
+        "site_set": "SITE_SET_MOBILE_INNER",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：1~40"
+            },
+            "image": [{
+                "name": "图片",
+                "des": "尺寸：640*288，大小：不超过30 KB，格式：*.jpg|*.jpeg|*.png；"
+            }],
+            "deep_link": {
+                "name": "应用直达",
+                "des": "(可选)"
+            }
+        },
+        "val_type": 210
+    }, {
+        "advertisement": "腾讯新闻",
+        "creativeform": "230×152多图(文)",
+        "description": "新闻信息流",
+        "site_set": "SITE_SET_TENCENT_NEWS",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：6~30"
+            },
+            "image": [{
+                "name": "图片",
+                "des": "尺寸：230*152，大小：不超过30 KB，格式：*.jpg|*.jpeg；"
+            }, {
+                "name": "图片",
+                "des": "尺寸：230*152，大小：不超过30 KB，格式：*.jpg|*.jpeg；"
+            }, {
+                "name": "图片",
+                "des": "尺寸：230*152，大小：不超过30 KB，格式：*.jpg|*.jpeg；"
+            }],
+            "corporate_name": {
+                "name": "corporate_name",
+                "des": "字数：1~7"
+            },
+            "0": "corporate",
+            "1": "element_story",
+            "deep_link": {
+                "name": "应用直达",
+                "des": "(可选)"
+            }
+        },
+        "val_type": 473
+    }, {
+        "advertisement": "腾讯新闻",
+        "creativeform": "230×152多图(文)",
+        "description": "新闻信息流",
+        "site_set": "SITE_SET_TENCENT_VIDEO",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：1~14"
+            },
+            "image": [{
+                "name": "图片",
+                "des": "尺寸：960*540，大小：不超过200 KB，格式：*.jpg|*.jpeg|*.png；"
+            }],
+            "corporate_name": {
+                "name": "corporate_name",
+                "des": "字数：1~7"
+            },
+            "0": "corporate",
+            "1": "element_story"
+        },
+        "val_type": 486
+    }, {
+        "advertisement": "腾讯新闻",
+        "creativeform": "230×152单图(文)",
+        "description": "新闻信息流、微信新闻插件信息流",
+        "site_set": "SITE_SET_TENCENT_NEWS",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：16~24"
+            },
+            "image": [{
+                "name": "图片",
+                "des": "尺寸：230*152，大小：不超过30 KB，格式：*.jpg|*.jpeg；"
+            }],
+            "corporate_name": {
+                "name": "corporate_name",
+                "des": "字数：1~7"
+            },
+            "0": "corporate"
+        },
+        "val_type": 471
+    }, {
+        "advertisement": "腾讯视频",
+        "creativeform": "960×274单图(文)",
+        "description": "首页专栏、热点视频流",
+        "site_set": "SITE_SET_TENCENT_VIDEO",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：1~14"
+            },
+            "image": [{
+                "name": "图片",
+                "des": "尺寸：960*274，大小：不超过100 KB，格式：*.jpg|*.jpeg|*.png"
+            }],
+            "corporate_name": {
+                "name": "corporate_name",
+                "des": "字数：1~7"
+            },
+            "0": "corporate"
+        },
+        "val_type": 487
+    }, {
+        "advertisement": "移动原生",
+        "creativeform": "1280×720多图(文)",
+        "description": "原生广告位",
+        "site_set": "SITE_SET_MOBILE_INNER",
+        "adcreative_elements": {
+            "title": {
+                "name": "广告文案",
+                "des": "字数：1~14"
+            },
+            "image": [{
+                "name": "图片",
+                "des": "尺寸：1280*720，大小：不超过100 KB，格式：*.jpg|*.jpeg|*.png；"
+            }],
+            "image2": [{
+                "name": "图片",
+                "des": "尺寸：1280*720，大小：不超过100 KB，格式：*.jpg|*.jpeg|*.png；"
+            }],
+            "description": {
+                "name": "广告描述",
+                "des": "字数：1~30"
+            }
+        },
+        "val_type": 148
+    }],
+    "dmp_system_status": [{
+        "name": "待处理",
+        "color": "blue",
+        "val_type": "MEDIA_STATUS_VALID"
+    }, {
+        "name": "有效",
+        "color": "green",
+        "val_type": "MEDIA_STATUS_PENDING"
+    }, {
+        "name": "异常",
+        "color": "red",
+        "val_type": "MEDIA_STATUS_ERROR"
+    }],
+    "media_type": [{
+        "name": "mp4",
+        "val_type": "MEDIA_TYPE_MP4"
+    }],
+    "adcreative_elements": [{
+        "name": "图片ID",
+        "val_type": "image"
+    }, {
+        "name": "广告文案",
+        "val_type": "title"
+    }, {
+        "name": "应用直达",
+        "val_type": "deep_link_url"
+    }, {
+        "name": "商标",
+        "val_type": "corporate"
+    }, {
+        "name": "按钮文字",
+        "val_type": "button_text"
+    }, {
+        "name": "左下辅助文字",
+        "val_type": "bottom_text"
+    }]
+}

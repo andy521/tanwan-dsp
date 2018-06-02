@@ -89,7 +89,7 @@
         <side-bar :step="2"></side-bar>
 
         <Card dis-hover v-if="!this.adcreative_id" style="margin-bottom:10px">
-            <div class="newtt">
+            <div class="padding-20">
                 <Row>
                     <Col span="16">
                     <Select size="large" @on-change="getAdgroupsId" filterable>
@@ -101,7 +101,7 @@
         </Card>
 
         <Card dis-hover>
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">
                     <span>投放目标</span>
                     <!-- 广告位说明 -->
@@ -129,7 +129,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">
                     <span>添加创意素材</span>
                     <!-- 创意标题特殊符号说明 -->
@@ -156,11 +156,14 @@
                                         <li v-for="(item,index) in it.imgList">
                                             <div class="img" :style="{height: (it.height/it.width*200)+'px'}">
                                                 <template v-if="item.video_id||item.video_id==''">
-                                                    <img :src="item.imgUrl" v-if="item.imgUrl!=''&&item.video_id!=''">
-                                                    <div class="alt-upload" :class="item.video_id? 'alt-upload1':''">
+                                                    <div class="alt-upload">
                                                         <div class="margin-top-10">
                                                             <!-- 上传视频 -->
                                                             <uploadVideo :size="it.size" @on-change="getvideoid" :ind="ind" :index="index"></uploadVideo>
+                                                            <a :href="item.video_url" target="_blank" v-if="item.video_id">
+                                                                <Button type="primary" icon="arrow-right-b" class="margin-top-10" v-if="item.video_url">播放视频</Button>
+                                                                <Button type="primary" class="margin-top-10" v-else>视频不支持播放</Button>
+                                                            </a>
                                                             <p class="margin-top-10">{{item.desc}}</p>
                                                         </div>
                                                     </div>
@@ -224,7 +227,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">设置创意分类和标签</div>
                 <Row class="margin-top-20">
                     <Col span="16">
@@ -256,7 +259,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">设置广告监测</div>
                 <Row class="margin-top-20">
                     <Col span="16">
@@ -295,7 +298,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <Button type="primary" size="large" @click="submitCreative()">
                     <span v-if="this.adcreative_id">修改创意</span>
                     <span v-else>新增创意</span>
@@ -338,7 +341,7 @@ export default {
             modify_time: "",
             inventory_type: [],   //位置选择      
 
-            image_mode: "CREATIVE_IMAGE_MODE_LARGE",//图片类别
+            image_mode: "CREATIVE_IMAGE_MODE_SMALL",//图片类别
             image: [
                 {
                     value: "CREATIVE_IMAGE_MODE_SMALL",
@@ -348,17 +351,17 @@ export default {
                     title: "",
                     width: 456,
                     height: 300,
-                    size: 0.5
+                    size: 500
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_LARGE",
                     imgList: [
-                        { desc: '宽高比1.78,最低尺寸1280*720,大小500K以下', image_id: "web.business.image/201805225d0d65531f9f12c74ff892c0", imgUrl: "", }
+                        { desc: '宽高比1.78,最低尺寸1280*720,大小500K以下', image_id: "", imgUrl: "", }
                     ],
                     title: "",
                     width: 1280,
                     height: 720,
-                    size: 0.5
+                    size: 500
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_GROUP",
@@ -370,39 +373,39 @@ export default {
                     title: "",
                     width: 456,
                     height: 300,
-                    size: 0.5
+                    size: 500
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_VIDEO",
                     imgList: [
-                        { desc: '视频码率 >=516kbps，横版分辨率>=1280*720，大小<=1000M', video_id: "", imgUrl: "" },
+                        { desc: '视频码率 >=516kbps，横版分辨率>=1280*720，大小<=1000M', video_id: "", video_url: "" },
                         { desc: '需和视频同比例，大小不超过500K；横版16:9，最低尺寸1280*720', image_id: "", imgUrl: "", }
                     ],
                     title: "",
                     width: 1280,
                     height: 720,
-                    size: 1000
+                    size: 1024000
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_LARGE_VERTICAL",
                     imgList: [
-                        { desc: '宽高比0.56,最低尺寸720*1280,大小500K以下', image_id: "web.business.image/201805225d0d65531f9f12c74ff892c0", imgUrl: "", }
+                        { desc: '宽高比0.56,最低尺寸720*1280,大小500K以下', image_id: "", imgUrl: "", }
                     ],
                     title: "",
                     width: 720,
                     height: 1280,
-                    size: 0.5
+                    size: 500
                 },
                 {
                     value: "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL",
                     imgList: [
-                        { desc: '视频码率 >=516kbps，竖版分辨率>=720*1280，大小<=100M', video_id: "", imgUrl: "" },
+                        { desc: '视频码率 >=516kbps，竖版分辨率>=720*1280，大小<=100M', video_id: "", video_url: "" },
                         { desc: '需和视频同比例，大小不超过500K；竖版9:16，最低尺寸720*1280', image_id: "", imgUrl: "", }
                     ],
                     title: "",
                     width: 720,
                     height: 1280,
-                    size: 100
+                    size: 102400
                 }
             ],
 
@@ -491,8 +494,8 @@ export default {
                 if (data.image_mode == e.value) {
                     if (data.image_mode == "CREATIVE_IMAGE_MODE_VIDEO" || data.image_mode == "CREATIVE_IMAGE_MODE_VIDEO_VERTICAL") {
                         this.image[i].title = data.title;
+                        this.image[i].imgList[0].video_url = "";
                         this.image[i].imgList[0].video_id = data.video_id;
-                        this.image[i].imgList[0].imgUrl = data.image_info[0].url;
                         this.image[i].imgList[1].image_id = data.image_id;
                         this.image[i].imgList[1].imgUrl = data.image_info[0].url;
                     } else {
@@ -521,10 +524,12 @@ export default {
             this.monitorData.video_play_done_track_url = data.video_play_done_track_url;
             this.monitorData.video_play_effective_track_url = data.video_play_effective_track_url;
         },
-        //图片视频id
+
+        //视频id
         getvideoid(video_id, Url, ind, index) {
             let item = this.image[ind].imgList[index];
             item.video_id = video_id;
+            item.video_url = Url;
         },
         //图片id
         getimgid(image_id, imgUrl, ind, index) {

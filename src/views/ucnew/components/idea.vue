@@ -410,6 +410,11 @@ import { deepClone } from '@/utils/DateShortcuts.js'
 import util from '@/utils/index'
 import wordPackages from './wordPackages'
 const ERR_OK = 1
+
+async function initCampaignName() {
+  // const campaignList = 
+}
+
 export default {
   // 图片模板类型： 大图：big，小图：small，三图：three
   data() {
@@ -447,7 +452,7 @@ export default {
         videoId: 0,
         creativeTemplate_id: 1,
         clickMonitorUrl: '', // 点击URL
-        wildcardIds: 0,
+        wildcardIds: null,
         content: {}
       },
       packageWord: {
@@ -501,6 +506,7 @@ export default {
     handlePackageChange(word) {
       [this.packageWord] = [word]
       this.isWordPackages = false
+      this.wildcardIds = word.id
 
       this.fieldSetting.title += this.packageWord.packageName
       this.viewTitle += this.packageWord.defaultWord
@@ -909,13 +915,14 @@ export default {
     getCampaignName() {
       this.campaignNameList.forEach(campaign => {
         if (campaign.campaign_id === this.campaignId) {
-          console.log('获取计划名称', campaign.campaign_name)
+          console.log('获取计划名称',campaign, campaign.campaign_name)
           this.campaignName = campaign.campaign_name
         }
       })
     },
     // 获取计划名称列表
     getCampaignNameList() {
+
       Axios.post('api.php', {
         action: 'ucAdPut',
         opt: 'getCampaignNameList'

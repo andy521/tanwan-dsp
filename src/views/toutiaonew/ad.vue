@@ -6,9 +6,6 @@
   height: 100%;
   font-size: 14px;
 }
-.newtt {
-  padding: 20px;
-}
 .title {
   font-size: 22px;
 }
@@ -23,7 +20,7 @@
         <side-bar :step="1"></side-bar>
 
         <Card dis-hover>
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">投放目标</div>
                 <Form :label-width="80" class="margin-top-20">
                     <FormItem label="投放目标">
@@ -48,7 +45,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title" v-if="landing_type=='APP'">应用链接</div>
                 <div class="title" v-if="landing_type=='LINK'">网页链接</div>
                 <Form :label-width="80" class="margin-top-20">
@@ -83,7 +80,7 @@
         <targeting-details :apptype="app_type" :pricing="pricing" @on-change="getTargetingid" class="margin-top-10"></targeting-details>
 
         <Card dis-hover class="margin-top-10" style="position: inherit;">
-            <div class="newtt">
+            <div class="padding-20">
                 <div class="title">预算与出价</div>
                 <Form :label-width="80" class="margin-top-20">
                     <FormItem label="预算">
@@ -174,7 +171,7 @@
         </Card>
 
         <Card dis-hover class="margin-top-10">
-            <div class="newtt">
+            <div class="padding-20">
                 <Button type="primary" v-if="adgroup_id" size="large" @click="updateAdgroup()">修改计划</Button>
                 <Button type="primary" v-else size="large" @click="addAdgroup()">保存计划</Button>
             </div>

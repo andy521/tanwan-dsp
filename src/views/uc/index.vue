@@ -121,37 +121,33 @@
                 <Row>
                     <Col span="12"> 展现量:
                     <Select v-model="impression_relation" style="width:50px">
-                        <Option value=">=">>=</Option>
+                        <Option value=">=">&gt;=</Option>
                         <Option value="=">=</Option>
-                        <Option value="<=">
-                            <=</Option>
+                        <Option value="<=">&lt;=</Option>
                     </Select>
                     <Input v-model="impression_value" @on-blur="setNum('impression')" placeholder="" style="width:110px"></Input>
                     </Col>
                     <Col span="12"> 消&nbsp;&nbsp;&nbsp;&nbsp;费:
                     <Select v-model="cost_relation" style="width:50px">
-                        <Option value=">=">>=</Option>
+                        <Option value=">=">&gt;=</Option>
                         <Option value="=">=</Option>
-                        <Option value="<=">
-                            <=</Option>
+                        <Option value="<=">&lt;=</Option>
                     </Select>
                     <Input v-model="cost_value" @on-blur="setNum('cost')" placeholder="" style="width:110px"></Input>
                     </Col>
                     <Col span="12"> 点击量:
                     <Select v-model="click_relation" style="width:50px">
-                        <Option value=">=">>=</Option>
+                        <Option value=">=">&gt;=</Option>
                         <Option value="=">=</Option>
-                        <Option value="<=">
-                            <=</Option>
+                        <Option value="<=">&lt;=</Option>
                     </Select>
                     <Input v-model="click_value" @on-blur="setNum('click')" placeholder="" style="width:110px"></Input>
                     </Col>
                     <Col span="12"> 点击率:
                     <Select v-model="ctr_relation" style="width:50px">
-                        <Option value=">=">>=</Option>
+                        <Option value=">=">&gt;=</Option>
                         <Option value="=">=</Option>
-                        <Option value="<=">
-                            <=</Option>
+                        <Option value="<=">&lt;=</Option>
                     </Select>
                     <Input v-model="ctr_value" @on-blur="setNum('ctr')" placeholder="" style="width:110px"></Input>
                     </Col>
@@ -273,11 +269,9 @@ export default {
             options: null,
             tableSize: "small",
             //选中id
-            cid: [],
-            //选中账户id
             checkId: [],
-            //选中计划id
-            checkCampaign: [],
+            // 选择的账号id
+            account_ids: [],
             //默认自定义指标选项
             checkAllGroup: [
                 "paused",
@@ -399,17 +393,14 @@ export default {
             if (row.length > 0) {
                 this.operating = false;
             }
-            let id = [],
-                ids = [],
-                campaigns = [];
+            const ids = []
+            const account_ids = []
             row.forEach(item => {
-                id.push(item.id);
-                ids.push(item.account_id);
-                campaigns.push(item.campaign_id);
+                ids.push(item.id)
+                account_ids.push(item.account_id)
             });
-            this.cid = id;
             this.checkId = ids;
-            this.checkCampaign = campaigns;
+            this.account_ids = account_ids
         },
         //排序
         sortchange(column) {
@@ -432,7 +423,7 @@ export default {
                 endDate: this.DateDomain[1], //结速时间
                 keyword: this.keyword, //模糊搜索关键词(针对计划名称、后台用户名称)
                 state: this.state,
-                game_ids: this.game_id, //游戏ID
+                author: this.author_model,
                 "impression[relation]": this.impression_relation,
                 "impression[value]": this.impression_value,
                 "cost[relation]": this.cost_relation,
@@ -442,12 +433,12 @@ export default {
                 "ctr[relation]": this.ctr_relation,
                 "ctr[value]": this.ctr_value,
                 adResourceId: this.adResourceId,
-                orderField: this.orderField,
+                game_ids: this.game_id, //游戏ID
                 paused: this.status, //过滤状态
+                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+                orderField: this.orderField,
                 page: this.page, //页码
                 page_size: this.page_size, //每页数量
-                orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
-                author: this.author_model
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -489,9 +480,9 @@ export default {
                 return;
             }
             let param = {
-                account_id: this.checkId[0],
-                campaignids: "[" + this.checkCampaign.join(",") + "]",
-                paused: this.setpaused
+                ids: this.checkId,
+                paused: this.setpaused,
+                account_ids: this.account_ids
             };
             this.updatePaused(param);
         },
@@ -500,7 +491,6 @@ export default {
             let param = data;
             param.action = "ucAdPut";
             param.opt = "updateCampaignPaused";
-            //console.log(param);
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == 1) {
@@ -514,23 +504,21 @@ export default {
         },
         //删除
         deleteFun() {
-            console.log(1);
             if (this.checkId.length == "0") {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
-            let account = this.checkId[0],
-                campaign = "[" + this.checkCampaign.join(",") + "]";
+            const ids = this.checkId,
+                account_ids = this.account_ids
 
-            this.deleteData(account, campaign);
+            this.deleteData(ids, account_ids)
         },
-        deleteData(account, campaign) {
+        deleteData(ids, account_ids) {
             let param = {
                 action: "ucAdPut",
                 opt: "deleteCampaign",
-                do: "del",
-                account_id: account,
-                campaignids: campaign
+                ids: ids,
+                account_ids: account_ids
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -555,8 +543,7 @@ export default {
             let param = {
                 action: "ucAdPut",
                 opt: "updateCampaignDate",
-                account_id: this.checkId[0],
-                campaignids: "[" + this.checkCampaign.join(",") + "]",
+                ids: this.checkId,
                 startDate: this.formStartDate,
                 endDate: this.formEndDate,
                 monday: this.interval[0],
@@ -565,7 +552,8 @@ export default {
                 thursday: this.interval[3],
                 friday: this.interval[4],
                 saturday: this.interval[5],
-                sunday: this.interval[6]
+                sunday: this.interval[6],
+                account_ids: this.account_ids
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -600,14 +588,13 @@ export default {
             let param = {
                 action: "ucAdPut",
                 opt: "updateCampaignBudget",
-                account_id: this.checkId[0],
-                campaignids: "[" + this.checkCampaign.join(",") + "]",
-                budget: setbuget
+                ids: this.checkId,
+                budget: setbuget,
+                account_ids: this.account_ids
             };
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == 1) {
-                        //console.log(res)
                         this.$Message.info(res.data);
                     }
                 })
@@ -747,7 +734,7 @@ export default {
                 type: "uc",
                 act: "cp_campaigns",
                 account_id: this.seleId,
-                idArr: this.cid.join(",")
+                idArr: this.checkId.join(",")
             };
             Axios.post("api.php", param)
                 .then(res => {
@@ -782,9 +769,9 @@ export default {
                     key: "campaign_name",
                     width: 300,
                     render: (h, params) => {
-                        return h(
-                            "span",
-                            {
+                        let value = params.row.campaign_name
+                        return [
+                            h('span', {
                                 class: "name",
                                 on: {
                                     click: () => {
@@ -798,9 +785,48 @@ export default {
                                         });
                                     }
                                 }
-                            },
-                            params.row.campaign_name
-                        );
+                            }, params.row.campaign_name),
+                            h('i-button', {
+                                props: {
+                                    icon: 'edit',
+                                    type: 'text',
+                                    size: 'small'
+                                },
+                                class: ['edit'],
+                                on: {
+                                    click: () => {
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return h('i-input', {
+                                                    props: {
+                                                        value: value,
+                                                        autofocus: true,
+                                                        placeholder: '请输入推广计划名称'
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            value = val
+                                                        }
+                                                    }
+                                                })
+                                            },
+                                            onOk: () => {
+                                                if (value === '') {
+                                                    return this.$Message.info('请输入修改信息')
+                                                }
+                                                Axios.post('api.php', {
+                                                    action: 'ucAdPut',
+                                                    opt: 'updateCampaignName',                                            
+                                                    account_id: params.row.account_id,
+                                                    campaign_id: params.row.campaign_id,
+                                                    campaign_name: value
+                                                })
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        ]
                     }
                 },
                 {
@@ -850,13 +876,10 @@ export default {
                                         "on-change": value => {
                                             let paused = value ? "0" : "1";
                                             let param = {
-                                                account_id:
-                                                    params.row.account_id,
-                                                campaignids:
-                                                    "[" +
-                                                    params.row.campaign_id +
-                                                    "]",
-                                                paused: paused
+                                                ids: [params.row.id],
+                                                // campaignids: "[" + params.row.campaign_id + "]",
+                                                paused: paused,
+                                                account_ids: [params.row.account_id]
                                             };
                                             this.updatePaused(param);
                                         }
@@ -1139,19 +1162,13 @@ export default {
                                     class: "del_link",
                                     on: {
                                         click: value => {
-                                            let account = params.row.account_id,
-                                                campaign =
-                                                    "[" +
-                                                    params.row.campaign_id +
-                                                    "]";
+                                            const id = params.row.id
+                                            const account_id = params.row.account_id
                                             this.$Modal.confirm({
                                                 title: "操作提示",
                                                 content: "<p>确认删除</p>",
                                                 onOk: () => {
-                                                    this.deleteData(
-                                                        account,
-                                                        campaign
-                                                    );
+                                                    this.deleteData(id, account_id);
                                                 },
                                                 onCancel: () => {}
                                             });
@@ -1180,7 +1197,7 @@ export default {
             return date && date.valueOf() > Date.now() - 86400000;
         };
         this.options = setDate;
-        let query = this.$route.query.id;
+        let query = this.$route.query.account_id;
         if (!!query) {
             this.keyword = query.toString();
             this.isBack = true;

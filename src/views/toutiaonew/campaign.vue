@@ -1,12 +1,12 @@
 <style>
-    @import "./style.less";
+@import "./style.less";
 </style>
 <template>
     <div class="toutiaonew">
         <!-- 导行 -->
         <side-bar :step="0"></side-bar>
         <Card dis-hover>
-            <div class="newtt">
+            <div class="padding-20">
                 <Tabs :animated="false">
                     <TabPane label="创建新广告组">
                         <Row>
@@ -28,23 +28,23 @@
                                     </RadioGroup>
                                 </FormItem>
                                 <FormItem v-show="budget_mode!='BUDGET_MODE_INFINITE'">
-                                    <Input v-model="budget" placeholder="RMB"></Input>
+                                    <Input v-model="budget" placeholder="RMB" size="large"></Input>
                                 </FormItem>
                                 <FormItem label="广告组名称">
-                                    <Input v-model="campaign_name" placeholder="请输入广告组名称"></Input>
+                                    <Input v-model="campaign_name" placeholder="请输入广告组名称" size="large"></Input>
                                 </FormItem>
-                                <FormItem v-if="id">
-                                    <Button type="primary" @click="submitCampaign()">确定修改</Button>
-                                </FormItem>
-                                <FormItem v-else>
-                                    <Button type="primary" @click="submitCampaign()">保存并继续</Button>
+                                <FormItem>
+                                    <Button type="primary" size="large" @click="submitCampaign()">
+                                        <span v-if="id">确定修改</span>
+                                        <span v-else>保存并继续</span>
+                                    </Button>
                                 </FormItem>
                             </Form>
                             </Col>
                         </Row>
                     </TabPane>
                     <TabPane label="选择已有广告组">
-                        <cho-list></cho-list>
+                        <campaignList></campaignList>
                     </TabPane>
                 </Tabs>
             </div>
@@ -56,11 +56,11 @@
 import Axios from "@/api/index";
 import sideBar from "./components/sideBar.vue";
 import toutiaoConfig from "@/utils/toutiaoConfig.json";
-import choList from './components/choseList.vue'
+import campaignList from './components/campaignList.vue'
 export default {
     components: {
         sideBar,
-        choList
+        campaignList
     },
     data() {
         return {
@@ -153,7 +153,7 @@ export default {
                         query: {
                             account_id: this.account_id,
                             campaign_id: res.data.campaign_id,
-                            landing_type:this.landing_type
+                            landing_type: this.landing_type
                         }
                     })
                 }

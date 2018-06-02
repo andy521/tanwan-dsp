@@ -2,7 +2,7 @@
     @import "../../styles/common.less";
 </style>
 <template>
-    <Card :bordered="false">
+    <Card dis-hover>
         <Row v-show="showGroupListTable">
             <Col span="24">
                 <Button icon="plus-round" @click="showAddGroupDialog">添加权限组</Button>
@@ -15,7 +15,7 @@
         </Row>
         <Row v-show="showGroupListTable">
             <Col span="24">
-                <Table border :columns="tableColumns" :data="tableData" size="small" style="width:800px"></Table>
+                <Table border :columns="tableColumns" :data="tableData" size="small" ></Table>
             </Col>
         </Row>
         <Row v-show="showPermissionSetting">

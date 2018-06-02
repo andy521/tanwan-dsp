@@ -5,21 +5,17 @@
 </style>
 <template>
     <div class="new">
-        <Button type="ghost" icon="android-add" :loading="loading" @click="newsEdit">{{title}}</Button>
-
-        <Modal v-model="accountModal" title="选择新建计划帐号" @on-ok="setAccount" @on-cancel=" accountModal = false">
-            <div class="select">
-                <Select v-model="account">
-                    <Option v-for="item in accountList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-            </div>
-        </Modal>
+        <select-account @on-change="handleSelectAccount" :title="title"></select-account>
     </div>
 </template>
 <script>
-import Axios from "@/api/index";
+import Axios from '@/api/index'
+import selectAccount from '@/components/select-account/index.vue'
 export default {
-    name: "newEdit",
+    name: 'newEdit',
+    components: {
+        selectAccount
+    },
     props:{
         title:{
             type:String,
@@ -27,7 +23,7 @@ export default {
         },
         toRouteName: {
             type: String,
-            default: 'bdcampaign'
+            default: 'bdcampagin'
         },
         queryParams: {
             type: Object,
@@ -37,46 +33,28 @@ export default {
     data() {
         return {
             loading: false,
-            accountModal: false,
-            accountList: [],
-            account: ""
+            accountModal: false
         };
     },
     methods: {
-        newsEdit() {
-            this.loading = true;
-            Axios.post("api.php", { action: "ucAdPut", opt: "getAccountList" })
-            .then(res => {
-                if (res.ret == 1) {
-                    let list = res.data,
-                    s = [];
-                    list.forEach(item => {
-                        s.push({ value: item.account_id, label: item.account_name });
-                    });
-                    this.accountList = s;
-                    this.loading = false;
-                    this.accountModal = true;
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            });
+        handleSelectAccount(accountId) {
+            this.setAccount(accountId)
         },
-        setAccount() {
-            if (this.account == "") {
-                this.$Message.info("请选择帐号");
-                return;
+        setAccount(accountId) {
+            if (accountId == '') {
+                this.$Message.info('')
+                return
             }
             const query = Object.assign({
-                account: this.account
+                account: accountId
             }, this.queryParams)
 
             this.$router.push({
                 name: this.toRouteName,
                 query: query
-            });
-            this.accountModal = false;
+            })
+            this.accountModal = false
         }
     }
-};
+}
 </script>

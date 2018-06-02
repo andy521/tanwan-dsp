@@ -56,17 +56,14 @@
 .namediv:hover {
   color: #57a3f3;
 }
-
 </style>
 
 <template>
     <div class="time">
-        <Card shadow>
+        <Card dis-hover>
             <Row>
                 <Col span="19">
-                <template v-if="params.id">
-                    <Button type="primary" @click="back">返回</Button>
-                </template>
+                <Button type="primary" @click="back" v-if="account_id">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Select v-model="MediaListModel" :value="MediaListModel" filterable class="sel" placeholder="请选择媒体账号" @on-change="getCampaigns">
@@ -86,7 +83,7 @@
             </Row>
         </Card>
 
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="16">
                 <!--自定义指标-->
@@ -194,7 +191,7 @@ export default {
     },
     data() {
         return {
-            params: this.$route.query,
+            account_id: this.$route.query.account_id,
             height: document.body.clientHeight - 300,
             mediaList: [], //媒体账号列表
             campaignslist: [], //推广计划列表
@@ -729,8 +726,8 @@ export default {
         };
     },
     mounted() {
-        if (this.params.id) {
-            this.MediaListModel = this.params.id;
+        if (this.account_id) {
+            this.MediaListModel = this.account_id;
         }
         //返回时获取保存数据
         let planparam = this.$store.state.setid.planparam;
@@ -754,12 +751,6 @@ export default {
         this.getMedia();
     },
     methods: {
-        // handleClickAuthor() {
-        //     if (!this.mediaType) {
-        //         this.$Message.warning('请先选择媒体账号');
-        //         return;
-        //     }
-        // },
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");
@@ -774,17 +765,14 @@ export default {
             Axios.get("api.php", {
                 action: "api",
                 opt: "getAccount",
-                // MeidaType: "1"   //1代表广点能， 3代码UC
-                media_type: 1   // 2018-04-25修改
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.mediaList = res.data;
-                    }
-                })
-                .catch(err => {
-                    console.log("获取媒体账号" + err);
-                });
+                media_type: 1   // 2018-04-25修改//1代表广点能， 3代码UC
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.mediaList = res.data;
+                }
+            }).catch(err => {
+                console.log("获取媒体账号" + err);
+            });
         },
         // 获取推广计划
         getCampaigns(id) {
@@ -793,16 +781,14 @@ export default {
                 opt: "getcampaigns",
                 MeidaType: "Gdt",
                 account_id: id
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.campaignslist = res.data;
-                        this.mediaType = "1";
-                    }
-                })
-                .catch(err => {
-                    console.log("获取推广计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.campaignslist = res.data;
+                    this.mediaType = "1";
+                }
+            }).catch(err => {
+                console.log("获取推广计划" + err);
+            });
         },
         //提交复制
         submitCopy() {
@@ -813,19 +799,16 @@ export default {
                 type: "gdt",
                 account_id: this.formItem.account_id,
                 idArr: this.taCheckids.join(",")
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                    }
-                })
-                .catch(err => {
-                    console.log("提交计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                }
+            }).catch(err => {
+                console.log("提交计划" + err);
+            });
         },
         //选择负责人
         authorChange(data) {
-            console.log('author change', data)
             this.author_model = data;
             this.getCampaignsList();
         },
@@ -846,8 +829,7 @@ export default {
                 page: this.page, //页码
                 page_size: this.page_size, //每页数量
                 game_id: this.GameListIds.join(","), //游戏id
-                account_id:
-                    this.MediaListModel == "0" ? "" : this.MediaListModel, //媒体账号
+                account_id: this.MediaListModel == "0" ? "" : this.MediaListModel, //媒体账号
                 configured_status: this.configured_status, //过滤无数据的广告
                 campaign_id: this.CampaignsListModel, //广告
                 campaign_name: this.campaign_name, //关键字
@@ -855,23 +837,21 @@ export default {
                 orderField: this.orderField, //排序的orderField参数名
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 author: this.author_model //负责人
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.unshift(res.data.curr_page_total);
-                        res.data.list.push(res.data.curr_page_total);
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
-                        this.adList = res.data.list;
-                    }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("获取实时投放计划" + err);
-                });
+            }).then(res => {
+                this.loading = false;
+                if (res.ret == 1) {
+                    //添加统计
+                    res.data.curr_page_total._disabled = true;
+                    res.data.list.unshift(res.data.curr_page_total);
+                    res.data.list.push(res.data.curr_page_total);
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                    this.adList = res.data.list;
+                }
+            }).catch(err => {
+                this.loading = false;
+                console.log("获取实时投放计划" + err);
+            });
         },
         //批量修改删除投放计划
         AmendCampaignsList(type) {
@@ -887,16 +867,14 @@ export default {
                 id: this.taCheckids, //必传[13,12,12]
                 type: type, //1 修改状态  3 删除 type
                 configured_status: this.edit_status //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.getCampaignsList(this.page);
-                    }
-                })
-                .catch(err => {
-                    console.log("批量修改删除投放计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getCampaignsList(this.page);
+                }
+            }).catch(err => {
+                console.log("批量修改删除投放计划" + err);
+            });
         },
         //批量修改目期
         DateChanged() {
@@ -922,16 +900,14 @@ export default {
                 type: 1, //1 修改状态  3 删除 type
                 begin_date: begin_date, //开始投放日期
                 end_date: end_date //结束投放日期
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.getCampaignsList(this.page);
-                    }
-                })
-                .catch(err => {
-                    console.log("批量修改日期" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getCampaignsList(this.page);
+                }
+            }).catch(err => {
+                console.log("批量修改日期" + err);
+            });
         },
         //排序
         sortchange(column) {

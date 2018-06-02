@@ -17,10 +17,10 @@
 </style>
 <template>
     <div>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
-                <!-- <Button type="primary">返回</Button> -->
+                <Button type="primary" @click="back" v-if="account_id">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input class="inp" placeholder="请输入广告组ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
@@ -32,10 +32,10 @@
                 </Col>
             </Row>
         </Card>
-        <Card shadow class="margin-top-10" v-if="Echartsmodel">
+        <Card dis-hover class="margin-top-10" v-if="Echartsmodel">
             <campaign-echarts></campaign-echarts>
         </Card>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <!--自定义指标-->
@@ -120,6 +120,7 @@ export default {
         return {
             toutiaoConfig: toutiaoConfig,
             height: document.body.clientHeight - 300,
+            account_id: this.$route.query.account_id,
             checkAllGroup: ["impression"], //默认选中的
             uncheck: [], //没选中的
             visible: false,
@@ -132,6 +133,7 @@ export default {
             total_page: 1, //总页数
             loading: false,
             taCheckids: [], //选中ids
+            account_ids: [], // 选中的账号id
             options: DateShortcuts, //日期辅助功能
             status: "", //状态
             landing_type: "", //推广目的
@@ -163,10 +165,13 @@ export default {
         //获取选中的id
         taCheck(row) {
             let ids = [];
+            let account_ids = []
             row.forEach(item => {
                 ids.push(item.id);
+                account_ids.push(item.account_id)
             });
             this.taCheckids = ids;
+            this.account_ids = account_ids
         },
         //选择负责人
         authorChange(data) {
@@ -188,11 +193,10 @@ export default {
         },
         //改变日期
         changeDate(e) {
-            console.log(e)
             this.DateDomain = e;
             this.getCampaignsList();
         },
-         //新增
+        //新增
         add(account_id) {
             this.$router.push({
                 name: "ttcampaign",
@@ -205,21 +209,21 @@ export default {
                 action: "ttAdPut",
                 opt: "updateCampaignStatus",
                 ids: this.taCheckids,
-                opt_status: this.edit_status
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.getCampaignsList(this.page);
-                        this.visible = false;
-                    }
-                })
-                .catch(err => {
-                    console.log("修改状态失败" + err);
-                });
+                opt_status: this.edit_status,
+                account_ids: this.account_ids
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getCampaignsList(this.page);
+                    this.visible = false;
+                }
+            }).catch(err => {
+                console.log("修改状态失败" + err);
+            });
         },
         //获取实时投放计划
         getCampaignsList(page) {
+            console.log(this.account_id)
             if (page === undefined) {
                 this.$refs["pages"].currentPage = 1;
                 this.page = 1;
@@ -230,6 +234,7 @@ export default {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "searchCampaigns",
+                account_id:this.account_id,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -241,26 +246,27 @@ export default {
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 page: this.page, //页码
                 page_size: this.page_size //每页数量
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        console.log(res.data.list);
-                        //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.push(res.data.curr_page_total);
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
-                        this.newAdList = res.data.list;
-                    }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("今日头条广告组" + err);
-                });
-        }
+            }).then(res => {
+                this.loading = false;
+                if (res.ret == 1) {
+                    console.log(res.data.list);
+                    //添加统计
+                    res.data.curr_page_total._disabled = true;
+                    res.data.list.push(res.data.curr_page_total);
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                    this.newAdList = res.data.list;
+                }
+            }).catch(err => {
+                this.loading = false;
+                console.log("今日头条广告组" + err);
+            });
+        },
+         //返回
+        back() {
+            this.$router.go(-1);
+        },
     },
-    beforeMount() { },
     computed: {
         //设置表格头部
         taColumns() {
@@ -273,7 +279,7 @@ export default {
                 {
                     title: "广告组名称",
                     key: "campaign_name",
-                    width: 200,
+                    width: 280,
                     render: (h, params) => {
                         if (params.row._disabled) {
                             return h("span", "本页统计");
@@ -355,8 +361,8 @@ export default {
                 },
                 {
                     title: "账户名",
-                    key: "account_id",
-                    width: 120
+                    key: "account_name",
+                    width: 300
                 },
                 {
                     title: "开关/状态",
@@ -382,6 +388,7 @@ export default {
                                                 action: "ttAdPut",
                                                 opt: "updateCampaignStatus",
                                                 ids: params.row.id.split(","),
+                                                account_ids: params.row.account_id.split(","),
                                                 opt_status: value == true ? "enable" : "disable"
                                             }).then(res => {
                                                 if (res.ret == 1) {
@@ -622,8 +629,9 @@ export default {
                                                     Axios.post("api.php", {
                                                         action: "ttAdPut",
                                                         opt: "updateCampaignStatus",
+                                                        opt_status: "delete",
                                                         ids: params.row.id.split(","),
-                                                        opt_status: "delete"
+                                                        account_ids: params.row.account_id.split(",")
                                                     }).then(res => {
                                                         if (res.ret == 1) {
                                                             this.$Message.info(res.msg);

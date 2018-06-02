@@ -179,7 +179,7 @@
 
                 <Tab-pane label="本地上传">
                     <div class="image-content">
-                        <Button type="primary" icon="ios-upload" class="filediv">上传文件<input type="file" accept="image/*" capture="camera" @change="readFile" class="file"></Button>
+                        <Button type="primary" icon="ios-cloud-upload-outline" class="filediv">上传文件<input type="file" accept="image/*" capture="camera" @change="readFile" class="file"></Button>
                     </div>
 
                 </Tab-pane>
@@ -263,7 +263,7 @@ export default {
                     that.$Message.info("图片格式不对");
                     return false;
                 }
-                var size = file.size / 1024 / 1024;
+                var size = file.size / 1024 ;
                 if (size > that.size) {
                     that.$Message.info("图片大小超过限制");
                     return;
