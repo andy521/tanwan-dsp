@@ -87,7 +87,6 @@ export default {
             Axios.post('api.php', param).then(
                 res => {
                     if (res.ret == '1') {
-                        console.log(res)
                         let data = res.data;
                         this.echart = data.echart;
                         this.total = {
@@ -99,9 +98,11 @@ export default {
                         };
 
                         //添加统计
-                        data.curr_page_total._disabled = true;
-                        data.list.push(data.curr_page_total);
-                        data.list.unshift(data.curr_page_total);
+                        if (data.list.length > 1) {
+                            data.curr_page_total._disabled = true;
+                            data.list.push(data.curr_page_total);
+                            data.list.unshift(data.curr_page_total);
+                        }
                         this.tdata = {
                             page_size: data.page_size,
                             total_number: data.total_number,

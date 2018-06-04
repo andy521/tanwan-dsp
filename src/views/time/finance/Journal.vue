@@ -216,7 +216,7 @@ export default {
                     this.loading = false;
                     if (res.ret == 1) {
                         //添加统计
-                        if (res.data.curr_page_total) {
+                        if (res.data.list.length > 1) {
                             res.data.curr_page_total._disabled = true;
                             res.data.list.unshift(res.data.curr_page_total);
                             res.data.list.push(res.data.curr_page_total);

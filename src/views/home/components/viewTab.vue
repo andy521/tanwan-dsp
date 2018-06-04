@@ -235,7 +235,6 @@ export default {
                 console.log("获取媒体账号" + err);
             });
         },
-        //这里的排序没有做哈哈哈
         tableData(page) {
             if (page === undefined) {
                 this.$refs["pages"].currentPage = 1;
@@ -256,6 +255,7 @@ export default {
                 author: this.author,
                 agent: this.agent
             };
+            
             this.$emit("on-change", param);
         },
         //分页
@@ -384,17 +384,17 @@ export default {
                     key: "balance",
                     sortable: "custom",
                     render: (h, params) => {
+                        let newvalue = String(params.row.balance).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         if (params.row._disabled) {
-                            return h("span", params.row.balance);
+                            return h("span", newvalue+"元");
                         } else {
-                            const text = params.row.balance;
-                            const color = text < 20000 ? "green" : "";
+                            const color = params.row.balance < 20000 ? "green" : "";
                             return h(
                                 "span",
                                 {
                                     class: color
                                 },
-                                text
+                                newvalue+"元"
                             );
                         }
                     }
@@ -404,14 +404,14 @@ export default {
                     key: "cost",
                     sortable: "custom",
                     render: (h, params) => {
-                        const cost = params.row.cost;
-                        const color = cost > 20000 ? "red" : "";
+                        let newvalue = String(params.row.balance).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        const color = params.row.cost > 20000 ? "red" : "";
                         return h(
                             "span",
                             {
                                 class: color
                             },
-                            cost
+                            newvalue+"元"
                         );
                     }
                 },

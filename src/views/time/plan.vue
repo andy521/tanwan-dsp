@@ -367,10 +367,16 @@ export default {
                     width: 110
                 },
                 {
-                    title: "花费",
+                    title: "消耗",
                     sortable: "custom",
                     key: "cost",
-                    width: 100
+                    width: 100,
+                    render: (h, params) => {
+                        if (!params.row.cost) return;
+                        //三位数加逗号
+                        let newvalue = String(params.row.cost).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        return h("span", newvalue + "元");
+                    }
                 },
                 {
                     title: "展示PV",
@@ -764,9 +770,11 @@ export default {
                 this.loading = false;
                 if (res.ret == 1) {
                     //添加统计
-                    res.data.curr_page_total._disabled = true;
-                    res.data.list.unshift(res.data.curr_page_total);
-                    res.data.list.push(res.data.curr_page_total);
+                    if (res.data.list.length > 1) {
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
+                        res.data.list.push(res.data.curr_page_total);
+                    }
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;
                     this.adList = res.data.list;
