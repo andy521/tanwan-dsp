@@ -14,7 +14,7 @@
 </style>
 
 <template>
-    <div class="ad">
+    <div class="setid">
         <Card shadow>
             <Row type="flex" justify="space-between">
                 <Col class="manger-head-bar">
