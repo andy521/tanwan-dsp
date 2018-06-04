@@ -87,30 +87,30 @@ export default {
                     key: "agent_detail"
                 },
                 {
-                    title: "存入（元）",
+                    title: "存入(元)",
                     key: "save",
                     render: (h, params) => {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.save)) {
                             //三位数加逗号
                             let newvalue = String(params.row.save / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                            return [h("span", newvalue)];
+                            return h("span", newvalue+"元");
                         } else {
-                            return [h("span", params.row.save)];
+                            return h("span", params.row.save);
                         }
                     }
                 },
                 {
-                    title: "支出（元）",
+                    title: "支出(元)",
                     key: "pay",
                     render: (h, params) => {
                         var re = /^[0-9]+.?[0-9]*$/;
                         if (re.test(params.row.pay)) {
                             //三位数加逗号
                             let newvalue = String(params.row.pay / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                            return [h("span", newvalue)];
+                            return h("span", newvalue+"元");
                         } else {
-                            return [h("span", params.row.pay)];
+                            return h("span", params.row.pay);
                         }
                     }
                 },
