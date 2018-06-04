@@ -152,15 +152,24 @@ export default {
                 res => {
                     if (res.ret == 1) {
                         this.backendData = [];
+                        let pattern = "[fatherChosen]";
                         for (let i in res.data.list) {
-                            let data = {
-                                key: res.data.list[i],
-                            };
-                            this.backendData.push(data);
+                            if(res.data.list[i].indexOf(pattern) !== -1) {
+                                let data = {
+                                    key: res.data.list[i].substr(pattern.length),
+                                    disabled: true
+                                };
+                                this.backendData.push(data);
+                            } else {
+                                let data = {
+                                    key: res.data.list[i],
+                                };
+                                this.backendData.push(data);
+                            }
                         }
                         this.sBackendData = [];
                         for (let i in res.data.selected) {
-                            this.sBackendData.push(res.data.list[i]);
+                            this.sBackendData.push(res.data.selected[i]);
                         }
                     }
                 }
