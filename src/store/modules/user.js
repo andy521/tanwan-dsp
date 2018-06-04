@@ -47,7 +47,8 @@ const user = {
             if (localStorage.theme) {
                 theme = localStorage.theme;
             }
-            localStorage.clear();
+            util.removeItem('sessionid');
+            //localStorage.clear();
             if (theme) {
                 localStorage.theme = theme;
             }
