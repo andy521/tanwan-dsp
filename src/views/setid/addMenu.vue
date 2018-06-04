@@ -7,11 +7,10 @@
             <Tab-pane label="添加菜单">
                 <Form ref="formItem" :model="formItem" :label-width="100" :rules="ruleValidate" style="width:500px">
                     <Form-item label="菜单名" prop="name">
-                        <Input v-model="formItem.name" placeholder="请输入菜单名 (例如：资金流水)"></Input>
+                        <Input v-model="formItem.name" placeholder="请输入菜单名"></Input>
                     </Form-item>
                     <Form-item label="菜单层级路径" prop="route">
                         <Input v-model="formItem.route" placeholder="请输入菜单层级路径"></Input>
-                        <p class="gray">注：这里是路由name的层级关系（tt/tt_finance/tt_funds）</p>
                     </Form-item>
                     <Form-item>
                         <Button type="primary" @click="handleSubmit('formItem')">提交</Button>
@@ -153,15 +152,24 @@ export default {
                 res => {
                     if (res.ret == 1) {
                         this.backendData = [];
+                        let pattern = "[fatherChosen]";
                         for (let i in res.data.list) {
-                            let data = {
-                                key: res.data.list[i],
-                            };
-                            this.backendData.push(data);
+                            if(res.data.list[i].indexOf(pattern) !== -1) {
+                                let data = {
+                                    key: res.data.list[i].substr(pattern.length),
+                                    disabled: true
+                                };
+                                this.backendData.push(data);
+                            } else {
+                                let data = {
+                                    key: res.data.list[i],
+                                };
+                                this.backendData.push(data);
+                            }
                         }
                         this.sBackendData = [];
                         for (let i in res.data.selected) {
-                            this.sBackendData.push(res.data.list[i]);
+                            this.sBackendData.push(res.data.selected[i]);
                         }
                     }
                 }
