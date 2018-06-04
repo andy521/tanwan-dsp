@@ -1,5 +1,5 @@
 <template>
-    <Card shadow>
+    <Card dis-hover>
         <div>
             <Select v-model="account_id" placeholder="请选择帐号" style="width:250px;" @on-change="getfund()">
                 <Option value="">全部帐号</Option>

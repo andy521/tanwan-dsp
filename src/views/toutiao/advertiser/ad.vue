@@ -26,7 +26,7 @@
 </style>
 <template>
     <div class="toutiaoad">
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <Button type="primary" @click="back" v-if="campaign_id">返回</Button>
@@ -41,10 +41,10 @@
                 </Col>
             </Row>
         </Card>
-        <Card shadow class="margin-top-10" v-if="Echartsmodel">
+        <Card dis-hover class="margin-top-10" v-if="Echartsmodel">
             <campaign-echarts></campaign-echarts>
         </Card>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <!--自定义指标-->
@@ -259,10 +259,12 @@ export default {
             }).then(res => {
                 this.loading = false;
                 if (res.ret == 1) {
-                    console.log(res.data.list);
                     //添加统计
-                    res.data.curr_page_total._disabled = true;
-                    res.data.list.push(res.data.curr_page_total);
+                    if (res.data.list.length > 1) {
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
+                        res.data.list.push(res.data.curr_page_total);
+                    }
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;
                     this.newAdList = res.data.list;

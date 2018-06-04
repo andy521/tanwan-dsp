@@ -1,69 +1,68 @@
 <style >
 .sel {
-    width: 220px;
+  width: 220px;
 }
 
 .time .ivu-poptip {
-    display: inline-block;
+  display: inline-block;
 }
 
 .tipbtn {
-    text-align: right;
+  text-align: right;
 }
 
 .clear:after {
-    content: "\20";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
+  content: "\20";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
 }
 
 .ivu-table .ivu-col span {
-    line-height: 24px;
+  line-height: 24px;
 }
 
 .inp {
-    display: inline-block;
-    width: 150px;
+  display: inline-block;
+  width: 150px;
 }
 
 .sel_state {
-    text-align: left;
-    width: 110px;
+  text-align: left;
+  width: 110px;
 }
 
 .sel_state1 {
-    text-align: left;
-    width: 300px;
+  text-align: left;
+  width: 300px;
 }
 
 .sel_state1.ivu-select-multiple .ivu-select-selection {
-    overflow: auto;
-    height: 32px;
+  overflow: auto;
+  height: 32px;
 }
 
 .namediv {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .namediv:hover {
-    color: #57a3f3;
+  color: #57a3f3;
 }
-
 
 .campaign_name {
-    font-size: 18px;
-    margin-left: 20px;
+  font-size: 18px;
+  margin-left: 20px;
 }
 .ivu-tooltip-inner {
-    white-space: normal;
+  white-space: normal;
 }
 </style>
 
 <template>
     <div class="time">
-        <Card shadow>
+        <Card dis-hover>
             <Row>
                 <Col span="18">
                 <div v-if="params.campaign_name">
@@ -92,15 +91,15 @@
                 </Col>
             </Row>
         </Card>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="16">
                 <!--自定义指标-->
                 <view-popti @on-change="getuncheck" action="gdtAdPut" opt="adgroups"></view-popti>
                 <!--选择负责人-->
-                <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
+                <select-author :is-linkage="true" :media-type="mediaType" @on-change="authorChange"></select-author>
                 <!-- <select-author  :is-linkage="true" :media-type="mediaType" @on-change="authorChange" @click.native="handleClickAuthor"></select-author> -->
-                <Select v-model="configured_status"  class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
+                <Select v-model="configured_status" class="sel_state" @on-change="getCampaignsList()" placeholder="状态">
                     <Option value="">不限</Option>
                     <Option value="AD_STATUS_NORMAL">有效</Option>
                     <Option value="AD_STATUS_SUSPEND">暂停</Option>
@@ -219,6 +218,7 @@ export default {
             MediaListModel: "0",
             CampaignsListModel: [],
             taCheckids: [], //选中ids
+            account_ids: [],
             taCheckitem: [], //选中item
             page: 1, //第N页
             page_size: 50, //每页数量
@@ -306,8 +306,7 @@ export default {
                                             let arr = deepClone(this.adList);
                                             arr.forEach((v, i) => {
                                                 if (
-                                                    v.adgroup_id ==
-                                                    params.row.adgroup_id
+                                                    v.adgroup_id == params.row.adgroup_id
                                                 ) {
                                                     if (v._expanded) {
                                                         v._expanded = false;
@@ -335,12 +334,9 @@ export default {
                                             render: h => {
                                                 return h("Input", {
                                                     props: {
-                                                        value:
-                                                            params.row
-                                                                .adgroup_name,
+                                                        value: params.row.adgroup_name,
                                                         autofocus: true,
-                                                        placeholder:
-                                                            "请输入广告名称"
+                                                        placeholder: "请输入广告名称"
                                                     },
                                                     on: {
                                                         input: val => {
@@ -351,37 +347,24 @@ export default {
                                             },
                                             onOk: () => {
                                                 if (value == "") {
-                                                    this.$Message.info(
-                                                        "请输入修改信息"
-                                                    );
+                                                    this.$Message.info("请输入修改信息");
                                                     return;
                                                 }
                                                 Axios.post("api.php", {
                                                     action: "gdtAdPut",
                                                     opt: "adgroups_add",
                                                     do: "edit",
-                                                    account_id:
-                                                        params.row.account_id, //*必传*
-                                                    adgroup_id:
-                                                        params.row.adgroup_id, //传这个值就是修改当前计划 不传就是添加新的计划
+                                                    account_id: params.row.account_id, //*必传*
+                                                    adgroup_id: params.row.adgroup_id, //传这个值就是修改当前计划 不传就是添加新的计划
                                                     adgroup_name: value
-                                                })
-                                                    .then(res => {
-                                                        if (res.ret == 1) {
-                                                            this.$Message.info(
-                                                                res.msg
-                                                            );
-                                                            this.getCampaignsList(
-                                                                this.page
-                                                            );
-                                                        }
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(
-                                                            "修改删除广告计划失败" +
-                                                                err
-                                                        );
-                                                    });
+                                                }).then(res => {
+                                                    if (res.ret == 1) {
+                                                        this.$Message.info(res.msg);
+                                                        this.getCampaignsList();
+                                                    }
+                                                }).catch(err => {
+                                                    console.log("修改删除广告计划失败" + err);
+                                                });
                                             }
                                         });
                                     }
@@ -420,10 +403,16 @@ export default {
                     width: 110
                 },
                 {
-                    title: "花费",
+                    title: "消耗",
                     sortable: "custom",
                     key: "cost",
-                    width: 100
+                    width: 120,
+                    render: (h, params) => {
+                        if (!params.row.cost) return;
+                        //三位数加逗号
+                        let newvalue = String(params.row.cost).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        return h("span", newvalue + "元");
+                    }
                 },
                 {
                     title: "展示PV",
@@ -496,7 +485,10 @@ export default {
                     key: "bid_amount",
                     width: 100,
                     render: (h, params) => {
-                        return h("span", params.row.bid_amount / 100);
+                        if (!params.row.bid_amount) return;
+                        //三位数加逗号
+                        let newvalue = String(params.row.bid_amount / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        return h("span", newvalue + "元");
                     }
                 },
                 {
@@ -592,10 +584,7 @@ export default {
                                 }
                             });
                         }
-                        if (
-                            params.row.reject_message != "null" &&
-                            params.row.reject_message
-                        ) {
+                        if (params.row.reject_message != "null" && params.row.reject_message) {
                             return [
                                 h(
                                     "span",
@@ -649,58 +638,34 @@ export default {
                                 h("i-switch", {
                                     props: {
                                         size: "small",
-                                        value:
-                                            params.row.configured_status ==
-                                            "AD_STATUS_NORMAL"
-                                                ? true
-                                                : false
+                                        value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
                                     },
                                     style: {
                                         marginRight: "10px"
                                     },
                                     on: {
                                         "on-change": value => {
-                                            params.row.configured_status =
-                                                value == true
-                                                    ? "AD_STATUS_NORMAL"
-                                                    : "AD_STATUS_SUSPEND";
+                                            params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
                                             Axios.post("api.php", {
                                                 action: "gdtAdPut",
                                                 opt: "adgroups_add",
-                                                do: "edit",
-                                                account_id:
-                                                    params.row.account_id, //*必传*
-                                                adgroup_id:
-                                                    params.row.adgroup_id, //传这个值就是修改当前计划 不传就是添加新的计划
-                                                configured_status:
-                                                    params.row.configured_status //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停
-                                            })
-                                                .then(res => {
-                                                    if (res.ret == 1) {
-                                                        this.$Message.info(
-                                                            res.msg
-                                                        );
-                                                        this.getCampaignsList(
-                                                            this.page
-                                                        );
-                                                    }
-                                                })
-                                                .catch(err => {
-                                                    console.log(
-                                                        "修改删除投放计划失败" +
-                                                            err
-                                                    );
-                                                });
+                                                do: "edits",
+                                                type: 1,
+                                                ids: params.row.id.split(","),
+                                                account_ids: params.row.account_id.split(","), //*必传*
+                                                configured_status: params.row.configured_status //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停
+                                            }).then(res => {
+                                                if (res.ret == 1) {
+                                                    this.$Message.info(res.msg);
+                                                    this.getCampaignsList();
+                                                }
+                                            }).catch(err => {
+                                                console.log("修改删除投放计划失败" + err);
+                                            });
                                         }
                                     }
                                 }),
-                                h(
-                                    "span",
-                                    params.row.configured_status ==
-                                    "AD_STATUS_NORMAL"
-                                        ? "开启"
-                                        : "关闭"
-                                )
+                                h("span", params.row.configured_status == "AD_STATUS_NORMAL" ? "开启" : "关闭")
                             ]);
                         }
                     }
@@ -739,12 +704,9 @@ export default {
                                                     render: h => {
                                                         return h("Input", {
                                                             props: {
-                                                                value:
-                                                                    params.row
-                                                                        .daily_budget,
+                                                                value: params.row.daily_budget,
                                                                 autofocus: true,
-                                                                placeholder:
-                                                                    "日消耗限额"
+                                                                placeholder: "日消耗限额"
                                                             },
                                                             on: {
                                                                 input: val => {
@@ -755,43 +717,24 @@ export default {
                                                     },
                                                     onOk: () => {
                                                         if (value == "") {
-                                                            this.$Message.info(
-                                                                "请输入修改信息"
-                                                            );
+                                                            this.$Message.info("请输入修改信息");
                                                             return;
                                                         }
                                                         Axios.post("api.php", {
                                                             action: "gdtAdPut",
                                                             opt: "adgroups_add",
                                                             do: "edit",
-                                                            account_id:
-                                                                params.row
-                                                                    .account_id, //*必传*
-                                                            adgroup_id:
-                                                                params.row
-                                                                    .adgroup_id,
-                                                            daily_budget:
-                                                                value * 100 //日消耗限额
-                                                        })
-                                                            .then(res => {
-                                                                if (
-                                                                    res.ret == 1
-                                                                ) {
-                                                                    this.$Message.info(
-                                                                        res.msg
-                                                                    );
-                                                                    this.getCampaignsList(
-                                                                        this
-                                                                            .page
-                                                                    );
-                                                                }
-                                                            })
-                                                            .catch(err => {
-                                                                console.log(
-                                                                    "修改删除投放计划失败" +
-                                                                        err
-                                                                );
-                                                            });
+                                                            account_id: params.row.account_id, //*必传*
+                                                            adgroup_id: params.row.adgroup_id,
+                                                            daily_budget: value * 100 //日消耗限额
+                                                        }).then(res => {
+                                                            if (res.ret == 1) {
+                                                                this.$Message.info(res.msg);
+                                                                this.getCampaignsList();
+                                                            }
+                                                        }).catch(err => {
+                                                            console.log("修改删除投放计划失败" + err);
+                                                        });
                                                     }
                                                 });
                                             }
@@ -806,6 +749,71 @@ export default {
                     title: "产品名称",
                     key: "game_name",
                     width: 200
+                },
+                {
+                    title: "操作",
+                    key: "",
+                    width: 130,
+                    render: (h, params) => {
+                        if (params.row._disabled) return;
+                        return [
+                            h(
+                                "span",
+                                {
+                                    class: "edit_link",
+                                    on: {
+                                        click: () => {
+                                            this.$router.push({
+                                                name: "gdtad",
+                                                query: {
+                                                    account_id: params.row.account_id,
+                                                    adgroup_id: params.row.adgroup_id,
+                                                    campaign_id: params.row.campaign_id,
+                                                    targeting_id: params.row.targeting_id,
+                                                    product_type: params.row.product_type,
+                                                    campaign_type: params.row.campaign_type,
+                                                    configured_status: params.row.configured_status
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                "编辑"
+                            ),
+                            h(
+                                "span",
+                                {
+                                    class: "del_link",
+                                    on: {
+                                        click: value => {
+                                            this.$Modal.confirm({
+                                                title: "操作提示",
+                                                content: "<p>确认删除</p>",
+                                                onOk: () => {
+                                                    Axios.post("api.php", {
+                                                        action: "gdtAdPut",
+                                                        opt: "adgroups_add",
+                                                        do: "edits",
+                                                        ids: params.row.id.split(","), //必传[13,12,12]
+                                                        account_ids: params.row.account_id.split(","),
+                                                        type: 3, //1 修改状态  3 删除 type   
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList();
+                                                        }
+                                                    }).catch(err => {
+                                                        console.log("批量修改删除投放计划" + err);
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                "删除"
+                            )
+                        ];
+                    }
                 }
             ]
         };
@@ -820,12 +828,6 @@ export default {
         this.getCampaignsList();
     },
     methods: {
-        // handleClickAuthor() {
-        //     if (!this.mediaType) {
-        //         this.$Message.warning('请先选择媒体账号');
-        //         return;
-        //     }
-        // },
         //去登陆
         tologin() {
             window.open("http://e.qq.com/ads/");
@@ -837,54 +839,48 @@ export default {
         },
         //获取媒体账号
         getMedia() {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "api",
                 opt: "getAccount",
                 MeidaType: "Gdt"
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.mediaList = res.data;
-                    }
-                })
-                .catch(err => {
-                    console.log("获取媒体账号" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.mediaList = res.data;
+                }
+            }).catch(err => {
+                console.log("获取媒体账号" + err);
+            });
         },
         //获取推广计划
         getCampaigns(id) {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "api",
                 opt: "getcampaigns",
                 MeidaType: "Gdt",
                 account_id: id
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.campaignslist = res.data;
-                        this.mediaType = 1;
-                    }
-                })
-                .catch(err => {
-                    console.log("获取推广计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.campaignslist = res.data;
+                    this.mediaType = 1;
+                }
+            }).catch(err => {
+                console.log("获取推广计划" + err);
+            });
         },
         //获取复制推广计划
         getCampaignsform(id) {
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "api",
                 opt: "getcampaigns",
                 MeidaType: "Gdt",
                 account_id: id
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.campaignslistform = res.data;
-                    }
-                })
-                .catch(err => {
-                    console.log("获取推广计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.campaignslistform = res.data;
+                }
+            }).catch(err => {
+                console.log("获取推广计划" + err);
+            });
         },
         //提交复制
         submitCopy() {
@@ -896,15 +892,13 @@ export default {
                 account_id: this.formItem.account_id,
                 campaign_id: this.formItem.campaign_id,
                 idArr: this.taCheckids.join(",")
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                    }
-                })
-                .catch(err => {
-                    console.log("提交计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                }
+            }).catch(err => {
+                console.log("提交计划" + err);
+            });
         },
         //选择负责人
         authorChange(data) {
@@ -928,8 +922,7 @@ export default {
                 page: this.page, //页码
                 page_size: this.page_size, //每页数量
                 game_id: this.GameListIds.join(","), //游戏id
-                account_id:
-                    this.MediaListModel == "0" ? "" : this.MediaListModel, //媒体账号
+                account_id: this.MediaListModel == "0" ? "" : this.MediaListModel, //媒体账号
                 configured_status: this.configured_status, //过滤无数据的广告
                 campaign_id: this.CampaignsListModel, //广告
                 adgroup_name: this.campaign_name, //关键字
@@ -937,24 +930,24 @@ export default {
                 orderField: this.orderField, //排序的orderField参数名
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 author: this.author_model //负责人
-            })
-                .then(res => {
-                    this.loading = false;
-                    if (res.ret == 1) {
-                        //添加统计
+            }).then(res => {
+                this.loading = false;
+                if (res.ret == 1) {
+                    //添加统计
+                    if (res.data.list.length > 1) {
                         res.data.curr_page_total._disabled = true;
                         res.data.curr_page_total._disableExpand = true;
                         res.data.list.unshift(res.data.curr_page_total);
                         res.data.list.push(res.data.curr_page_total);
-                        this.total_number = res.data.total_number;
-                        this.total_page = res.data.total_page;
-                        this.adList = res.data.list;
                     }
-                })
-                .catch(err => {
-                    this.loading = false;
-                    console.log("获取实时投放广告" + err);
-                });
+                    this.total_number = res.data.total_number;
+                    this.total_page = res.data.total_page;
+                    this.adList = res.data.list;
+                }
+            }).catch(err => {
+                this.loading = false;
+                console.log("获取实时投放广告" + err);
+            });
         },
         //批量修改删除投放计划
         AmendCampaignsList(type) {
@@ -963,23 +956,22 @@ export default {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtAdPut",
                 opt: "adgroups_add",
                 do: "edits",
-                id: this.taCheckids, //必传[13,12,12]
+                ids: this.taCheckids, //必传[13,12,12]
+                account_ids: this.account_ids,
                 type: type, //1 修改状态  3 删除 type
                 configured_status: this.edit_status //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.getCampaignsList(this.page);
-                    }
-                })
-                .catch(err => {
-                    console.log("批量修改删除投放计划" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getCampaignsList();
+                }
+            }).catch(err => {
+                console.log("批量修改删除投放计划" + err);
+            });
         },
         //批量修改目期
         DateChanged() {
@@ -997,35 +989,37 @@ export default {
                 begin_date = this.date2[0];
                 end_date = this.date2[1];
             }
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtAdPut",
                 opt: "adgroups_add",
                 do: "edits",
-                id: this.taCheckids, //必传[13,12,12]
-                type: 1, //1 修改状态  3 删除 type
+                ids: this.taCheckids, //必传[13,12,12]
+                account_ids: this.account_ids,
+                type: 2, //1 修改状态  3 删除 type
                 begin_date: begin_date, //开始投放日期
                 end_date: end_date //结束投放日期
-            })
-                .then(res => {
-                    if (res.ret == 1) {
-                        this.$Message.info(res.msg);
-                        this.getCampaignsList(this.page);
-                    }
-                })
-                .catch(err => {
-                    console.log("批量修改日期" + err);
-                });
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                    this.getCampaignsList();
+                }
+            }).catch(err => {
+                console.log("批量修改日期" + err);
+            });
         },
         //获取选中的id
         taCheck(row) {
             let ids = [];
             let it = [];
+            let account_ids = [];
             row.forEach(item => {
                 ids.push(item.id);
                 it.push(item);
+                account_ids.push(item.account_id)
             });
             this.taCheckitem = it;
             this.taCheckids = ids;
+            this.account_ids = account_ids;
         },
         //新增
         add(account_id) {

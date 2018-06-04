@@ -2,34 +2,34 @@
 @import "../../styles/common.less";
 @import "./index.less";
 .citytree {
-    background: #fff;
-    border: solid 1px #eee;
-    padding: 15px;
-    max-height: 200px;
-    overflow: auto;
-    margin-top: 10px;
+  background: #fff;
+  border: solid 1px #eee;
+  padding: 15px;
+  max-height: 200px;
+  overflow: auto;
+  margin-top: 10px;
 }
 .sel {
-    width: 220px;
+  width: 220px;
 }
 .unit .ivu-poptip {
-    display: inline-block;
+  display: inline-block;
 }
 .sel_state {
-    text-align: left;
-    width: 110px;
+  text-align: left;
+  width: 110px;
 }
 .table-statistics {
-    color: #2b7ed1;
-    font-weight: bold;
+  color: #2b7ed1;
+  font-weight: bold;
 }
-.manger-head-bar:first-of-type{
-    flex: 2;
-    text-align: left;
+.manger-head-bar:first-of-type {
+  flex: 2;
+  text-align: left;
 }
-.manger-head-bar:last-of-type{
-    flex: 1;
-    text-align: right;
+.manger-head-bar:last-of-type {
+  flex: 1;
+  text-align: right;
 }
 </style>
 <template>
@@ -349,7 +349,7 @@ export default {
         },
         queryParam() {
             const id = parseInt(this.$route.query.id)
-            const retParam = id ? {campaign_id: id} : {}
+            const retParam = id ? { campaign_id: id } : {}
             return retParam
         }
     },
@@ -368,7 +368,7 @@ export default {
             this.game_id = "[" + gid.join(",") + "]";
             this.getUnit();
         },
-         //表格高亮calss
+        //表格高亮calss
         rowClassName(row, index) {
             if (row._disabled) {
                 return "table-statistics";
@@ -409,16 +409,17 @@ export default {
                 orderField: this.orderField,
                 orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
             };
-            this.loading=true;
+            this.loading = true;
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
-                        //console.log(res);
                         this.loading = false;
-                         //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.unshift(res.data.curr_page_total);
-                        res.data.list.push(res.data.curr_page_total);
+                        //添加统计
+                        if (res.data.list.length > 1) {
+                            res.data.curr_page_total._disabled = true;
+                            res.data.list.unshift(res.data.curr_page_total);
+                            res.data.list.push(res.data.curr_page_total);
+                        }
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
                         this.page_size = parseInt(res.data.page_size);
@@ -888,7 +889,7 @@ export default {
                                                 }
                                                 Axios.post('api.php', {
                                                     action: 'ucAdPut',
-                                                    opt: 'updateAdgroupName',                                            
+                                                    opt: 'updateAdgroupName',
                                                     account_id: params.row.account_id,
                                                     adgroup_id: params.row.adgroup_id,
                                                     adgroup_name: value
@@ -1304,7 +1305,7 @@ export default {
                                                 onOk: () => {
                                                     this.deleteData(ids, account_ids)
                                                 },
-                                                onCancel: () => {}
+                                                onCancel: () => { }
                                             });
                                         }
                                     }
@@ -1441,7 +1442,7 @@ export default {
             this.isBack = true;
         }
         this.changeTableColumns();
-        
+
         // 返回时获取保存数据
         const unitCache = this.$store.state.uc.unitCache
         if (this.$route.meta.keepAlive && JSON.stringify(unitCache) !== '{}') {
@@ -1473,7 +1474,7 @@ export default {
         if (from.name === 'uc_creativity') {
             to.meta.keepAlive = true
         }
-        next()        
+        next()
     }
 };
 </script>

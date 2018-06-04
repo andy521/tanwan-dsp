@@ -17,7 +17,7 @@
 </style>
 <template>
     <div>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <Button type="primary" @click="back" v-if="account_id">返回</Button>
@@ -32,10 +32,10 @@
                 </Col>
             </Row>
         </Card>
-        <Card shadow class="margin-top-10" v-if="Echartsmodel">
+        <Card dis-hover class="margin-top-10" v-if="Echartsmodel">
             <campaign-echarts></campaign-echarts>
         </Card>
-        <Card shadow class="margin-top-10">
+        <Card dis-hover class="margin-top-10">
             <Row>
                 <Col span="20">
                 <!--自定义指标-->
@@ -234,7 +234,7 @@ export default {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "searchCampaigns",
-                account_id:this.account_id,
+                account_id: this.account_id,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 authors: this.author_model, //负责人
@@ -249,10 +249,12 @@ export default {
             }).then(res => {
                 this.loading = false;
                 if (res.ret == 1) {
-                    console.log(res.data.list);
                     //添加统计
-                    res.data.curr_page_total._disabled = true;
-                    res.data.list.push(res.data.curr_page_total);
+                    if (res.data.list.length > 1) {
+                        res.data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
+                        res.data.list.push(res.data.curr_page_total);
+                    }
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;
                     this.newAdList = res.data.list;
@@ -262,7 +264,7 @@ export default {
                 console.log("今日头条广告组" + err);
             });
         },
-         //返回
+        //返回
         back() {
             this.$router.go(-1);
         },

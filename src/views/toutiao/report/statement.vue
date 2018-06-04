@@ -21,7 +21,7 @@
     <div>
         <!-- 获取帐号 -->
         <account-id></account-id>
-        <Card shadow class="margin-top-10" v-if="get_account_id">
+        <Card dis-hover class="margin-top-10" v-if="get_account_id">
             <span>时间范围</span>
             <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
             <span class="margin-left-10">汇总方式</span>
@@ -132,17 +132,21 @@ export default {
             }).then(
                 res => {
                     if (res.ret == 1) {
-                        // console.log(res);
                         //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.unshift(res.data.curr_page_total);
+                        if (res.data.list.length > 1) {
+                            res.data.curr_page_total._disabled = true;
+                            res.data.list.unshift(res.data.curr_page_total);
+                            res.data.list.push(res.data.curr_page_total);
+                        }
                         this.list = res.data.list;
                         this.echart = res.data.echart;
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                     }
                 }
-                ).catch(err => { console.log(err) });
+            ).catch(err => {
+                console.log(err)
+            });
         },
         //改变日期
         changeDate(e) {

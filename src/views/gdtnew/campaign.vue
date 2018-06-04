@@ -174,7 +174,6 @@ export default {
                     }).then(res => {
                         if (res.ret == 1) {
                             this.$Message.success("提交成功");
-                            console.log(res.data)
                             this.$router.push({
                                 name: 'gdtad',
                                 query: {

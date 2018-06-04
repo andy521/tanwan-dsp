@@ -18,7 +18,7 @@
 }
 </style>
 <template>
-    <div shadow class="margin-top-10">
+    <div class="margin-top-10">
         <span>时间范围</span>
         <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
         <span class="margin-left-10">汇总方式</span>
@@ -31,7 +31,6 @@
             <Option value="">不限</Option>
             <Option :value="item.val_type" v-for="item in toutiaoConfig.pricing" :key="this">{{item.name}}</Option>
         </Select>
-       
 
         <adgroup-id @on-change="get_adgroup_id"></adgroup-id>
 
@@ -140,17 +139,21 @@ export default {
             }).then(
                 res => {
                     if (res.ret == 1) {
-                        // console.log(res.data);
                         //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.unshift(res.data.curr_page_total);
+                        if (res.data.list.length > 1) {
+                            res.data.curr_page_total._disabled = true;
+                            res.data.list.unshift(res.data.curr_page_total);
+                            res.data.list.push(res.data.curr_page_total);
+                        }
                         this.list = res.data.list;
                         this.echart = res.data.echart;
                         this.total_number = res.data.total_number;
                         this.total_page = res.data.total_page;
                     }
                 }
-            ).catch(err => { console.log(err) });
+            ).catch(err => {
+                console.log(err)
+            });
         },
         //回调adgroup_ids
         get_adgroup_id(ids) {
