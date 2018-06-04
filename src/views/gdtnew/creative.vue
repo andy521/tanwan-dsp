@@ -167,7 +167,9 @@ export default {
     data() {
         return {
             account_id: this.$route.query.account_id,
+
             adcreative_id: this.$route.query.adcreative_id,
+
             adcreative_template_id: this.$route.query.adcreative_template_id,
             campaign_id: this.$route.query.campaign_id,
             site_set: this.$route.query.site_set.split(","),
@@ -283,11 +285,33 @@ export default {
                 destination_url: this.destination_url,
                 adcreative: JSON.stringify(this.adcreative)
             };
-            Axios.post("api.php", param).then(res => {
-                if (res.ret == 1) {
-                    this.$Message.info(res.msg);
+
+
+            for (let i = 0; i < this.adcreative.length; i++) {
+                if (this.adcreative[i].adcreative_name == "") {
+                    this.$Message.info("创意名不能为空");
+                    return
                 }
-            }).catch(err => console.log("广告组" + err));
+                if (this.adcreative[i].adcreative_elements.title == "") {
+                    this.$Message.info("广告方案不能为空");
+                    return
+                }
+                if (this.adcreative[i].adcreative_elements.image == "") {
+                    this.$Message.info("广告图片不能为空");
+                    return
+                }
+            }
+
+
+
+
+            console.log(111)
+
+            // Axios.post("api.php", param).then(res => {
+            //     if (res.ret == 1) {
+            //         this.$Message.info(res.msg);
+            //     }
+            // }).catch(err => console.log("广告组" + err));
         }
     }
 };
