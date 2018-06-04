@@ -201,6 +201,7 @@ export default {
             MediaListModel: "0",
             CampaignsListModel: [],
             taCheckids: [], //选中ids
+            account_ids: [],
             taCheckitem: [], //选中item
             page: 1, //第N页
             page_size: 50, //每页数量
@@ -243,7 +244,6 @@ export default {
             tableColumns: [
                 {
                     type: "selection",
-                    //fixed: "left",
                     width: 58,
                     key: ""
                 },
@@ -273,16 +273,12 @@ export default {
                                     class: "namediv",
                                     on: {
                                         click: () => {
-                                            let query = {
-                                                campaign_id:
-                                                    params.row.campaign_id,
-                                                campaign_name:
-                                                    params.row.campaign_name
-                                            };
-
                                             this.$router.push({
                                                 name: "time_ad",
-                                                query: query
+                                                query: {
+                                                    campaign_id: params.row.campaign_id,
+                                                    campaign_name: params.row.campaign_name
+                                                }
                                             });
                                         }
                                     }
@@ -302,12 +298,9 @@ export default {
                                             render: h => {
                                                 return h("Input", {
                                                     props: {
-                                                        value:
-                                                            params.row
-                                                                .campaign_name,
+                                                        value: params.row.campaign_name,
                                                         autofocus: true,
-                                                        placeholder:
-                                                            "请输入计划名称"
+                                                        placeholder: "请输入计划名称"
                                                     },
                                                     on: {
                                                         input: val => {
@@ -318,37 +311,24 @@ export default {
                                             },
                                             onOk: () => {
                                                 if (value == "") {
-                                                    this.$Message.info(
-                                                        "请输入修改信息"
-                                                    );
+                                                    this.$Message.info("请输入修改信息");
                                                     return;
                                                 }
                                                 Axios.post("api.php", {
                                                     action: "gdtAdPut",
                                                     opt: "campaigns_add",
                                                     do: "edit",
-                                                    account_id:
-                                                        params.row.account_id, //*必传*
-                                                    campaign_id:
-                                                        params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
+                                                    account_id: params.row.account_id, //*必传*
+                                                    campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
                                                     campaign_name: value
-                                                })
-                                                    .then(res => {
-                                                        if (res.ret == 1) {
-                                                            this.$Message.info(
-                                                                res.msg
-                                                            );
-                                                            this.getCampaignsList(
-                                                                this.page
-                                                            );
-                                                        }
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(
-                                                            "修改删除投放计划失败" +
-                                                            err
-                                                        );
-                                                    });
+                                                }).then(res => {
+                                                    if (res.ret == 1) {
+                                                        this.$Message.info(res.msg);
+                                                        this.getCampaignsList();
+                                                    }
+                                                }).catch(err => {
+                                                    console.log("修改删除投放计划失败" + err);
+                                                });
                                             }
                                         });
                                     }
@@ -458,12 +438,6 @@ export default {
                     key: "activation_per_download",
                     width: 120
                 },
-                //
-                //					{
-                //						title: '出价',
-                //						key: 'bid_mode',
-                //						width: 150
-                //					},
                 {
                     title: "注册设备数",
                     sortable: "custom",
@@ -554,58 +528,33 @@ export default {
                                 h("i-switch", {
                                     props: {
                                         size: "small",
-                                        value:
-                                            params.row.configured_status ==
-                                                "AD_STATUS_NORMAL"
-                                                ? true
-                                                : false
+                                        value: params.row.configured_status == "AD_STATUS_NORMAL" ? true : false
                                     },
                                     style: {
                                         marginRight: "10px"
                                     },
                                     on: {
                                         "on-change": value => {
-                                            params.row.configured_status =
-                                                value == true
-                                                    ? "AD_STATUS_NORMAL"
-                                                    : "AD_STATUS_SUSPEND";
+                                            params.row.configured_status = value == true ? "AD_STATUS_NORMAL" : "AD_STATUS_SUSPEND";
                                             Axios.post("api.php", {
                                                 action: "gdtAdPut",
                                                 opt: "campaigns_add",
                                                 do: "edit",
-                                                account_id:
-                                                    params.row.account_id, //*必传*
-                                                campaign_id:
-                                                    params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-                                                configured_status:
-                                                    params.row.configured_status //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停
-                                            })
-                                                .then(res => {
-                                                    if (res.ret == 1) {
-                                                        this.$Message.info(
-                                                            res.msg
-                                                        );
-                                                        this.getCampaignsList(
-                                                            this.page
-                                                        );
-                                                    }
-                                                })
-                                                .catch(err => {
-                                                    console.log(
-                                                        "修改删除投放计划失败" +
-                                                        err
-                                                    );
-                                                });
+                                                account_id: params.row.account_id, //*必传*
+                                                campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
+                                                configured_status: params.row.configured_status //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停
+                                            }).then(res => {
+                                                if (res.ret == 1) {
+                                                    this.$Message.info(res.msg);
+                                                    this.getCampaignsList();
+                                                }
+                                            }).catch(err => {
+                                                console.log("修改删除投放计划失败" + err);
+                                            });
                                         }
                                     }
                                 }),
-                                h(
-                                    "span",
-                                    params.row.configured_status ==
-                                        "AD_STATUS_NORMAL"
-                                        ? "开启"
-                                        : "关闭"
-                                )
+                                h("span", params.row.configured_status == "AD_STATUS_NORMAL" ? "开启" : "关闭")
                             ]);
                         }
                     }
@@ -625,8 +574,7 @@ export default {
                                 {
                                     props: {
                                         placement: "top",
-                                        content:
-                                            "最低额度是该推广计划的今日消耗加上50元"
+                                        content: "最低额度是该推广计划的今日消耗加上50元"
                                     }
                                 },
                                 [
@@ -644,13 +592,9 @@ export default {
                                                     render: h => {
                                                         return h("Input", {
                                                             props: {
-                                                                value:
-                                                                    params.row
-                                                                        .daily_budget /
-                                                                    100,
+                                                                value: params.row.daily_budget / 100,
                                                                 autofocus: true,
-                                                                placeholder:
-                                                                    "日消耗限额"
+                                                                placeholder: "日消耗限额"
                                                             },
                                                             on: {
                                                                 input: val => {
@@ -661,45 +605,24 @@ export default {
                                                     },
                                                     onOk: () => {
                                                         if (value == "") {
-                                                            this.$Message.info(
-                                                                "请输入修改信息"
-                                                            );
+                                                            this.$Message.info("请输入修改信息");
                                                             return;
                                                         }
-
                                                         Axios.post("api.php", {
                                                             action: "gdtAdPut",
-                                                            opt:
-                                                                "campaigns_add",
+                                                            opt: "campaigns_add",
                                                             do: "edit",
-                                                            account_id:
-                                                                params.row
-                                                                    .account_id, //*必传*
-                                                            campaign_id:
-                                                                params.row
-                                                                    .campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
-                                                            daily_budget:
-                                                                value * 100 //日消耗限额
-                                                        })
-                                                            .then(res => {
-                                                                if (
-                                                                    res.ret == 1
-                                                                ) {
-                                                                    this.$Message.info(
-                                                                        res.msg
-                                                                    );
-                                                                    this.getCampaignsList(
-                                                                        this
-                                                                            .page
-                                                                    );
-                                                                }
-                                                            })
-                                                            .catch(err => {
-                                                                console.log(
-                                                                    "修改删除投放计划失败" +
-                                                                    err
-                                                                );
-                                                            });
+                                                            account_id: params.row.account_id, //*必传*
+                                                            campaign_id: params.row.campaign_id, //传这个值就是修改当前计划 不传就是添加新的计划
+                                                            daily_budget: value * 100 //日消耗限额
+                                                        }).then(res => {
+                                                            if (res.ret == 1) {
+                                                                this.$Message.info(res.msg);
+                                                                this.getCampaignsList();
+                                                            }
+                                                        }).catch(err => {
+                                                            console.log("修改删除投放计划失败" + err);
+                                                        });
                                                     }
                                                 });
                                             }
@@ -860,17 +783,18 @@ export default {
                 this.$Message.info("请勾选需要修改的数据");
                 return;
             }
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtAdPut",
                 opt: "campaigns_add",
                 do: "edits",
                 id: this.taCheckids, //必传[13,12,12]
+                account_ids: this.account_ids,
                 type: type, //1 修改状态  3 删除 type
                 configured_status: this.edit_status //AD_STATUS_NORMAL  有效  AD_STATUS_SUSPEND暂停 默认不传
             }).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
-                    this.getCampaignsList(this.page);
+                    this.getCampaignsList();
                 }
             }).catch(err => {
                 console.log("批量修改删除投放计划" + err);
@@ -892,18 +816,19 @@ export default {
                 begin_date = this.date2[0];
                 end_date = this.date2[1];
             }
-            Axios.get("api.php", {
+            Axios.post("api.php", {
                 action: "gdtAdPut",
                 opt: "campaigns_add",
                 do: "edits",
                 id: this.taCheckids, //必传[13,12,12]
-                type: 1, //1 修改状态  3 删除 type
+                account_ids: this.account_ids,
+                type: 2, //1 修改状态  3 删除 type
                 begin_date: begin_date, //开始投放日期
                 end_date: end_date //结束投放日期
             }).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
-                    this.getCampaignsList(this.page);
+                    this.getCampaignsList();
                 }
             }).catch(err => {
                 console.log("批量修改日期" + err);
@@ -912,20 +837,22 @@ export default {
         //排序
         sortchange(column) {
             this.orderField = column.key;
-            this.orderDirection =
-                column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
+            this.orderDirection = column.order == "asc" ? "SORT_ASC" : "SORT_DESC";
             this.getCampaignsList();
         },
         //获取选中的id
         taCheck(row) {
             let ids = [];
             let it = [];
+            let account_ids = [];
             row.forEach(item => {
                 ids.push(item.id);
                 it.push(item);
+                account_ids.push(item.account_id)
             });
             this.taCheckitem = it;
             this.taCheckids = ids;
+            this.account_ids = account_ids;
         },
         //改变日期
         changeDate(e) {
