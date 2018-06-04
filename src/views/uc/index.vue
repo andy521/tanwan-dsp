@@ -2,26 +2,26 @@
 @import "../../styles/common.less";
 @import "./index.less";
 .sel {
-    width: 220px;
+  width: 220px;
 }
 .spread .ivu-poptip {
-    display: inline-block;
+  display: inline-block;
 }
 .sel_state {
-    text-align: left;
-    width: 110px;
+  text-align: left;
+  width: 110px;
 }
 .table-statistics {
-    color: #2b7ed1;
-    font-weight: bold;
+  color: #2b7ed1;
+  font-weight: bold;
 }
-.manger-head-bar:first-of-type{
-    flex: 2;
-    text-align: left;
+.manger-head-bar:first-of-type {
+  flex: 2;
+  text-align: left;
 }
-.manger-head-bar:last-of-type{
-    flex: 1;
-    text-align: right;
+.manger-head-bar:last-of-type {
+  flex: 1;
+  text-align: right;
 }
 </style>
 <template>
@@ -443,12 +443,13 @@ export default {
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
-                        //console.log(res);
                         this.loading = false;
-                         //添加统计
-                        res.data.curr_page_total._disabled = true;
-                        res.data.list.unshift(res.data.curr_page_total);
-                        res.data.list.push(res.data.curr_page_total);
+                        //添加统计
+                        if (res.data.list.length > 1) {
+                            res.data.curr_page_total._disabled = true;
+                            res.data.list.unshift(res.data.curr_page_total);
+                            res.data.list.push(res.data.curr_page_total);
+                        }
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
                         this.page_size = parseInt(res.data.page_size);
@@ -756,7 +757,7 @@ export default {
                     title: "账号",
                     key: "account_name",
                     width: 150,
-                     render: (h, params) => {
+                    render: (h, params) => {
                         if (params.row.account_name) {
                             return h("span", params.row.account_name);
                         } else {
@@ -816,7 +817,7 @@ export default {
                                                 }
                                                 Axios.post('api.php', {
                                                     action: 'ucAdPut',
-                                                    opt: 'updateCampaignName',                                            
+                                                    opt: 'updateCampaignName',
                                                     account_id: params.row.account_id,
                                                     campaign_id: params.row.campaign_id,
                                                     campaign_name: value
@@ -1170,7 +1171,7 @@ export default {
                                                 onOk: () => {
                                                     this.deleteData(id, account_id);
                                                 },
-                                                onCancel: () => {}
+                                                onCancel: () => { }
                                             });
                                         }
                                     }

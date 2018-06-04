@@ -1,5 +1,4 @@
 <style lang="less">
-@import "../../styles/common.less";
 .report .ivu-form-item{margin-bottom: 15px;}
 .report .ivu-form .ivu-form-item-label{font-weight: bold;}
 .report_tab{position: relative;}
@@ -62,8 +61,8 @@
                 }
                 this.curent = name;
             },
-            accountChange(data){ 
-                this.account = data.join(',');
+            accountChange(account_id){ 
+                this.account = account_id;
             },
 		},
         beforeMount(){

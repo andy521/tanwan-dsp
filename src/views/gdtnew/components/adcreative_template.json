@@ -4,6 +4,56 @@
     "modus": "1000×560单图(文)",
     "description": "好友动态及QQ看点、QQ动漫等优质广告位",
     "site_set": ["SITE_SET_MOBILE_INNER"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "corporate": {
+                    "corporate_name": "腾讯",
+                    "corporate_img": ""
+                },
+                "title": "腾讯效果推广",
+                "image": "",
+                "button_text": "确认",
+                "bottom_text": "腾讯效果推广",
+                "countdown": "示例文字"
+            }
+        }, {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "corporate": {
+                    "corporate_name": "腾讯",
+                    "corporate_img": ""
+                },
+                "title": "腾讯效果推广",
+                "image": "",
+                "button_text": "确认",
+                "bottom_text": "腾讯效果推广",
+                "countdown": "示例文字"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "title": "腾讯效果推广",
+                "image": "",
+                "button_text": "确认",
+                "bottom_text": "腾讯效果推广",
+                "countdown": "示例文字",
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "title": "腾讯效果推广",
+                "image": "",
+                "button_text": "确认",
+                "bottom_text": "腾讯效果推广",
+                "countdown": "示例文字",
+                "deep_link": "weixin://dl/moments"
+            }
+        }
+    ],
     "element": {
         "title": {
             "name": "广告文案",
@@ -41,6 +91,45 @@
     "modus": "240×180单图(文)",
     "description": "看点及兴趣部落，浏览器信息流",
     "site_set": ["SITE_SET_MOBILE_INNER"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "corporate": {
+                    "corporate_name": "腾讯",
+                    "corporate_img": ""
+                },
+                "image": "",
+                "title": "腾讯效果推广"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "corporate": {
+                    "corporate_name": "腾讯",
+                    "corporate_img": ""
+                },
+                "image": "",
+                "title": "腾讯效果推广"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "deep_link": "weixin://dl/moments"
+            }
+        }
+    ],
     "element": {
         "image": {
             "name": "图片",
@@ -83,6 +172,45 @@
     "modus": "640×288单图(文)",
     "description": "资讯信息流、资讯文章页、焦点图",
     "site_set": ["SITE_SET_MOBILE_INNER"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "corporate": {
+                    "corporate_name": "腾讯",
+                    "corporate_img": ""
+                },
+                "image": "",
+                "title": "腾讯效果推广"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "corporate": {
+                    "corporate_name": "腾讯",
+                    "corporate_img": ""
+                },
+                "image": "",
+                "title": "腾讯效果推广"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "deep_link": "weixin://dl/moments"
+            }
+        }
+    ],
     "element": {
         "image": {
             "name": "图片",
@@ -125,6 +253,85 @@
     "modus": "230×152多图(文)",
     "description": "新闻信息流",
     "site_set": ["SITE_SET_TENCENT_NEWS"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "element_story": [{
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    }
+                ],
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "element_story": [{
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    }
+                ],
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "element_story": [{
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    }
+                ],
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "element_story": [{
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    },
+                    {
+                        "image": ""
+                    }
+                ],
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        }
+    ],
     "element": {
         "element_story": {
             "name": "素材",
@@ -194,6 +401,49 @@
     "modus": "960×540单图(文)",
     "description": "首页专栏、热点视频流",
     "site_set": ["SITE_SET_TENCENT_VIDEO"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        }
+    ],
     "element": {
         "image": {
             "name": "图片",
@@ -250,6 +500,49 @@
     "modus": "230×152单图(文)",
     "description": "新闻信息流、微信新闻插件信息流",
     "site_set": ["SITE_SET_TENCENT_NEWS"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        }
+    ],
     "element": {
         "image": {
             "name": "图片",
@@ -306,6 +599,49 @@
     "modus": "960×274单图(文)",
     "description": "首页专栏、热点视频流",
     "site_set": ["SITE_SET_TENCENT_VIDEO"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                }
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "image": "",
+                "title": "腾讯效果推广",
+                "corporate": {
+                    "corporate_name": "腾讯"
+                },
+                "deep_link": "weixin://dl/moments"
+            }
+        }
+    ],
     "element": {
         "image": {
             "name": "图片",
@@ -362,6 +698,45 @@
     "modus": "1280×720多图(文)",
     "description": "原生广告位",
     "site_set": ["SITE_SET_MOBILE_UNION", "SITE_SET_MOBILE_INNER"],
+    "adcreative_elements": [{
+            "product_type": "PRODUCT_TYPE_LINK",
+            "adcreative_elements": {
+                "title": "腾讯效果推广",
+                "description": "不仅有量，还有效！",
+                "image": "",
+                "image2": "",
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_ECOMMERCE",
+            "adcreative_elements": {
+                "title": "腾讯效果推广",
+                "description": "不仅有量，还有效！",
+                "image": "",
+                "image2": "",
+                "deep_link": "weixin://dl/moments"
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_IOS",
+            "adcreative_elements": {
+                "title": "腾讯效果推广",
+                "description": "不仅有量，还有效！",
+                "image": "",
+                "image2": ""
+            }
+        },
+        {
+            "product_type": "PRODUCT_TYPE_APP_ANDROID_OPEN_PLATFORM",
+            "adcreative_elements": {
+                "title": "腾讯效果推广",
+                "description": "不仅有量，还有效！",
+                "image": "",
+                "image2": ""
+            }
+        }
+    ],
     "element": {
         "title": {
             "name": "广告文案",

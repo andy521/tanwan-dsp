@@ -7,10 +7,11 @@
             <Tab-pane label="添加菜单">
                 <Form ref="formItem" :model="formItem" :label-width="100" :rules="ruleValidate" style="width:500px">
                     <Form-item label="菜单名" prop="name">
-                        <Input v-model="formItem.name" placeholder="请输入菜单名"></Input>
+                        <Input v-model="formItem.name" placeholder="请输入菜单名 (例如：资金流水)"></Input>
                     </Form-item>
                     <Form-item label="菜单层级路径" prop="route">
                         <Input v-model="formItem.route" placeholder="请输入菜单层级路径"></Input>
+                        <p class="gray">注：这里是路由name的层级关系（tt/tt_finance/tt_funds）</p>
                     </Form-item>
                     <Form-item>
                         <Button type="primary" @click="handleSubmit('formItem')">提交</Button>

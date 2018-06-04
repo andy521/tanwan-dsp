@@ -310,9 +310,7 @@ export default {
                 end_date: this.DateDomain[1], //结速时间
             }).then(res => {
                 this.loading = false;
-                if (res.ret == 1) {
-                    
-                console.log(res.data)
+                if (res.ret == 1) {                   
                     this.funddata = res.data.list;
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;

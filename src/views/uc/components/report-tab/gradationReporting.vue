@@ -169,7 +169,6 @@
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {
-                            console.log('getReporting',res);  
                             this.loading = false;                      
                             this.echart = res.data.echart; 
                             this.list = res.data.list;

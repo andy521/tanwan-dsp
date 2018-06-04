@@ -164,9 +164,9 @@ li {
             <Progress :percent="percent" :stroke-width="5"></Progress>
             <div>正在上传</div>
         </Spin>
-        <div class="upload_div" >
+        <div class="upload_div">
             <Upload multiple type="drag" :format="accept" :show-upload-list="false" :max-size="imgSize" :action="actionUrl" :on-success="handleSuccess" :on-exceeded-size="handleMaxSize" :on-format-error="handleFormatError" :before-upload="handleBeforeUpload" :on-progress="handleProgress" :on-error="handleError" name="img">
-                <div class="upload" :style="{backgroundImage: 'url(' + preview_url+ ')',height:500*img_size[1]/img_size[0]+ 'px'}" >
+                <div class="upload" :style="{backgroundImage: 'url(' + preview_url+ ')',height:500*img_size[1]/img_size[0]+ 'px'}">
                     <div class="uploadbg">
                         <div class="txtbox">
                             <div class="size">{{template.element.image.size}}(px)</div>
@@ -324,9 +324,9 @@ export default {
     },
     methods: {
         url() {
-            this.adcreative_template.forEach(element => {
-                if (element.id == this.id) {
-                    this.template = element;
+            this.adcreative_template.forEach(e => {
+                if (e.id == this.id) {
+                    this.template = e;
                     this.img_size = this.template.element.image.size.split("*");
                 }
             });
@@ -370,7 +370,6 @@ export default {
                 page_size: this.page_size //每页数量
             }).then(res => {
                 this.gallery = res.data;
-                console.log(this.remark)
                 this.total_number = res.data.total_number;
                 this.total_page = res.data.total_page;
             }).catch(err => {
@@ -384,6 +383,7 @@ export default {
                 if (item.id == id) {
                     this.model.preview_url = item.preview_url;
                     this.model.image_id = item.image_id;
+                    this.remark = item.remark;
                 }
             });
             this.model.isShowSelect = true;

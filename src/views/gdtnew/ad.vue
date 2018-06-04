@@ -93,7 +93,7 @@
                         </FormItem>
                         <FormItem label="出价：">
                             <InputNumber :max="100000" :min="10" :step="100" v-model="adgroup.bid_amount" placeholder="输入价格" style="width:200px;" size="large"></InputNumber>
-                            <span>元/点击</span>
+                            <span>分/点击</span>
                             <span style="color:#ccc;">单位为分</span>
                         </FormItem>
                         <FormItem label="日限额：" v-if="campaign_type=='CAMPAIGN_TYPE_WECHAT_MOMENTS'">
@@ -206,6 +206,7 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     this.adgroup_detail = res.data;
+                    console.log(res.data)
                     this.fill_adgroup_detail(res.data);
                 }
             }).catch(err => {
@@ -250,7 +251,7 @@ export default {
             this.product_refs_id = adgroup_detail.product_refs_id;//标的物
             this.sub_product_refs_id = adgroup_detail.sub_product_refs_id;
             this.get_destination_url(this.product_refs_id);
-           // this.destination_url = adgroup_detail.destination_url;
+            // this.destination_url = adgroup_detail.destination_url;
         },
         //返回定向id
         getTargetingid(id) {
@@ -417,9 +418,11 @@ export default {
                         query: {
                             account_id: this.account_id,
                             product_type: this.product_type,
-                            site_set: this.site_set,
+                            site_set: this.site_set.join(","),
                             adcreative_template_id: this.adcreative_template_id,
-                            destination_url: this.destination_url
+                            destination_url: this.destination_url,
+                            product_refs_id:this.product_refs_id,
+                            campaign_id:this.campaign_id
                         }
                     })
                 }
@@ -429,7 +432,18 @@ export default {
         get_destination_url(val) {
             this.product_refs_ids.forEach(e => {
                 if (val == e.product_refs_id) {
-                    this.destination_url = e.product_info.product_type_app_android_open_platform.app_property_pkg_url;
+                    if (e.product_info.product_type_app_android_open_platform) {
+                        this.destination_url = e.product_info.product_type_app_android_open_platform.app_property_pkg_url;
+                    }
+                    if (e.product_info.product_type_apple_app_store) {
+                        this.destination_url = e.product_info.product_type_apple_app_store.app_property_pkg_url;
+                    }
+                    if (e.product_info.product_type_union_app_info) {
+                        this.destination_url = e.product_info.product_type_union_app_info.app_property_pkg_url;
+                    }
+                    if (e.product_info.product_type_app_android_myapp) {
+                        this.destination_url = e.product_info.product_type_app_android_myapp.app_property_pkg_url;
+                    }
                 }
             });
         },
