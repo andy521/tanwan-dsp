@@ -20,7 +20,7 @@
 </style>
 
 <template>
-    <div class="ad">
+    <div class="systemsetid">
         <Card shadow>
             <Row type="flex" justify="space-between">
                 <Col class="manger-head-bar">
@@ -154,8 +154,7 @@ export default {
                                 on: {
                                     'on-change': (isFlag) => {
                                         params.row.canEdit = isFlag
-                                        console.log([params.row], 'xxxxxxxxxxxx')
-                                        this.handleSingleEditAcPermission([params.row], isFlag)
+                                        this.handleSingleEditAcPermission(params.row, isFlag)
                                     }
                                 }
                             }),
@@ -187,15 +186,16 @@ export default {
                 }
                 return
             }
+
             let ret = []
             const userAccountParams = {}
             checkedList.forEach(checked => {
                 ret.push(0)
                 userAccountParams[checked.sysUserId] = {}
-                userAccountParams[checked.sysUserId][checked.accountId] = checked.canEdit
-                console.log(userAccountParams)
             })
-
+            checkedList.forEach(checked => {
+                userAccountParams[checked.sysUserId][checked.accountId] = checked.canEdit
+            })
 
             this.checkedIdList = ret
             this.checkedUserAccountParams = userAccountParams
@@ -242,8 +242,11 @@ export default {
             }
         },
         handleSingleEditAcPermission(checkedList, flag) {
-            this.handleSelectionChange(checkedList)
-            this.changePermission(flag)
+            this.checkedUserAccountParams = {
+                [checkedList.sysUserId]: {
+                    [checkedList.accountId]: flag
+                }
+            }
             this.mutilEditAcPermission()
         },
         // 批量编辑账户权限
@@ -260,6 +263,7 @@ export default {
                if (res.ret === 1) {
                    this.$Message.info(res.msg)
                    this.isModal = false
+                   this.checkedIdList = []
                    this.getAccountList(this.page)
                }
             }).catch(err => {
@@ -273,7 +277,6 @@ export default {
             } else {
                 this.page = page
             }
-            console.log(this.agentList, this.mediaList, this.authorList, 'sss')
             Axios.post('api.php', {
                 action: 'sys',
                 opt: 'accountList',
@@ -289,7 +292,6 @@ export default {
                    this.pageTotalNum = +res.data.page.totalCount
                    this.pageSize = +res.data.page.numPerPage
                    this.page = +res.data.page.pageNum
-                   console.log(res.data.page)
                }
             }).catch(err => {
                 console.log('获取权限账号名列表错误:' + err)
