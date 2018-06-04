@@ -370,6 +370,7 @@ export default {
                 page_size: this.page_size //每页数量
             }).then(res => {
                 this.gallery = res.data;
+                console.log(this.remark)
                 this.total_number = res.data.total_number;
                 this.total_page = res.data.total_page;
             }).catch(err => {

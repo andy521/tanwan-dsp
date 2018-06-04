@@ -9,6 +9,7 @@
 }
 .adspace {
   position: relative;
+  margin-right: 200px;
 }
 
 .ta {
@@ -69,7 +70,7 @@
     <Card dis-hover>
         <div class="padding-20">
             <div class="title">广告版位</div>
-            <div id="J_edition" class="adspace margin-top-20">
+            <div class="adspace margin-top-20">
                 <div class="ta">
                     <Table :columns="columnsAdSpace" :data="newEition" highlight-row @on-row-click="rowClick" size="small"></Table>
                     <div class="preview" v-show="imgSrc">
@@ -121,7 +122,7 @@ export default {
             ],
             modify: false,//是否修改版位
             imgSrc: "",
-            edit: false
+            adgroup_id: this.$route.query.adgroup_id
         };
     },
     mounted() {
@@ -134,7 +135,7 @@ export default {
             this.$emit("on-change", row.id, row.site_set);
         },
         getimgSrc(id) {
-            switch (id) {
+            switch (parseInt(id)) {
                 case 65:
                     this.imgSrc = p65;
                     break;
@@ -159,6 +160,9 @@ export default {
                 case 487:
                     this.imgSrc = p487;
                     break;
+                default:
+                    this.imgSrc = ""
+
             }
         }
     },
@@ -172,7 +176,7 @@ export default {
                     edition.push(e);
                 }
             });
-            if (this.edit) {
+            if (this.adgroup_id) {
                 return edition;
             } else {
                 return this.edition;

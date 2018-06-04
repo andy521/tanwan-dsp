@@ -1,5 +1,5 @@
 <template>
-    <Card shadow>
+    <Card dis-hover>
 
         <Row>
             <Col span="18">
@@ -70,9 +70,13 @@ export default {
                         }
                     }
                 },
-                {
-                    title: "帐户id",
+                 {
+                    title: "帐户ID",
                     key: "account_id"
+                },
+                {
+                    title: "帐户名",
+                    key: "account_name"
                 },
                 {
                     title: "代理简称",

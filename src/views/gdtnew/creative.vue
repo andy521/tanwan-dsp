@@ -1,4 +1,11 @@
+
 <style scoped>
+.gdtnew {
+  padding: 10px 10px 10px 210px;
+  overflow: auto;
+  height: 100%;
+  font-size: 14px;
+}
 .item {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
@@ -58,10 +65,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.w500 {
+  width: 500px;
+}
 </style>
-
 <template>
-    <div>
+    <div class="gdtnew ad">
+
+        <!-- 导行 -->
+        <side-bar :step="2"></side-bar>
         <Card dis-hover>
             <div class="padding-20">
                 <div class="title">上传创意</div>
@@ -78,14 +90,18 @@
                 </ul>
                 <ul class="nav-main">
                     <li v-for="(item,index) in adcreative" v-show="index==current">
-                        <create-image type="image" @on-change="imgChange" :id="id" :imgsrc="item.adcreative_elements.image_url"></create-image>
+                        <create-image type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url"></create-image>
                         <Row>
                             <Col span="16">
-                            <Input v-model="item.adcreative_elements.title" class="margin-top-10">
+                            <Input v-model="item.adcreative_name" class="margin-top-10 w500">
+                            <span slot="prepend">创意名称</span>
+                            <span slot="append">{{item.adcreative_name.length}}/30</span>
+                            </Input>
+                            <Input v-model="item.adcreative_elements.title" class="margin-top-10 w500">
                             <span slot="prepend">广告文案</span>
                             <span slot="append">{{item.adcreative_elements.title.length}}/30</span>
                             </Input>
-                            <Input v-model="item.adcreative_elements.corporate.corporate_name" class="margin-top-10">
+                            <Input v-model="item.adcreative_elements.corporate.corporate_name" class="margin-top-10 w500">
                             <span slot="prepend">广告主名称</span>
                             <span slot="append">{{item.adcreative_elements.corporate.corporate_name.length}}/30</span>
                             </Input>
@@ -104,17 +120,21 @@
 </template>
 <script>
 import Axios from "@/api/index";
-import createImage from "./createImage.vue";
+import sideBar from "./components/sideBar.vue";
+import createImage from "./components/createImage.vue";
+
 export default {
     components: {
+        sideBar,
         createImage
     },
-    name: "upCreative",
-    props: ["id"],
     data() {
         return {
             account_id: this.$route.query.account_id,
-            adcreativeId: this.$route.query.adcreativeId,
+            adcreative_id: this.$route.query.adcreative_id,
+            adcreative_template_id: this.$route.query.adcreative_template_id,
+            site_set: this.$route.query.site_set,
+            destination_url: this.$route.query.destination_url,
             //创意数据
             adcreative: [
                 {
@@ -131,32 +151,14 @@ export default {
                     }
                 }
             ],
-            adcreative1: [
-                {
-                    adcreative_name: "创意1",
-                    adcreative_id: "",
-                    adcreative_elements: {
-                        image: "",
-                        title: "",
-                        corporate: {
-                            corporate_name: "",
-                            corporate_img: ""
-                        },
-                        image_url: ""
-                    }
-                }
-            ],
             //当前创意索引
             current: 0,
-            adgroup_detail: ""
+            creatives: "",//创意详情
         };
     },
     mounted() {
-        this.getCreatives();
-    },
-    watch: {
-        id() {
-            this.adcreative = this.adcreative1;
+        if (this.adcreative_id) {
+            this.getCreatives();
         }
     },
     methods: {
@@ -167,11 +169,11 @@ export default {
                 opt: "getCreatives",
                 account_id: this.account_id,
                 media_type: 1,
-                adcreativeId: this.adcreativeId
+                adcreative_id: this.adcreative_id
             }).then(res => {
                 if (res.ret == 1) {
                     console.log(res.data)
-                    this.adgroup_detail = res.data;
+                    this.creatives = res.data;
                     this.fill_adgroup_detail(res.data);
                 }
             }).catch(err => {
@@ -195,8 +197,7 @@ export default {
                 return;
             }
             let data = {
-                adcreative_name:
-                    "创意" + (parseInt(this.adcreative.length) + 1),
+                adcreative_name: "创意" + (parseInt(this.adcreative.length) + 1),
                 adcreative_id: "",
                 adcreative_elements: {
                     image: "",
@@ -216,11 +217,40 @@ export default {
         },
         //提交
         submit() {
-            //验证数据是否正确
-            // 问题
-            // 传过来要修改的创意，修改规则是什么
-            // 数据格式与原来规则的格式不一样
-            this.$emit("on-change", this.adcreative);
+            console.log(this.adcreative)
+
+            let param = {
+                action: "gdtAdPut",
+                opt: "adcre_add",
+                account_id: this.account_id,
+                campaign_id: this.campaign_id,
+                product_type: this.product_type,
+                product_refs_id: this.product_refs_id,
+                site_set: this.site_set,
+                product_type: this.product_type,
+                product_refs_id: this.product_refs_id,
+                adcreative_template_id: this.adcreative_template_id,
+                destination_url: this.destination_url,
+                adcreative: {
+                    adcreative_name: "创意1",
+                    adcreative_id: "",
+                    adcreative_elements: {
+                        image: "",
+                        title: "",
+                        corporate: {
+                            corporate_name: "",
+                            corporate_img: ""
+                        },
+                        image_url: ""
+                    }
+                }
+            };
+
+            Axios.post("api.php", param).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                }
+            }).catch(err => console.log("广告组" + err));
 
         }
     },
@@ -240,3 +270,4 @@ export default {
     // }
 };
 </script>
+

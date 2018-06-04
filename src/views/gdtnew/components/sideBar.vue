@@ -108,16 +108,19 @@ export default {
                             name: "用户定向"
                         },
                         {
+                            name: "目标详情"
+                        },
+                        {
+                            name: "广告版位"
+                        },
+                        {
                             name: "排期和出价"
                         }
                     ]
                 },
                 {
                     name: "创建创意",
-                    list: [
-                        {
-                            name: "广告版位"
-                        },
+                    list: [  
                         {
                             name: "上传创意"
                         }
