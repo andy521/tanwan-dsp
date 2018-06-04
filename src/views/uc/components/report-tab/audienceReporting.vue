@@ -174,7 +174,6 @@
                     orderField:this.orderField,
                     orderDirection: this.orderDirection
                 };
-                console.log(param)
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {

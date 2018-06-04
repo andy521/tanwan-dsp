@@ -263,7 +263,7 @@ export default {
                     title: "计划名称",
                     sortable: "custom",
                     key: "campaign_name",
-                    width: 300,
+                    width: 350,
                     render: (h, params) => {
                         let value = params.row.campaign_name;
                         return [

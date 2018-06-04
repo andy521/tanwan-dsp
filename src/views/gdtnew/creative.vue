@@ -6,6 +6,9 @@
   height: 100%;
   font-size: 14px;
 }
+.title {
+  font-size: 22px;
+}
 .item {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
@@ -90,11 +93,12 @@
                 </ul>
                 <ul class="nav-main">
                     <li v-for="(item,index) in adcreative" v-show="index==current">
-                        <create-image v-if="item.adcreative_elements.image" type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url"></create-image>
 
-                        <template v-if="item.adcreative_elements.element_story" v-for="subitem in item.adcreative_elements.element_story">
-                            <create-image type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url" style="margin-bottom:10px;"></create-image>
+                        <template v-if="item.adcreative_elements.element_story">
+                            <create-image type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url" style="margin-bottom:10px;" v-for="subitem in item.adcreative_elements.element_story" :key="this"></create-image>
                         </template>
+
+                        <create-image v-else type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url"></create-image>
 
                         <Row>
                             <Col span="16">
@@ -105,7 +109,7 @@
 
                             <Input v-model="item.adcreative_elements.title" class="margin-top-10 w500">
                             <span slot="prepend">广告文案</span>
-                            <span slot="append">{{item.adcreative_elements.title.length}}/25</span>
+                            <span slot="append">{{item.adcreative_elements.title.length}}/{{element.title.amount[1]}}</span>
                             </Input>
 
                             <template v-if="item.adcreative_elements.corporate">
@@ -120,7 +124,7 @@
 
                             <Input v-model="item.adcreative_elements.button_text" class="margin-top-10 w500" v-if="item.adcreative_elements.button_text">
                             <span slot="prepend">按钮文字</span>
-                            <span slot="append">{{item.adcreative_elements.button_text.length}}/40</span>
+                            <span slot="append">{{item.adcreative_elements.button_text.length}}/{{element.button_text[1]}}</span>
                             </Input>
 
                             <Input v-model="item.adcreative_elements.bottom_text" class="margin-top-10 w500" v-if="item.adcreative_elements.bottom_text">
@@ -167,16 +171,23 @@ export default {
     data() {
         return {
             account_id: this.$route.query.account_id,
-
-            adcreative_id: this.$route.query.adcreative_id,
-
+            adgroup_id: this.$route.query.adgroup_id,
             adcreative_template_id: this.$route.query.adcreative_template_id,
             campaign_id: this.$route.query.campaign_id,
             site_set: this.$route.query.site_set.split(","),
             destination_url: this.$route.query.destination_url,
             product_refs_id: this.$route.query.product_refs_id,
-            adcreative_template: adcreative_template,
             product_type: this.$route.query.product_type,
+
+            adcreative_template: adcreative_template,
+            element: {
+                title: {
+                    amount: [1, 20],
+                },
+                button_text: {
+                    amount: [2, 4],
+                },
+            },
             //创意数据
             adcreative: [
                 {
@@ -212,19 +223,23 @@ export default {
         if (this.adcreative_id) {
             this.getCreatives();
         }
-        this.adcreative_template.forEach(e => {
-            if (e.id == this.adcreative_template_id) {
-                e.adcreative_elements.forEach(v => {
-                    if (v.product_type == this.product_type) {
-                        this.adcreative[0].adcreative_elements = v.adcreative_elements;
-                        this.adcreative_elements = v.adcreative_elements;
-                        console.log(this.adcreative.adcreative_elements)
-                    }
-                })
-            }
-        });
+        this.get_adcreative_elements();
     },
     methods: {
+        //获取版位信息
+        get_adcreative_elements() {
+            this.adcreative_template.forEach(e => {
+                if (e.id == this.adcreative_template_id) {
+                    this.element = e.element;
+                    e.adcreative_elements.forEach(v => {
+                        if (v.product_type == this.product_type) {
+                            this.adcreative[0].adcreative_elements = v.adcreative_elements;
+                            this.adcreative_elements = v.adcreative_elements;
+                        }
+                    })
+                }
+            });
+        },
         //创意详情
         getCreatives() {
             Axios.post("api.php", {
@@ -232,7 +247,7 @@ export default {
                 opt: "getCreatives",
                 account_id: this.account_id,
                 media_type: 1,
-                adcreative_id: this.adcreative_id
+                adgroup_id: this.adgroup_id
             }).then(res => {
                 if (res.ret == 1) {
                     console.log(res.data)
@@ -243,7 +258,6 @@ export default {
                 console.log("获取详情失败" + err);
             });
         },
-
         //当前创意
         handleChange(index) {
             this.current = index;
@@ -285,8 +299,6 @@ export default {
                 destination_url: this.destination_url,
                 adcreative: JSON.stringify(this.adcreative)
             };
-
-
             for (let i = 0; i < this.adcreative.length; i++) {
                 if (this.adcreative[i].adcreative_name == "") {
                     this.$Message.info("创意名不能为空");
@@ -301,11 +313,6 @@ export default {
                     return
                 }
             }
-
-
-
-
-            console.log(111)
 
             // Axios.post("api.php", param).then(res => {
             //     if (res.ret == 1) {
