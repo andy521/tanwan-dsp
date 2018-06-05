@@ -112,7 +112,7 @@
                             <span slot="append">{{item.adcreative_elements.title.length}}/{{element.title.amount[1]}}</span>
                             </Input>
 
-                            <template v-if="item.adcreative_elements.corporate">
+                            <!-- <template v-if="item.adcreative_elements.corporate">
                                 <Input v-model="item.adcreative_elements.corporate.corporate_name" class="margin-top-10 w500">
                                 <span slot="prepend">商标名称</span>
                                 <span slot="append">{{item.adcreative_elements.corporate.corporate_name.length}}/20</span>
@@ -120,7 +120,7 @@
 
                                 <uploadLogo type="image" v-model="item.adcreative_elements.corporate.corporate_img" class="margin-top-10"></uploadLogo>
 
-                            </template>
+                            </template> -->
 
                             <Input v-model="item.adcreative_elements.button_text" class="margin-top-10 w500" v-if="item.adcreative_elements.button_text">
                             <span slot="prepend">按钮文字</span>
@@ -148,7 +148,7 @@
                         </Row>
                     </li>
                 </ul>
-                <Button type="primary" size="large" @click="submit" class="margin-top-20">确定</Button>
+                <Button type="primary" size="large" @click="submit" class="margin-top-20">确定提交</Button>
             </div>
         </Card>
 
@@ -160,7 +160,7 @@ import sideBar from "./components/sideBar.vue";
 import createImage from "./components/createImage.vue";
 import adcreative_template from "./components/adcreative_template.json";
 import uploadLogo from "./components/uploadLogo.vue";
-
+import {deepClone} from "@/utils/DateShortcuts.js";
 export default {
     components: {
         sideBar,
@@ -232,8 +232,8 @@ export default {
                     this.element = e.element;
                     e.adcreative_elements.forEach(v => {
                         if (v.product_type == this.product_type) {
-                            this.adcreative[0].adcreative_elements = v.adcreative_elements;
-                            this.adcreative_elements = v.adcreative_elements;
+                            this.adcreative[0].adcreative_elements = deepClone(v.adcreative_elements);
+                            this.adcreative_elements =  deepClone(v.adcreative_elements);
                         }
                     })
                 }
@@ -250,12 +250,15 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     console.log(res.data)
-                    this.adcreative = res.data;
+                    if (res.data.length>0) {
+                        this.adcreative = res.data;
+                    }
                 }
             }).catch(err => {
                 console.log("获取详情失败" + err);
             });
         },
+
 
         //当前创意
         handleChange(index) {
@@ -316,6 +319,9 @@ export default {
             Axios.post("api.php", param).then(res => {
                 if (res.ret == 1) {
                     this.$Message.info(res.msg);
+                     this.$router.push({
+                        name: 'time_ad'
+                    })
                 }
             }).catch(err => console.log("广告组" + err));
         }

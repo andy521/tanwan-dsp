@@ -55,8 +55,11 @@
   font-size: 18px;
   margin-left: 20px;
 }
-.ivu-tooltip-inner {
+.time .ivu-tooltip-inner {
   white-space: normal;
+}
+.time .ivu-table-cell-with-expand {
+  display: none;
 }
 </style>
 
@@ -232,9 +235,9 @@ export default {
             tableColumns: [
                 {
                     type: "expand",
-                    width: 30,
-                    //fixed: "left",
+                    width: 0,
                     render: (h, params) => {
+                        console.log(params.row.adgroup_id)
                         return h(creativity, {
                             props: {
                                 row: params.row,
@@ -275,9 +278,7 @@ export default {
                                         click: () => {
                                             let arr = deepClone(this.adList);
                                             arr.forEach((v, i) => {
-                                                if (
-                                                    v.adgroup_id == params.row.adgroup_id
-                                                ) {
+                                                if (v.adgroup_id == params.row.adgroup_id) {
                                                     if (v._expanded) {
                                                         v._expanded = false;
                                                     } else {

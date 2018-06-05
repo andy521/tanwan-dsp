@@ -150,7 +150,7 @@
                         </div>
                     </li>
                 </ul>
-                <Page v-if="page>1" :total="total_number" :current="page" :page-size="page_size" size="small" show-total @on-change="galleryLink"></Page>
+                <Page v-if="total_page>1" :total="total_number" :current="page" :page-size="page_size" size="small" show-total @on-change="galleryLink"></Page>
             </div>
         </Modal>
 
