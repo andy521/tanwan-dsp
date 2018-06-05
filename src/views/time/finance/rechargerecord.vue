@@ -141,7 +141,7 @@ export default {
                 },
                 {
                     title: "当前账户余额",
-                    width: 140,
+                    width: 130,
                     key: "balance"
                 },
                 {
@@ -151,7 +151,7 @@ export default {
                 },
                 {
                     title: "充值返点比例",
-                    width: 140,
+                    width: 130,
                     key: "rebate"
                 },
                 {
@@ -310,9 +310,7 @@ export default {
                 end_date: this.DateDomain[1], //结速时间
             }).then(res => {
                 this.loading = false;
-                if (res.ret == 1) {
-                    
-                console.log(res.data)
+                if (res.ret == 1) {                   
                     this.funddata = res.data.list;
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;

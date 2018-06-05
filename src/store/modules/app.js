@@ -49,15 +49,28 @@ const app = {
             let menuList = [],
                 accessList = Util.getItem('access') || [];  
             appRouter.forEach((item, index) => { 
+
                 if (item.children.length === 1) {
                     menuList.push(item);
                 }else{
                     let len = menuList.push(item);
                     let childrenArr = [];
-                    childrenArr = item.children.filter(child => {
-                        if(accessList.indexOf(child.name) != -1){
-                            return child;
-                        }
+                    childrenArr = item.children.filter(child =>{
+                        let childItem = child.children;
+                        if(!childItem){
+                            if(accessList.indexOf(child.name) != -1){
+                                return child;
+                            }
+                        }else{
+                            let childCur = [];
+                            childCur = childItem.filter( childs => {
+                                if(accessList.indexOf(childs.name) != -1){
+                                    return childs;
+                                }
+                            });
+                            child.children = childCur;
+                            return child
+                        }                        
                     });
                     if (childrenArr === undefined || childrenArr.length === 0) {
                         menuList.splice(len - 1, 1);
@@ -67,7 +80,9 @@ const app = {
                         menuList.splice(len - 1, 1, handledItem);
                     }
                 }
+
             });
+            //console.log(menuList)
             state.menuList = menuList;
         },
         setOpenedList (state) {

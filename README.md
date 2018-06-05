@@ -43,7 +43,6 @@ npm run build
 
 ```
 
-
 ![Image text](https://github.com/275957304/tanwan-dsp/blob/master/src/images/preview/0.jpg)
 ![Image text](https://github.com/275957304/tanwan-dsp/blob/master/src/images/preview/1.jpg)
 ![Image text](https://github.com/275957304/tanwan-dsp/blob/master/src/images/preview/2.jpg)

@@ -145,7 +145,6 @@
                     orderField:this.orderField,
                     orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 }; 
-                console.log(param)               
                 Axios.post('api.php', param).then(
 					res => {
 						if(res.ret == 1) {

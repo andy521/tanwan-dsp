@@ -117,14 +117,17 @@ em {
   width: auto;
 }
 </style>
+
+
 <template>
     <div>
         <table class="ta">
             <tr v-for="item in adgroup_detail.adcreative">
-                <td width="56">{{item.adcreative_name}}</td>
+                <td width="28"></td>
+                <td width="100">{{item.adcreative_name}}</td>
                 <template v-for="subitem in checkAll">
-                    <td width="120" v-if="subitem=='account_name'">{{item.adtodayArr.account_name}}</td>
-                    <td width="400" v-else-if="subitem=='adgroup_name'"></td>
+                    <!-- <td width="120" v-if="subitem=='account_name'">{{item.adtodayArr.account_name}}</td> -->
+                    <td width="400" v-if="subitem=='adgroup_name'"></td>
                     <td width="100" v-else-if="subitem=='campaign_id'">{{item.adtodayArr.campaign_id}}</td>
                     <td width="100" v-else-if="subitem=='impression'">{{item.adtodayArr.impression}}</td>
                     <td width="100" v-else-if="subitem=='click'">{{item.adtodayArr.click}}</td>
@@ -178,25 +181,23 @@ em {
                     <div class="w_flex" v-if="adgroup_detail.adcreative.length>0">
                         <div class="w_flex_hd">创意</div>
                         <div class="w_flex_bd">
-                            <Carousel class="carousel_ad" v-model="CarouselItem" arrow="always" trigger="hover" :height="250">
+                            <Carousel class="carousel_ad" v-model="CarouselItem" arrow="hover" trigger="hover" :height="250">
                                 <CarouselItem class="carouselitem" v-for="item in adgroup_detail.adcreative" :key="this">
                                     <div class="carouselbox" v-if="item.adcreative_elements">
                                         <div class="txt">{{item.adcreative_name}}</div>
-                                        <img :src="item.adcreative_elements.image_url" width="100%" />
+                                        <img :src="item.preview_url" width="100%" />
                                         <div class="txt">{{item.adcreative_elements.title}}</div>
                                     </div>
                                     <div class="img_operation">
-                                        <span class="w_img_operation" @click="editTargeting(1)">
-                                            <Tooltip placement="bottom-end">
+                                        <span class="w_img_operation" @click="editCreativity()">
+                                            <Poptip  placement="bottom-end" content="修改创意" trigger="hover">
                                                 <Icon type="android-create" size="18" color="#666"></Icon>
-                                                <div slot="content">修改创意</div>
-                                            </Tooltip>
+                                            </Poptip >
                                         </span>
                                         <span class="w_img_operation" @click="funpreview(item)">
-                                            <Tooltip placement="bottom-end">
+                                            <Poptip  placement="bottom-end" content="放大图片" trigger="hover">
                                                 <Icon type="search" size="18" color="#666"></Icon>
-                                                <div slot="content">放大图片</div>
-                                            </Tooltip>
+                                            </Poptip >
                                         </span>
                                     </div>
                                 </CarouselItem>
@@ -331,7 +332,7 @@ em {
                                     <span class="grey">地域：</span>{{new_regions}}
                                 </div>
                             </div>
-                            <Button type="ghost" icon="edit" @click="editTargeting(0)">修改定向</Button>
+                            <Button type="ghost" icon="edit" @click="editTargeting()">修改定向</Button>
                         </div>
                     </div>
                 </div>
@@ -345,7 +346,7 @@ em {
         <!--创意预览-->
         <div class="Preview_bg" v-if="preview_win" @click="preview_win=false"></div>
         <div class="Preview" v-if="preview_win">
-            <img :src="preview.adcreative_elements.image_url" width="100%" />
+            <img :src="preview.preview_url" width="100%" />
             <div class="Preview_name">{{preview.adcreative_elements.title}}</div>
         </div>
     </div>
@@ -358,14 +359,11 @@ export default {
     components: {
         echartsTabel
     },
-    props: {
-        row: Object,
-        uncheck: Array
-    },
+    props:["row","uncheck"],
     data() {
         return {
             checkAllGroups: [
-                "account_name",
+                // "account_name",
                 "adgroup_name",
                 "campaign_id",
                 "impression",
@@ -415,9 +413,9 @@ export default {
                                 corporate_name: ""
                             },
                             image: "",
-                            image_url: "",
                             title: ""
                         },
+                        preview_url:"",
                         adcreative_id: "",
                         adcreative_name: "",
                         configured_status: "",
@@ -484,12 +482,25 @@ export default {
                 console.log("获取详情失败" + err);
             });
         },
-        //编辑
+
+        //编辑创意
+        editCreativity() {
+            this.$router.push({
+                name: "gdtcreative",
+                query: {
+                    account_id: this.adgroup_detail.account_id,
+                    adgroup_id: this.adgroup_detail.adgroup_id,
+                    campaign_id: this.adgroup_detail.campaign_id,
+                    product_refs_id: this.adgroup_detail.product_refs_id,
+                    product_type: this.adgroup_detail.product_type,
+                    adcreative_template_id: this.adgroup_detail.adcreative_template_id,
+                    site_set: this.adgroup_detail.site_set.join(","),
+                    destination_url: this.adgroup_detail.destination_url,
+                }
+            });
+        },
+        //编辑定向
         editTargeting(e) {
-            this.detailswin = false;
-
-            // this.$store.commit("save_adgroup_detail", this.adgroup_detail);
-
             this.$router.push({
                 name: "gdtad",
                 query: {
@@ -499,8 +510,7 @@ export default {
                     product_refs_id: this.adgroup_detail.product_refs_id,
                     product_type: this.adgroup_detail.product_type,
                     adgroup_id: this.adgroup_detail.adgroup_id,
-                    campaign_type: this.adgroup_detail.campaign_type,
-                    adcreative_id: this.adgroup_detail.adcreative_id
+                    campaign_type: this.adgroup_detail.campaign_type
                 }
             });
         },
@@ -610,6 +620,6 @@ export default {
             let time = this.adgroup_detail.time_series;
             return changetime(time);
         }
-    }
+    },
 };
 </script>

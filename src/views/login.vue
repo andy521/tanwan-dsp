@@ -24,10 +24,10 @@
 						<FormItem>
 							<Button @click="handleSubmit" :loading="loading" type="primary" long>登录</Button>
 						</FormItem>
-						<!-- <FormItem class="login-tip">
-                            <Checkbox v-model="form.check">记住登录状态</Checkbox>
-                            <a href="javascript:void(0)" class="zf">找回密码</a>
-                        </FormItem> -->
+						<FormItem class="login-tip">
+                            <Checkbox v-model="form.check">记住密码</Checkbox>
+                            <!-- <a href="javascript:void(0)" class="zf">找回密码</a> -->
+                        </FormItem>
 					</Form>
 
 				</div>
@@ -45,17 +45,18 @@
                 loading:false,
 				passwordType: true,
 				form: {
-					userName: '',
-					password: '',
+					userName: Util.getItem('uName'),
+					password: Util.getItem('uPass'),
 					check: true
 				}
 			};
-		},
+        },
 		methods: {			
 			handleSubmit() {
 				this.$refs.loginForm.validate((valid) => {
 					if (valid) {                         
                         let userinfo = { 'user' : this.form.userName, 'password' : this.form.password, 'remember' : this.form.check};
+
                         this.loading = true;
                         Axios.post('api.php',{
                             'uName' : userinfo.user,
@@ -67,7 +68,7 @@
                             if (res.ret == 1) {
                                 let access = res.data.data.access,
                                     page = res.data.data.lastPage,
-									accessItem = ['setid_systemstatussetid']; //'setid_menu'
+									accessItem = []; //'setid_menu'
                                 access.forEach( (item,index) => {
                                     let path = item.path.split('/'),
                                         len = path.length-1;
@@ -76,7 +77,16 @@
                                             accessItem.push(path[i])
                                         }
                                     }
-								});
+                                });
+                                 //记住密码
+                                if(this.form.check){
+                                    Util.setItem('uName', userinfo.user); 
+                                    Util.setItem('uPass', userinfo.password); 
+                                }else{
+                                    Util.removeItem('uName');
+                                    Util.removeItem('uPass');
+                                }
+
                                 Util.setItem('access', accessItem); 
                                 Util.setItem('user', this.form.userName);
                                 Util.setItem('sessionid',res.data.sessionid);                                

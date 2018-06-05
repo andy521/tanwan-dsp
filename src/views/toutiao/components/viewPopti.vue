@@ -1,29 +1,29 @@
 <style scoped>
 .bottom_line {
-    border-bottom: 1px solid rgb(233, 233, 233);
-    padding-bottom: 10px;
+  border-bottom: 1px solid rgb(233, 233, 233);
+  padding-bottom: 10px;
 }
 
 .poptipdiv {
-    white-space: normal;
-    text-align: left;
-    padding: 20px;
+  white-space: normal;
+  text-align: left;
+  padding: 20px;
 }
 
 .checklist {
-    padding-bottom: 5px;
-    padding-top: 20px;
+  padding-bottom: 5px;
+  padding-top: 20px;
 }
 
 .Poptiptap .ivu-poptip-body-content {
-    overflow: inherit;
+  overflow: inherit;
 }
 </style>
 
 <template>
     <div style="display: inline-block;">
         <Poptip ref="poptip" placement="bottom-start" width="500" class="Poptiptap" trigger="hover">
-            <Button type="primary" @click="handleShow">自定义指标</Button>
+            <Button type="ghost" icon="ios-navigate-outline" @click="handleShow">自定义指标</Button>
             <div slot="content" class="poptipdiv">
                 <div class="bottom_line">
                     <Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>
@@ -124,7 +124,7 @@ export default {
             taction: this.action,
             topt: this.opt
         })
-            .then(res => {              
+            .then(res => {
                 if (res.ret == 1) {
                     let check = res.data.split(",");
                     if (check.length == 0) {
@@ -233,5 +233,4 @@ export default {
 </script>
 
 <style>
-
 </style>

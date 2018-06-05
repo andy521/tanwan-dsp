@@ -1,64 +1,63 @@
 <style scoped>
-.tip-txt{
-    width: 100%;
-    color: #777;
-    font-size: 12px;
+.tip-txt {
+  width: 100%;
+  color: #777;
+  font-size: 12px;
 }
-.tip-txt p{
-    display: inline-block;
-    text-indent: 60px;
+.tip-txt p {
+  display: inline-block;
+  text-indent: 60px;
 }
-.tip-txt p:first-of-type{
-    text-indent: 0;
+.tip-txt p:first-of-type {
+  text-indent: 0;
 }
 </style>
 <template>
-<div>
+    <div>
 
-    <Card shadow>
-        <Row>
-            <Col span="14">
+        <Card dis-hover>
+            <Row>
+                <Col span="14">
                 <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd" :value="DateDomain" @on-change="changeDate"></DatePicker>
                 <Input v-model="keyword" style="display:inline-block;width:150px;margin-left:10px;" placeholder="请输入帐户名" clearable @on-enter="getfund()"></Input>
                 <Button type="primary" icon="search" @click="getfund()">搜索</Button>
-            </Col>
-        </Row>
+                </Col>
+            </Row>
 
-        <Table @on-selection-change="handleSelectionChange" :columns="fundcolumns" :data="fundsData" :loading="loading" :size="tableSize" class="margin-top-10" :row-class-name="rowClassName" @on-sort-change="sortchange"></Table>
+            <Table @on-selection-change="handleSelectionChange" :columns="fundcolumns" :data="fundsData" :loading="loading" :size="tableSize" class="margin-top-10" :row-class-name="rowClassName" @on-sort-change="sortchange"></Table>
 
-        <Row class="margin-top-10">
-            <Col span="10"> 表格尺寸
-            <Radio-group v-model="tableSize" type="button">
-                <Radio label="large">大</Radio>
-                <Radio label="default">中</Radio>
-                <Radio label="small">小</Radio>
-            </Radio-group>
-            每页显示
-            <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getfund()">
-                <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
-            </Select>
-            </Col>
-            <Col span="14" style="text-align: right;">
-            <Page :total="total_number" :page-size="page_size" ref="fundspage" @on-change="getfund" show-elevator show-total></Page>
-            </Col>
-        </Row>
-    </Card>
+            <Row class="margin-top-10">
+                <Col span="10"> 表格尺寸
+                <Radio-group v-model="tableSize" type="button">
+                    <Radio label="large">大</Radio>
+                    <Radio label="default">中</Radio>
+                    <Radio label="small">小</Radio>
+                </Radio-group>
+                每页显示
+                <Select v-model="page_size" style="width:80px" placement="top" transfer @on-change="getfund()">
+                    <Option v-for="item in 500" :value="item" :key="item" v-if="item%50==0">{{ item }}</Option>
+                </Select>
+                </Col>
+                <Col span="14" style="text-align: right;">
+                <Page :total="total_number" :page-size="page_size" ref="fundspage" @on-change="getfund" show-elevator show-total></Page>
+                </Col>
+            </Row>
+        </Card>
 
-    <Card>
-        <div class="tip-txt margin-top-10">
-            <p>数据说明：1.总支出：所有广告计划的消耗</p>
-            <p>2.总存入：包括充值、赠款、返点</p>
-            <p>3.总转入：广告主与代理商之间的转账收入</p>
-            <p>4.总转出：广告主与代理商之间的转账支出</p>
-            <p>5.日终结余：当日账户总余额，包括冻结款</p>
-        </div>
-        
-    </Card>
-</div>
+        <Card dis-hover>
+            <div class="tip-txt margin-top-10">
+                <p>数据说明：1.总支出：所有广告计划的消耗</p>
+                <p>2.总存入：包括充值、赠款、返点</p>
+                <p>3.总转入：广告主与代理商之间的转账收入</p>
+                <p>4.总转出：广告主与代理商之间的转账支出</p>
+                <p>5.日终结余：当日账户总余额，包括冻结款</p>
+            </div>
+        </Card>
+    </div>
 </template>
 <script>
 import Axios from "@/api/index";
-import {DateShortcuts, formatDate, changetime, deepClone} from "@/utils/DateShortcuts.js";
+import { DateShortcuts, formatDate, changetime, deepClone } from "@/utils/DateShortcuts.js";
 export default {
     data() {
         return {
@@ -140,7 +139,7 @@ export default {
                 }
             ],
             fundsData: [],
-            keyword:'', //模糊搜索关键词(账户id,账户名称)
+            keyword: '', //模糊搜索关键词(账户id,账户名称)
             tableSize: "small",
             page: 1, //第N页
             page_size: 50, //每页数量
@@ -154,15 +153,15 @@ export default {
     mounted() {
         this.getfund();
     },
-    methods: {        
+    methods: {
         // 选择的所有数据
         handleSelectionChange(rows) {
             const ids = [];
             rows.forEach(item => {
                 ids.push(item.id);
             });
-            this.taCheckids = ids;            
-        },        
+            this.taCheckids = ids;
+        },
         //获取转帐列表
         getfund(page) {
             if (page === undefined) {
@@ -175,19 +174,23 @@ export default {
             Axios.post("api.php", {
                 action: "ttAdPut",
                 opt: "getAccountFund",
-                keyword:this.keyword,
-                page_size:this.page_size,
-                page:this.page,
+                keyword: this.keyword,
+                page_size: this.page_size,
+                page: this.page,
                 startDate: this.DateDomain[0], //开始时间
                 endDate: this.DateDomain[1], //结速时间
                 orderField: this.orderField,
                 orderDirection: this.orderDirection //排序的方向值SORT_ASC顺序 SORT_DESC倒序
             }).then(res => {
                 this.loading = false;
-                if (res.ret == 1) {                    
+                if (res.ret == 1) {
                     let data = res.data;
-                    data.curr_page_total._disabled = true;
-                    data.list.push(data.curr_page_total); 
+                    //添加统计
+                    if (res.data.list.length > 1) {
+                        data.curr_page_total._disabled = true;
+                        res.data.list.unshift(res.data.curr_page_total);
+                        data.list.push(data.curr_page_total);
+                    }
                     this.fundsData = data.list;
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;
