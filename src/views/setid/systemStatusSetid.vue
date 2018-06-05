@@ -25,7 +25,7 @@
                         <Row type="flex" justify="space-between" align="middle">
                             <Col>全部账号</Col>
                             <Col>
-                                <Input @on-enter="handleSearchAllGrantList()" v-model="allGrantSearchVal" placeholder="请输入关键词" class="width-tab"></Input>
+                                <Input @on-change="handleSearchAllGrantList()" @on-enter="handleSearchAllGrantList()" v-model="allGrantSearchVal" placeholder="请输入关键词" class="width-tab"></Input>
                                 <Button @click="handleSearchAllGrantList()" icon="ios-search-strong">搜索</Button>
                             </Col>
                         </Row>
@@ -40,7 +40,7 @@
                         <Row type="flex" justify="space-between" align="middle">
                             <Col>所选管理员已有全部账号</Col>
                             <Col>
-                                <Input @on-enter="handleSearchUserGrantList()" v-model="userGrantSearchVal" placeholder="请输入关键词" class="width-tab"></Input>
+                                <Input  @on-change="handleSearchUserGrantList()" @on-enter="handleSearchUserGrantList()" v-model="userGrantSearchVal" placeholder="请输入关键词" class="width-tab"></Input>
                                 <Button @click="handleSearchUserGrantList()" icon="ios-search-strong">搜索</Button>
                             </Col>
                         </Row>
@@ -90,7 +90,7 @@ export default {
                     title: '媒体类型'
                 },
                 {
-                    key: 'accountId',
+                    key: 'accountName',
                     title: '账号名'
                 }
             ],
@@ -116,13 +116,13 @@ export default {
             if (searchVal === '') {
                 return
             }
-            const searchVal = this.userGrantSearchVal
+            const searchVal = String.trim(this.userGrantSearchVal)
             const userGrantAcList = this.userGrantAcList
             const ret = []
             if (userGrantAcList.length !== 0) {
                 const reg = new RegExp(searchVal, 'gmi')
                 userGrantAcList.forEach(item => {
-                    if (reg.test(item.inChargeName) || reg.test(item.mediaTypeName) || reg.test(item.accountId)) {
+                    if (reg.test(item.inChargeName) || reg.test(item.mediaTypeName) || reg.test(item.accountName)) {
                         ret.push(item)
                     }
                 })
@@ -134,13 +134,13 @@ export default {
             if (searchVal === '') {
                 return
             }
-            const searchVal = this.allGrantSearchVal
+            const searchVal = String.trim(this.allGrantSearchVal)
             const allGrantAcList = this.allGrantAcList
             const ret = []
             if (allGrantAcList.length !== 0) {
                 const reg = new RegExp(searchVal, 'gmi')
                 allGrantAcList.forEach(item => {
-                    if (reg.test(item.inChargeName) || reg.test(item.mediaTypeName) || reg.test(item.accountId)) {
+                    if (reg.test(item.inChargeName) || reg.test(item.mediaTypeName) || reg.test(item.accountName)) {
                         ret.push(item)
                     }
                 })
@@ -151,55 +151,55 @@ export default {
         handleAddUser() {
             this.userGrantAcList = this.allGrantAcSelectedList.length === 0 ? this.userGrantAcList : this.allGrantAcSelectedList
             this.userGrantAcListCopy = this.userGrantAcList.slice()
+
+            this._normalizeGrantAcSelected(this.allGrantAcList, this.userGrantAcList)
         },
         // 获取添加的userGrantAcList
         getAllGrantSelect(selectedList) {
-            const userGrantAcList = this.userGrantAcList.slice()
-            selectedList.forEach(selected => {
-                userGrantAcList.forEach(user => {
-                    if (user._checked && selected.accountId == user.accountId) {
-                        selected._checked = true
-                    } else {
-                        selected._checked = false
-                    }
+            const userGrantAcListCopy = this.userGrantAcList
+            if (userGrantAcListCopy.length !== 0) {
+                userGrantAcListCopy.forEach(user => {
+                    selectedList.forEach((selected, i) => {
+                        if (user.sysUserId == selected.sysUserId && user.accountId == selected.accountId && user.mediaType == selected.mediaType) {
+                            selectedList.splice(i, 1)
+                        }
+                    })
                 })
-            })
-            this.allGrantAcSelectedList = selectedList
+            }
+
+            this.allGrantAcSelectedList = selectedList.concat(userGrantAcListCopy)
         },
         // 加载移除userGrantAcList后的数据
         handleRemoveUser() {
-            this.userGrantAcList = this.userGrantAcSelectedList.length === 0 ? this.userGrantAcList : this.userGrantAcSelectedList
+            this.userGrantAcList = this.deleteAccountId.length === 0 ? this.userGrantAcList : this.userGrantAcSelectedList
             this.userGrantAcListCopy = this.userGrantAcList.slice()
 
             const deleteAccountId = this.deleteAccountId
-            deleteAccountId.forEach(id => {
+            deleteAccountId.forEach(deleted => {
                 this.allGrantAcList.forEach(all => {
-                    if (all.accountId == id) {
+                    if (all.sysUserId === deleted.sysUserId && all.mediaType === deleted.mediaType && all.accountId == deleted.accountId) {
                         all._checked = false
                     }
                 })
-            })   
+            })
         },
         // 获取移除后的userGrantAcList
         removeUserGrantSelect(selectedList) {
-            const userGrantAcList = this.userGrantAcList
-            const ret = userGrantAcList.slice()
-            const deleteAccountId = []
+            const ret = this.userGrantAcList.slice()
             selectedList.forEach(selected => {
                 ret.forEach((user, i) => {
-                    if (selected.accountId == user.accountId) {
+                    if (selected.sysUserId === user.sysUserId && selected.mediaType === user.mediaType && selected.accountId === user.accountId) {
                         ret.splice(i, 1)
-                        deleteAccountId.push(user.accountId)
                     }
                 })
             })
             this.userGrantAcSelectedList = ret
-            this.deleteAccountId = deleteAccountId         
+            this.deleteAccountId = selectedList         
         },
         //表格高亮calss
         rowClassName(row, index) {
             if (row._disabled) {
-                return "table-statistics";
+                return 'table-statistics'
             }
         },
         // 管理员切换
@@ -214,46 +214,9 @@ export default {
             }
             this.userAcGrantInfo()
         },
-        // getAccountGrantParams(allGrantAcListOrigin, userGrantAcListOrigin) {
-        //     const userGrantAcListOriginCopy = this.getGrantAcLenInfo(deepClone(userGrantAcListOrigin))
-
-        //     if (allGrantAcListOrigin.length === userGrantAcListOrigin.length) {
-        //         userGrantAcListOrigin = 'all'
-        //         return
-        //     }
-        //     console.log(allGrantAcListOrigin.length, userGrantAcListOrigin.length)
-        //     for(let sysUserId of Object.keys(userGrantAcListOrigin)) {
-        //         let sysUserIdItem = userGrantAcListOrigin[sysUserId]
-        //         let mediaList= sysUserIdItem.list
-            
-        //         if (allGrantAcListOrigin[sysUserId].length === sysUserIdItem.length) {
-        //             // sysUserIdItem
-        //         }
-
-        //         // userGrantAcListOrigin.length = ++sysIdLen
-        //         // if (mediaList) {
-        //             //     for(let mediaType of Object.keys(mediaList)) {
-        //                 //         let mediaTypeItem = mediaList[mediaType]
-        //         //         mediaList.length = ++mediaTypeLen
-        //         //         let accountList = mediaTypeItem.list
-        //         //         if (accountList.length !== 0) {
-        //             //             accountList.forEach(accountId => {
-        //                 //                 ++accountIdLen
-        //         //             })
-        //         //             accountList.length = accountIdLen
-        //         //             accountIdLen = 0
-        //         //         }
-        //         //     }
-        //         //     mediaTypeLen = 0
-        //         // }
-        //     }
-        //     console.log('=========', allGrantAcListOrigin, userGrantAcListOrigin)
-        // },
         submitUserAcGrant() {
             const userGrantAcList = this._normalizeAccountGrant(this.userGrantAcList)
-            // const accountGrantParams = this.getAccountGrantParams(this.allGrantAcListOrigin, userGrantAcList)
             this.userAcGrant(userGrantAcList)
-
         },
         // 获取系统账户的媒体账户权限信息
         userAcGrantInfo() {
@@ -265,17 +228,23 @@ export default {
                 sysUserId: this.currUId
             }).then(res => {
                 if (res.ret == 1) {
-                    this.allGrantAcList = res.data.allGrantAcList ? this._normalizeGrantAcList(res.data.allGrantAcList) : []
-                    this.allGrantAcListCopy = this.allGrantAcList.slice()
-                    this.userGrantAcList = res.data.userGrantAcList ? this._normalizeGrantAcList(res.data.userGrantAcList) : []
+                    // 初始化负责人拥有账号
+                    this.userGrantAcList = res.data.userGrantAcList ? this._normalizeUserGrantAcList(res.data.userGrantAcList) : []
                     this.userGrantAcListCopy = this.userGrantAcList.slice()
+                    
+                    // 初始化所有负责人账号
+                    this.allGrantAcList = res.data.allGrantAcList ? this._normalizeGrantAcList(res.data.allGrantAcList).reverse() : []
                     this._normalizeGrantAcSelected(this.allGrantAcList, this.userGrantAcList)
+                    this.allGrantAcListCopy = this.allGrantAcList.slice()
+                    
                     this.$Message.info('加载账户权限信息成功')
+                    
                     this.loading = false
-                    this.allGrantAcListOrigin = this.getGrantAcLenInfo(res.data.allGrantAcList)
+                    // this.allGrantAcListOrigin = this.getGrantAcLenInfo(res.data.allGrantAcList)
                 }
             }).catch(
                 err => {
+                    this.loading = false
                     console.log('获取系统账户的媒体账户权限信息' + err)
                 }
             )        
@@ -284,6 +253,12 @@ export default {
         userAcGrant(accountGrantParams) {
             if (typeof accountGrantParams === 'undefined') {
                 accountGrantParams = ''
+            } 
+            else if(accountGrantParams === 'all') {
+                accountGrantParams = accountGrantParams + ''
+            } 
+            else {
+                accountGrantParams = JSON.stringify(accountGrantParams)
             }
             this.isSubmiting = true
             Axios.post('api.php', {
@@ -291,12 +266,14 @@ export default {
                 opt: 'userAcGrant',
                 type: this.typeParam,
                 sysUserId: this.currUId,
-                accountGrant: JSON.stringify(accountGrantParams)
+                accountGrant: accountGrantParams
             }).then(res => {
                 if (res.ret == 1) {
                     const tip = this.typeConfig[this.typeParam]
                     this.$Message.info(`${tip}修改成功`)
                     this.isSubmiting = false
+
+                    this.userAcGrantInfo()
                 }
             }).catch(
                 err => {
@@ -331,10 +308,10 @@ export default {
                         let mediaTypeItem = mediaList[mediaType]
                         mediaList.length = ++mediaTypeLen
                         let accountList = mediaTypeItem.list
-                        if (accountList.length !== 0) {
-                            accountList.forEach(accountId => {
+                        if (accountList) {
+                            for(let accountName of Object.keys(accountList)) {
                                 ++accountIdLen
-                            })
+                            }
                             accountList.length = accountIdLen
                             accountIdLen = 0
                         }
@@ -342,13 +319,15 @@ export default {
                     mediaTypeLen = 0
                 }
             }
-            return obj        
+            console.log(obj)
+            return obj       
         },
         // 初始化accoutGrant
         _normalizeAccountGrant(userGrantAcList) {
             if (userGrantAcList.length === 0) {
                 return
             }
+            console.log('user', userGrantAcList)
             const accountGrant = {}
             userGrantAcList.forEach(item => {
                 accountGrant[item.sysUserId] = {}
@@ -359,49 +338,178 @@ export default {
             userGrantAcList.forEach(item => {
                 accountGrant[item.sysUserId][item.mediaType].push(item.accountId)        
             })
-            // console.log(accountGrant)
+            console.log('before', accountGrant)
+            for(let sysId of Object.keys(accountGrant)) {
+                if (sysId == 'all') {
+                    return 'all'
+                }
+                let sysIdItem = accountGrant[sysId]
+                if (sysIdItem) {
+                    for(let mediaType of Object.keys(sysIdItem)) {
+                        if (mediaType == 'all') {
+                            accountGrant[sysId] = 'all'
+                        }
+                        let mediaTypeItem = sysIdItem[mediaType]
+                        if (mediaType != 'all' && mediaTypeItem.length !== 0) {
+                            mediaTypeItem.forEach(item => {
+                                if (item == 'all') {
+                                    sysIdItem[mediaType] = 'all'
+                                }
+                            })
+                        }  
+                    }
+                }
+            }
+            console.log('after', accountGrant)
             return accountGrant
         },
         // 初始化allGrantAcList被选项
         _normalizeGrantAcSelected(allList, userList) {
+            if (userList.length === 0) {
+                return
+            }
             userList.forEach(user => {
                 allList.forEach(all => {
-                    if (user.accountId == all.accountId) {
+                    if (user.sysUserId == all.sysUserId && user.accountId == all.accountId && user.mediaType == all.mediaType) {
                         all._checked = true
                     }
                 })
             })
         },
+
+        // 初始化负责人权限数据表
+        _normalizeUserGrantAcList(obj) {
+            if (JSON.stringify(obj) === '{}') {
+                return []
+            }
+            console.log(obj)
+            const ret = []
+            if (obj === 'all') {
+                ret.push({
+                    sysUserId: 'all',
+                    inChargeName: '全部负责人',
+                    mediaType: '',
+                    mediaTypeName: '',
+                    accountId: '',
+                    accountName: '',
+                    _checked: false,
+                })
+                return ret
+            }
+            for(let sysUserId of Object.keys(obj)) {
+                let sysUserIdItem = obj[sysUserId]
+                let inChargeName = sysUserIdItem.inChargeName
+                let mediaList= sysUserIdItem.list
+                
+                if (mediaList) {
+                    if (mediaList === 'all') {
+                        ret.push({
+                            sysUserId: sysUserId,
+                            inChargeName: inChargeName,
+                            mediaType: mediaList,
+                            mediaTypeName: '全部媒体类型',
+                            accountId: '',
+                            accountName: '',
+                            _checked: false,
+                        })
+                    } else {
+                        for(let mediaType of Object.keys(mediaList)) {
+                            let mediaTypeItem = mediaList[mediaType]
+                            let mediaTypeName = mediaTypeItem.mediaTypeName
+                            let accountList = mediaTypeItem.list
+                            if (accountList) {
+                                if (accountList === 'all') {
+                                    ret.push({
+                                        sysUserId: sysUserId,
+                                        inChargeName: inChargeName,
+                                        mediaType: mediaType,
+                                        mediaTypeName: mediaTypeName,
+                                        accountId: 'all',
+                                        accountName: '全部媒体账户',
+                                        _checked: false,
+                                    })
+                                } else {
+                                    for(let accountId of Object.keys(accountList)) {
+                                        let accountItem = accountList[accountId]
+                                        let accountName = accountList[accountId]
+                                        console.log(accountList)
+                                        ret.push({
+                                            sysUserId: sysUserId,
+                                            inChargeName: inChargeName,
+                                            mediaType: mediaType,
+                                            mediaTypeName: mediaTypeName,
+                                            accountId: accountId,
+                                            accountName: accountName,
+                                            _checked: false,
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            console.log('user', ret)
+            return ret
+        },
         // 初始化权限数据表
         _normalizeGrantAcList(obj) {
             if (JSON.stringify(obj) === '{}') {
-                return
+                return []
             }
+            const TYPE_ALL = 'all'
             const ret = []
             for(let sysUserId of Object.keys(obj)) {
                 let sysUserIdItem = obj[sysUserId]
                 let inChargeName = sysUserIdItem.inChargeName
                 let mediaList= sysUserIdItem.list
-                if (mediaList) {
-                    for(let mediaType of Object.keys(mediaList)) {
-                        let mediaTypeItem = mediaList[mediaType]
-                        let mediaTypeName = mediaTypeItem.mediaTypeName
-                        let accountList = mediaTypeItem.list
-                        if (accountList.length !== 0) {
-                            accountList.forEach(accountId => {
+                if (sysUserId === TYPE_ALL) {
+                    ret.push({
+                        sysUserId: sysUserId,
+                        inChargeName: sysUserIdItem,
+                        mediaType: '',
+                        mediaTypeName: '',
+                        accountId: '',
+                        accountName: '',
+                        _checked: false,
+                    })
+                } else {
+                    if (mediaList) {
+                        for(let mediaType of Object.keys(mediaList)) {
+                            let mediaTypeItem = mediaList[mediaType]
+                            let mediaTypeName = mediaTypeItem.mediaTypeName
+                            let accountList = mediaTypeItem.list
+                            if (mediaType === TYPE_ALL) {
                                 ret.push({
                                     sysUserId: sysUserId,
                                     inChargeName: inChargeName,
                                     mediaType: mediaType,
-                                    mediaTypeName: mediaTypeName,
-                                    accountId: accountId,
+                                    mediaTypeName: mediaTypeItem,
+                                    accountId: '',
+                                    accountName: '',
                                     _checked: false,
                                 })
-                            })
+                            } else {
+                                if (accountList) {
+                                    for(let accountId of Object.keys(accountList)) {
+                                        let accountName = accountList[accountId]
+                                        ret.push({
+                                            sysUserId: sysUserId,
+                                            inChargeName: inChargeName,
+                                            mediaType: mediaType,
+                                            mediaTypeName: mediaTypeName,
+                                            accountId: accountId,
+                                            accountName: accountName,
+                                            _checked: false,
+                                        })
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
+            console.log('all', ret)
             return ret
         }
     }
