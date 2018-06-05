@@ -55,8 +55,11 @@
   font-size: 18px;
   margin-left: 20px;
 }
-.ivu-tooltip-inner {
+.time .ivu-tooltip-inner {
   white-space: normal;
+}
+.time .ivu-table-cell-with-expand {
+  display: none;
 }
 </style>
 
@@ -124,24 +127,6 @@
                             <div class="tipbtn margin-top-10">
                                 <Button type="text" size="small" @click="visible=false">取消</Button>
                                 <Button type="primary" size="small" @click="AmendCampaignsList(1)">确定</Button>
-                            </div>
-                        </div>
-                    </Poptip>
-                    <Poptip v-model="visible1" placement="bottom-end">
-                        <Button type="ghost">修改日期</Button>
-                        <div class="api" slot="content">
-                            <div class="tipbtn margin-top-10">
-                                <Checkbox v-model="startdate">长期投放（仅设置开始时间）</Checkbox>
-                            </div>
-                            <div class="tipbtn margin-top-10" v-if="startdate">
-                                <DatePicker type="date" :options="options1" placement="bottom-end" placeholder="请选择日期" format="yyyy/MM/dd" :value="date1"></DatePicker>
-                            </div>
-                            <div class="tipbtn margin-top-10" v-if="!startdate">
-                                <DatePicker type="daterange" :options="options1" placement="bottom-end" placeholder="请选择日期" format="yyyy/MM/dd" :value="date2"></DatePicker>
-                            </div>
-                            <div class="tipbtn margin-top-10">
-                                <Button type="text" size="small" @click="visible1 = false">取消</Button>
-                                <Button type="primary" size="small" @click="DateChanged">确定</Button>
                             </div>
                         </div>
                     </Poptip>
@@ -227,18 +212,6 @@ export default {
             indeterminate: true,
             uncheck: [], //没选中的
             visible: false,
-            visible1: false,
-            startdate: true,
-            options1: {
-                disabledDate(date) {
-                    return date && date.valueOf() < Date.now() - 86400000;
-                }
-            },
-            date1: formatDate(new Date(), "yyyy-MM-dd"),
-            date2: [
-                formatDate(new Date(), "yyyy-MM-dd"),
-                formatDate(new Date(), "yyyy-MM-dd")
-            ],
             DateDomain: [
                 formatDate(new Date(), "yyyy-MM-dd"),
                 formatDate(new Date(), "yyyy-MM-dd")
@@ -262,9 +235,9 @@ export default {
             tableColumns: [
                 {
                     type: "expand",
-                    width: 30,
-                    //fixed: "left",
+                    width: 0,
                     render: (h, params) => {
+                        console.log(params.row.adgroup_id)
                         return h(creativity, {
                             props: {
                                 row: params.row,
@@ -305,9 +278,7 @@ export default {
                                         click: () => {
                                             let arr = deepClone(this.adList);
                                             arr.forEach((v, i) => {
-                                                if (
-                                                    v.adgroup_id == params.row.adgroup_id
-                                                ) {
+                                                if (v.adgroup_id == params.row.adgroup_id) {
                                                     if (v._expanded) {
                                                         v._expanded = false;
                                                     } else {
@@ -652,7 +623,7 @@ export default {
                                                 do: "edits",
                                                 type: 1,
                                                 ids: params.row.id.split(","),
-                                                account_ids: params.row.account_id.split(","), //*必传*
+                                                account_id: params.row.account_id, //*必传*
                                                 configured_status: params.row.configured_status //AD_STATUS_NORMAL有效AD_STATUS_SUSPEND暂停
                                             }).then(res => {
                                                 if (res.ret == 1) {
@@ -795,7 +766,7 @@ export default {
                                                         opt: "adgroups_add",
                                                         do: "edits",
                                                         ids: params.row.id.split(","), //必传[13,12,12]
-                                                        account_ids: params.row.account_id.split(","),
+                                                        account_id: params.row.account_id,
                                                         type: 3, //1 修改状态  3 删除 type   
                                                     }).then(res => {
                                                         if (res.ret == 1) {
@@ -971,40 +942,6 @@ export default {
                 }
             }).catch(err => {
                 console.log("批量修改删除投放计划" + err);
-            });
-        },
-        //批量修改目期
-        DateChanged() {
-            this.visible = false;
-            if (this.taCheckids.length == 0) {
-                this.$Message.info("请勾选需要修改的数据");
-                return;
-            }
-            let begin_date = "";
-            let end_date = "";
-            //判断是否长期投放
-            if (this.startdate) {
-                begin_date = this.date1;
-            } else {
-                begin_date = this.date2[0];
-                end_date = this.date2[1];
-            }
-            Axios.post("api.php", {
-                action: "gdtAdPut",
-                opt: "adgroups_add",
-                do: "edits",
-                ids: this.taCheckids, //必传[13,12,12]
-                account_ids: this.account_ids,
-                type: 2, //1 修改状态  3 删除 type
-                begin_date: begin_date, //开始投放日期
-                end_date: end_date //结束投放日期
-            }).then(res => {
-                if (res.ret == 1) {
-                    this.$Message.info(res.msg);
-                    this.getCampaignsList();
-                }
-            }).catch(err => {
-                console.log("批量修改日期" + err);
             });
         },
         //获取选中的id

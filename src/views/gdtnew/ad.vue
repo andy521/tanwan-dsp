@@ -206,7 +206,6 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     this.adgroup_detail = res.data;
-                    console.log(res.data)
                     this.fill_adgroup_detail(res.data);
                 }
             }).catch(err => {
@@ -422,7 +421,8 @@ export default {
                             adcreative_template_id: this.adcreative_template_id,
                             destination_url: this.destination_url,
                             product_refs_id:this.product_refs_id,
-                            campaign_id:this.campaign_id
+                            campaign_id:this.campaign_id,
+                            adgroup_id:res.data.adgroup_id
                         }
                     })
                 }

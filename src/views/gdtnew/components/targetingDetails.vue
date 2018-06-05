@@ -1106,7 +1106,7 @@ export default {
         //选择定向
         changeTargeting(item) {
             this.targeting_name = item.targeting_name;
-            this.targeting_id = item.targeting_id;
+            //this.targeting_id = item.targeting_id;
             this.$emit("on-change", item.targeting_id);
             //地域       
             if (item.targeting.geo_location) {

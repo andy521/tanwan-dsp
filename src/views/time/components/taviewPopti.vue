@@ -23,7 +23,7 @@
 <template>
     <div style="display: inline-block;">
         <Poptip placement="bottom-start" width="500" class="Poptiptap" trigger="hover">
-            <Button type="primary">自定义指标</Button>
+            <Button  type="ghost" icon="ios-navigate-outline">自定义指标</Button>
             <div slot="content" class="poptipdiv">
                 <div class="bottom_line">
                     <Checkbox :indeterminate="indeterminate" :value="checkAll" @click.prevent.native="handleCheckAll">全选</Checkbox>

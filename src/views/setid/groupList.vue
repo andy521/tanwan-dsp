@@ -63,8 +63,11 @@
                 <Form-item label="权限组描述：" prop="groupDetail">
                     <Input v-model="editGroupInfo.groupDetail" placeholder="请输入"></Input>
                 </Form-item>
-                <Form-item label="包含管理权限组：" prop="groupContain">
+                <Form-item label="越级管理：" prop="groupContain">
                     <Input v-model="editGroupInfo.groupContain" placeholder="填写权限组ID，多个用半角逗号隔开"></Input>
+                </Form-item>
+                <Form-item label="媒体管理：" prop="groupMediaManage">
+                    <Input v-model="editGroupInfo.groupMediaManage" placeholder="填写媒体类型ID，多个用半角逗号隔开"></Input>
                 </Form-item>
             </Form>
         </Modal>
@@ -103,12 +106,16 @@
                         key: 'groupName'
                     },
                     {
-                        title: '包含管理权限组',
+                        title: '权限组描述',
+                        key: 'groupDetail'
+                    },
+                    {
+                        title: '越级管理',
                         key: 'groupContain'
                     },
                     {
-                        title: '权限组描述',
-                        key: 'groupDetail'
+                        title: '媒体管理',
+                        key: 'groupMediaManage'
                     },
                     {
                         title: '操作',
@@ -202,7 +209,8 @@
                     groupID: '',
                     groupName: '',
                     groupDetail: '',
-                    groupContain: ''
+                    groupContain: '',
+                    groupMediaManage: ''
                 },
                 editGroupRule: {
                     groupName: [
@@ -235,6 +243,7 @@
                 this.editGroupInfo.groupName = '';
                 this.editGroupInfo.groupDetail = '';
                 this.editGroupInfo.groupContain = '';
+                this.editGroupInfo.groupMediaManage = '';
             },
             //提交编辑权限组
             editGroup () {
@@ -246,7 +255,8 @@
                                 pmid: this.editGroupInfo.groupID,
                                 name: this.editGroupInfo.groupName,
                                 memo: this.editGroupInfo.groupDetail,
-                                extgid: this.editGroupInfo.groupContain
+                                extgid: this.editGroupInfo.groupContain,
+                                media: this.editGroupInfo.groupMediaManage,
                             }).then(
                                 res => {
                                     if (res.ret == 1) {
@@ -266,7 +276,8 @@
                                 stage: 'add',
                                 name: this.editGroupInfo.groupName,
                                 memo: this.editGroupInfo.groupDetail,
-                                extgid: this.editGroupInfo.groupContain
+                                extgid: this.editGroupInfo.groupContain,
+                                media: this.editGroupInfo.groupMediaManage,
                             }).then(
                                 res => {
                                     if (res.ret == 1) {
@@ -300,6 +311,7 @@
                             this.editGroupInfo.groupName = res.data.pdata.name;
                             this.editGroupInfo.groupDetail = res.data.pdata.memo;
                             this.editGroupInfo.groupContain = res.data.pdata.exceed;
+                            this.editGroupInfo.groupMediaManage = res.data.pdata.mediaManage;
                             this.editGroupDialog = true;
                         } else {
                             this.$Message.error(res.msg);
@@ -349,7 +361,8 @@
                                     groupID: res.data.pmData[i].pmid,
                                     groupName: res.data.pmData[i].name,
                                     groupDetail: res.data.pmData[i].memo,
-                                    groupContain: res.data.pmData[i].extgname
+                                    groupContain: res.data.pmData[i].extgname,
+                                    groupMediaManage: res.data.pmData[i].medianame,
                                 };
                                 this.tableData.push(groupInfo);
                             }

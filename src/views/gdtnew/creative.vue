@@ -95,10 +95,10 @@
                     <li v-for="(item,index) in adcreative" v-show="index==current">
 
                         <template v-if="item.adcreative_elements.element_story">
-                            <create-image type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url" style="margin-bottom:10px;" v-for="subitem in item.adcreative_elements.element_story" :key="this"></create-image>
+                            <create-image type="image" v-model="item.adcreative_elements.element_story.image[subindex]" style="margin-bottom:10px;" v-for="(subitem,subindex) in item.adcreative_elements.element_story.image" :key="this"></create-image>
                         </template>
 
-                        <create-image v-else type="image" @on-change="imgChange" :id="adcreative_template_id" :imgsrc="item.adcreative_elements.image_url"></create-image>
+                        <create-image v-else type="image" v-model="item.adcreative_elements.image"></create-image>
 
                         <Row>
                             <Col span="16">
@@ -112,15 +112,15 @@
                             <span slot="append">{{item.adcreative_elements.title.length}}/{{element.title.amount[1]}}</span>
                             </Input>
 
-                            <template v-if="item.adcreative_elements.corporate">
+                            <!-- <template v-if="item.adcreative_elements.corporate">
                                 <Input v-model="item.adcreative_elements.corporate.corporate_name" class="margin-top-10 w500">
-                                <span slot="prepend">广告主名称</span>
-                                <span slot="append">{{item.adcreative_elements.corporate.corporate_name.length}}/30</span>
+                                <span slot="prepend">商标名称</span>
+                                <span slot="append">{{item.adcreative_elements.corporate.corporate_name.length}}/20</span>
                                 </Input>
-                                <Input v-model="item.adcreative_elements.corporate.corporate_img" class="margin-top-10 w500">
-                                <span slot="prepend">广告主图片</span>
-                                </Input>
-                            </template>
+
+                                <uploadLogo type="image" v-model="item.adcreative_elements.corporate.corporate_img" class="margin-top-10"></uploadLogo>
+
+                            </template> -->
 
                             <Input v-model="item.adcreative_elements.button_text" class="margin-top-10 w500" v-if="item.adcreative_elements.button_text">
                             <span slot="prepend">按钮文字</span>
@@ -148,13 +148,10 @@
                         </Row>
                     </li>
                 </ul>
+                <Button type="primary" size="large" @click="submit" class="margin-top-20">确定提交</Button>
             </div>
         </Card>
-        <Card dis-hover class="margin-top-10">
-            <div class="padding-20">
-                <Button type="primary" size="large" @click="submit">确定</Button>
-            </div>
-        </Card>
+
     </div>
 </template>
 <script>
@@ -162,11 +159,13 @@ import Axios from "@/api/index";
 import sideBar from "./components/sideBar.vue";
 import createImage from "./components/createImage.vue";
 import adcreative_template from "./components/adcreative_template.json";
-
+import uploadLogo from "./components/uploadLogo.vue";
+import {deepClone} from "@/utils/DateShortcuts.js";
 export default {
     components: {
         sideBar,
-        createImage
+        createImage,
+        uploadLogo
     },
     data() {
         return {
@@ -193,6 +192,7 @@ export default {
                 {
                     adcreative_name: "创意1",
                     adcreative_id: "",
+                    adcreative_template_id: this.adcreative_template_id,
                     adcreative_elements: {
                         title: "",
                         image: "",
@@ -215,12 +215,11 @@ export default {
             ],
             adcreative_elements: "",
             //当前创意索引
-            current: 0,
-            creatives: "",//创意详情
+            current: 0
         };
     },
     mounted() {
-        if (this.adcreative_id) {
+        if (this.adgroup_id) {
             this.getCreatives();
         }
         this.get_adcreative_elements();
@@ -233,8 +232,8 @@ export default {
                     this.element = e.element;
                     e.adcreative_elements.forEach(v => {
                         if (v.product_type == this.product_type) {
-                            this.adcreative[0].adcreative_elements = v.adcreative_elements;
-                            this.adcreative_elements = v.adcreative_elements;
+                            this.adcreative[0].adcreative_elements = deepClone(v.adcreative_elements);
+                            this.adcreative_elements =  deepClone(v.adcreative_elements);
                         }
                     })
                 }
@@ -246,18 +245,21 @@ export default {
                 action: "api",
                 opt: "getCreatives",
                 account_id: this.account_id,
+                adgroup_id: this.adgroup_id,
                 media_type: 1,
-                adgroup_id: this.adgroup_id
             }).then(res => {
                 if (res.ret == 1) {
                     console.log(res.data)
-                    this.creatives = res.data;
-                    this.fill_adgroup_detail(res.data);
+                    if (res.data.length>0) {
+                        this.adcreative = res.data;
+                    }
                 }
             }).catch(err => {
                 console.log("获取详情失败" + err);
             });
         },
+
+
         //当前创意
         handleChange(index) {
             this.current = index;
@@ -276,13 +278,11 @@ export default {
             let data = {
                 adcreative_name: "创意" + (parseInt(this.adcreative.length) + 1),
                 adcreative_id: "",
+                adcreative_template_id: this.adcreative_template_id,
                 adcreative_elements: this.adcreative_elements
             };
             this.adcreative.push(data);
             this.current = parseInt(this.adcreative.length) - 1;
-        },
-        imgChange(info) {
-            this.adcreative[this.current].adcreative_elements.image = info.image_id;
         },
         //提交
         submit() {
@@ -291,6 +291,7 @@ export default {
                 opt: "adcre_add",
                 account_id: this.account_id,
                 campaign_id: this.campaign_id,
+                adgroup_id: this.adgroup_id,
                 product_type: this.product_type,
                 product_refs_id: this.product_refs_id,
                 site_set: this.site_set,
@@ -313,13 +314,16 @@ export default {
                     return
                 }
             }
-            
 
-            // Axios.post("api.php", param).then(res => {
-            //     if (res.ret == 1) {
-            //         this.$Message.info(res.msg);
-            //     }
-            // }).catch(err => console.log("广告组" + err));
+
+            Axios.post("api.php", param).then(res => {
+                if (res.ret == 1) {
+                    this.$Message.info(res.msg);
+                     this.$router.push({
+                        name: 'time_ad'
+                    })
+                }
+            }).catch(err => console.log("广告组" + err));
         }
     }
 };
