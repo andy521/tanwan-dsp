@@ -186,7 +186,7 @@ em {
                                         <div class="txt">{{item.adcreative_elements.title}}</div>
                                     </div>
                                     <div class="img_operation">
-                                        <span class="w_img_operation" @click="editTargeting(1)">
+                                        <span class="w_img_operation" @click="editCreativity()">
                                             <Tooltip placement="bottom-end">
                                                 <Icon type="android-create" size="18" color="#666"></Icon>
                                                 <div slot="content">修改创意</div>
@@ -331,7 +331,7 @@ em {
                                     <span class="grey">地域：</span>{{new_regions}}
                                 </div>
                             </div>
-                            <Button type="ghost" icon="edit" @click="editTargeting(0)">修改定向</Button>
+                            <Button type="ghost" icon="edit" @click="editTargeting()">修改定向</Button>
                         </div>
                     </div>
                 </div>
@@ -484,12 +484,24 @@ export default {
                 console.log("获取详情失败" + err);
             });
         },
-        //编辑
+        //编辑创意
+        editCreativity() {
+            this.$router.push({
+                name: "gdtcreative",
+                query: {
+                    account_id: this.adgroup_detail.account_id,
+                    adgroup_id: this.adgroup_detail.adgroup_id,
+                    campaign_id: this.adgroup_detail.campaign_id,
+                    product_refs_id: this.adgroup_detail.product_refs_id,
+                    product_type: this.adgroup_detail.product_type,
+                    adcreative_template_id: this.adgroup_detail.adcreative_template_id,
+                    site_set: this.adgroup_detail.site_set.join(","),
+                    destination_url: this.adgroup_detail.destination_url,
+                }
+            });
+        },
+        //编辑定向
         editTargeting(e) {
-            this.detailswin = false;
-
-            // this.$store.commit("save_adgroup_detail", this.adgroup_detail);
-
             this.$router.push({
                 name: "gdtad",
                 query: {
@@ -499,8 +511,7 @@ export default {
                     product_refs_id: this.adgroup_detail.product_refs_id,
                     product_type: this.adgroup_detail.product_type,
                     adgroup_id: this.adgroup_detail.adgroup_id,
-                    campaign_type: this.adgroup_detail.campaign_type,
-                    adcreative_id: this.adgroup_detail.adcreative_id
+                    campaign_type: this.adgroup_detail.campaign_type
                 }
             });
         },

@@ -141,7 +141,7 @@ export default {
                 },
                 {
                     title: "当前账户余额",
-                    width: 140,
+                    width: 130,
                     key: "balance"
                 },
                 {
@@ -151,7 +151,7 @@ export default {
                 },
                 {
                     title: "充值返点比例",
-                    width: 140,
+                    width: 130,
                     key: "rebate"
                 },
                 {

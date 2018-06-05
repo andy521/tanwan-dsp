@@ -206,7 +206,6 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     this.adgroup_detail = res.data;
-                    console.log(res.data)
                     this.fill_adgroup_detail(res.data);
                 }
             }).catch(err => {

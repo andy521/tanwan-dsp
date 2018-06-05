@@ -1,8 +1,4 @@
 <style scoped>
-ul,
-li {
-  list-style: none;
-}
 .upload {
   color: #a7abb1;
   position: relative;
@@ -58,8 +54,7 @@ li {
 }
 
 .created {
-  margin: 10px 0 10px 15px;
-  overflow: hidden;
+  margin: 10px 0 0 10px;
 }
 .created li {
   height: 133px;
@@ -107,51 +102,11 @@ li {
 .created_img {
   height: 100%;
 }
-.created_img img,
-.select_img .simg img {
+.created_img img {
   object-fit: contain;
   width: 100%;
   height: 100%;
   background-color: #f5f6f8;
-}
-.model_foot {
-  border-top: 1px solid #eee;
-  padding: 10px 0 0 0;
-  margin-left: 20px;
-  height: 75px;
-}
-.model_foot .ivu-page {
-  margin-top: 20px;
-  float: right;
-}
-.select_img {
-  float: left;
-  text-align: left;
-}
-.select_img .simg {
-  width: 62px;
-  height: 46px;
-  line-height: 45px;
-  background: #888;
-  position: relative;
-}
-.select_close {
-  display: inline-block;
-  position: absolute;
-  height: 26px;
-  width: 26px;
-  top: -10px;
-  right: -7px;
-  background: red;
-  z-index: 30;
-  cursor: pointer;
-  border-radius: 50%;
-  border: 2px solid #fff;
-}
-.select_close .ivu-icon {
-  color: #fff;
-  float: left;
-  margin: 6px 0 0 6px;
 }
 
 .creative {
@@ -160,10 +115,7 @@ li {
 </style>
 <template>
     <div class="creative">
-        <Spin v-if="loading" fix>
-            <Progress :percent="percent" :stroke-width="5"></Progress>
-            <div>正在上传</div>
-        </Spin>
+
         <div class="upload_div">
             <Upload multiple type="drag" :format="accept" :show-upload-list="false" :max-size="imgSize" :action="actionUrl" :on-success="handleSuccess" :on-exceeded-size="handleMaxSize" :on-format-error="handleFormatError" :before-upload="handleBeforeUpload" :on-progress="handleProgress" :on-error="handleError" name="img">
                 <div class="upload" :style="{backgroundImage: 'url(' + preview_url+ ')',height:500*img_size[1]/img_size[0]+ 'px'}">
@@ -174,6 +126,10 @@ li {
                             <p>{{template.element.image.des}}</p>
                         </div>
                     </div>
+                    <Spin v-if="loading" fix>
+                        <Progress :percent="percent" :stroke-width="5"></Progress>
+                        <div>正在上传</div>
+                    </Spin>
                 </div>
             </Upload>
             <div class="gallery_area">
@@ -181,15 +137,10 @@ li {
                     <Icon type="ios-albums-outline"></Icon> 从图库选择</p>
             </div>
         </div>
-        <div class="margin-top-10 upload_div">
-            <Input v-model="remark" :maxlength="10" placeholder="请输入图片描述(可选)">
-            <span slot="append">{{remark.length}}/10</span>
-            </Input>
-        </div>
 
-        <Modal v-model="model.galleryModal" width="980" title="从创意库选择" :mask-closable="false" @on-ok="ok" class-name="vertical-center-modal">
+        <Modal v-model="model.galleryModal" width="972" title="从创意库选择" :mask-closable="false" @on-ok="ok" class-name="vertical-center-modal">
             <div class="created">
-                <ul>
+                <ul class="clear">
                     <li v-for="(item,index) in gallery.list" :key="index" :class="model.sid==item.id? 'selected':''" @click="selectCreated(item.id)">
                         <div class="created_img">
                             <img :src="item.preview_url">
@@ -199,17 +150,6 @@ li {
                         </div>
                     </li>
                 </ul>
-            </div>
-            <div class="model_foot">
-                <div class="select_img">
-                    <p>已选择</p>
-                    <div v-show="model.isShowSelect" class="simg">
-                        <img :src="model.preview_url">
-                        <div @click="closeCreated" class="select_close">
-                            <Icon type="close-round"></Icon>
-                        </div>
-                    </div>
-                </div>
                 <Page v-if="page>1" :total="total_number" :current="page" :page-size="page_size" size="small" show-total @on-change="galleryLink"></Page>
             </div>
         </Modal>
@@ -223,23 +163,11 @@ import util from "@/utils/index";
 import Axios from "@/api/index";
 export default {
     name: "create-image",
-    props: {
-        type: {
-            type: String,
-            default: ""
-        },
-        id: {
-            type: [String, Number],
-            default: ""
-        },
-        imgsrc: {
-            type: String,
-            default: ""
-        }
-    },
+    props: ["value", "type"],
     data() {
         return {
             account_id: this.$route.query.account_id,
+            adcreative_template_id: this.$route.query.adcreative_template_id,
             adcreative_template: adcreative_template,
             //选中广告版位数据
             template: {
@@ -256,8 +184,7 @@ export default {
                         size: "240*180",
                         quality: "30",
                         format: "*.jpg|*.jpeg|*.png",
-                        des:
-                            "尺寸：240*180，大小：不超过30 KB，格式：*.jpg|*.jpeg|*.png"
+                        des: "尺寸：240*180，大小：不超过30 KB，格式：*.jpg|*.jpeg|*.png"
                     },
                     title: {
                         name: "广告文案",
@@ -272,29 +199,21 @@ export default {
             //上传图片loading
             loading: false,
             percent: 0,
-            //预览图片地址
-            preview_url: "",
             //action 上传地址
             actionUrl: "",
             //图片大小
             imgSize: 0,
             //图片描述
             remark: "",
+            image_id: "",
+            preview_url: "",
             //上传格式
             accept: [],
-            //图片提交信息
-            info: {
-                type: this.type,
-                image_url: "",
-                image_id: ""
-            },
             //图库
             model: {
                 galleryModal: false,
                 //选择图库图片ID
                 sid: "",
-                //显示以选择
-                isShowSelect: false,
                 //图库预览地址
                 preview_url: "",
                 //图库选择图片ID
@@ -318,19 +237,22 @@ export default {
         this.url();
     },
     watch: {
-        id() {
+        value() {
             this.url();
         }
     },
     methods: {
         url() {
             this.adcreative_template.forEach(e => {
-                if (e.id == this.id) {
+                if (e.id == this.adcreative_template_id) {
                     this.template = e;
                     this.img_size = this.template.element.image.size.split("*");
                 }
             });
-            this.preview_url = this.imgsrc;
+
+            this.image_id = this.value;
+            this.getImageById();
+
 
             let size = this.template.element.image.size.split("*"),
                 width = size[0],
@@ -349,11 +271,23 @@ export default {
                 "&remark=" +
                 this.remark;
         },
+        //预览图片地址
+        getImageById() {
+            if (!this.image_id) return;
+            Axios.get("api.php", {
+                action: "gdtAdPut",
+                opt: "getImageById",
+                account_id: this.account_id,
+                image_id: this.image_id
+            }).then(res => {
+                this.preview_url = res.data.preview_url;
+            }).catch(err => {
+                console.log("获取图库片路径" + err);
+            });
+        },
         //图库确认
         ok() {
-            this.preview_url = this.model.preview_url;
-            this.info.image_id = this.model.image_id;
-            this.$emit("on-change", this.info);
+            this.$emit("input", this.image_id);
         },
         //图库
         galleryLink(page) {
@@ -381,27 +315,21 @@ export default {
             this.model.sid = id;
             this.gallery.list.forEach(item => {
                 if (item.id == id) {
-                    this.model.preview_url = item.preview_url;
-                    this.model.image_id = item.image_id;
+                    this.preview_url = item.preview_url;
+                    this.image_id = item.image_id;
                     this.remark = item.remark;
                 }
             });
-            this.model.isShowSelect = true;
-        },
-        //关闭已选择
-        closeCreated() {
-            this.model.isShowSelect = false;
-            this.model.preview_url = this.model.image_id = this.model.sid = " ";
         },
         //图片上传成功
         handleSuccess(filte) {
             //console.log(filte)
             this.$Message.info(filte.msg);
             if (filte.ret == "1") {
-                this.info.image_id = filte.data.image_id;
+                this.image_id = filte.data.image_id;
                 this.preview_url = filte.data.preview_url;
 
-                this.$emit("on-change", this.info);
+                this.$emit("input", this.image_id);
             }
         },
         handleFormatError(file) {
@@ -417,7 +345,7 @@ export default {
         },
         handleProgress(event, file) {
             this.loading = true;
-            this.percent = event.percent;
+            this.percent = parseInt(event.percent);
             if (event.percent === 100) {
                 this.loading = false;
             }
