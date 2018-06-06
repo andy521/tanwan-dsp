@@ -127,9 +127,9 @@
           </FormItem>
           <FormItem v-if="isGeneralizePage" label="操作系统">
             <CheckboxGroup @on-change="handlePagePlatform" v-model="pagePlatform">
-              <Checkbox label="001">IOS</Checkbox>
-              <Checkbox label="010">Android</Checkbox>
-              <Checkbox label="100">其他系统</Checkbox>
+              <Checkbox :disabled="isEdit" label="001">IOS</Checkbox>
+              <Checkbox :disabled="isEdit" label="010">Android</Checkbox>
+              <Checkbox :disabled="isEdit" label="100">其他系统</Checkbox>
             </CheckboxGroup>
           </FormItem>
         </Form>
