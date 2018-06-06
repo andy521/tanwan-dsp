@@ -461,14 +461,26 @@ export default {
                     excluded_custom_audience: [],
                     description: []
                 }
-            }
+            },
+            province: [],//地域
+            appcategory: [],//app行为按分类
+            business_interest: [],//商业兴趣
+            custom_audiences: ""//自定义人群
         };
     },
     mounted() {
-         this.get_adgroup_detail();
+        this.get_adgroup_detail();
+        //请求定向标签(地域)
+        this.get_targeting_tags();
+        //获取商业兴趣
+        this.get_business_interest();
+        //app行为按分类
+        this.get_appCategory();
+        //获取自定义人群
+        this.get_custom_audiences();
     },
     beforeMount() {
-       
+
     },
     methods: {
         //获取详情
@@ -486,6 +498,54 @@ export default {
             }).catch(err => {
                 console.log("获取详情失败" + err);
             });
+        },
+        //获取商业兴趣
+        get_business_interest() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags',
+                type: 'Business_interest'
+            }).then(res => {
+                this.business_interest = res.data;
+            }).catch(err => {
+                console.log('获取商业兴趣' + err)
+            })
+        },
+        get_custom_audiences() {
+            //获取自定义人群
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'custom_audiences_get',
+                account_id: this.account_id,
+                name: this.Audiencesname
+            }).then(res => {
+                this.custom_audiences = res.data;
+            }).catch(err => {
+                console.log('获取自定义人群' + err)
+            })
+        },
+        //app行为按分类
+        get_appCategory() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags',
+                type: 'app_category'
+            }).then(res => {
+                this.appcategory = res.data;
+            }).catch(err => {
+                console.log('app行为按分类' + err)
+            })
+        },
+        //请求定向标签(地域)
+        get_targeting_tags() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags'
+            }).then(res => {
+                this.province = res.data;
+            }).catch(err => {
+                console.log('获取定向标签(地域)' + err)
+            })
         },
         //编辑创意
         editCreativity() {
@@ -542,7 +602,7 @@ export default {
         },
         //省市区转码
         new_regions() {
-            let regions = this.$store.state.newad.targeting_tags;
+            let regions = this.province;
             let ids = this.adgroup_detail.targeting.geo_location.regions;
             if (!ids) return;
             var name = [];
@@ -561,7 +621,7 @@ export default {
         },
         //商业兴趣转码
         businessids() {
-            let business_interest = this.$store.state.newad.business_interest;
+            let business_interest = this.business_interest;
             let ids = this.adgroup_detail.targeting.business_interest;
             if (!ids) return;
             var name = [];
@@ -589,7 +649,7 @@ export default {
         },
         //app行为转码
         app_category() {
-            let appCategory = this.$store.state.newad.appCategory;
+            let appCategory = this.appcategory;
             let ids = this.adgroup_detail.targeting.app_behavior.object_id_list;
             if (!ids) return;
             var name = [];

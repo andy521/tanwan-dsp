@@ -120,12 +120,6 @@ export default {
         this.init();
         //获取消息
         this.$store.dispatch("getMessages");
-        //请求定向标签(地域)
-        this.$store.dispatch("get_targeting_tags");
-        //获取商业兴趣
-        this.$store.dispatch("get_business_interest");
-        //获取App行为
-        this.$store.dispatch("get_appCategory");
     },
     computed: {
         //缓存页面

@@ -388,12 +388,12 @@ export default {
                 },
                 {
                     title: "推广余额",
+                    width: 110,
                     key: "balance",
                     sortable: "custom",
-                    render: (h, params) => {
-                        let newvalue = String(params.row.balance).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    render: (h, params) => {                       
                         if (params.row._disabled) {
-                            return h("span", newvalue + "元");
+                            return h("span", params.row.balance + "元");
                         } else {
                             const color = params.row.balance < 20000 ? "green" : "";
                             return h(
@@ -401,24 +401,24 @@ export default {
                                 {
                                     class: color
                                 },
-                                newvalue + "元"
+                                params.row.balance + "元"
                             );
                         }
                     }
                 },
                 {
                     title: "消耗",
+                    width: 110,
                     key: "cost",
                     sortable: "custom",
                     render: (h, params) => {
-                        let newvalue = String(params.row.balance).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         const color = params.row.cost > 20000 ? "red" : "";
                         return h(
                             "span",
                             {
                                 class: color
                             },
-                            newvalue + "元"
+                            params.row.cost + "元"
                         );
                     }
                 },
@@ -450,6 +450,7 @@ export default {
                 },
                 {
                     title: "注册成本",
+                    width: 110,
                     key: "reg_cost",
                     sortable: "custom"
                 },
@@ -490,9 +491,9 @@ export default {
                     }
                 },
                 {
-                    title: "充值与转帐",
+                    title: "充值/转帐",
                     key: "platform",
-                    width: 100,
+                    width: 95,
                     render: (h, params) => {
                         if (params.row._disabled) return;
                         let money = "", mark = "";

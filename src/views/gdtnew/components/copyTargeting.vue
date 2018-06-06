@@ -69,162 +69,171 @@
                     <div class="city_title">{{targeting.targeting_name}}</div>
                     <div style="position: relative;">
                         <div class="city_box">
-                            <!-- <div class="padding-10 ">
-                                <div class="targeting_item" v-if="targeting.targeting.district">
-                                    <span>地域：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.district" v-if="item.val_type==targeting.targeting.district">
-                                            {{item.name}}：
-                                        </template>
-                                        <template v-for="item in cityname">
-                                            {{item}}
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.gender">
-                                    <span>性别：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.gender" v-if="item.val_type==targeting.targeting.gender">
-                                            {{item.name}}
-                                        </template>
-                                    </span>
-                                </div>
-
+                            <div class="padding-10 ">
+                                <template v-if="targeting.targeting.geo_location">
+                                    <div class="targeting_item" v-if="targeting.targeting.geo_location.regions">
+                                        <span>地域：</span>
+                                        <span class="grey">
+                                            {{new_regions}};
+                                        </span>
+                                    </div>
+                                    <div class="targeting_item" v-if="targeting.targeting.geo_location.location_types">
+                                        <span>地点类型：</span>
+                                        <span class="grey">
+                                            <template v-for="item in gdtConfig.location_types">
+                                                <template v-for="subitem in targeting.targeting.geo_location.location_types" v-if="subitem==item.val_type">
+                                                    {{item.name}};
+                                                </template>
+                                            </template>
+                                        </span>
+                                    </div>
+                                </template>
                                 <div class="targeting_item" v-if="targeting.targeting.age">
                                     <span>年龄：</span>
                                     <span class="grey">
-                                        <template v-for="item in toutiaoConfig.age">
-                                            <template v-for="subitem in targeting.targeting.age" v-if="item.val_type==subitem">
+                                        {{targeting.targeting.age[0]}};
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.gender">
+                                    <span>性别：</span>
+                                    <span class="grey">
+                                        <template v-for="item in gdtConfig.gender">
+                                            <template v-for="subitem in targeting.targeting.gender" v-if="subitem==item.val_type">
                                                 {{item.name}};
                                             </template>
                                         </template>
                                     </span>
                                 </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.ad_tag">
-                                    <span>兴趣分类：</span>
+                                <div class="targeting_item" v-if="targeting.targeting.business_interest">
+                                    <span>商业兴趣：</span>
                                     <span class="grey">
-                                        <template v-for="item in targeting.targeting.ad_tag">
-                                            <template v-for="subitem in ad_tag" v-if="item==subitem.value">
-                                                {{subitem.name}};
-                                                <template v-for="subTagsitem in subitem.subTags" v-if="item==subTagsitem.value">
-                                                    {{subTagsitem.name}};
-                                                </template>
+                                        {{businessids}};
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.app_behavior">
+                                    <span>App行为：</span>
+                                    <span class="grey">
+                                        {{app_category}}
+                                        <br/> 距离今天 {{targeting.targeting.app_behavior.time_window}}
+                                        <template v-for="item in gdtConfig.act_id_list">
+                                            <template v-for="subitem in targeting.targeting.app_behavior.act_id_list" v-if="subitem==item.val_type">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                        用户
+                                    </span>
+                                </div>
+
+                                <div class="targeting_item" v-if="targeting.targeting.app_install_status">
+                                    <span>App安装：</span>
+                                    <span class="grey">
+                                        <template v-for="item in gdtConfig.app_install_status">
+                                            <template v-for="subitem in targeting.targeting.app_install_status" v-if="subitem==item.val_type">
+                                                {{item.name}};
                                             </template>
                                         </template>
                                     </span>
                                 </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.interest_tags">
-                                    <span>兴趣关键词：</span>
+                                <div class="targeting_item" v-if="targeting.targeting.network_type">
+                                    <span>联网方式：</span>
                                     <span class="grey">
-                                        <template v-for="item in targeting.targeting.interest_tags">
+                                        <template v-for="item in gdtConfig.network_type">
+                                            <template v-for="subitem in targeting.targeting.network_type" v-if="subitem==item.val_type">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.customized_audience">
+                                    <span>定向用户群：</span>
+                                    <span class="grey">
+                                        <template v-for="item in audiences">
+                                            <template v-for="subitem in targeting.targeting.customized_audience" v-if="subitem==item.audience_id">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.excluded_custom_audience">
+                                    <span>排除用户群：</span>
+                                    <span class="grey">
+                                        <template v-for="item in audiences">
+                                            <template v-for="subitem in targeting.targeting.excluded_custom_audience" v-if="subitem==item.audience_id">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.education">
+                                    <span>婚恋状态：</span>
+                                    <span class="grey">
+                                        <template v-for="item in gdtConfig.education">
+                                            <template v-for="subitem in targeting.targeting.education" v-if="subitem==item.val_type">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.living_status">
+                                    <span>工作状态：</span>
+                                    <span class="grey">
+                                        <template v-for="item in gdtConfig.living_status">
+                                            <template v-for="subitem in targeting.targeting.living_status" v-if="subitem==item.val_type">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.keyword">
+                                    <span>关键词：</span>
+                                    <span class="grey" v-if="targeting.targeting.keyword.words">
+                                        <template v-for="item in targeting.targeting.keyword.words">
                                             {{item}};
                                         </template>
                                     </span>
                                 </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.platform">
-                                    <span>平台：</span>
+                                <div class="targeting_item" v-if="targeting.targeting.paying_user_type">
+                                    <span>付费用户：</span>
                                     <span class="grey">
-                                        <template v-for="item in toutiaoConfig.platform">
-                                            <template v-for="subitem in targeting.targeting.platform" v-if="item.val_type==subitem">
+                                        <template v-for="item in gdtConfig.paying_user_type">
+                                            <template v-for="subitem in targeting.targeting.paying_user_type" v-if="subitem==item.val_type">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.shopping_capability">
+                                    <span>消费状态：</span>
+                                    <span class="grey">
+                                        <template v-for="item in gdtConfig.shopping_capability">
+                                            <template v-for="subitem in targeting.targeting.shopping_capability" v-if="subitem==item.val_type">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.network_operator">
+                                    <span>移动运营商：</span>
+                                    <span class="grey">
+                                        <template v-for="item in gdtConfig.network_operator">
+                                            <template v-for="subitem in targeting.targeting.network_operator" v-if="subitem==item.val_type">
+                                                {{item.name}};
+                                            </template>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="targeting_item" v-if="targeting.targeting.device_price">
+                                    <span>设备价格：</span>
+                                    <span class="grey">
+                                        <template v-for="item in gdtConfig.device_price">
+                                            <template v-for="subitem in targeting.targeting.device_price" v-if="subitem==item.val_type">
                                                 {{item.name}};
                                             </template>
                                         </template>
                                     </span>
                                 </div>
 
-                                <div class="targeting_item" v-if="targeting.targeting.ac">
-                                    <span>网络类型：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.ac">
-                                            <template v-for="subitem in targeting.targeting.ac" v-if="item.val_type==subitem">
-                                                {{item.name}};
-                                            </template>
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.carrier">
-                                    <span>运营商：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.carrier">
-                                            <template v-for="subitem in targeting.targeting.carrier" v-if="item.val_type==subitem">
-                                                {{item.name}};
-                                            </template>
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.activate_type">
-                                    <span>新用户：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.activate_type">
-                                            <template v-for="subitem in targeting.targeting.activate_type" v-if="item.val_type==subitem">
-                                                {{item.name}};
-                                            </template>
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.app_behavior_target!='NONE'&&targeting.targeting.app_category">
-                                    <span>APP行为定向：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.app_behavior_target" v-if="item.val_type==targeting.targeting.app_behavior_target">
-                                            {{item.name}};
-                                        </template>
-                                        <template v-for="item in targeting.targeting.app_category">
-                                            <template v-for="subitem in app_category">
-                                                <template v-for="subTagsitem in subitem.subItems" v-if="item==subTagsitem.value">
-                                                    {{subTagsitem.name}};
-                                                </template>
-                                            </template>
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.device_brand">
-                                    <span>受众手机品牌：</span>
-                                    <span class="grey">
-                                        <template v-for="item in targeting.targeting.device_brand">
-                                            <template v-for="subitem in device_brand" v-if="item==subitem.value">
-                                                {{subitem.name}};
-                                            </template>
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.article_category">
-                                    <span>受众文章分类：</span>
-                                    <span class="grey">
-                                        <template v-for="item in targeting.targeting.article_category">
-                                            <template v-for="subitem in article_category" v-if="item==subitem.value">
-                                                {{subitem.name}};
-                                            </template>
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.android_osv">
-                                    <span>受众最低android版本：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.android_osv" v-if="item.val_type==targeting.targeting.android_osv">
-                                            {{item.name}}
-                                        </template>
-                                    </span>
-                                </div>
-
-                                <div class="targeting_item" v-if="targeting.targeting.ios_osv">
-                                    <span>受众最低ios版本：</span>
-                                    <span class="grey">
-                                        <template v-for="item in toutiaoConfig.ios_osv" v-if="item.val_type==targeting.targeting.ios_osv">
-                                            {{item.name}}
-                                        </template>
-                                    </span>
-                                </div>
-                            </div> -->
+                            </div>
                             <Spin size="small" fix v-if="loading"></Spin>
                         </div>
                     </div>
@@ -236,14 +245,14 @@
 
 <script>
 import Axios from "@/api/index";
-import toutiaoConfig from '@/utils/toutiaoConfig.json';
+import gdtConfig from '@/utils/gdtConfig.json';
 export default {
     name: "copyTargeting",
-    props: [],
+    props: ["province", "appcategory", "business", "audiences"],
     data() {
         return {
             account_id: this.$route.query.account_id, //账户id
-            toutiaoConfig: toutiaoConfig,
+            gdtConfig: gdtConfig,
             byted_modal: false,
             loading: false,
             search: "",
@@ -251,7 +260,39 @@ export default {
             copyList: "",
             targeting: {
                 account_id: "",
-                targeting: "",
+                targeting: {
+                    geo_location: {
+                        regions: [],
+                        location_types: [],
+                        business_districts: []
+                    },
+                    age: ["5~60"],
+                    gender: ["FEMALE"],
+                    education: [],
+                    relationship_status: [],
+                    living_status: [],
+                    app_behavior: {
+                        object_type: "APP_CLASS",
+                        object_id_list: [],
+                        time_window: 1,
+                        act_id_list: []
+                    },
+                    app_install_status: [],
+                    network_type: [],
+                    business_interest: [],
+                    network_operator: [],
+                    device_price: [],
+                    shopping_capability: [],
+                    paying_user_type: [],
+                    keyword: {
+                        words: []
+                    },
+                    player_consupt: [],
+                    residential_community_price: [],
+                    customized_audience: [],
+                    excluded_custom_audience: [],
+                    description: []
+                },
                 targeting_id: "",
                 targeting_name: ""
             }
@@ -316,6 +357,83 @@ export default {
             })
             const retNull = [{ targeting_name: '无搜索结果,请重新搜索', targeting_id: '' }]
             this.TargetingList = filter.length < 1 ? retNull : filter
+        },
+    },
+    computed: {
+        //省市区转码
+        new_regions() {
+            let regions = this.province;
+            let ids = this.targeting.targeting.geo_location.regions;
+            if (!ids) return;
+            var name = [];
+            ids.forEach(id => {
+                for (var i in regions) {
+                    var e = regions[i].list;
+                    for (var j in e) {
+                        var f = e[j];
+                        if (f.id == id) {
+                            name.push(f.name);
+                        }
+                    }
+                }
+            });
+            return name.toString();
+        },
+        //商业兴趣转码
+        businessids() {
+            let business_interest = this.business;
+            let ids = this.targeting.targeting.business_interest;
+            if (!ids) return;
+            var name = [];
+            ids.forEach(id => {
+                for (var i in business_interest) {
+                    var item1 = business_interest[i];
+                    if (item1.id == id) {
+                        name.push(item1.name);
+                    }
+                    var item2 = item1.list;
+                    for (var j in item2) {
+                        if (item2[j].id == id) {
+                            name.push(item2[j].name);
+                        }
+                        for (var k in item2[j].list) {
+                            var n = item2[j].list[k];
+                            if (n.id == id) {
+                                name.push(n.name);
+                            }
+                        }
+                    }
+                }
+            });
+            return name.toString();
+        },
+        //app行为转码
+        app_category() {
+            let appCategory = this.appcategory;
+            let ids = this.targeting.targeting.app_behavior.object_id_list;
+            if (!ids) return;
+            var name = [];
+            ids.forEach(id => {
+                for (var i in appCategory) {
+                    var item1 = appCategory[i];
+                    if (item1.id == id) {
+                        name.push(item1.name);
+                    }
+                    var item2 = item1.list;
+                    for (var j in item2) {
+                        if (item2[j].id == id) {
+                            name.push(item2[j].name);
+                        }
+                        for (var k in item2[j].list) {
+                            var n = item2[j].list[k];
+                            if (n.id == id) {
+                                name.push(n.name);
+                            }
+                        }
+                    }
+                }
+            });
+            return name.toString();
         },
     }
 }
