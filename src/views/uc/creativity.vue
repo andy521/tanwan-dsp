@@ -712,7 +712,11 @@ export default {
                 tableColumnList.content,
                 tableColumnList.account_name
             ];
-            this.checkAllGroup.forEach(col => {data.push(tableColumnList[col])});
+            this.checkAllGroup.forEach(col => {
+                if (tableColumnList[col]) {
+                    data.push(tableColumnList[col])
+                }
+            });
             data.push(tableColumnList.operate);
             return data;
         },
