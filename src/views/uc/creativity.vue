@@ -265,7 +265,6 @@ export default {
             Axios.post("api.php", param)
                 .then(res => {
                     if (res.ret == "1") {
-                        //console.log(res);
                         this.loading = false;
                         this.list = res.data.list;
                         this.page = parseInt(res.data.page);
@@ -626,12 +625,18 @@ export default {
                     key: "download_complete_rate",
                     width: 120
                 },
-                // conversion: {
-                //     title: "注册设备数",
-                //     sortable: "custom",
-                //     key: "conversion",
-                //     width: 120
-                // },
+                activation: {
+                    title: "安装数",
+                    sortable: "custom",
+                    key: "activation",
+                    width: 120
+                },
+                conversion: {
+                    title: "注册设备数",
+                    sortable: "custom",
+                    key: "conversion",
+                    width: 120
+                },
                 cost_per_conversion: {
                     title: "转化成本",
                     sortable: "custom",
@@ -707,7 +712,7 @@ export default {
                 tableColumnList.content,
                 tableColumnList.account_name
             ];
-            this.checkAllGroup.forEach(col => data.push(tableColumnList[col]));
+            this.checkAllGroup.forEach(col => {data.push(tableColumnList[col])});
             data.push(tableColumnList.operate);
             return data;
         },
