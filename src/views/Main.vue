@@ -141,7 +141,7 @@ export default {
         init() {
             //更新菜单
             this.$store.commit("updateMenulist");
-            this.userName = util.getItem("user");
+            this.userName = util.getItem("uName");
             this.$store.commit("addOpenSubmenu", this.$route.name);
 
             //查找展开菜单

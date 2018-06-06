@@ -28,7 +28,7 @@
                 <Row class="margin-top-20">
                     <Col span="16">
                     <template v-if="adgroup_id">
-                        <Select filterable size="large" disabled placeholder="请选择标的物id" v-model="product_refs_id" v-if="product_refs_ids.length>0" @on-change="get_destination_url">
+                        <Select filterable size="large" disabled placeholder="请选择标的物id" v-model="product_refs_id" v-if="product_refs_ids.length>0">
                             <Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="item.product_refs_id">{{item.product_name}}</Option>
                         </Select>
                     </template>
@@ -459,6 +459,7 @@ export default {
                     }
                 }
             });
+            if (this.adgroup_id) return;
 
             // 检测标的物有效性
             Axios.post("api.php", {

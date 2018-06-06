@@ -1540,6 +1540,8 @@ export default {
                     return;
                 }
             }
+console.log(targeting)
+
             Axios.post("api.php", {
                 action: "gdtAdPut",
                 opt: "targetings_add",

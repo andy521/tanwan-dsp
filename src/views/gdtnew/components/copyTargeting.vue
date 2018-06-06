@@ -12,6 +12,7 @@
   border-bottom: solid 1px #dee4f5;
   padding: 0 15px;
   height: 36px;
+  overflow: hidden;text-overflow: ellipsis;white-space:nowrap;
 }
 .city_box {
   height: 350px;
@@ -144,7 +145,7 @@
                                         </template>
                                     </span>
                                 </div>
-                                <div class="targeting_item" v-if="targeting.targeting.customized_audience">
+                                <!-- <div class="targeting_item" v-if="targeting.targeting.customized_audience">
                                     <span>定向用户群：</span>
                                     <span class="grey">
                                         <template v-for="item in audiences">
@@ -163,7 +164,7 @@
                                             </template>
                                         </template>
                                     </span>
-                                </div>
+                                </div> -->
                                 <div class="targeting_item" v-if="targeting.targeting.education">
                                     <span>婚恋状态：</span>
                                     <span class="grey">
@@ -261,37 +262,37 @@ export default {
             targeting: {
                 account_id: "",
                 targeting: {
-                    geo_location: {
-                        regions: [],
-                        location_types: [],
-                        business_districts: []
-                    },
-                    age: ["5~60"],
-                    gender: ["FEMALE"],
-                    education: [],
-                    relationship_status: [],
-                    living_status: [],
-                    app_behavior: {
-                        object_type: "APP_CLASS",
-                        object_id_list: [],
-                        time_window: 1,
-                        act_id_list: []
-                    },
-                    app_install_status: [],
-                    network_type: [],
-                    business_interest: [],
-                    network_operator: [],
-                    device_price: [],
-                    shopping_capability: [],
-                    paying_user_type: [],
-                    keyword: {
-                        words: []
-                    },
-                    player_consupt: [],
-                    residential_community_price: [],
-                    customized_audience: [],
-                    excluded_custom_audience: [],
-                    description: []
+                    // geo_location: {
+                    //     regions: [],
+                    //     location_types: [],
+                    //     business_districts: []
+                    // },
+                    // age: ["5~60"],
+                    // gender: ["FEMALE"],
+                    // education: [],
+                    // relationship_status: [],
+                    // living_status: [],
+                    // app_behavior: {
+                    //     object_type: "APP_CLASS",
+                    //     object_id_list: [],
+                    //     time_window: 1,
+                    //     act_id_list: []
+                    // },
+                    // app_install_status: [],
+                    // network_type: [],
+                    // business_interest: [],
+                    // network_operator: [],
+                    // device_price: [],
+                    // shopping_capability: [],
+                    // paying_user_type: [],
+                    // keyword: {
+                    //     words: []
+                    // },
+                    // player_consupt: [],
+                    // residential_community_price: [],
+                    // customized_audience: [],
+                    // excluded_custom_audience: [],
+                    // description: []
                 },
                 targeting_id: "",
                 targeting_name: ""
