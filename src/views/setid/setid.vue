@@ -456,7 +456,13 @@ export default {
                 return
             }
 
-            const params = this.initAdsAccountParams()
+            // const params = this.initAdsAccountParams()
+            const params = {
+                action: 'sys',
+                opt: 'updateAdsAccount',
+                ids: this.checkedIdList,
+                [this.currBatchIndex.type]: this.currBatchIndex.value,            
+            }
             Axios.post('api.php', params)
                 .then(res => {
                     if (res.ret === 1) {

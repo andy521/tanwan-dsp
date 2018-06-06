@@ -898,7 +898,7 @@ export default {
     handlerInterestWord(e) {
       let word = e.target.value
       if (!word && this.targetingSetting.word.length >= 200) {
-        this.interestWord = ths.targetingSetting.word.join()
+        this.interestWord = this.targetingSetting.word.join()
         return
       }
 
@@ -920,7 +920,7 @@ export default {
     handlerInterestURL(e) {
       let url = e.target.value
       if (!url && this.targetingSetting.url.length >= 200) {
-        this.isInterestURL = ths.targetingSetting.url.join()
+        this.isInterestURL = this.targetingSetting.url.join()
         return
       }
 
