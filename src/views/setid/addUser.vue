@@ -1,9 +1,8 @@
 <style scoped>
-    @import "../../styles/common.less";
     .form_area{width: 600px; margin: 0 auto;}
 </style>
 <template>
-	<Card :bordered="false">
+	<Card dis-hover>
         <div class="form_area">
             <Form ref="addUser" :model="addUser" :rules="addUserRule" label-position="right" :label-width="110">
                 <Form-item label="用户名：" prop="userName">

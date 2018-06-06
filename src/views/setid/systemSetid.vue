@@ -1,5 +1,4 @@
 <style>
-@import "../../styles/table.less";
 .ivu-modal-confirm-body.ivu-modal-confirm-body-render{
     text-align: center;
 }
@@ -21,7 +20,7 @@
 
 <template>
     <div class="systemsetid">
-        <Card shadow>
+        <Card dis-hover>
             <Row type="flex" justify="space-between">
                 <Col class="manger-head-bar">
                     <select-agent @on-change="handleAgent"></select-agent>

@@ -15,7 +15,7 @@
 
 <template>
     <div class="setid">
-        <Card shadow>
+        <Card dis-hover>
             <Row type="flex" justify="space-between">
                 <Col class="manger-head-bar">
                 <select-agent @on-change="handleAgent"></select-agent>
