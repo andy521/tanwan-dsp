@@ -1,15 +1,15 @@
 <style scoped>
-.width-250{
-    width: 170px;
+.width-250 {
+  width: 170px;
 }
-.manger-head-bar:first-of-type{
-    flex: 1;
-    text-align: left;
+.manger-head-bar:first-of-type {
+  flex: 1;
+  text-align: left;
 }
-.manger-head-bar:last-of-type{
-    flex: 0 0 110px;
-    width: 110px;
-    text-align: right;
+.manger-head-bar:last-of-type {
+  flex: 0 0 110px;
+  width: 110px;
+  text-align: right;
 }
 </style>
 
@@ -22,10 +22,12 @@
                 <select-author @on-change="handleAuthor"></select-author>
                 <select-media @on-change="handleMedia"></select-media>
                 <Input @on-enter="getAdsAccount()" v-model="searchVal" placeholder="支持账号ID或账号名称搜索" class="width-250"></Input>
-                <Button @click="getAdsAccount()"><Icon type="ios-search-strong"></Icon> &nbsp;搜索</Button>
+                <Button @click="getAdsAccount()">
+                    <Icon type="ios-search-strong"></Icon> &nbsp;搜索</Button>
                 </Col>
                 <Col class="manger-head-bar">
-                    <Button @click="handleBatchEdit"><Icon type="edit"></Icon> &nbsp;批量修改</Button>
+                <Button @click="handleBatchEdit">
+                    <Icon type="edit"></Icon> &nbsp;批量修改</Button>
                 </Col>
             </Row>
 
@@ -60,18 +62,18 @@
                 <Row type="flex" align="middle">
                     <Col>修改的指标：</Col>
                     <Col class="flex-1">
-                        <Select @on-change="handleBatchIndexChange" v-model="currBatchIndex.type" placeholder="请选择修改指标">
-                            <Option v-for="(value, key) of batchIndex" :value="key" :key="this">{{ value.name }}</Option>
-                        </Select>
+                    <Select @on-change="handleBatchIndexChange" v-model="currBatchIndex.type" placeholder="请选择修改指标">
+                        <Option v-for="(value, key) of batchIndex" :value="key" :key="this">{{ value.name }}</Option>
+                    </Select>
                     </Col>
                 </Row>
                 <Row v-if="currBatchIndex.type !== ''" type="flex" align="middle" class="margin-top-20">
                     <Col>{{currBatchIndex.name}}修改为：</Col>
                     <Col class="flex-1">
-                        <Input v-if="currBatchIndex.type !== 'author'" @on-change="handleModalInput" v-model="currBatchIndex.value" :placeholder="`请输入${currBatchIndex.name}内容...`"></Input>
-                        <Select v-if="currBatchIndex.type === 'author'" v-model="currBatchIndex.value" placeholder="请选择负责人">
-                            <Option v-for="item in AdsAthour" :value="item.uId" :key="this">{{ item.uName }}</Option>
-                        </Select>
+                    <Input v-if="currBatchIndex.type !== 'author'" @on-change="handleModalInput" v-model="currBatchIndex.value" :placeholder="`请输入${currBatchIndex.name}内容...`"></Input>
+                    <Select v-if="currBatchIndex.type === 'author'" v-model="currBatchIndex.value" placeholder="请选择负责人">
+                        <Option v-for="item in AdsAthour" :value="item.uId" :key="this">{{ item.uName }}</Option>
+                    </Select>
                     </Col>
                 </Row>
             </div>
@@ -133,234 +135,237 @@ export default {
                 value: ''
             },
             columns: [
-            {
-                type: 'selection',
-                width: 60,
-                align: 'center'
-            },
-            {
-                title: 'ID',
-                key: 'id'
-            },
-            {
-                title: '帐号ID',
-                key: 'account_id'
-            },
-            {
-                title: '帐号名',
-                key: 'account_name'
-            },
-            {
-                title: '管理员',
-                key: 'author',
-                render: (h, params) => {
-                    let value = params.row.author;
-                    return [
-                        h('span', params.row.author),
-                        h('i-button', {
-                            props: {
-                                icon: "edit",
-                                type: "text",
-                                size: "small"
-                            },
-                            class: ['edit'],
-                            on: {
-                                click: () => {
-                                    this.row = params.row;
-                                    this.uId = params.row.uid;
-                                    this.author_modal = true;
+                {
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                },
+                {
+                    title: 'ID',
+                    width: 60,
+                    key: 'id'
+                },
+                {
+                    title: '帐号ID',
+                    key: 'account_id'
+                },
+                {
+                    title: '帐号名',
+                     width:250,
+                    key: 'account_name'
+                },
+                {
+                    title: '管理员',
+                    key: 'author',
+                    render: (h, params) => {
+                        let value = params.row.author;
+                        return [
+                            h('span', params.row.author),
+                            h('i-button', {
+                                props: {
+                                    icon: "edit",
+                                    type: "text",
+                                    size: "small"
+                                },
+                                class: ['edit'],
+                                on: {
+                                    click: () => {
+                                        this.row = params.row;
+                                        this.uId = params.row.uid;
+                                        this.author_modal = true;
+                                    }
                                 }
-                            }
-                        })
-                    ]
-                }
-            },
-            {
-                title: '媒体名',
-                key: 'media_name'
-            },
-            {
-                title: '代理商',
-                key: 'agent',
-                render: (h, params) => {
-                    let value = params.row.agent;
-                    return [
-                        h("span", params.row.agent),
-                        h("i-button", {
-                            props: {
-                                icon: "edit",
-                                type: "text",
-                                size: "small"
-                            },
-                            class: ["edit"],
-                            on: {
-                                click: () => {
-                                    this.$Modal.confirm({
-                                        render: h => {
-                                            return h("Input", {
-                                                props: {
-                                                    value: params.row.agent,
-                                                    autofocus: true,
-                                                    placeholder: "请输入代理商"
-                                                },
-                                                on: {
-                                                    input: val => {
-                                                        value = val;
-                                                    }
-                                                }
-                                            });
-                                        },
-                                        onOk: () => {
-                                            if (value == "") {
-                                                this.$Message.info("请输入修改信息");
-                                                return;
-                                            }
-
-                                            Axios.post("api.php", {
-                                                action: "sys",
-                                                opt: "updateAdsAccount",
-                                                ids: params.row.id.split(","),
-                                                agent: value,
-                                                rebate: params.row.rebate,
-                                                agent_detail: params.row.agent_detail
-                                            }).then(res => {
-                                                if (res.ret == 1) {
-                                                    this.$Message.info(res.msg);
-                                                    this.getAdsAccount(this.page);
-                                                }
-                                            }).catch(err => {
-                                                console.log("修改账号代理商失败" + err);
-                                            });
-                                        }
-                                    });
-                                }
-                            }
-                        })
-                    ];
-                }
-            },
-            {
-                title: "代理全称",
-                key: "agent_detail",
-                render: (h, params) => {
-                    let value = params.row.agent_detail;
-                    return [
-                        h('span', value),
-                        h('i-button', {
-                            props: {
-                                icon: 'edit',
-                                type: 'text',
-                                // size: 'small'
-                            },
-                            class: ['edit'],
-                            on: {
-                                click: () => {
-                                    this.$Modal.confirm({
-                                        render: h=> {
-                                            return [
-                                                h('i-input', {
+                            })
+                        ]
+                    }
+                },
+                {
+                    title: '媒体名',
+                    key: 'media_name'
+                },
+                {
+                    title: '代理商',
+                    key: 'agent',
+                    render: (h, params) => {
+                        let value = params.row.agent;
+                        return [
+                            h("span", params.row.agent),
+                            h("i-button", {
+                                props: {
+                                    icon: "edit",
+                                    type: "text",
+                                    size: "small"
+                                },
+                                class: ["edit"],
+                                on: {
+                                    click: () => {
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return h("Input", {
                                                     props: {
-                                                        value: value,
+                                                        value: params.row.agent,
                                                         autofocus: true,
-                                                        placeholder: '请输入代理全称'
+                                                        placeholder: "请输入代理商"
                                                     },
                                                     on: {
                                                         input: val => {
-                                                            value = val
+                                                            value = val;
                                                         }
                                                     }
-                                                })
-                                            ]
-                                        },
-                                        onOk: () => {
-                                            if (value == '') {
-                                                this.$Message.info('请输入修改信息')
-                                                return
-                                            }
-
-                                            Axios.post('api.php', {
-                                                action: 'sys',
-                                                opt: 'updateAdsAccount',
-                                                ids: params.row.id.split(","),
-                                                agent: params.row.agent,
-                                                rebate: params.row.rebate,
-                                                agent_detail: value
-                                            }).then( res => {
-                                                if (res.ret === 1) {
-                                                    this.$Message.info(res.msg)
-                                                    this.getAdsAccount(this.page)
+                                                });
+                                            },
+                                            onOk: () => {
+                                                if (value == "") {
+                                                    this.$Message.info("请输入修改信息");
+                                                    return;
                                                 }
-                                            }).catch(err => {
-                                                console.error('修改账号代理全称失败', err)
-                                            })
-                                        }
-                                    })
-                                }
-                            }
-                        })
-                    ]
-                }
-            },
-            {
-                title: '返点比例',
-                key: 'rebate',
-                render: (h, params) => {
-                    let value = params.row.rebate;
-                    return [
-                        h("span", params.row.rebate),
-                        h("i-button", {
-                            props: {
-                                icon: "edit",
-                                type: "text",
-                                size: "small"
-                            },
-                            class: ["edit"],
-                            on: {
-                                click: () => {
-                                    this.$Modal.confirm({
-                                        render: h => {
-                                            return h("Input", {
-                                                props: {
-                                                    value: params.row.rebate,
-                                                    autofocus: true,
-                                                    placeholder: "请输入返点比例"
-                                                },
-                                                on: {
-                                                    input: val => {
-                                                        value = val;
+
+                                                Axios.post("api.php", {
+                                                    action: "sys",
+                                                    opt: "updateAdsAccount",
+                                                    ids: params.row.id.split(","),
+                                                    agent: value,
+                                                    rebate: params.row.rebate,
+                                                    agent_detail: params.row.agent_detail
+                                                }).then(res => {
+                                                    if (res.ret == 1) {
+                                                        this.$Message.info(res.msg);
+                                                        this.getAdsAccount();
                                                     }
-                                                }
-                                            });
-                                        },
-                                        onOk: () => {
-                                            if (value == "") {
-                                                this.$Message.info("请输入修改信息");
-                                                return;
+                                                }).catch(err => {
+                                                    console.log("修改账号代理商失败" + err);
+                                                });
                                             }
-
-                                            Axios.post("api.php", {
-                                                action: "sys",
-                                                opt: "updateAdsAccount",
-                                                ids: params.row.id.split(","),
-                                                agent: params.row.agent,
-                                                rebate: value,
-                                                agent_detail: params.row.agent_detail
-                                            }).then(res => {
-                                                if (res.ret == 1) {
-                                                    this.$Message.info(res.msg);
-                                                    this.getAdsAccount(this.page);
-                                                }
-                                            }).catch(err => {
-                                                console.log("修改账号返点比例失败" + err);
-                                            });
-                                        }
-                                    });
+                                        });
+                                    }
                                 }
-                            }
-                        })
-                    ];
+                            })
+                        ];
+                    }
+                },
+                {
+                    title: "代理全称",
+                    width:250,
+                    key: "agent_detail",
+                    render: (h, params) => {
+                        let value = params.row.agent_detail;
+                        return [
+                            h('span', value),
+                            h('i-button', {
+                                props: {
+                                    icon: 'edit',
+                                    type: 'text',
+                                    // size: 'small'
+                                },
+                                class: ['edit'],
+                                on: {
+                                    click: () => {
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return [
+                                                    h('i-input', {
+                                                        props: {
+                                                            value: value,
+                                                            autofocus: true,
+                                                            placeholder: '请输入代理全称'
+                                                        },
+                                                        on: {
+                                                            input: val => {
+                                                                value = val
+                                                            }
+                                                        }
+                                                    })
+                                                ]
+                                            },
+                                            onOk: () => {
+                                                if (value == '') {
+                                                    this.$Message.info('请输入修改信息')
+                                                    return
+                                                }
+
+                                                Axios.post('api.php', {
+                                                    action: 'sys',
+                                                    opt: 'updateAdsAccount',
+                                                    ids: params.row.id.split(","),
+                                                    agent: params.row.agent,
+                                                    rebate: params.row.rebate,
+                                                    agent_detail: value
+                                                }).then(res => {
+                                                    if (res.ret === 1) {
+                                                        this.$Message.info(res.msg)
+                                                        this.getAdsAccount()
+                                                    }
+                                                }).catch(err => {
+                                                    console.error('修改账号代理全称失败', err)
+                                                })
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        ]
+                    }
+                },
+                {
+                    title: '返点比例',
+                    key: 'rebate',
+                    render: (h, params) => {
+                        let value = params.row.rebate;
+                        return [
+                            h("span", params.row.rebate),
+                            h("i-button", {
+                                props: {
+                                    icon: "edit",
+                                    type: "text",
+                                    size: "small"
+                                },
+                                class: ["edit"],
+                                on: {
+                                    click: () => {
+                                        this.$Modal.confirm({
+                                            render: h => {
+                                                return h("Input", {
+                                                    props: {
+                                                        value: params.row.rebate,
+                                                        autofocus: true,
+                                                        placeholder: "请输入返点比例"
+                                                    },
+                                                    on: {
+                                                        input: val => {
+                                                            value = val;
+                                                        }
+                                                    }
+                                                });
+                                            },
+                                            onOk: () => {
+                                                if (value == "") {
+                                                    this.$Message.info("请输入修改信息");
+                                                    return;
+                                                }
+
+                                                Axios.post("api.php", {
+                                                    action: "sys",
+                                                    opt: "updateAdsAccount",
+                                                    ids: params.row.id.split(","),
+                                                    agent: params.row.agent,
+                                                    rebate: value,
+                                                    agent_detail: params.row.agent_detail
+                                                }).then(res => {
+                                                    if (res.ret == 1) {
+                                                        this.$Message.info(res.msg);
+                                                        this.getAdsAccount();
+                                                    }
+                                                }).catch(err => {
+                                                    console.log("修改账号返点比例失败" + err);
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+                            })
+                        ];
+                    }
                 }
-            }
             ]
         }
     },
@@ -413,12 +418,12 @@ export default {
         // 代理商数据
         handleAgent(agentList) {
             this.agentList = agentList
-            this.getAdsAccount()            
+            this.getAdsAccount()
         },
         // 负责人数据
         handleAuthor(authorList) {
             this.authorList = authorList
-            this.getAdsAccount()            
+            this.getAdsAccount()
         },
         initAdsAccountParams() {
             const batchIndex = this.batchIndex

@@ -107,15 +107,18 @@
 
         <Modal v-model="transfer_modal" title="转帐" @on-ok="changTransfer()">
             <div class="padding-10">
-                <Form :label-width="80">
+                <Form :label-width="100">
                     <FormItem label="退款账号id">
-                        <Select v-model="transfer.out_account_id" placeholder="请选择退款账号id">
-                            <Option v-for="item in transfer.accountList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
+                        <Select v-model="transfer.out_account_id" placeholder="请选择退款账号id" @on-change="change_out_account_id">
+                            <Option v-for="item in transfer.accountList" :value="item.account_id" :key="item.account_id">{{ item.account_name }}</Option>
                         </Select>
+                    </FormItem>
+                    <FormItem label="当前帐户余额">
+                       {{transfer.balance}}元
                     </FormItem>
                     <FormItem label="加款账号id">
                         <Select v-model="transfer.in_account_id" placeholder="请选择加款账号id">
-                            <Option v-for="item in transfer.accountList" :value="item.account_id" :key="this">{{ item.account_name }}</Option>
+                            <Option v-for="item in transfer.accountList" :value="item.account_id" :key="item.account_id">{{ item.account_name }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="转账金额">
@@ -184,6 +187,7 @@ export default {
                 in_account_id: "",
                 money: "",
                 mark: "",
+                balance: 0
             }
         };
     },
@@ -255,13 +259,16 @@ export default {
                 author: this.author,
                 agent: this.agent
             };
-            
+
             this.$emit("on-change", param);
         },
-        //分页
-        changePage(val) {
-            this.page = val;
-            this.tableData();
+        //选择转出帐户
+        change_out_account_id() {
+            this.transfer.accountList.forEach(e => {
+                if (this.transfer.out_account_id == e.account_id) {
+                    this.transfer.balance = e.balance;
+                }
+            });
         },
         //返回没有选中的
         getuncheck(val) {
@@ -386,7 +393,7 @@ export default {
                     render: (h, params) => {
                         let newvalue = String(params.row.balance).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         if (params.row._disabled) {
-                            return h("span", newvalue+"元");
+                            return h("span", newvalue + "元");
                         } else {
                             const color = params.row.balance < 20000 ? "green" : "";
                             return h(
@@ -394,7 +401,7 @@ export default {
                                 {
                                     class: color
                                 },
-                                newvalue+"元"
+                                newvalue + "元"
                             );
                         }
                     }
@@ -411,7 +418,7 @@ export default {
                             {
                                 class: color
                             },
-                            newvalue+"元"
+                            newvalue + "元"
                         );
                     }
                 },

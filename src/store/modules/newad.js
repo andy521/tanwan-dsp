@@ -2,10 +2,6 @@ import Axios from "@/api/index";
 
 const newad = {
     state: {
-        //step: [0, 0], //导行定位
-        // adgroup_detail: "", //定向详情
-
-        ads_config: [], //所有状态
         product_type: [], //标的物类型       
         targeting_tags: [], //定向标签(地域)
         business_interest: [], //商业兴趣
@@ -18,12 +14,8 @@ const newad = {
         save_step(state, step) {
             state.step = step;
         },
-        // save_adgroup_detail(state, adgroup_detail) {
-        //     state.adgroup_detail = adgroup_detail;
-        // },
-        GET_ADS_CONFIG(state, data) {
-            state.ads_config = data;
-        },
+   
+      
         GET_PRODUCT_TYPE(state, data) {
             state.product_type = data;
         },
@@ -45,22 +37,6 @@ const newad = {
       
     },
     actions: {
-        //获取所有状态ret_ads_config
-        get_ads_config({
-            commit
-        }) {
-            Axios.get('api.php', {
-                action: 'gdtAdPut',
-                opt: 'ret_ads_config'
-            }).then(res => {
-                commit('GET_ADS_CONFIG', res.data)
-            }).catch(
-                err => {
-                    console.log('获取所有状态' + err)
-                }
-            )
-        },
-
         //获取商业兴趣
         get_business_interest({
             commit
@@ -161,9 +137,7 @@ const newad = {
             }).then(res => {
                 commit('GET_APPCATEGORY', res.data)
             }).catch(err => console.log('app行为按分类' + err))
-        },
-
-     
+        }
     }
 };
 
