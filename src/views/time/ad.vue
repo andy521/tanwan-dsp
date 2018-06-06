@@ -239,7 +239,7 @@ export default {
                     type: "expand",
                     width: 0,
                     render: (h, params) => {
-                        //console.log(params.row.adgroup_id)
+                        console.log(params.row.adgroup_id)
                         return h(creativity, {
                             props: {
                                 row: params.row,

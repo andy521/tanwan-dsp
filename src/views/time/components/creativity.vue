@@ -465,7 +465,6 @@ export default {
         };
     },
     mounted() {
-        console.log(this.row.adgroup_id)
          this.get_adgroup_detail();
     },
     beforeMount() {
