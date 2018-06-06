@@ -55,7 +55,7 @@ Axios.interceptors.response.use(
                 });
                 //Message.info(res.data.msg);
             } else {
-                Message.info(res.data.msg);
+                Message.warning(res.data.msg);
             }
             return Promise.reject(res.data.msg);
         }
@@ -63,7 +63,7 @@ Axios.interceptors.response.use(
     },
     error => {
         // 返回 response 里的错误信息
-        Message.info(res.data.msg);
+        Message.error(res.data.msg);
         console.log('拦截器' + error);
         return Promise.reject(error);
     }

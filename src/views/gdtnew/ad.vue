@@ -27,9 +27,17 @@
 
                 <Row class="margin-top-20">
                     <Col span="16">
-                    <Select filterable size="large" placeholder="请选择标的物id" v-model="product_refs_id" v-if="product_refs_ids.length>0" @on-change="get_destination_url">
-                        <Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="item.product_refs_id">{{item.product_name}}</Option>
-                    </Select>
+                    <template v-if="adgroup_id">
+                        <Select filterable size="large" disabled placeholder="请选择标的物id" v-model="product_refs_id" v-if="product_refs_ids.length>0">
+                            <Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="item.product_refs_id">{{item.product_name}}</Option>
+                        </Select>
+                    </template>
+                    <template v-else>
+                        <Select filterable size="large" placeholder="请选择标的物id" v-model="product_refs_id" v-if="product_refs_ids.length>0" @on-change="get_destination_url">
+                            <Option v-for="item in product_refs_ids" :value="item.product_refs_id" :key="item.product_refs_id">{{item.product_name}}</Option>
+                        </Select>
+                    </template>
+
                     <Form :label-width="90" v-else>
                         <FormItem label="标的物名称">
                             <Input v-model="product.product_name" :maxlength="15" style="width: 450px" size="large"></Input>
@@ -152,6 +160,7 @@ export default {
             sub_product_refs_id: "",//子标的物 id
             product_refs_ids: [],
             destination_url: "",//落地页 url
+            checkProductUrl: false,
 
             options: {
                 disabledDate(date) {
@@ -383,6 +392,10 @@ export default {
                 this.$Message.info("请输入标的物id");
                 return;
             }
+            if (!this.checkProductUrl) {
+                this.$Message.info("无效标的物");
+                return;
+            }
             if (param.adgroup_name == "") {
                 this.$Message.info("请填写广告组名称");
                 return;
@@ -420,9 +433,9 @@ export default {
                             site_set: this.site_set.join(","),
                             adcreative_template_id: this.adcreative_template_id,
                             destination_url: this.destination_url,
-                            product_refs_id:this.product_refs_id,
-                            campaign_id:this.campaign_id,
-                            adgroup_id:res.data.adgroup_id
+                            product_refs_id: this.product_refs_id,
+                            campaign_id: this.campaign_id,
+                            adgroup_id: res.data.adgroup_id
                         }
                     })
                 }
@@ -446,6 +459,24 @@ export default {
                     }
                 }
             });
+            if (this.adgroup_id) return;
+
+            // 检测标的物有效性
+            Axios.post("api.php", {
+                action: "gdtAdPut",
+                opt: "checkProductUrl",
+                account_id: this.account_id,
+                id: this.product_refs_id,
+                url: this.destination_url
+            }).then(res => {
+                if (res.ret == 1) {
+                    this.checkProductUrl = true;
+                }
+            }).catch(err => {
+                this.checkProductUrl = false;
+                console.log("检测标的物有效性" + err);
+            });
+
         },
         //选择广告版位
         getPosition(id, site_set) {

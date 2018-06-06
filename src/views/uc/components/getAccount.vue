@@ -35,10 +35,10 @@ export default {
             Axios.post('api.php', {
                 action: 'api',
                 opt: 'getAccount',
-                meida_type: 3
+                media_type: 3
             }).then(res => {
                 this.loading = false;
-                if (res.ret == '1') {
+                if (res.ret == 1) {
                     this.isModal = true;
                     this.allAccount = this.accountList = res.data;
                 }

@@ -1,10 +1,8 @@
-<style>
-    @import "../../styles/common.less";
-</style>
 <template>
-    <Card :bordered="false">
-        <Row v-show="showUserListTable">
-            <Col span="24">
+    <Card dis-hover>
+        <div v-show="showUserListTable">
+            <Row>
+                <Col span="24">
                 <Input v-model="searchUserCondition.userName" placeholder="搜索用户名" style="width:150px;"></Input>
                 <Select v-model="searchUserCondition.departmentSelected" placeholder="选择部门" style="width:150px;">
                     <Option v-for="(item,index) in editUserProfile.departmentList" :value="item.value" :key="index">{{ item.label }}</Option>
@@ -18,57 +16,48 @@
                 </Select>
                 <Button icon="search" @click="getUserList">搜索</Button>
                 <Button icon="plus-round" @click="arouseAddUserDialog">添加账号</Button>
-            </Col>
-        </Row>
-        <Row>
-            <Col span="24">
-            <br>
-            </Col>
-        </Row>
-        <Row v-show="showUserListTable">
-            <Col span="24">
-                <Table  :columns="tableColumns" :data="tableData" :size="tableSize"></Table>
-            </Col>
-        </Row>
-        <Row class="margin-top-10" v-show="showUserListTable">
-            <Col span="10"> 表格尺寸
-            <Radio-group v-model="tableSize" type="button">
-                <Radio label="large">大</Radio>
-                <Radio label="default">中</Radio>
-                <Radio label="small">小</Radio>
-            </Radio-group>
-            每页显示
-            <Select v-model="pageSize" style="width:80px" placement="top" transfer @on-change="getUserList(undefined)">
-                <Option v-for="item in 100" :value="item" :key="item" v-if="item%20==0">{{ item }}</Option>
-            </Select>
-            </Col>
-            <Col span="14" style="text-align: right;">
-            <Page :total="recordTotalNumber" :current="page" :page-size="pageSize" ref="pages" @on-change="getUserList" show-elevator show-total></Page>
-            </Col>
-        </Row>
-        <Row v-show="showPermissionSetting">
-            <Col span="12">
+                </Col>
+            </Row>
+
+            <Table :columns="tableColumns" :data="tableData" :size="tableSize" class="margin-top-10"></Table>
+
+            <Row class="margin-top-10">
+                <Col span="10"> 表格尺寸
+                <Radio-group v-model="tableSize" type="button">
+                    <Radio label="large">大</Radio>
+                    <Radio label="default">中</Radio>
+                    <Radio label="small">小</Radio>
+                </Radio-group>
+                每页显示
+                <Select v-model="pageSize" style="width:80px" placement="top" transfer @on-change="getUserList(undefined)">
+                    <Option v-for="item in 100" :value="item" :key="item" v-if="item%20==0">{{ item }}</Option>
+                </Select>
+                </Col>
+                <Col span="14" style="text-align: right;">
+                <Page :total="recordTotalNumber" :current="page" :page-size="pageSize" ref="pages" @on-change="getUserList" show-elevator show-total></Page>
+                </Col>
+            </Row>
+        </div>
+        <div v-show="showPermissionSetting">
+            <Row>
+                <Col span="12">
                 <Button type="primary" @click="commitUserPermission">提交</Button>
                 <Button type="ghost" @click="backListPage">取消</Button>
-            </Col>
-            <Col span="12" style="text-align: right;">
+                </Col>
+                <Col span="12" style="text-align: right;">
                 <Button icon="arrow-left-b" @click="backListPage">返回列表</Button>
-            </Col>
-        </Row>
-        <Row>
-            <Col span="24">
-            <br>
-            </Col>
-        </Row>
-        <Row v-show="showPermissionSetting">
-            <Col span="24">
+                </Col>
+            </Row>
+            <Row>
+                <Col span="24">
                 <Tabs @on-click="changeTabs">
                     <Tab-pane label="前台权限">
                         <Tree :data="menu0" @on-check-change="changeTreeData" show-checkbox></Tree>
                     </Tab-pane>
                 </Tabs>
-            </Col>
-        </Row>
+                </Col>
+            </Row>
+        </div>
         <Modal v-model="editProfileDialog" :title="editUserProfile.title" ok-text="修改" cancel-text="取消" @on-ok="commitUserProfile">
             <Form ref="editUserProfile" :model="editUserProfile" :rules="editUserProfileRule" label-position="right" :label-width="110" style="width:460px">
                 <Form-item label="用户名：" prop="userName">
@@ -133,293 +122,275 @@
 </template>
 
 <script>
-    import Axios from '@/api/index';
-    export default {
-        data() {
-            return {
-                //分页属性
-                tableSize: "small",
-                recordTotalNumber: 1, //总数量
-                page: 1, //第N页
-                pageSize: 20, //每页数量
-                //现实/隐藏
-                showUserListTable: true,
-                showPermissionSetting: false,
-                //表格属性
-                tableColumns: [
-                    {
-                        title: '用户名',
-                        key: 'userName'
-                    },
-                    {
-                        title: '权限组',
-                        key: 'permissionGroup'
-                    },
-                    {
-                        title: '真实姓名',
-                        key: 'realName'
-                    },
-                    {
-                        title: '性别',
-                        key: 'sex'
-                    },
-                    {
-                        title: '部门',
-                        key: 'department'
-                    },
-                    {
-                        title: '职位',
-                        key: 'position'
-                    },
-                    {
-                        title: '手机号码',
-                        key: 'mobile'
-                    },
-                    {
-                        title: '密保SN',
-                        key: 'sn'
-                    },
-                    {
-                        title: '登录次数',
-                        key: 'loginCount'
-                    },
-                    {
-                        title: '登录时间',
-                        key: 'lastLoginDate',
-                        width: 150
-                    },
-                    {
-                        title: '登录IP',
-                        key: 'lastLoginIP'
-                    },
-                    {
-                        title: '操作',
-                        align: 'center',
-                        key: 'action',
-                        width: 150,
-                        render : (h, params) => {
-                            if (this.searchUserCondition.searchDataStatement == '1') {
-                                return [
-                                    h("i-button", {
-                                        props: {
-                                            icon: "person-stalker",
-                                            type: "info",
-                                            size: "small"
-                                        },
-                                        on: {
-                                            'click': () => {
-                                                this.getPermissionTree(params.row.uid);
-                                            }
+import Axios from '@/api/index';
+export default {
+    data() {
+        return {
+            //分页属性
+            tableSize: "small",
+            recordTotalNumber: 1, //总数量
+            page: 1, //第N页
+            pageSize: 20, //每页数量
+            //现实/隐藏
+            showUserListTable: true,
+            showPermissionSetting: false,
+            //表格属性
+            tableColumns: [
+                {
+                    title: '用户名',
+                    key: 'userName'
+                },
+                {
+                    title: '权限组',
+                    key: 'permissionGroup'
+                },
+                {
+                    title: '真实姓名',
+                    key: 'realName'
+                },
+                {
+                    title: '性别',
+                    key: 'sex'
+                },
+                {
+                    title: '部门',
+                    key: 'department'
+                },
+                {
+                    title: '职位',
+                    key: 'position'
+                },
+                {
+                    title: '手机号码',
+                    key: 'mobile'
+                },
+                {
+                    title: '密保SN',
+                    key: 'sn'
+                },
+                {
+                    title: '登录次数',
+                    key: 'loginCount'
+                },
+                {
+                    title: '登录时间',
+                    key: 'lastLoginDate',
+                    width: 150
+                },
+                {
+                    title: '登录IP',
+                    key: 'lastLoginIP'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    key: 'action',
+                    width: 150,
+                    render: (h, params) => {
+                        if (this.searchUserCondition.searchDataStatement == '1') {
+                            return [
+                                h("i-button", {
+                                    props: {
+                                        icon: "person-stalker",
+                                        type: "info",
+                                        size: "small"
+                                    },
+                                    on: {
+                                        'click': () => {
+                                            this.getPermissionTree(params.row.uid);
                                         }
-                                    }),
-                                    h("i-button", {
-                                        props: {
-                                            icon: "edit",
-                                            type: "success",
-                                            size: "small"
-                                        },
-                                        class:"margin-left-10",
-                                        on: {
-                                            'click': () => {
-                                                this.editUserProfileDialog(params.row.uid);
-                                            }
+                                    }
+                                }),
+                                h("i-button", {
+                                    props: {
+                                        icon: "edit",
+                                        type: "success",
+                                        size: "small"
+                                    },
+                                    class: "margin-left-10",
+                                    on: {
+                                        'click': () => {
+                                            this.editUserProfileDialog(params.row.uid);
                                         }
-                                    }),
-                                    h("i-button", {
-                                        props: {
-                                            icon: "trash-a",
-                                            type: "error",
-                                            size: "small"
-                                        },
-                                        class:"margin-left-10",
-                                        on: {
-                                            'click': () => {
-                                                this.deleteUser(params.row.uid, params.row.sn);
-                                            }
+                                    }
+                                }),
+                                h("i-button", {
+                                    props: {
+                                        icon: "trash-a",
+                                        type: "error",
+                                        size: "small"
+                                    },
+                                    class: "margin-left-10",
+                                    on: {
+                                        'click': () => {
+                                            this.deleteUser(params.row.uid, params.row.sn);
                                         }
-                                    })
-                                ];
-                            } else if (this.searchUserCondition.searchDataStatement == '0') {
-                                return [
-                                    h("i-button", {
-                                        props: {
-                                            icon: "arrow-return-left",
-                                            type: "success",
-                                            size: "small"
-                                        },
-                                        on: {
-                                            'click': () => {
-                                                this.recoverUser(params.row.uid);
-                                            }
+                                    }
+                                })
+                            ];
+                        } else if (this.searchUserCondition.searchDataStatement == '0') {
+                            return [
+                                h("i-button", {
+                                    props: {
+                                        icon: "arrow-return-left",
+                                        type: "success",
+                                        size: "small"
+                                    },
+                                    on: {
+                                        'click': () => {
+                                            this.recoverUser(params.row.uid);
                                         }
-                                    }),
-                                    h("i-button", {
-                                        props: {
-                                            icon: "trash-a",
-                                            type: "error",
-                                            size: "small"
-                                        },
-                                        class:"margin-left-10",
-                                        on: {
-                                            'click': () => {
-                                                this.deleteUserAccountDialog(params.row.uid);
-                                            }
+                                    }
+                                }),
+                                h("i-button", {
+                                    props: {
+                                        icon: "trash-a",
+                                        type: "error",
+                                        size: "small"
+                                    },
+                                    class: "margin-left-10",
+                                    on: {
+                                        'click': () => {
+                                            this.deleteUserAccountDialog(params.row.uid);
                                         }
-                                    })
-                                ];
-                            }
+                                    }
+                                })
+                            ];
                         }
                     }
-                ],
-                tableData: [],
-                menu0: [],
-                //修改权限
-                associate: {
+                }
+            ],
+            tableData: [],
+            menu0: [],
+            //修改权限
+            associate: {
+                menu0: {},
+                groupMenu: {
                     menu0: {},
-                    groupMenu: {
-                        menu0: {},
-                    }
-                },
-                editPermission: {
-                    act: undefined,
-                    uid: undefined,
-                    pmid: undefined,
-                    menu0: [],
-                },
-                // tableData: [],
-                // menu1: [],
-                // menu2: [],
-                // menu5: [],
-                // platformList: [],
-                // associate: {
-                //     menu1: {},
-                //     menu2: {},
-                //     menu5: {},
-                //     games: [],
-                //     groupMenu: {
-                //         menu1: {},
-                //         menu2: {},
-                //         menu5: {},
-                //         games: []
-                //     }
-                // },
-                // editPermission: {
-                //     act: undefined,
-                //     uid: undefined,
-                //     pmid: undefined,
-                //     menu1: [],
-                //     menu2: [],
-                //     menu5: [],
-                //     games: []
-                // },
-                //编辑用户资料会话框
-                editProfileDialog: false,
-                editUserProfile: {
-                    title: '',
-                    uid: '',
-                    userName: '',
-                    password: '',
-                    permissionGroup: [],
-                    permissionGroupSelected: '0',
-                    realName: '',
-                    sex: '',
-                    departmentList: [],
-                    departmentSelected: '0',
-                    positionList: [],
-                    positionSelected: '',
-                    dutyDescribe: '',
-                    eMail: '',
-                    officePhone: '',
-                    mobile: '',
-                },
-                editUserProfileRule: {
-                    userName: [
-                        { required: true, message: '用户名不能为空', trigger: 'blur' },
-                    ],
-                    permissionGroupSelected: [
-                        { required: true, message: '请选择权限组', trigger: 'change' },
-                    ],
-                    realName: [
-                        { required: true, message: '真实姓名不能为空', trigger: 'blur' },
-                    ],
-                    sex: [
-                        { required: true, message: '性别不能为空', trigger: 'blur' },
-                    ],
-                    /*departmentSelected: [
-                        { required: true, message: '部门不能为空', trigger: 'change' },
-                    ],
-                    positionSelected: [
-                        { required: true, message: '职位不能为空', trigger: 'change' },
-                    ]*/
-                },
-                //删除用户
-                deleteUserDialog: false,
-                deleteUserProfile: {
-                    uid: ''
-                },
-                //搜索用户条件
-                searchUserCondition: {
-                    userName: '',
-                    departmentSelected: '',
-                    permissionGroupSelected: '',
-                    statement: '1',
-                    searchDataStatement: '1'
-                },
-                //添加or编辑用户
-                commitUserProfileType : '',
-                //当前标签页
-                currentTag : '0'
-            }
-        },
-        mounted() {
-            this.getUserList();
-            this.getPermissionGroup();
-            this.getDepartmentsList();
-        },
-        methods: {
-            //改变标签页
-            changeTabs (data) {
-                this.currentTag = data.toString();
+                }
             },
-            //添加用户 - 会话框
-            arouseAddUserDialog () {
-                this.commitUserProfileType = 'add';
-                this.editProfileDialog = true;
-                this.editUserProfile.title = "添加用户";
-                this.editUserProfile.uid = '';
-                this.editUserProfile.userName = '';
-                this.editUserProfile.password = '';
-                this.editUserProfile.permissionGroupSelected = '0';
-                this.editUserProfile.realName = '';
-                this.editUserProfile.sex = '';
-                this.editUserProfile.departmentSelected = '0';
-                this.editUserProfile.positionSelected = '';
-                this.editUserProfile.dutyDescribe = '';
-                this.editUserProfile.eMail = '';
-                this.editUserProfile.officePhone = '';
-                this.editUserProfile.mobile = '';
+            editPermission: {
+                act: undefined,
+                uid: undefined,
+                pmid: undefined,
+                menu0: [],
             },
-            //恢复用户
-            recoverUser (uid) {
-                Axios.get('api.php?action=sys&opt=userEdit&stage=recover&uid='+uid)
-                .then(
-                    res => {
-                        if (res.ret == 1) {
-                            this.getUserList(this.page);
-                            this.$Message.success(res.data);
-                        } else {
-                            this.$Message.error(res.msg);
-                        }
-                    }
-                ).catch(
-                    err => {
-                        console.log('请求失败' + err);
-                    }
-                )
+            // tableData: [],
+            // menu1: [],
+            // menu2: [],
+            // menu5: [],
+            // platformList: [],
+            // associate: {
+            //     menu1: {},
+            //     menu2: {},
+            //     menu5: {},
+            //     games: [],
+            //     groupMenu: {
+            //         menu1: {},
+            //         menu2: {},
+            //         menu5: {},
+            //         games: []
+            //     }
+            // },
+            // editPermission: {
+            //     act: undefined,
+            //     uid: undefined,
+            //     pmid: undefined,
+            //     menu1: [],
+            //     menu2: [],
+            //     menu5: [],
+            //     games: []
+            // },
+            //编辑用户资料会话框
+            editProfileDialog: false,
+            editUserProfile: {
+                title: '',
+                uid: '',
+                userName: '',
+                password: '',
+                permissionGroup: [],
+                permissionGroupSelected: '0',
+                realName: '',
+                sex: '',
+                departmentList: [],
+                departmentSelected: '0',
+                positionList: [],
+                positionSelected: '',
+                dutyDescribe: '',
+                eMail: '',
+                officePhone: '',
+                mobile: '',
+            },
+            editUserProfileRule: {
+                userName: [
+                    { required: true, message: '用户名不能为空', trigger: 'blur' },
+                ],
+                permissionGroupSelected: [
+                    { required: true, message: '请选择权限组', trigger: 'change' },
+                ],
+                realName: [
+                    { required: true, message: '真实姓名不能为空', trigger: 'blur' },
+                ],
+                sex: [
+                    { required: true, message: '性别不能为空', trigger: 'blur' },
+                ],
+                /*departmentSelected: [
+                    { required: true, message: '部门不能为空', trigger: 'change' },
+                ],
+                positionSelected: [
+                    { required: true, message: '职位不能为空', trigger: 'change' },
+                ]*/
             },
             //删除用户
-            deleteUser (uid, userSN) {
-                Axios.get('api.php?action=sys&opt=userEdit&act=del&uid='+uid+'&mb_isbn='+(userSN?userSN:''))
+            deleteUserDialog: false,
+            deleteUserProfile: {
+                uid: ''
+            },
+            //搜索用户条件
+            searchUserCondition: {
+                userName: '',
+                departmentSelected: '',
+                permissionGroupSelected: '',
+                statement: '1',
+                searchDataStatement: '1'
+            },
+            //添加or编辑用户
+            commitUserProfileType: '',
+            //当前标签页
+            currentTag: '0'
+        }
+    },
+    mounted() {
+        this.getUserList();
+        this.getPermissionGroup();
+        this.getDepartmentsList();
+    },
+    methods: {
+        //改变标签页
+        changeTabs(data) {
+            this.currentTag = data.toString();
+        },
+        //添加用户 - 会话框
+        arouseAddUserDialog() {
+            this.commitUserProfileType = 'add';
+            this.editProfileDialog = true;
+            this.editUserProfile.title = "添加用户";
+            this.editUserProfile.uid = '';
+            this.editUserProfile.userName = '';
+            this.editUserProfile.password = '';
+            this.editUserProfile.permissionGroupSelected = '0';
+            this.editUserProfile.realName = '';
+            this.editUserProfile.sex = '';
+            this.editUserProfile.departmentSelected = '0';
+            this.editUserProfile.positionSelected = '';
+            this.editUserProfile.dutyDescribe = '';
+            this.editUserProfile.eMail = '';
+            this.editUserProfile.officePhone = '';
+            this.editUserProfile.mobile = '';
+        },
+        //恢复用户
+        recoverUser(uid) {
+            Axios.get('api.php?action=sys&opt=userEdit&stage=recover&uid=' + uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -434,10 +405,28 @@
                         console.log('请求失败' + err);
                     }
                 )
-            },
-            //彻底删除用户
-            deleteUserThoroughly () {
-                Axios.get('api.php?action=sys&opt=userEdit&stage=delForever&uid='+this.deleteUserProfile.uid)
+        },
+        //删除用户
+        deleteUser(uid, userSN) {
+            Axios.get('api.php?action=sys&opt=userEdit&act=del&uid=' + uid + '&mb_isbn=' + (userSN ? userSN : ''))
+                .then(
+                    res => {
+                        if (res.ret == 1) {
+                            this.getUserList(this.page);
+                            this.$Message.success(res.data);
+                        } else {
+                            this.$Message.error(res.msg);
+                        }
+                    }
+                ).catch(
+                    err => {
+                        console.log('请求失败' + err);
+                    }
+                )
+        },
+        //彻底删除用户
+        deleteUserThoroughly() {
+            Axios.get('api.php?action=sys&opt=userEdit&stage=delForever&uid=' + this.deleteUserProfile.uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
@@ -455,92 +444,92 @@
                         console.log('请求失败' + err);
                     }
                 )
-            },
-            deleteUserAccountDialog (uid) {
-                this.deleteUserProfile.uid = uid;
-                this.deleteUserDialog = true;
-            },
-            //修改用户资料
-            commitUserProfile () {
-                this.$refs['editUserProfile'].validate((valid) => {
-                    if (valid) {
-                        if (this.commitUserProfileType == 'edit') {
-                            Axios.post('api.php?action=sys&opt=userEdit', {
-                                stage: 'edit',
-                                uId: this.editUserProfile.uid,
-                                uName: this.editUserProfile.userName,
-                                uPass: this.editUserProfile.password,
-                                uGid: this.editUserProfile.permissionGroupSelected,
-                                truename: this.editUserProfile.realName,
-                                sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
-                                dept: this.editUserProfile.departmentSelected,
-                                position: this.editUserProfile.positionSelected,
-                                position_desc: this.editUserProfile.dutyDescribe,
-                                email: this.editUserProfile.eMail,
-                                office_phone: this.editUserProfile.officePhone,
-                                mobile: this.editUserProfile.mobile
-                            }).then(
-                                res => {
-                                    if (res.ret == 1) {
-                                        this.getUserList(this.page);
-                                        this.$Message.success(res.data);
-                                    } else {
-                                        this.$Message.error(res.msg);
-                                    }
+        },
+        deleteUserAccountDialog(uid) {
+            this.deleteUserProfile.uid = uid;
+            this.deleteUserDialog = true;
+        },
+        //修改用户资料
+        commitUserProfile() {
+            this.$refs['editUserProfile'].validate((valid) => {
+                if (valid) {
+                    if (this.commitUserProfileType == 'edit') {
+                        Axios.post('api.php?action=sys&opt=userEdit', {
+                            stage: 'edit',
+                            uId: this.editUserProfile.uid,
+                            uName: this.editUserProfile.userName,
+                            uPass: this.editUserProfile.password,
+                            uGid: this.editUserProfile.permissionGroupSelected,
+                            truename: this.editUserProfile.realName,
+                            sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
+                            dept: this.editUserProfile.departmentSelected,
+                            position: this.editUserProfile.positionSelected,
+                            position_desc: this.editUserProfile.dutyDescribe,
+                            email: this.editUserProfile.eMail,
+                            office_phone: this.editUserProfile.officePhone,
+                            mobile: this.editUserProfile.mobile
+                        }).then(
+                            res => {
+                                if (res.ret == 1) {
+                                    this.getUserList(this.page);
+                                    this.$Message.success(res.data);
+                                } else {
+                                    this.$Message.error(res.msg);
                                 }
-                            ).catch(
-                                err => {
-                                    console.log('提交失败' + err)
+                            }
+                        ).catch(
+                            err => {
+                                console.log('提交失败' + err)
+                            }
+                        )
+                    } else if (this.commitUserProfileType == 'add') {
+                        Axios.post('api.php', {
+                            action: 'sys',
+                            opt: 'userEdit',
+                            stage: 'add',
+                            uName: this.editUserProfile.userName,
+                            uPass: this.editUserProfile.password,
+                            uGid: this.editUserProfile.permissionGroupSelected,
+                            truename: this.editUserProfile.realName,
+                            sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
+                            dept: this.editUserProfile.departmentSelected,
+                            position: this.editUserProfile.positionSelected,
+                            position_desc: this.editUserProfile.dutyDescribe,
+                            email: this.editUserProfile.eMail,
+                            extension: 0,
+                            office_phone: this.editUserProfile.officePhone,
+                            mobile: this.editUserProfile.mobile,
+                            actionid: '',
+                            gamelist: '',
+                            accountList: '',
+                        }).then(
+                            res => {
+                                if (res.ret == 1) {
+                                    this.getUserList(this.page);
+                                    this.$Message.success(res.data);
+                                } else {
+                                    this.$Message.error(res.msg);
                                 }
-                            )
-                        } else if (this.commitUserProfileType == 'add') {
-                            Axios.post('api.php', {
-                                action: 'sys',
-                                opt: 'userEdit',
-                                stage: 'add',
-                                uName: this.editUserProfile.userName,
-                                uPass: this.editUserProfile.password,
-                                uGid: this.editUserProfile.permissionGroupSelected,
-                                truename: this.editUserProfile.realName,
-                                sex: (this.editUserProfile.sex == 'female') ? '女' : ((this.editUserProfile.sex == 'male') ? '男' : ''),
-                                dept: this.editUserProfile.departmentSelected,
-                                position: this.editUserProfile.positionSelected,
-                                position_desc: this.editUserProfile.dutyDescribe,
-                                email: this.editUserProfile.eMail,
-                                extension: 0,
-                                office_phone: this.editUserProfile.officePhone,
-                                mobile: this.editUserProfile.mobile,
-                                actionid: '',
-                                gamelist: '',
-                                accountList: '',
-                            }).then(
-                                res => {
-                                    if (res.ret == 1) {
-                                        this.getUserList(this.page);
-                                        this.$Message.success(res.data);
-                                    } else {
-                                        this.$Message.error(res.msg);
-                                    }
-                                }
-                            ).catch(
-                                err => {
-                                    console.log('提交失败' + err);
-                                }
-                            )
-                        }
-                    } else {
-                        this.$Message.error('请填写带*号信息!');
+                            }
+                        ).catch(
+                            err => {
+                                console.log('提交失败' + err);
+                            }
+                        )
                     }
-                });
-            },
-            //修改用户资料-会话框
-            editUserProfileDialog (uid) {
-                this.commitUserProfileType = 'edit';
-                Axios.get('api.php?action=sys&opt=userEdit&act=edit&uid='+uid)
+                } else {
+                    this.$Message.error('请填写带*号信息!');
+                }
+            });
+        },
+        //修改用户资料-会话框
+        editUserProfileDialog(uid) {
+            this.commitUserProfileType = 'edit';
+            Axios.get('api.php?action=sys&opt=userEdit&act=edit&uid=' + uid)
                 .then(
                     res => {
                         if (res.ret == 1) {
-                            this.editUserProfile.title = '修改['+res.data.uData.truename+']资料';
+                            this.editUserProfile.title = '修改[' + res.data.uData.truename + ']资料';
                             this.editUserProfile.uid = uid;
                             this.editUserProfile.userName = res.data.uData.uName;
                             this.editUserProfile.password = '';
@@ -563,39 +552,60 @@
                         console.log('获取失败' + err);
                     }
                 )
-            },
-            //获取权限组列表
-            getPermissionGroup() {
-                Axios.post('api.php', {
-                    action: 'sys',
-                    opt: 'userEdit',
-                }).then(
-                    res => {
-                        // console.log(res);
-                        if(res.ret == 1){
-                            for(var i in res.data.pmData){
-                                this.editUserProfile.permissionGroup.push({"value":res.data.pmData[i].pmid,"label":res.data.pmData[i].name});
-                            }
+        },
+        //获取权限组列表
+        getPermissionGroup() {
+            Axios.post('api.php', {
+                action: 'sys',
+                opt: 'userEdit',
+            }).then(
+                res => {
+                    // console.log(res);
+                    if (res.ret == 1) {
+                        for (var i in res.data.pmData) {
+                            this.editUserProfile.permissionGroup.push({ "value": res.data.pmData[i].pmid, "label": res.data.pmData[i].name });
                         }
                     }
-                ).catch(
-                    err => {
-                        console.log('获取失败' + err)
+                }
+            ).catch(
+                err => {
+                    console.log('获取失败' + err)
+                }
+            )
+        },
+        //获取部门列表
+        getDepartmentsList() {
+            Axios.post('api.php', {
+                action: 'sys',
+                opt: 'getDepartments',
+            }).then(
+                res => {
+                    // console.log(res);
+                    if (res.ret == 1) {
+                        this.editUserProfile.departmentList = [];
+                        for (var i = 0; i < res.data.dpData.length; i++) {
+                            this.editUserProfile.departmentList.push({ "value": res.data.dpData[i].id, "label": res.data.dpData[i].name });
+                        }
                     }
-                )
-            },
-            //获取部门列表
-            getDepartmentsList() {
+                }
+            ).catch(
+                err => {
+                    console.log('获取失败' + err);
+                }
+            )
+        },
+        getChangedPositions() {
+            if (this.editUserProfile.departmentSelected != "0") {
                 Axios.post('api.php', {
                     action: 'sys',
-                    opt: 'getDepartments',
+                    opt: 'getPositions',
+                    dept: this.editUserProfile.departmentSelected,
                 }).then(
                     res => {
-                        // console.log(res);
                         if (res.ret == 1) {
-                            this.editUserProfile.departmentList = [];
-                            for(var i=0;i<res.data.dpData.length;i++){
-                                this.editUserProfile.departmentList.push({"value":res.data.dpData[i].id,"label":res.data.dpData[i].name});
+                            this.editUserProfile.positionList = [];
+                            for (var i = 0; i < res.data.posData.length; i++) {
+                                this.editUserProfile.positionList.push({ "value": res.data.posData[i].id, "label": res.data.posData[i].name });
                             }
                         }
                     }
@@ -604,227 +614,206 @@
                         console.log('获取失败' + err);
                     }
                 )
-            },
-            getChangedPositions() {
-                if (this.editUserProfile.departmentSelected != "0") {
-                    Axios.post('api.php', {
-                        action: 'sys',
-                        opt: 'getPositions',
-                        dept: this.editUserProfile.departmentSelected,
-                    }).then(
-                        res => {
-                            if (res.ret == 1) {
-                                this.editUserProfile.positionList = [];
-                                for(var i=0;i<res.data.posData.length;i++){
-                                    this.editUserProfile.positionList.push({"value":res.data.posData[i].id,"label":res.data.posData[i].name});
-                                }
-                            }
-                        }
-                    ).catch(
-                        err => {
-                            console.log('获取失败' + err);
-                        }
-                    )
-                } else {
-                    this.editUserProfile.positionList = [];
-                    this.editUserProfile.positionSelected = "0";
-                }
-            },
-            // //权限修改
-            // commitUserPermission () {
-            //     //console.log(this.editPermission);
-            //     //console.log(this.associate);
-            //     Axios.post('api.php?action=sys&opt=permission&act='+this.editPermission.act, {
-            //         stage: 'yes',
-            //         pmid: this.editPermission.pmid,
-            //         uid: this.editPermission.uid,
-            //         mids: this.mergeMids(),
-            //         games: this.editPermission.games
-            //     }).then(
-            //         res => {
-            //             if (res.ret == 1) {
-            //                 this.$Message.success(res.data);
-            //             } else {
-            //                 this.$Message.error(res.msg);
-            //             }
-            //         }
-            //     ).catch(
-            //         err => {
-            //             console.log('请求失败' + err);
-            //         }
-            //     )
-            // },
-            // mergeMids () {
-            //     let res = [];
-            //     for (let k in this.editPermission) {
-            //         if (k.substr(0,4) == 'menu') {
-            //             for (let i in this.editPermission[k]) {
-            //                 res.push(this.editPermission[k][i]);
-            //             }
-            //         }
-            //     }
-            //     return res;
-            // },
-            // changeTreeData (data) {
-            //     let origin = undefined;
-            //     let idList = {};
-            //     data.forEach(item => {
-            //         if (origin == undefined) {
-            //             origin = item.origin;
-            //         }
-            //         let tmp = item.mark;
-            //         let cache = [];
-            //         if (typeof origin == 'object') { //platform
-            //             while (this.associate['games'][origin.games][tmp] != undefined) {
-            //                 cache.push(tmp);
-            //                 tmp = this.associate['games'][origin.games][tmp];
-            //             }
-            //         } else { //menu
-            //             while (this.associate[origin][tmp] != undefined) {
-            //                 cache.push(tmp);
-            //                 tmp = this.associate[origin][tmp];
-            //             }
-            //         }
-            //         idList[tmp] = undefined;
-            //         while ((tmp = cache.pop()) != undefined) {
-            //             idList[tmp] = undefined;
-            //         }
-            //     });
-            //     if (typeof origin == 'object') { //platform
-            //         this.editPermission['games'][origin.games] = [];
-            //         for (let i in idList) {
-            //             if (this.associate.groupMenu['games'][origin.games][i]!==true) {
-            //                 this.editPermission['games'][origin.games].push(parseInt(i));
-            //             }
-            //         }
-            //     } else { //menu
-            //         this.editPermission[origin] = [];
-            //         for (let i in idList) {
-            //             if (this.associate.groupMenu[origin][i]!==true) {
-            //                 this.editPermission[origin].push(parseInt(i));
-            //             }
-            //         }
-            //     }
-            //     //console.log(this.associate);
-            //     //console.log(this.editPermission);
-            // },
-            //权限修改
-            commitUserPermission () {
-                Axios.post('api.php?action=sys&opt=editPermission&act='+this.editPermission.act, {
-                    stage: 'yes',
-                    pmid: this.editPermission.pmid,
-                    uid: this.editPermission.uid,
-                    mids: this.mergeMids()
-                }).then(
-                    res => {
-                        if (res.ret == 1) {
-                            this.$Message.success(res.data);
-                        } else {
-                            this.$Message.error(res.msg);
-                        }
-                    }
-                ).catch(
-                    err => {
-                        console.log('请求失败' + err);
-                    }
-                )
-            },
-            mergeMids () {
-                let res = [];
-                for (let k in this.editPermission) {
-                    if (k.substr(0,4) == 'menu') {
-                        for (let i in this.editPermission[k]) {
-                            res.push(this.editPermission[k][i]);
-                        }
+            } else {
+                this.editUserProfile.positionList = [];
+                this.editUserProfile.positionSelected = "0";
+            }
+        },
+        // //权限修改
+        // commitUserPermission () {
+        //     //console.log(this.editPermission);
+        //     //console.log(this.associate);
+        //     Axios.post('api.php?action=sys&opt=permission&act='+this.editPermission.act, {
+        //         stage: 'yes',
+        //         pmid: this.editPermission.pmid,
+        //         uid: this.editPermission.uid,
+        //         mids: this.mergeMids(),
+        //         games: this.editPermission.games
+        //     }).then(
+        //         res => {
+        //             if (res.ret == 1) {
+        //                 this.$Message.success(res.data);
+        //             } else {
+        //                 this.$Message.error(res.msg);
+        //             }
+        //         }
+        //     ).catch(
+        //         err => {
+        //             console.log('请求失败' + err);
+        //         }
+        //     )
+        // },
+        // mergeMids () {
+        //     let res = [];
+        //     for (let k in this.editPermission) {
+        //         if (k.substr(0,4) == 'menu') {
+        //             for (let i in this.editPermission[k]) {
+        //                 res.push(this.editPermission[k][i]);
+        //             }
+        //         }
+        //     }
+        //     return res;
+        // },
+        // changeTreeData (data) {
+        //     let origin = undefined;
+        //     let idList = {};
+        //     data.forEach(item => {
+        //         if (origin == undefined) {
+        //             origin = item.origin;
+        //         }
+        //         let tmp = item.mark;
+        //         let cache = [];
+        //         if (typeof origin == 'object') { //platform
+        //             while (this.associate['games'][origin.games][tmp] != undefined) {
+        //                 cache.push(tmp);
+        //                 tmp = this.associate['games'][origin.games][tmp];
+        //             }
+        //         } else { //menu
+        //             while (this.associate[origin][tmp] != undefined) {
+        //                 cache.push(tmp);
+        //                 tmp = this.associate[origin][tmp];
+        //             }
+        //         }
+        //         idList[tmp] = undefined;
+        //         while ((tmp = cache.pop()) != undefined) {
+        //             idList[tmp] = undefined;
+        //         }
+        //     });
+        //     if (typeof origin == 'object') { //platform
+        //         this.editPermission['games'][origin.games] = [];
+        //         for (let i in idList) {
+        //             if (this.associate.groupMenu['games'][origin.games][i]!==true) {
+        //                 this.editPermission['games'][origin.games].push(parseInt(i));
+        //             }
+        //         }
+        //     } else { //menu
+        //         this.editPermission[origin] = [];
+        //         for (let i in idList) {
+        //             if (this.associate.groupMenu[origin][i]!==true) {
+        //                 this.editPermission[origin].push(parseInt(i));
+        //             }
+        //         }
+        //     }
+        //     //console.log(this.associate);
+        //     //console.log(this.editPermission);
+        // },
+        //权限修改
+        commitUserPermission() {
+            Axios.post('api.php?action=sys&opt=editPermission&act=' + this.editPermission.act, {
+                stage: 'yes',
+                pmid: this.editPermission.pmid,
+                uid: this.editPermission.uid,
+                mids: this.mergeMids()
+            }).then(
+                res => {
+                    if (res.ret == 1) {
+                        this.$Message.success(res.data);
+                    } else {
+                        this.$Message.error(res.msg);
                     }
                 }
-                // console.log(res);
-                return res;
-            },
-            changeTreeData (data) {
-                let origin = this.currentTag ? "menu" + this.currentTag : undefined;
-                let idList = {};
-                data.forEach(item => {
-                    if (origin == undefined) {
-                        origin = item.origin;
+            ).catch(
+                err => {
+                    console.log('请求失败' + err);
+                }
+            )
+        },
+        mergeMids() {
+            let res = [];
+            for (let k in this.editPermission) {
+                if (k.substr(0, 4) == 'menu') {
+                    for (let i in this.editPermission[k]) {
+                        res.push(this.editPermission[k][i]);
                     }
-                    let tmp = item.mark;
-                    let cache = [];
-                    while (this.associate[origin][tmp] != undefined) {
-                        cache.push(tmp);
-                        tmp = this.associate[origin][tmp];
-                    }
+                }
+            }
+            // console.log(res);
+            return res;
+        },
+        changeTreeData(data) {
+            let origin = this.currentTag ? "menu" + this.currentTag : undefined;
+            let idList = {};
+            data.forEach(item => {
+                if (origin == undefined) {
+                    origin = item.origin;
+                }
+                let tmp = item.mark;
+                let cache = [];
+                while (this.associate[origin][tmp] != undefined) {
+                    cache.push(tmp);
+                    tmp = this.associate[origin][tmp];
+                }
+                idList[tmp] = undefined;
+                while ((tmp = cache.pop()) != undefined) {
                     idList[tmp] = undefined;
-                    while ((tmp = cache.pop()) != undefined) {
-                        idList[tmp] = undefined;
-                    }
-                });
-                this.editPermission[origin] = [];
-                for (let i in idList) {
-                    if (this.associate.groupMenu[origin][i]!==true) {
-                        this.editPermission[origin].push(parseInt(i));
-                    }
                 }
-                // console.log(this.associate);
-                // console.log(this.editPermission);
-            },
-            //返回列表
-            backListPage () {
-                this.showUserListTable = true;
-                this.showPermissionSetting = false;
-            },
-            //获取系统用户列表
-            getUserList (page) {
-                if (page === undefined || typeof page == 'object') {
-                    this.page = 1;
-                } else {
-                    this.page = page;
+            });
+            this.editPermission[origin] = [];
+            for (let i in idList) {
+                if (this.associate.groupMenu[origin][i] !== true) {
+                    this.editPermission[origin].push(parseInt(i));
                 }
-                Axios.post('api.php?action=sys&opt=showUser', {
-                    act: 'search',
-                    numPerPage: this.pageSize,
-                    pageNum: this.page,
-                    uName: this.searchUserCondition.userName,
-                    dept: this.searchUserCondition.departmentSelected,
-                    uGid: this.searchUserCondition.permissionGroupSelected,
-                    state: this.searchUserCondition.statement
-                }).then(
-                    res => {
-                        // console.log(res);
-                        if (res.ret == 1) {
-                            this.searchUserCondition.searchDataStatement = res.data.searchArr.state;
-                            this.recordTotalNumber = parseInt(res.data.searchArr.totalCount);
-                            this.page = res.data.searchArr.pageNum;
-                            this.pageSize = parseInt(res.data.searchArr.numPerPage);
-                            this.tableData = [];
-                            for(let i=0;i<res.data.uData.length;i++){
-                                let userInfo = {
-                                    uid: res.data.uData[i].uId,
-                                    userName: res.data.uData[i].uName,
-                                    permissionGroup: res.data.uData[i].uGname,
-                                    realName: res.data.uData[i].truename,
-                                    sex: res.data.uData[i].sex,
-                                    department: res.data.uData[i].deptName,
-                                    position: res.data.uData[i].posName,
-                                    mobile: res.data.uData[i].mobile,
-                                    sn: res.data.uData[i].mb_isbn,
-                                    loginCount: res.data.uData[i].logincount,
-                                    lastLoginDate: res.data.uData[i].LastLoginDate,
-                                    lastLoginIP: res.data.uData[i].LastLoginIp
-                                };
-                                this.tableData.push(userInfo);
-                            }
+            }
+            // console.log(this.associate);
+            // console.log(this.editPermission);
+        },
+        //返回列表
+        backListPage() {
+            this.showUserListTable = true;
+            this.showPermissionSetting = false;
+        },
+        //获取系统用户列表
+        getUserList(page) {
+            if (page === undefined || typeof page == 'object') {
+                this.page = 1;
+            } else {
+                this.page = page;
+            }
+            Axios.post('api.php?action=sys&opt=showUser', {
+                act: 'search',
+                numPerPage: this.pageSize,
+                pageNum: this.page,
+                uName: this.searchUserCondition.userName,
+                dept: this.searchUserCondition.departmentSelected,
+                uGid: this.searchUserCondition.permissionGroupSelected,
+                state: this.searchUserCondition.statement
+            }).then(
+                res => {
+                    // console.log(res);
+                    if (res.ret == 1) {
+                        this.searchUserCondition.searchDataStatement = res.data.searchArr.state;
+                        this.recordTotalNumber = parseInt(res.data.searchArr.totalCount);
+                        this.page = res.data.searchArr.pageNum;
+                        this.pageSize = parseInt(res.data.searchArr.numPerPage);
+                        this.tableData = [];
+                        for (let i = 0; i < res.data.uData.length; i++) {
+                            let userInfo = {
+                                uid: res.data.uData[i].uId,
+                                userName: res.data.uData[i].uName,
+                                permissionGroup: res.data.uData[i].uGname,
+                                realName: res.data.uData[i].truename,
+                                sex: res.data.uData[i].sex,
+                                department: res.data.uData[i].deptName,
+                                position: res.data.uData[i].posName,
+                                mobile: res.data.uData[i].mobile,
+                                sn: res.data.uData[i].mb_isbn,
+                                loginCount: res.data.uData[i].logincount,
+                                lastLoginDate: res.data.uData[i].LastLoginDate,
+                                lastLoginIP: res.data.uData[i].LastLoginIp
+                            };
+                            this.tableData.push(userInfo);
                         }
                     }
-                ).catch(
-                    err => {
-                        console.log('获取失败' + err);
-                    }
-                )
-            },
-            //获取权限列表
-            getPermissionTree (uid) {
-                Axios.get('api.php?action=sys&opt=editPermission&act=user&uid='+uid)
+                }
+            ).catch(
+                err => {
+                    console.log('获取失败' + err);
+                }
+            )
+        },
+        //获取权限列表
+        getPermissionTree(uid) {
+            Axios.get('api.php?action=sys&opt=editPermission&act=user&uid=' + uid)
                 .then(
                     res => {
                         // console.log(res); 
@@ -833,8 +822,8 @@
                             this.editPermission.uid = res.data.gData.uid;
                             this.editPermission.pmid = res.data.gData.pmid;
                             for (let i in res.data.menuData) {
-                                this['menu'+i] = [];
-                                this.buildPermissionTree(res.data.menuData[i], this['menu'+i], 'menu'+i);
+                                this['menu' + i] = [];
+                                this.buildPermissionTree(res.data.menuData[i], this['menu' + i], 'menu' + i);
                             }
                             this.showUserListTable = false;
                             this.showPermissionSetting = true;
@@ -850,154 +839,154 @@
                         console.log('获取失败' + err);
                     }
                 )
-            },
-            //组装Tree
-            buildPermissionTree (menuData, list, origin, father) {
-                for (let i in menuData) {
-                    let defaultSet = {
-                        mark: undefined,
-                        origin: origin,
-                        expand: true,
-                        checked: true,
-                        disabled: true,
-                        title: '',
-                        children: []
-                    };
-                    if (menuData[i].acstate == 0) {
-                        delete defaultSet.checked;
-                        delete defaultSet.disabled;
-                    } else if (menuData[i].acstate == 1) {
-                        delete defaultSet.disabled;
-                    }
-                    defaultSet.title += menuData[i].name;
-                    defaultSet.mark = parseInt(menuData[i].id);
-                    this.buildAssociate(origin, parseInt(menuData[i].id), father, menuData[i].acstate);
-                    if (defaultSet.checked && menuData[i].acstate!=2) {
-                        this.buildUserPermission(origin, parseInt(menuData[i].id));
-                    }
-                    list.push(defaultSet);
-                    if(menuData[i].list != undefined){
-                        delete defaultSet.checked;
-                        this.buildPermissionTree(menuData[i].list, list[list.length-1].children, origin, menuData[i].id);
-                    } else {
-                        delete list[list.length-1].children;
-                    }
+        },
+        //组装Tree
+        buildPermissionTree(menuData, list, origin, father) {
+            for (let i in menuData) {
+                let defaultSet = {
+                    mark: undefined,
+                    origin: origin,
+                    expand: true,
+                    checked: true,
+                    disabled: true,
+                    title: '',
+                    children: []
+                };
+                if (menuData[i].acstate == 0) {
+                    delete defaultSet.checked;
+                    delete defaultSet.disabled;
+                } else if (menuData[i].acstate == 1) {
+                    delete defaultSet.disabled;
                 }
-            },
-            //创建节点联系表
-            buildAssociate (origin, curID, faterID, type) {
-                if (type == 2) {
-                    this.associate.groupMenu[origin][curID] = true;
+                defaultSet.title += menuData[i].name;
+                defaultSet.mark = parseInt(menuData[i].id);
+                this.buildAssociate(origin, parseInt(menuData[i].id), father, menuData[i].acstate);
+                if (defaultSet.checked && menuData[i].acstate != 2) {
+                    this.buildUserPermission(origin, parseInt(menuData[i].id));
                 }
-                this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
-            },
-            //创建用户目前权限列表
-            buildUserPermission (origin, curID) {
-                this.editPermission[origin].push(curID);
+                list.push(defaultSet);
+                if (menuData[i].list != undefined) {
+                    delete defaultSet.checked;
+                    this.buildPermissionTree(menuData[i].list, list[list.length - 1].children, origin, menuData[i].id);
+                } else {
+                    delete list[list.length - 1].children;
+                }
             }
-            // //获取权限列表
-            // getPermissionTree (uid) {
-            //     Axios.get('api.php?action=sys&opt=permission&act=user&uid='+uid)
-            //     .then(
-            //         res => {
-            //             if (res.ret == 1) {
-            //                 //console.log(res);
-            //                 this.editPermission.act = res.data.gData.act;
-            //                 this.editPermission.uid = res.data.gData.uid;
-            //                 this.editPermission.pmid = res.data.gData.pmid;
-            //                 for (let i in res.data.menuData) {
-            //                     this['menu'+i] = [];
-            //                     this.buildPermissionTree(res.data.menuData[i], this['menu'+i], 'menu'+i);
-            //                 }
-            //                 for (let i in res.data.plat_arr) {
-            //                     var tmp = {
-            //                         platformId: res.data.plat_arr[i].id,
-            //                         platformName: res.data.plat_arr[i].plat_name,
-            //                         menu: []
-            //                     };
-            //                     this.buildPermissionTree(res.data.game_arr[res.data.plat_arr[i].id], tmp.menu, {games: res.data.plat_arr[i].id});
-            //                     this.platformList.push(tmp);
-            //                 }
-            //                 this.showUserListTable = false;
-            //                 this.showPermissionSetting = true;
-            //                 //console.log(this.editPermission);
-            //             } else {
-            //                 this.$Message.error(res.msg);
-            //             }
-            //         }
-            //     ).catch(
-            //         err => {
-            //             console.log('获取失败' + err);
-            //         }
-            //     )
-            // },
-            // //组装Tree
-            // buildPermissionTree (menuData, list, origin, father) {
-            //     for (let i in menuData) {
-            //         let defaultSet = {
-            //             mark: undefined,
-            //             origin: origin,
-            //             expand: true,
-            //             checked: true,
-            //             disabled: true,
-            //             title: '',
-            //             children: []
-            //         };
-            //         if (menuData[i].acstate == 0) {
-            //             delete defaultSet.checked;
-            //             delete defaultSet.disabled;
-            //         } else if (menuData[i].acstate == 1) {
-            //             delete defaultSet.disabled;
-            //         }/* else if (menuData[i].acstate == 2) {
-            //             delete defaultSet.checked;
-            //             defaultSet.title = '√ ';
-            //         }*/
-            //         defaultSet.title += menuData[i].name;
-            //         defaultSet.mark = parseInt(menuData[i].id);
-            //         this.buildAssociate(origin, parseInt(menuData[i].id), father, menuData[i].acstate);
-            //         if (defaultSet.checked && menuData[i].acstate!=2) {
-            //             this.buildUserPermission(origin, parseInt(menuData[i].id));
-            //         }
-            //         list.push(defaultSet);
-            //         if(menuData[i].list != undefined){
-            //             delete defaultSet.checked;
-            //             this.buildPermissionTree(menuData[i].list, list[list.length-1].children, origin, menuData[i].id);
-            //         } else {
-            //             delete list[list.length-1].children;
-            //         }
-            //     }
-            // },
-            // //创建节点联系表
-            // buildAssociate (origin, curID, faterID, type) {
-            //     if (typeof origin == 'object') {
-            //         if (type == 2) {
-            //             if (this.associate.groupMenu.games[origin.games] == undefined) {
-            //                 this.associate.groupMenu.games[origin.games] = {};
-            //             }
-            //             this.associate.groupMenu.games[origin.games][curID] = true;
-            //         }
-            //         if (this.associate.games[origin.games] == undefined) {
-            //             this.associate.games[origin.games] = {};
-            //         }
-            //         this.associate.games[origin.games][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
-            //     } else {
-            //         if (type == 2) {
-            //             this.associate.groupMenu[origin][curID] = true;
-            //         }
-            //         this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
-            //     }
-            // },
-            // //创建用户目前权限列表
-            // buildUserPermission (origin, curID) {
-            //     if (typeof origin == 'object') {
-            //         if (this.editPermission.games[origin.games] == undefined) {
-            //             this.editPermission.games[origin.games] = [];
-            //         }
-            //         this.editPermission.games[origin.games].push(curID);
-            //     } else {
-            //         this.editPermission[origin].push(curID);
-            //     }
-            // }
+        },
+        //创建节点联系表
+        buildAssociate(origin, curID, faterID, type) {
+            if (type == 2) {
+                this.associate.groupMenu[origin][curID] = true;
+            }
+            this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
+        },
+        //创建用户目前权限列表
+        buildUserPermission(origin, curID) {
+            this.editPermission[origin].push(curID);
         }
-    };
+        // //获取权限列表
+        // getPermissionTree (uid) {
+        //     Axios.get('api.php?action=sys&opt=permission&act=user&uid='+uid)
+        //     .then(
+        //         res => {
+        //             if (res.ret == 1) {
+        //                 //console.log(res);
+        //                 this.editPermission.act = res.data.gData.act;
+        //                 this.editPermission.uid = res.data.gData.uid;
+        //                 this.editPermission.pmid = res.data.gData.pmid;
+        //                 for (let i in res.data.menuData) {
+        //                     this['menu'+i] = [];
+        //                     this.buildPermissionTree(res.data.menuData[i], this['menu'+i], 'menu'+i);
+        //                 }
+        //                 for (let i in res.data.plat_arr) {
+        //                     var tmp = {
+        //                         platformId: res.data.plat_arr[i].id,
+        //                         platformName: res.data.plat_arr[i].plat_name,
+        //                         menu: []
+        //                     };
+        //                     this.buildPermissionTree(res.data.game_arr[res.data.plat_arr[i].id], tmp.menu, {games: res.data.plat_arr[i].id});
+        //                     this.platformList.push(tmp);
+        //                 }
+        //                 this.showUserListTable = false;
+        //                 this.showPermissionSetting = true;
+        //                 //console.log(this.editPermission);
+        //             } else {
+        //                 this.$Message.error(res.msg);
+        //             }
+        //         }
+        //     ).catch(
+        //         err => {
+        //             console.log('获取失败' + err);
+        //         }
+        //     )
+        // },
+        // //组装Tree
+        // buildPermissionTree (menuData, list, origin, father) {
+        //     for (let i in menuData) {
+        //         let defaultSet = {
+        //             mark: undefined,
+        //             origin: origin,
+        //             expand: true,
+        //             checked: true,
+        //             disabled: true,
+        //             title: '',
+        //             children: []
+        //         };
+        //         if (menuData[i].acstate == 0) {
+        //             delete defaultSet.checked;
+        //             delete defaultSet.disabled;
+        //         } else if (menuData[i].acstate == 1) {
+        //             delete defaultSet.disabled;
+        //         }/* else if (menuData[i].acstate == 2) {
+        //             delete defaultSet.checked;
+        //             defaultSet.title = '√ ';
+        //         }*/
+        //         defaultSet.title += menuData[i].name;
+        //         defaultSet.mark = parseInt(menuData[i].id);
+        //         this.buildAssociate(origin, parseInt(menuData[i].id), father, menuData[i].acstate);
+        //         if (defaultSet.checked && menuData[i].acstate!=2) {
+        //             this.buildUserPermission(origin, parseInt(menuData[i].id));
+        //         }
+        //         list.push(defaultSet);
+        //         if(menuData[i].list != undefined){
+        //             delete defaultSet.checked;
+        //             this.buildPermissionTree(menuData[i].list, list[list.length-1].children, origin, menuData[i].id);
+        //         } else {
+        //             delete list[list.length-1].children;
+        //         }
+        //     }
+        // },
+        // //创建节点联系表
+        // buildAssociate (origin, curID, faterID, type) {
+        //     if (typeof origin == 'object') {
+        //         if (type == 2) {
+        //             if (this.associate.groupMenu.games[origin.games] == undefined) {
+        //                 this.associate.groupMenu.games[origin.games] = {};
+        //             }
+        //             this.associate.groupMenu.games[origin.games][curID] = true;
+        //         }
+        //         if (this.associate.games[origin.games] == undefined) {
+        //             this.associate.games[origin.games] = {};
+        //         }
+        //         this.associate.games[origin.games][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
+        //     } else {
+        //         if (type == 2) {
+        //             this.associate.groupMenu[origin][curID] = true;
+        //         }
+        //         this.associate[origin][curID] = (faterID == undefined) ? faterID : parseInt(faterID);
+        //     }
+        // },
+        // //创建用户目前权限列表
+        // buildUserPermission (origin, curID) {
+        //     if (typeof origin == 'object') {
+        //         if (this.editPermission.games[origin.games] == undefined) {
+        //             this.editPermission.games[origin.games] = [];
+        //         }
+        //         this.editPermission.games[origin.games].push(curID);
+        //     } else {
+        //         this.editPermission[origin].push(curID);
+        //     }
+        // }
+    }
+};
 </script>

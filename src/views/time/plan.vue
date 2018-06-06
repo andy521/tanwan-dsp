@@ -677,8 +677,8 @@ export default {
         getCampaigns(id) {
             Axios.get("api.php", {
                 action: "api",
-                opt: "getcampaigns",
-                MeidaType: "Gdt",
+                opt: "getCampaigns",
+                media_type: 1,
                 account_id: id
             }).then(res => {
                 if (res.ret == 1) {

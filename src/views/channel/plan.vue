@@ -18,9 +18,6 @@
             <Row :gutter="10">
                 <Col :xs="12" :md="3">
                 <!-- 媒体选择: -->
-                <!-- <Select @on-change="setMedia" placeholder="--媒体选择--" style="width:100%"  class="margin-bottom-10">
-                        <Option v-for="item in media" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select> -->
                 <select-media @on-change="setMedia"></select-media>
                 </Col>
 
@@ -123,7 +120,7 @@ export default {
             //默认选项目
             checkAllGroup: ['impression', 'click', 'install', 'install_per', 'reg_imei', 'activation', 'reg_per', 'reg_imei_cost', 'reg_cost', 'login', 'act_per', 'act_cost', 'pay_num', 'pay_total', 'pay_per', 'reg_arpu', 'pay_arpu', 'income_per', 'ltv'],
             current_account: '',
-            current_media: '',
+            media_type: '',
             current_version: '',
             current_time: [],
             current_campaigns: '',
@@ -154,7 +151,7 @@ export default {
                 action: 'api',
                 opt: 'getGameTotalDay',
                 do: 'planOverview',
-                media_type: this.current_media,
+                media_type: this.media_type,
                 os: this.current_version,
                 page: this.page,
                 page_size: this.page_size,
@@ -201,36 +198,34 @@ export default {
         //选择账户
         setAccount(data) {
             this.current_account = data;
-            // this.getTableData();
             //获取所有计划          
             Axios.get('api.php', {
                 action: 'api',
                 opt: 'getcampaigns',
-                MeidaType: this.current_media,
+                media_type: this.media_type,
                 account_id: data
             }).then(res => {
                 if (res.ret == '1') {
-                    this.plan = res.data
+                    this.plan = res.data;
                 }
-            }
-            ).catch(
+            }).catch(
                 err => { console.log('获取媒体账号' + err) }
             );
             this.plan_disabled = false;
         },
         //选择媒体
         setMedia(data) {
-            this.current_media = data;
+            this.media_type = data;
             // this.getTableData();
             //这里再获取账户
-            //this.$store.dispatch('getAccount',data);
             Axios.get('api.php', {
                 action: 'api',
                 opt: 'getAccount',
-                MeidaType: data
+                media_type: this.media_type
             }).then(res => {
                 if (res.ret == '1') {
                     this.account = res.data;
+                    this.getTableData();
                 }
             }).catch(err => {
                 console.log('获取媒体账号' + err)

@@ -9,7 +9,7 @@
 </style>
 <template>
     <div class="systemstatussetid">
-        <Card shadow>
+        <Card dis-hover>
             <div>
                 <Icon type="android-person"></Icon> &nbsp;选择管理员：
                 <Select v-model="currUId" style="width:200px" @on-change="handleAdsAthourSelect" placeholder="请选择管理员">

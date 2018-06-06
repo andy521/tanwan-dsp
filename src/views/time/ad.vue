@@ -182,6 +182,7 @@ import searchTree from "@/components/select-tree/searchTree.vue";
 import selectAuthor from "@/components/select-author/index.vue";
 import creativity from "./components/creativity.vue";
 import selectAccount from "@/components/select-account/index.vue";
+import gdtConfig from "@/utils/gdtConfig.json";
 export default {
     components: {
         viewPopti,
@@ -191,6 +192,7 @@ export default {
     },
     data() {
         return {
+            gdtConfig: gdtConfig,
             mediaType: '',
             params: this.$route.query,
             height: document.body.clientHeight - 300,
@@ -547,14 +549,11 @@ export default {
                     width: 110,
                     render: (h, params) => {
                         let item = "";
-                        //要判断是否已获取到ads_config
-                        if (this.ads_config.system_status) {
-                            this.ads_config.system_status.forEach(v => {
-                                if (v.val_type == params.row.system_status) {
-                                    item = v;
-                                }
-                            });
-                        }
+                        this.gdtConfig.system_status.forEach(v => {
+                            if (v.val_type == params.row.system_status) {
+                                item = v;
+                            }
+                        });
                         if (params.row.reject_message != "null" && params.row.reject_message) {
                             return [
                                 h(
@@ -813,7 +812,7 @@ export default {
             Axios.post("api.php", {
                 action: "api",
                 opt: "getAccount",
-                MeidaType: "Gdt"
+                media_type: 1
             }).then(res => {
                 if (res.ret == 1) {
                     this.mediaList = res.data;
@@ -826,8 +825,8 @@ export default {
         getCampaigns(id) {
             Axios.post("api.php", {
                 action: "api",
-                opt: "getcampaigns",
-                MeidaType: "Gdt",
+                opt: "getCampaigns",
+                media_type: 1,
                 account_id: id
             }).then(res => {
                 if (res.ret == 1) {
@@ -843,7 +842,7 @@ export default {
             Axios.post("api.php", {
                 action: "api",
                 opt: "getcampaigns",
-                MeidaType: "Gdt",
+                media_type: 1,
                 account_id: id
             }).then(res => {
                 if (res.ret == 1) {
@@ -1022,10 +1021,6 @@ export default {
         }
     },
     computed: {
-        //获取所有状态
-        ads_config() {
-            return this.$store.state.newad.ads_config;
-        },
         //获取实时投放计划
         newAdList() {
             //深层复制
