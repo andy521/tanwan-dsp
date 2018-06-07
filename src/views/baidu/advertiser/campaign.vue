@@ -2,9 +2,6 @@
 @import "../index.less";
 </style>
 <style scoped>
-.sel {
-  width: 220px;
-}
 .inp {
   display: inline-block;
   width: 150px;
@@ -48,13 +45,16 @@
         <Col span="20">
           <!--自定义指标-->
           <view-tip @on-change="getuncheck" :check="checkAllGroup" action="bdAdPut" opt="searchCampaigns"></view-tip>
-          <Select placeholder="操作状态" v-model="searchParams.pause" class="sel_state" @on-change="searchCampaigns()">
-            <Option value="">不限</Option>
-            <Option value="0">启用</Option>
-            <Option value="1">暂停</Option>
-          </Select>
           <!--选择负责人-->
           <select-author @on-change="handleAuthorChange"></select-author>
+          <!-- 操作状态 -->
+          <Select placeholder="操作状态" v-model="searchParams.pause" class="sel_state" @on-change="searchCampaigns()">
+            <Option v-for="(pause, index) in baiduConfig.pause" :value="pause.type" :key="index">{{pause.name}}</Option>
+          </Select>
+          <!-- 	推广对象 -->
+          <Select placeholder="推广对象" v-model="searchParams.subject" class="sel_state" @on-change="searchCampaigns()">
+            <Option v-for="(subject, index) in baiduConfig.subject" :value="subject.type" :key="index">{{subject.name}}</Option>
+          </Select>
           <DatePicker type="daterange" :options="options" placement="bottom-start" placeholder="请选择日期" format="yyyy-MM-dd"  @on-change="handleDateChange"></DatePicker> 
         </Col>
         <Col span="4" style=" text-align: right;">
@@ -66,7 +66,7 @@
                     <Option value="enable">启用</Option>
                     <Option value="disable">暂停</Option>
                     <Option value="delete">删除</Option>
-                </Select>
+                  </Select>
               </div>
               <div class="tipbtn margin-top-10">
                 <Button type="text" size="small" @click="visible=false">取消</Button>
@@ -105,6 +105,7 @@
 <script>
 import Axios from '@/api/index'
 import { DateShortcuts, formatDate } from '@/utils/DateShortcuts.js'
+import baiduConfig from '@/utils/baiduConfig.json'
 import newEdit from '../components/newEdit'
 import viewTip from '../components/viewPopti.vue'
 import gameTree from '@/components/select-tree/searchTree'
@@ -118,6 +119,7 @@ export default {
   },
   data() {
     return {
+      baiduConfig: baiduConfig,
       height: document.body.clientHeight - 300,
       checkAllGroup: ['impression'], // viewpop默认选中的
       options: DateShortcuts, // 日期辅助功能
@@ -230,7 +232,7 @@ export default {
           className: 'no-ellipse'
         },
         {
-          title: '计划名称',
+          title: '广告组名称',
           key: 'campaign_name',
           width: 200,
           render: (h, params) => {
@@ -311,31 +313,51 @@ export default {
           width: 120
         },
         {
-          title: '开关/状态',
+          title: '状态',
           key: 'status',
+          width: 120,
+          render: (h, params) => {
+            let type = params.row.status
+            let statusTxt = ''
+            baiduConfig.status.forEach(item => {
+              if (item.type === type) {
+                statusTxt = item.name
+              }
+            })
+            return h('span', statusTxt)
+          }
+        },
+        {
+          title: '开关/状态',
+          key: 'pause',
           width: 100,
           render: (h, params) => {
-            if (!params.row.status) {
+            if (!params.row.pause) {
               return
             }
             return [
               h('i-switch', {
                 props: {
                   size: 'small',
-                  value: params.row.status === '0'
+                  value: params.row.pause === '0'
                 },
                 style: {
                   marginRight: '10px'
                 },
                 on: {}
-              })
+              }),
+              h('span', params.row.pause === '0' ? '开启' : '暂停')
             ]
           }
         },
         {
           title: '预算',
           key: 'budget',
-          width: 100
+          width: 100,
+          // render: (h, params) => {
+          //   let budget = params.row.budget
+          //   return h('span', (+budget).toFixed(2))
+          // }
         },
         {
           title: '总花费',
@@ -574,7 +596,7 @@ export default {
       const params = Object.assign({}, this.searchParams, {
         action: 'bdAdPut',
         opt: 'searchCampaigns',
-        subject: +this.searchParams.subject,
+        subject: this.searchParams.subject === '' ? '' : +this.searchParams.subject,
         page_size: this.searchParams.page_size + '',
         page: this.searchParams.page + ''
       })

@@ -1,5 +1,5 @@
 <style scoped lang="less">
-@import url("../index.less");
+@import "../index.less";
 .vertical-center-modal {
   display: flex;
   align-items: center;
@@ -121,8 +121,8 @@
           </FormItem>
           <FormItem v-if="!isGeneralizePage" label="操作系统">
             <RadioGroup @on-change="handleAPPPlatform" v-model="unitSetting.platform">
-              <Radio label="001">IOS</Radio>
-              <Radio label="010">Android</Radio>
+              <Radio :disabled="isEdit" label="001">IOS</Radio>
+              <Radio :disabled="isEdit" label="010">Android</Radio>
             </RadioGroup>
           </FormItem>
           <FormItem v-if="isGeneralizePage" label="操作系统">
@@ -141,7 +141,7 @@
           </Col>
           <Col>
 
-          <Select v-if="!isEdit" @on-change="handleChangeTargeting" :loading="loading" loading-text="加载中，请稍后..." v-model="currTargetName" class="item-width">
+          <Select @on-change="handleChangeTargeting" :loading="loading" loading-text="加载中，请稍后..." v-model="currTargetName" class="item-width">
             <Option v-if="targetingList && targetingList.length > 0 && targeting.targeting_name !== null" v-for="(targeting, index) in targetingList" :value="targeting.targeting_name" :key="index">{{targeting.targeting_name}}</Option>
           </Select>
           </Col>
@@ -844,8 +844,7 @@ export default {
       }
       return ret
     },
-    // 事件：监听app定向的app定向， 2为游戏，1为软件
-    handleInterestAPP(list) {
+    editInterestAPP(list) {
       if (list.value === 1) {
         let seleinterestAPPSFName = []
         this.uniqueAppAPPSFList = []
@@ -864,6 +863,10 @@ export default {
         })
       }
       this.targetingSetting.appcategory = this.uniqueAppAPPSFList.concat(this.uniqueApptAPPGameList)
+    },
+    // 事件：监听app定向的app定向， 2为游戏，1为软件
+    handleInterestAPP(list) {
+      this.editInterestAPP(list)
 
       // 判断编辑状态下，定向更改
       if (this.isEdit) {
@@ -894,9 +897,7 @@ export default {
       }
       return retTxt
     },
-    // 事件：监听兴趣word
-    handlerInterestWord(e) {
-      let word = e.target.value
+    editInterestWord(word) {
       if (!word && this.targetingSetting.word.length >= 200) {
         this.interestWord = this.targetingSetting.word.join()
         return
@@ -910,6 +911,11 @@ export default {
         this.targetingSetting.word,
         8
       )
+    },
+    // 事件：监听兴趣word
+    handlerInterestWord(e) {
+      let word = e.target.value
+      this.editInterestWord(word)
 
       // 判断编辑状态下，定向更改
       if (this.isEdit) {
@@ -1032,7 +1038,6 @@ export default {
       this.convert.currConvertMonitorTypes = currConvertObj
       this.convert.convertMonitorTypeName = convertType
       this.getAdConvert(currConvertObj.objType)
-      console.log('convertType', convertType, currConvertObj)
     },
     // 事件：监听自定义年龄数据
     handleChangeCustomAge(ageList) {
@@ -1066,13 +1071,16 @@ export default {
         this.isEditTargetingChange += 1
       }
     },
-    // 事件：监听性别数据
-    handleGender(gender) {
+    editGender(gender) {
       if (gender === '1') {
         this.evaluate.genderTxt = '男'
       } else if (gender === '0') {
         this.evaluate.genderTxt = '女'
       }
+    },
+    // 事件：监听性别数据
+    handleGender(gender) {
+      this.editGender(gender)
       // 判断编辑状态下，定向更改
       if (this.isEdit) {
         this.isEditTargetingChange += 1
@@ -1141,8 +1149,7 @@ export default {
         this.isGeneralizePage = false
       }
     },
-    // 事件：监听网络环境
-    handleNewWorkEnv(env) {
+    editNewWorkEnv(env) {
       const enName = ['', 'WIFI', '数据网络']
       const enKey = ['11', '01', '10']
       enKey.forEach((k, i) => {
@@ -1150,6 +1157,15 @@ export default {
           this.evaluate.netWorkEnvTxt = enName[i]
         }
       })
+    },
+    // 事件：监听网络环境
+    handleNewWorkEnv(env) {
+      this.editNewWorkEnv(env)
+
+      // 判断编辑状态下，定向更改
+      if (this.isEdit) {
+        this.isEditTargetingChange += 1
+      }
     },
     // 编辑状态下， 更新定向
     updateTargeting() {
@@ -1339,17 +1355,16 @@ export default {
       this.interestURL = targeting.url.length > 0 ? targeting.url.join('、') : ''
       // APP定向
       const interestAPPGameList = this.normalizeInterestTreeList(this.interestAPPGameTreeList,this.targetingSetting.appcategory)
-      this.handleInterestAPP({list: interestAPPGameList,value: 2})
+      this.editInterestAPP({list: interestAPPGameList,value: 2})
 
       const interestAPPSFList = this.normalizeInterestTreeList(this.interestAPPSFTreeList,this.targetingSetting.appcategory)
-      this.handleInterestAPP({list: interestAPPSFList,value: 1})
-      console.log('app',interestCatSelectedList, interestAPPGameList, interestAPPSFList)
+      this.editInterestAPP({list: interestAPPSFList,value: 1})
 
       // 活跃数
       this.evaluate.activeTxt = this.normalizeActiveTxt(this.evaluate.activeNum)
       
       // 网络环境
-      this.handleNewWorkEnv(this.targetingSetting.network_env)
+      this.editNewWorkEnv(this.targetingSetting.network_env)
     },
     // 事件：选择targeting
     handleChangeTargeting(target) {
@@ -1387,7 +1402,6 @@ export default {
     normalizeInterestTreeList(srcList, arrList) {
       this.evaluate.activeNum = 0
       let ret = []
-      console.log('xxx',srcList, arrList)
       arrList.forEach(tar => {
         srcList.forEach((vp, ip) => {
           if (tar === vp.value) {
@@ -1429,7 +1443,6 @@ export default {
         optimizationTarget: parseInt(this.unitSetting.optimizationTarget),
         unitType: parseInt(this.unitSetting.unitType)
       }
-      console.log('edit this.unitSetting', update)
       Axios.post('api.php', update)
         .then(res => {
           if (ERR_OK === res.ret) {
@@ -1679,7 +1692,6 @@ export default {
           })
         })
       })
-      console.log(ret,'x')
       return ret
     },
     // 初始化省市地域列表
@@ -1709,12 +1721,12 @@ export default {
     },
     // 获取转化列表
     getAdConvert(objType) {
-      console.log(objType)
       Axios.post('api.php', {
         action: 'ucAdPut',
         opt: 'getAdConvert',
         account_id: this.$route.query.account,
-        convertMonitorType: objType
+        convertMonitorType: objType,
+        platform: this.unitSetting.platform
       })
         .then(res => {
           if (ERR_OK === res.ret) {
@@ -1873,7 +1885,6 @@ export default {
     // 获取关键词推荐、站点推荐、APP 推荐结果. params包括：maxNum，excludes，seeds，type
     // type包含：app ： app推荐 ，word ： 关键词推荐 ，url ： 站点推荐
     getRecommend(params) {
-      console.log(params)
       Axios.post('api.php', {
         action: 'ucAdPut',
         opt: 'getRecommend',
@@ -1942,7 +1953,6 @@ export default {
         .then(res => {
           if (ERR_OK === res.ret) {
             const data = res.data[0];
-            console.log("编辑时根据id获取单元内容接口getAdgroupById", data);
             this.initUnitEditStatus(data);
           }
         })
@@ -2001,15 +2011,17 @@ export default {
       this.loading = true
       Axios.post('api.php', {
         action: 'ucAdPut',
-        opt: 'getTargetingList'
+        opt: 'getTargetingList',
+        account_id: this.accountId,
+        targeting_id: this.targetingId
       })
         .then(res => {
           if (ERR_OK === res.ret) {
             const data = res.data
-            this.targetingList = data
+            this.targetingList = Array.isArray(data) ? data : [data]
             this.loading = false
             if (this.isEdit) {
-              this.initEditTargeting()
+              this.initEditTargeting(data)
             }
             // console.log('获取定向设置数据', this.targetingList)
           }
@@ -2057,17 +2069,13 @@ export default {
       }
     },
     // 编辑时的定向设置数据
-    initEditTargeting() {
-      this.targetingList.forEach(targ => {
-        if (targ.targeting_id === this.targetingId) {
-          this.targetingSetting.account_id = targ.account_id
-          this.targetingSetting.targeting_id = targ.targeting_id
-          this.targetingSetting.targeting_name = targ.targeting_name
+    initEditTargeting(targetingField) {
+      this.targetingSetting.account_id = targetingField.account_id
+      this.targetingSetting.targeting_id = targetingField.targeting_id
+      this.targetingSetting.targeting_name = targetingField.targeting_name
 
-          const targeting = JSON.parse(targ.targeting)
-          this.initTargetingField(targeting)
-        }
-      })
+      const targeting = JSON.parse(targetingField.targeting)
+      this.initTargetingField(targeting)
     },
     /**
      * 赋值函数

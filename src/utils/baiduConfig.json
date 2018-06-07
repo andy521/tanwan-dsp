@@ -1,0 +1,78 @@
+{
+    "status": [
+        {
+            "type": "",
+            "name": "不限"
+        },
+        {
+            "type": "0",
+            "name": "有效"
+        },
+        {
+            "type": "1",
+            "name": "处于暂停时段"
+        },
+        {
+            "type": "2",
+            "name": "计划暂停"
+        },
+        {
+            "type": "3",
+            "name": "计划预算不足"
+        },
+        {
+            "type": "11",
+            "name": "账户预算不足"
+        },
+        {
+            "type": "20",
+            "name": "账户余额为0"
+        },
+        {
+            "type": "24",
+            "name": "APP已下线"
+        }
+    ],
+    "pause": [
+        {
+            "type": "",
+            "name": "不限"
+        },
+        {
+            "type": "1",
+            "name": "暂停"
+        },
+        {
+            "type": "0",
+            "name": "启用"
+        }
+    ],
+    "orderDirection": [
+        {
+            "type": "SORT_ASC",
+            "name": "升序"
+        },
+        {
+            "type": "SORT_ASC",
+            "name": "降序"
+        }        
+    ],
+    "subject": [
+        {
+            "type": "",
+            "name": "不限"
+        },
+        {
+            "type": "1",
+            "name": "网站链接"
+        },
+        {
+            "type": "2",
+            "name": "APP(IOS)"
+        },
+        {
+            "type": "3",
+            "name": "APP(ANDROID)"
+        }         
+    ]
+}

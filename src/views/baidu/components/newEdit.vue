@@ -27,7 +27,7 @@ export default {
         },
         queryParams: {
             type: Object,
-            default: (() => {})
+            default: () => {}
         }
     },
     data() {

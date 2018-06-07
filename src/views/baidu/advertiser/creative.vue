@@ -107,7 +107,8 @@
 import Axios from '@/api/index'
 import { DateShortcuts, formatDate } from '@/utils/DateShortcuts.js'
 import newEdit from '../components/newEdit'
-import viewTip from '../components/viewPopti.vue'
+import viewTip from '../components/viewPopti'
+import createIdea from '../components/createIdea'
 import gameTree from '@/components/select-tree/searchTree'
 import selectAuthor from '@/components/select-author/index'
 export default {
@@ -115,7 +116,8 @@ export default {
     newEdit,
     gameTree,
     viewTip,
-    selectAuthor
+    selectAuthor,
+    createIdea
   },
   data() {
     return {
@@ -259,58 +261,14 @@ export default {
             if (params.row._disabled) {
               return h('span', '本页统计')
             } else {
-              let value = params.row.adgroup_name
-              return [
-                h('i-button', {
-                  props: {
-                    icon: 'edit',
-                    type: 'text',
-                    size: 'small'
-                  },
-                  class: ['edit'],
-                  on: {
-                    click: () => {
-                      this.$Modal.confirm({
-                        render: h => {
-                          return h('i-input', {
-                            props: {
-                              value: params.row.adgroup_name,
-                              autofocus: true,
-                              placeholder: '请输入推广创意名称'
-                            },
-                            on: {
-                              input: val => {
-                                value = val
-                              }
-                            }
-                          })
-                        },
-                        onOk: () => {
-                          if (value === '') {
-                            return this.$$Message.info('请输入修改信息')
-                          }
-
-                          Axios.post('api.php', {
-                            action: 'bdAdPut',
-                            opt: 'updateAdgroup',
-                            account_id: params.row.account_id,
-                            modify_time: params.row.modify_time,
-                            adgroup_id: params.row.adgroup_id,
-                            adgroup_name: value
-                          }).then(res => {
-                            if (res.ret === 1) {
-                              this.$Message.info(res.msg)
-                              this.searchCreatives(this.searchParams.page)
-                            }
-                          }).catch(err => {
-                            console.error('修改推广创意名失败', err)
-                          })
-                        }
-                      })
-                    }
-                  }
-                })
-              ]
+              let material = params.row.material
+              return h(createIdea, {
+                props: {
+                  title: material.title,
+                  imageUrl: material.pictures,
+                  source: material.brand
+                }
+              })
             }
           }
         },
@@ -331,7 +289,7 @@ export default {
         },
         {
           title: '账号名',
-          key: 'account_id',
+          key: 'account_name',
           width: 120
         },
         {

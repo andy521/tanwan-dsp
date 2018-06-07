@@ -116,7 +116,7 @@ export default {
             if (searchVal === '') {
                 return
             }
-            const searchVal = String.trim(this.userGrantSearchVal)
+            const searchVal = this.userGrantSearchVal = String.trim(this.userGrantSearchVal)
             const userGrantAcList = this.userGrantAcList
             const ret = []
             if (userGrantAcList.length !== 0) {
@@ -134,7 +134,7 @@ export default {
             if (searchVal === '') {
                 return
             }
-            const searchVal = String.trim(this.allGrantSearchVal)
+            const searchVal = this.allGrantSearchVal = String.trim(this.allGrantSearchVal)
             const allGrantAcList = this.allGrantAcList
             const ret = []
             if (allGrantAcList.length !== 0) {
@@ -215,7 +215,7 @@ export default {
             this.userAcGrantInfo()
         },
         submitUserAcGrant() {
-            const userGrantAcList = this._normalizeAccountGrant(this.userGrantAcList)
+            const userGrantAcList = this._normalizeAccountGrant(this.userGrantAcListCopy)
             this.userAcGrant(userGrantAcList)
         },
         // 获取系统账户的媒体账户权限信息

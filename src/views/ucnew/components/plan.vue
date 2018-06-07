@@ -1,5 +1,5 @@
 <style scoped lang="less">
-@import url("../index.less");
+@import "../index.less";
 .vertical-center-modal {
   display: flex;
   align-items: center;
