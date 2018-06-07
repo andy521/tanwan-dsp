@@ -5,7 +5,7 @@
 }
 </style>
 <template>
-    <Card shadow>
+    <Card dis-hover>
         <Row>
             <Col span="14">
             <!--选择负责人-->
@@ -89,6 +89,7 @@ export default {
                 },
                 {
                     title: "代理全称",
+                    width: 230,
                     key: "agent_detail"
                 },
                 {
@@ -111,11 +112,11 @@ export default {
                     }
                 },
                 {
-                    title: "加款",
+                    title: "加款(元)",
                     key: "add_funds"
                 },
                 {
-                    title: "退款",
+                    title: "退款(元)",
                     key: "refunds"
                 },
                 {
@@ -129,8 +130,9 @@ export default {
                 {
                     title: '转账时间',
                     key: 'date',
-                    width: 160
+                    width: 150
                 }
+
             ],
             funddata: [],
             tableSize: "small",
@@ -168,7 +170,7 @@ export default {
             rows.forEach(item => {
                 ids.push(item.id);
             });
-            this.taCheckids = ids;            
+            this.taCheckids = ids;
         },
         //获取转帐列表
         getfund(page) {

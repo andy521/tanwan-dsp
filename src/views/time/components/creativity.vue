@@ -275,11 +275,23 @@ em {
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.customized_audience">
                                 <span class="grey">定向用户群：</span>
-                                <span v-for="item in adgroup_detail.targeting.customized_audience">{{item.name}}</span>
+                                <span>
+                                    <template v-for="item in custom_audiences">
+                                        <template v-for="subitem in adgroup_detail.targeting.customized_audience" v-if="subitem==item.audience_id">
+                                            {{item.name}};
+                                        </template>
+                                    </template>
+                                </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.excluded_custom_audience">
                                 <span class="grey">排除用户群：</span>
-                                <span v-for="item in adgroup_detail.targeting.excluded_custom_audience">{{item.name}}</span>
+                                <span>
+                                    <template v-for="item in custom_audiences">
+                                        <template v-for="subitem in adgroup_detail.targeting.excluded_custom_audience" v-if="subitem==item.audience_id">
+                                            {{item.name}};
+                                        </template>
+                                    </template>
+                                </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.education">
                                 <span class="grey">婚恋状态：</span>
@@ -465,7 +477,7 @@ export default {
             province: [],//地域
             appcategory: [],//app行为按分类
             business_interest: [],//商业兴趣
-            custom_audiences: ""//自定义人群
+            custom_audiences: []//自定义人群
         };
     },
     mounted() {
@@ -516,8 +528,7 @@ export default {
             Axios.post('api.php', {
                 action: 'gdtAdPut',
                 opt: 'custom_audiences_get',
-                account_id: this.account_id,
-                name: this.Audiencesname
+                account_id: this.row.account_id,
             }).then(res => {
                 this.custom_audiences = res.data;
             }).catch(err => {

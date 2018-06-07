@@ -234,6 +234,7 @@ export default {
             },
             detailswin: false,
             taColumns: [], //表头设置
+            row:"",
             tableColumns: [
                 {
                     type: "expand",
@@ -242,7 +243,7 @@ export default {
                         console.log(params.row.adgroup_id)
                         return h(creativity, {
                             props: {
-                                row: params.row,
+                                row: this.row,
                                 uncheck: this.uncheck
                             }
                         });
@@ -278,6 +279,7 @@ export default {
                                     class: "namediv",
                                     on: {
                                         click: () => {
+                                            this.row= params.row;
                                             let arr = deepClone(this.adList);
                                             arr.forEach((v, i) => {
                                                 if (v.adgroup_id == params.row.adgroup_id) {

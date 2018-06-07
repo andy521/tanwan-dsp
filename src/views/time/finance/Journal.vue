@@ -70,7 +70,7 @@ export default {
                         }
                     }
                 },
-                 {
+                {
                     title: "帐户ID",
                     key: "account_id"
                 },
@@ -84,7 +84,8 @@ export default {
                 },
                 {
                     title: "代理全称",
-                    key: "agent_detail"
+                    key: "agent_detail",
+                    width: 230
                 },
                 {
                     title: "存入(元)",
@@ -94,7 +95,7 @@ export default {
                         if (re.test(params.row.save)) {
                             //三位数加逗号
                             let newvalue = String(params.row.save / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                            return h("span", newvalue+"元");
+                            return h("span", newvalue + "元");
                         } else {
                             return h("span", params.row.save);
                         }
@@ -108,7 +109,7 @@ export default {
                         if (re.test(params.row.pay)) {
                             //三位数加逗号
                             let newvalue = String(params.row.pay / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                            return h("span", newvalue+"元");
+                            return h("span", newvalue + "元");
                         } else {
                             return h("span", params.row.pay);
                         }
@@ -117,7 +118,7 @@ export default {
                 {
                     title: "备注",
                     key: "description",
-                    width: 400
+                    width: 350
                 }
             ],
             funddata: [],

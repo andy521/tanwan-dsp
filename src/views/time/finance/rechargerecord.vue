@@ -135,14 +135,14 @@ export default {
                     title: "代理简称",
                     key: "agent"
                 },
-                 {
+                {
                     title: "代理全称",
                     key: "agent_detail"
                 },
                 {
-                    title: "当前账户余额",
-                    width: 130,
-                    key: "balance"
+                    title: "当前账户余额(元)",
+                    width: 140,
+                    key: "balance"                  
                 },
                 {
                     title: "过去三天日均消耗",
@@ -151,7 +151,6 @@ export default {
                 },
                 {
                     title: "充值返点比例",
-                    width: 130,
                     key: "rebate"
                 },
                 {
@@ -159,19 +158,8 @@ export default {
                     key: "recharge_money"
                 },
                 {
-                    title: "充值人民币（元）",
-                    width: 140,
-                    key: "money",
-                    render: (h, params) => {
-                        var re = /^[0-9]+.?[0-9]*$/;
-                        if (re.test(params.row.money)) {
-                            //三位数加逗号
-                            let newvalue = String(params.row.money).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                            return [h("span", newvalue)];
-                        } else {
-                            return [h("span", params.row.recharge_money)];
-                        }
-                    }
+                    title: "充值人民币(元)",
+                    key: "money"
                 },
                 {
                     title: "充值时间",
@@ -207,7 +195,7 @@ export default {
                 },
                 {
                     title: "操作",
-                    width: 100,
+                    width: 95,
                     key: "",
                     render: (h, params) => {
                         return [
@@ -310,7 +298,7 @@ export default {
                 end_date: this.DateDomain[1], //结速时间
             }).then(res => {
                 this.loading = false;
-                if (res.ret == 1) {                   
+                if (res.ret == 1) {
                     this.funddata = res.data.list;
                     this.total_number = res.data.total_number;
                     this.total_page = res.data.total_page;
