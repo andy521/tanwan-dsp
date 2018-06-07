@@ -6,19 +6,15 @@ const setid = {
 			read_count: {},
 			message: []
 		}, //系统消息
-        SingleMessages: {}, //系统消息详情
-        planparam:''
+        SingleMessages: {}, //系统消息详情  
 	},
 	mutations: {
-        saveplan(state, data){
-            state.planparam = data;
-        },
 		GET_MESSAGES(state, data) {
 			state.MessagesData = data;
 		},
 		GET_SINGLEMESSAGES(state, data) {
 			state.SingleMessages = data;
-		},
+		}
 	},
 	actions: {
 		//获取系统消息

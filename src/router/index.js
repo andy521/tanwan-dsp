@@ -18,13 +18,13 @@ export default router;
 router.beforeEach((to, from, next) => {
     iView.LoadingBar.start();
     Util.title(to.meta.title);     
-    if ( !Util.getItem('user') && to.name !== 'login') { 
+    if ( !Util.getItem('sessionid') && to.name !== 'login') { 
         // 判断是否已经登录且前往的页面不是登录页
         console.log('router' + '登录')
         next({
             name: 'login'
         });
-    } else if ( Util.getItem('user') && to.name === 'login') { 
+    } else if ( Util.getItem('sessionid') && to.name === 'login') { 
         // 判断是否已经登录且前往的是登录页
         Util.title();
         next({

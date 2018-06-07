@@ -387,7 +387,7 @@
                                 </div>
                                 <Row>
                                     <Col span="12">
-                                    <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-keyup="getAudiences()" placeholder="搜索用户群"></Input>
+                                    <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-enter="get_custom_audiences()" placeholder="搜索用户群"></Input>
                                     </Col>
                                 </Row>
                                 <Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="customized_audience" size="small" @on-selection-change="taCheck" ref="selection"></Table>
@@ -412,7 +412,7 @@
                                 </div>
                                 <Row>
                                     <Col span="12">
-                                    <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname_ex" @on-keyup="getAudiences_ex()" placeholder="搜索用户群"></Input>
+                                    <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname_ex" @on-enter="get_custom_audiences_ex()" placeholder="搜索用户群"></Input>
                                     </Col>
                                 </Row>
                                 <Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="excluded_custom_audience" size="small" @on-selection-change="taCheck_ex"></Table>
@@ -822,7 +822,7 @@
                                     </div>
                                     <Row>
                                         <Col span="12">
-                                        <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-keyup="getAudiences()" placeholder="搜索用户群"></Input>
+                                        <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname" @on-enter="get_custom_audiences()" placeholder="搜索用户群"></Input>
                                         </Col>
                                     </Row>
                                     <Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="customized_audience" size="small" @on-selection-change="taCheck" ref="selection"></Table>
@@ -847,7 +847,7 @@
                                     </div>
                                     <Row>
                                         <Col span="12">
-                                        <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname_ex" @on-keyup="getAudiences_ex()" placeholder="搜索用户群"></Input>
+                                        <Input class="margin-top-10" icon="ios-search-strong" v-model="Audiencesname_ex" @on-enter="get_custom_audiences_ex()" placeholder="搜索用户群"></Input>
                                         </Col>
                                     </Row>
                                     <Table class="margin-top-10" height="200" :columns="Audiencescolumns" :data="excluded_custom_audience" size="small" @on-selection-change="taCheck_ex"></Table>
@@ -939,6 +939,7 @@ import Axios from "@/api/index";
 import gdtConfig from "@/utils/gdtConfig.json";
 import cityTree from "./cityTree.vue";
 import copyTargeting from './copyTargeting.vue';
+import { deepClone } from "@/utils/DateShortcuts.js";
 export default {
     name: "targetingDetails",
     components: {
@@ -1034,7 +1035,8 @@ export default {
             province: [],
             app_category: [],
             business_interest: [],
-            custom_audiences: ""
+            custom_audiences: [],
+            custom_audiences_ex: []
         };
     },
     mounted() {
@@ -1049,6 +1051,8 @@ export default {
         this.get_appCategory();
         //获取自定义人群
         this.get_custom_audiences();
+        //获取自定义排除人群
+        this.get_custom_audiences_ex();
     },
     methods: {
         //获取商业兴趣
@@ -1113,6 +1117,19 @@ export default {
                 this.custom_audiences = res.data;
             }).catch(err => {
                 console.log('获取自定义人群' + err)
+            })
+        },
+        get_custom_audiences_ex() {
+            //获取自定义人群
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'custom_audiences_get',
+                account_id: this.account_id,
+                name: this.Audiencesname_ex
+            }).then(res => {
+                this.custom_audiences_ex = res.data;
+            }).catch(err => {
+                console.log('获取自定义排除人群' + err)
             })
         },
         //获取定向详情
@@ -1540,7 +1557,6 @@ export default {
                     return;
                 }
             }
-console.log(targeting)
 
             Axios.post("api.php", {
                 action: "gdtAdPut",
@@ -1561,8 +1577,8 @@ console.log(targeting)
     computed: {
         //获取自定义人群
         customized_audience() {
-            let list = this.custom_audiences.list;
-            if (!list) return;
+            //深层复制
+            let list = this.custom_audiences;
             let ids = this.targeting.customized_audience;
             list.forEach(item => {
                 let checked = false;
@@ -1577,8 +1593,8 @@ console.log(targeting)
         },
         //获取自定义人群排除
         excluded_custom_audience() {
-            let list = this.custom_audiences.list;
-            if (!list) return;
+            //深层复制
+            let list = this.custom_audiences_ex;
             let ids = this.targeting.excluded_custom_audience;
             list.forEach(item => {
                 ids.forEach(v => {

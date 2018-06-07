@@ -50,6 +50,7 @@ export default {
                 },
                 {
                     title: "代理全称",
+                    width:250,
                     key: "agent_detail"
                 },
                 {

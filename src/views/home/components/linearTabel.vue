@@ -46,6 +46,7 @@ export default {
                 legend: {
                     data:['消耗','展现','点击','转化']
                 },
+                 color: ['rgb(255, 97, 34)', 'rgb(71, 104, 243)', 'rgb(2, 207, 128)','#fb7293','#96bfff', '#9fe6b8', '#ffdb5c', '#ff9f7f', '#9d96f5', '#8378ea'],
                 grid: {left: '3%',right: '4%',bottom: '3%',containLabel: true},
                 xAxis: {
                     type: 'category',
