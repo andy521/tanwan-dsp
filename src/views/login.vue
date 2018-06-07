@@ -63,8 +63,7 @@
                             'uPass' : userinfo.password,
                             'action' : 'sys',
                             'opt' : 'userLogin'
-                        })
-                        .then(res => {
+                        }).then(res => {
                             if (res.ret == 1) {
                                 let access = res.data.data.access,
                                     page = res.data.data.lastPage,
@@ -78,17 +77,16 @@
                                         }
                                     }
                                 });
+                                
                                  //记住密码
                                 if(this.form.check){
-                                    Util.setItem('uName', userinfo.user); 
                                     Util.setItem('uPass', userinfo.password); 
                                 }else{
-                                    Util.removeItem('uName');
                                     Util.removeItem('uPass');
                                 }
 
                                 Util.setItem('access', accessItem); 
-                                Util.setItem('user', this.form.userName);
+                                Util.setItem('uName', this.form.userName);
                                 Util.setItem('sessionid',res.data.sessionid);                                
                                 page ? this.$router.push({name: page}) : this.$router.push({name: 'home_index'}) ;
                                 this.$store.dispatch('UserLogin', userinfo);
