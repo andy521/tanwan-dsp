@@ -115,7 +115,7 @@ export default {
                 'pay_per_reg',
                 'roi'
             ]
-        };
+        }
     },
     mounted() {
         Axios.get('api.php', {
@@ -162,7 +162,7 @@ export default {
                 })
                 .catch(err => {
                     console.log(err)
-                });
+                })
         },
         //自定义指标全选
         handleCheckAll() {
@@ -197,16 +197,16 @@ export default {
         checkChange() {
             let uncheck = []
             this.checkAllGroups.forEach(item => {
-                let is = true;
+                let is = true
                 this.checkAllGroup.forEach(col => {
                     if (item == col) {
                         is = false
                     }
                 })
                 if (is) {
-                    uncheck.push(item);
+                    uncheck.push(item)
                 }
-            });
+            })
             this.$emit('on-change', uncheck)
         },
         getPoptip() {
