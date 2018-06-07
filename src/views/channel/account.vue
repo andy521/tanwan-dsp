@@ -1,6 +1,4 @@
 <style lang="less">
-@import "../../styles/common.less";
-@import "../../styles/table.less";
 .head {
   border-bottom: 1px solid #e9eaec;
   margin-bottom: 10px;
@@ -149,7 +147,7 @@ export default {
                 param.tdate2 = this.current_time[1];
             }
             Axios.get('api.php', param).then(res => {
-                if (res.ret == '1') {
+                if (res.ret == 1) {
                     this.list = res.data.list;
                     this.total_page = res.data.total_page;
                     this.total_page = res.data.total_page;

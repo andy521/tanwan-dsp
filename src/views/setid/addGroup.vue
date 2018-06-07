@@ -1,8 +1,5 @@
-<style>
-	@import "../../styles/common.less";
-</style>
 <template>
-	<Card :bordered="false">
+	<Card dis-hover>
     	<Form ref="addGroup" :model="addGroup" :rules="addGroupRule" label-position="right" :label-width="110" style="width:300px">
 	        <Form-item label="权限组名称：" prop="groupName">
 	            <Input v-model="addGroup.groupName" placeholder="请输入"></Input>

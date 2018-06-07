@@ -1,5 +1,4 @@
 <style scoped>
-	@import "../../styles/common.less";
 	.unread {
 		font-weight: bold;
 	}
@@ -11,7 +10,7 @@
 </style>
 <template>
 	<div class="ad">
-		<Card shadow>
+		<Card dis-hover>
 			<p slot="title">
 				<Icon type="email" size="16" color="#999"></Icon>
 				{{getSingleMessages.uName}}

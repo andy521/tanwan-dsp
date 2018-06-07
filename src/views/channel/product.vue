@@ -1,61 +1,24 @@
-<style scoped >
-@import "../../styles/common.less";
-@import "../../styles/table.less";
-.head {
-  border-bottom: 1px solid #e9eaec;
-  margin-bottom: 10px;
-  padding: 0;
-}
-.sel_state1 {
-  text-align: left;
-}
-.sel_state1.ivu-select-multiple .ivu-select-selection {
-  overflow: auto;
-  height: 32px;
-}
-.ivu-poptip-rel {
-  display: block;
-}
-</style>
 <template>
     <Card dis-hover shadow>
-        <div class="head">
-            <Row :gutter="10">
+        <Row>
+            <Col span="20">
+            <search-tree :clearable="sclear" @on-change="getids"></search-tree>
+            <select-media @on-change="setMedia" style="width:150px"></select-media>
+            <!-- 版本: -->
+            <Select @on-change="getTableData()" v-model="current_version" placeholder="--全部版本--" style="width:100px">
+                <Option v-for="item in versionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <DatePicker @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间"></DatePicker>
+            <!-- 自定义指标 -->
+            <diy-index @on-change="getIndex" :check="checkAllGroup"></diy-index>
+            <select-author @on-change="setPrincipal"></select-author>
+            </Col>
+            <Col span="4" style="  text-align: right;">
+            <Button icon="document-text" @click="exportData()">下载报表</Button>
+            </Col>
+        </Row>
 
-                <Col :xs="12" :md="5">
-                <search-tree :clearable="sclear" @on-change="getids"></search-tree>
-                </Col>
-
-                <Col :xs="12" :md="4">
-                <select-media class="smedia" @on-change="setMedia"></select-media>
-                </Col>
-
-                <Col :xs="12" :md="2">
-                <!-- 版本: -->
-                <Select @on-change="setVersion" placeholder="--全部版本--" class="margin-bottom-10">
-                    <Option v-for="item in versionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-                </Col>
-
-                <Col :xs="2" :md="2">
-                <diy-index @on-change="getIndex" :check="checkAllGroup" class="margin-bottom-10"></diy-index>
-                </Col>
-
-                <Col :xs="8" :md="3" offset="4">
-                <DatePicker @on-change="changeDate" type="daterange" placement="bottom-end" placeholder="自定义时间" style="width: 100%"></DatePicker>
-                </Col>
-                <Col :xs="12" :md="2">
-                <select-author @on-change="setPrincipal"></select-author>
-                </Col>
-
-                <Col :xs="12" :md="2">
-                <Button icon="document-text" @click="exportData()" style="float:right" class="margin-bottom-10">下载报表</Button>
-                </Col>
-
-            </Row>
-        </div>
-
-        <Table stripe :size="tableSize" :loading="loading" :columns="tableColumns" :data="list" ref="tableCsv" @on-sort-change="sortChange" :height="height"></Table>
+        <Table stripe :size="tableSize" :loading="loading" :columns="tableColumns" :data="list" ref="tableCsv" @on-sort-change="sortChange" :height="height" class="margin-top-10"></Table>
 
         <Row class="margin-top-10">
             <Col span="10">
@@ -93,8 +56,7 @@ export default {
         return {
             height: document.body.clientHeight - 225,
             loading: true,
-            //每页数量 
-            page: 1,
+            page: 1,//每页数量 
             page_size: 50,
             total_number: 1, //总数量
             total_page: 1, //总页数
@@ -211,11 +173,6 @@ export default {
         //选择媒体
         setMedia(data) {
             this.current_media = data;
-            this.getTableData();
-        },
-        //选择版本
-        setVersion(data) {
-            this.current_version = data;
             this.getTableData();
         },
         //选择负责人

@@ -1,8 +1,5 @@
-<style scoped>
-    @import "../../styles/common.less";
-</style>
 <template>
-    <Card :bordered="false" class="padding-10">
+    <Card dis-hover>
         <Tabs>
             <Tab-pane label="添加菜单">
                 <Form ref="formItem" :model="formItem" :label-width="100" :rules="ruleValidate" style="width:500px">

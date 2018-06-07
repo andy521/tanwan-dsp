@@ -28,14 +28,14 @@
     <div class="toutiaoad">
         <Card dis-hover class="margin-top-10">
             <Row>
-                <Col span="20">
+                <Col span="16">
                 <Button type="primary" @click="back" v-if="campaign_id">返回</Button>
                 <!--搜索游戏列表-->
                 <search-tree @on-change="getids"></search-tree>
                 <Input class="inp" placeholder="请输入广告计划ID或关键词" v-model="keyword" @on-enter="getCampaignsList()"></Input>
                 <Button type="primary" icon="search" @click="getCampaignsList()">搜索</Button>
                 </Col>
-                <Col span="4" style="text-align: right;">
+                <Col span="8" style="text-align: right;">
                 <Button type="ghost" icon="stats-bars" @click="Echartsmodel=!Echartsmodel;">图表</Button>
                 <selectAccount title="新建广告计划" @on-change="add" mediaType="4"></selectAccount>
                 </Col>

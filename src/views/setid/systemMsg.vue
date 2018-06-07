@@ -6,7 +6,7 @@
 </style>
 <template>
 	<div class="ad">
-		<Card shadow>
+		<Card dis-hover>
 			<Table :columns="columns1" :row-class-name="rowClassName" :data="getMessages.message" :size="tableSize" highlight-row @on-current-change="details" stripe></Table>
 			<Row class="margin-top-10">
 				<Col span="10"> 表格尺寸

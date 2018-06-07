@@ -131,6 +131,7 @@ export default {
             current_account: '',
             current_version: '',
             current_time: [],
+            media_type:"",
             current_campaigns: '',
             current_author: [],
             current_adgroup: '',
@@ -163,7 +164,7 @@ export default {
                 action: 'api',
                 opt: 'getGameTotalDay',
                 do: 'adsOverview',
-                media_type: this.current_media,
+                media_type: this.media_type,
                 os: this.current_version,
                 page: this.page,
                 page_size: this.page_size,
@@ -216,7 +217,7 @@ export default {
             Axios.get('api.php', {
                 action: 'api',
                 opt: 'getcampaigns',
-                MeidaType: this.current_media,
+                media_type: this.media_type,
                 account_id: data
             }).then(res => {
                 if (res.ret == '1') {
@@ -229,15 +230,16 @@ export default {
         },
         //选择媒体
         setMedia(data) {
-            this.current_media = data;
+            this.media_type = data;
             Axios.get('api.php', {
                 action: 'api',
                 opt: 'getAccount',
-                MeidaType: data
+                media_type: this.media_type
             }).then(res => {
                 if (res.ret == '1') {
                     this.account = res.data;
                     this.account_disabled = false;
+                     this.getTableData();
                 }
             }).catch(err => {
                 console.log('获取媒体账号' + err)
@@ -254,7 +256,7 @@ export default {
             Axios.get('api.php', {
                 action: 'api',
                 opt: 'getAdgroups',
-                MeidaType: this.current_media,
+                media_type: this.media_type,
                 account_id: data
             }).then(res => {
                 this.adgroups = res.data;

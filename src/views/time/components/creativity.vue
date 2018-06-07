@@ -159,7 +159,7 @@ em {
                     <td width="100" v-else-if="subitem=='pay_per'">-</td>
                     <td width="100" v-else-if="subitem=='income_per'">-</td>
                     <td width="110" v-else-if="subitem=='system_status'">
-                        <template v-for="col in ads_config.system_status" v-if="col.val_type==item.system_status">
+                        <template v-for="col in gdtConfig.system_status" v-if="col.val_type==item.system_status">
                             <span :style="{color:col.color}">{{col.name}}</span>
                             <Tooltip placement="top" v-if="item.reject_message != 'null' && item.reject_message">
                                 <Icon type="help-circled" :style="{color:col.color}"></Icon>
@@ -190,14 +190,14 @@ em {
                                     </div>
                                     <div class="img_operation">
                                         <span class="w_img_operation" @click="editCreativity()">
-                                            <Poptip  placement="bottom-end" content="修改创意" trigger="hover">
+                                            <Poptip placement="bottom-end" content="修改创意" trigger="hover">
                                                 <Icon type="android-create" size="18" color="#666"></Icon>
-                                            </Poptip >
+                                            </Poptip>
                                         </span>
                                         <span class="w_img_operation" @click="funpreview(item)">
-                                            <Poptip  placement="bottom-end" content="放大图片" trigger="hover">
+                                            <Poptip placement="bottom-end" content="放大图片" trigger="hover">
                                                 <Icon type="search" size="18" color="#666"></Icon>
-                                            </Poptip >
+                                            </Poptip>
                                         </span>
                                     </div>
                                 </CarouselItem>
@@ -223,13 +223,13 @@ em {
                     <div class="w_flex" v-if="adgroup_detail.optimization_goal">
                         <div class="w_flex_hd">优化目标</div>
                         <div class="w_flex_bd">
-                            <span v-if="item.val_type==adgroup_detail.optimization_goal" size="large" v-for="item in ads_config.optimization_goal" :key="this">{{item.name}}</span>
+                            <span v-if="item.val_type==adgroup_detail.optimization_goal" size="large" v-for="item in gdtConfig.optimization_goal" :key="this">{{item.name}}</span>
                         </div>
                     </div>
                     <div class="w_flex" v-if="adgroup_detail.billing_event">
                         <div class="w_flex_hd">付费方式</div>
                         <div class="w_flex_bd">
-                            <span v-if="item.val_type==adgroup_detail.billing_event" size="large" v-for="item in ads_config.billing_event" :key="this">{{item.name}}</span>
+                            <span v-if="item.val_type==adgroup_detail.billing_event" size="large" v-for="item in gdtConfig.billing_event" :key="this">{{item.name}}</span>
                         </div>
                     </div>
                     <div class="w_flex" v-if="adgroup_detail.bid_amount">
@@ -240,7 +240,7 @@ em {
                         <div class="w_flex_hd">投放平台</div>
                         <div class="w_flex_bd">
                             <span v-for="item in adgroup_detail.site_set">
-                                <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.site_set" :key="this">{{subitem.name}}&nbsp;</em>
+                                <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.site_set" :key="this">{{subitem.name}}&nbsp;</em>
                             </span>
                         </div>
                     </div>
@@ -249,7 +249,7 @@ em {
                         <div class="w_flex_bd">
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.gender">
                                 <span class="grey">性别：</span>
-                                <span v-if="item.val_type==adgroup_detail.targeting.gender" size="large" v-for="item in ads_config.gender" :key="this">{{item.name}}</span>
+                                <span v-if="item.val_type==adgroup_detail.targeting.gender" size="large" v-for="item in gdtConfig.gender" :key="this">{{item.name}}</span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.age">
                                 <span class="grey">年龄：</span> {{adgroup_detail.targeting.age.toString()}}岁
@@ -259,18 +259,18 @@ em {
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.app_behavior">
                                 <span class="grey">App行为：</span>{{app_category}}，距离今天{{adgroup_detail.targeting.app_behavior.time_window}}天内，该类APP的
-                                <span v-for="item in ads_config.act_id_list">
+                                <span v-for="item in gdtConfig.act_id_list">
                                     <em v-for="subitem in adgroup_detail.targeting.app_behavior.act_id_list" v-if="subitem==item.val_type">{{item.name}},</em>
                                 </span> 用户
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.app_install_status">
                                 <span class="grey">App安装：</span>
-                                <span size="large" v-for="item in ads_config.app_install_status" :key="this" v-if="item.val_type==adgroup_detail.targeting.app_install_status">{{item.name}}</span>
+                                <span size="large" v-for="item in gdtConfig.app_install_status" :key="this" v-if="item.val_type==adgroup_detail.targeting.app_install_status">{{item.name}}</span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.network_type">
                                 <span class="grey">联网方式：</span>
                                 <span v-for="item in adgroup_detail.targeting.network_type">
-                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.network_type" :key="this">{{subitem.name}}</em>
+                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.network_type" :key="this">{{subitem.name}}</em>
                                 </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.customized_audience">
@@ -284,13 +284,13 @@ em {
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.education">
                                 <span class="grey">婚恋状态：</span>
                                 <span v-for="item in adgroup_detail.targeting.education">
-                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.education" :key="this">{{subitem.name}}</em>
+                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.education" :key="this">{{subitem.name}}</em>
                                 </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.living_status">
                                 <span class="grey">工作状态：</span>
                                 <span v-for="item in adgroup_detail.targeting.living_status">
-                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.living_status" :key="this">{{subitem.name}}</em>
+                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.living_status" :key="this">{{subitem.name}}</em>
                                 </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.keyword">
@@ -300,31 +300,31 @@ em {
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.paying_user_type">
                                 <span class="grey">付费用户：</span>
                                 <span v-for="item in adgroup_detail.targeting.paying_user_type">
-                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.paying_user_type" :key="this">{{subitem.name}}&nbsp;</em>
+                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.paying_user_type" :key="this">{{subitem.name}}&nbsp;</em>
                                 </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.shopping_capability">
                                 <span class="grey">消费状态：</span>
                                 <span v-for="item in adgroup_detail.targeting.shopping_capability">
-                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.shopping_capability" :key="this">{{subitem.name}}&nbsp;</em>
+                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.shopping_capability" :key="this">{{subitem.name}}&nbsp;</em>
                                 </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.network_operator">
                                 <span class="grey">消费状态：</span>
                                 <span v-for="item in adgroup_detail.targeting.network_operator">
-                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.network_operator" :key="this">{{subitem.name}}&nbsp;</em>
+                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.network_operator" :key="this">{{subitem.name}}&nbsp;</em>
                                 </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.device_price">
                                 <span class="grey">设备价格：</span>
                                 <span v-for="item in adgroup_detail.targeting.device_price">
-                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in ads_config.device_price" :key="this">{{subitem.name}}&nbsp;</em>
+                                    <em v-if="subitem.val_type==item" size="large" v-for="subitem in gdtConfig.device_price" :key="this">{{subitem.name}}&nbsp;</em>
                                 </span>
                             </div>
                             <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location">
                                 <div class="w_flex_bd_div" v-if="adgroup_detail.targeting.geo_location.location_types">
                                     <span class="grey">地点类型：</span>
-                                    <span v-for="item in ads_config.location_types">
+                                    <span v-for="item in gdtConfig.location_types">
                                         <em v-for="subitem in adgroup_detail.targeting.geo_location.location_types" v-if="subitem==item.val_type">{{item.name}}&nbsp;</em>
                                     </span>
                                 </div>
@@ -355,13 +355,15 @@ em {
 import Axios from "@/api/index";
 import echartsTabel from "./echartsTabel.vue";
 import { changetime } from "@/utils/DateShortcuts.js";
+import gdtConfig from "@/utils/gdtConfig.json";
 export default {
     components: {
         echartsTabel
     },
-    props:["row","uncheck"],
+    props: ["row", "uncheck"],
     data() {
         return {
+            gdtConfig: gdtConfig,
             checkAllGroups: [
                 // "account_name",
                 "adgroup_name",
@@ -415,7 +417,7 @@ export default {
                             image: "",
                             title: ""
                         },
-                        preview_url:"",
+                        preview_url: "",
                         adcreative_id: "",
                         adcreative_name: "",
                         configured_status: "",
@@ -459,11 +461,26 @@ export default {
                     excluded_custom_audience: [],
                     description: []
                 }
-            }
+            },
+            province: [],//地域
+            appcategory: [],//app行为按分类
+            business_interest: [],//商业兴趣
+            custom_audiences: ""//自定义人群
         };
     },
     mounted() {
         this.get_adgroup_detail();
+        //请求定向标签(地域)
+        this.get_targeting_tags();
+        //获取商业兴趣
+        this.get_business_interest();
+        //app行为按分类
+        this.get_appCategory();
+        //获取自定义人群
+        this.get_custom_audiences();
+    },
+    beforeMount() {
+
     },
     methods: {
         //获取详情
@@ -482,7 +499,54 @@ export default {
                 console.log("获取详情失败" + err);
             });
         },
-
+        //获取商业兴趣
+        get_business_interest() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags',
+                type: 'Business_interest'
+            }).then(res => {
+                this.business_interest = res.data;
+            }).catch(err => {
+                console.log('获取商业兴趣' + err)
+            })
+        },
+        get_custom_audiences() {
+            //获取自定义人群
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'custom_audiences_get',
+                account_id: this.account_id,
+                name: this.Audiencesname
+            }).then(res => {
+                this.custom_audiences = res.data;
+            }).catch(err => {
+                console.log('获取自定义人群' + err)
+            })
+        },
+        //app行为按分类
+        get_appCategory() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags',
+                type: 'app_category'
+            }).then(res => {
+                this.appcategory = res.data;
+            }).catch(err => {
+                console.log('app行为按分类' + err)
+            })
+        },
+        //请求定向标签(地域)
+        get_targeting_tags() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags'
+            }).then(res => {
+                this.province = res.data;
+            }).catch(err => {
+                console.log('获取定向标签(地域)' + err)
+            })
+        },
         //编辑创意
         editCreativity() {
             this.$router.push({
@@ -536,13 +600,9 @@ export default {
             });
             return check;
         },
-        //获取所有状态
-        ads_config() {
-            return this.$store.state.newad.ads_config;
-        },
         //省市区转码
         new_regions() {
-            let regions = this.$store.state.newad.targeting_tags;
+            let regions = this.province;
             let ids = this.adgroup_detail.targeting.geo_location.regions;
             if (!ids) return;
             var name = [];
@@ -561,7 +621,7 @@ export default {
         },
         //商业兴趣转码
         businessids() {
-            let business_interest = this.$store.state.newad.business_interest;
+            let business_interest = this.business_interest;
             let ids = this.adgroup_detail.targeting.business_interest;
             if (!ids) return;
             var name = [];
@@ -589,7 +649,7 @@ export default {
         },
         //app行为转码
         app_category() {
-            let appCategory = this.$store.state.newad.appCategory;
+            let appCategory = this.appcategory;
             let ids = this.adgroup_detail.targeting.app_behavior.object_id_list;
             if (!ids) return;
             var name = [];
@@ -620,6 +680,6 @@ export default {
             let time = this.adgroup_detail.time_series;
             return changetime(time);
         }
-    },
+    }
 };
 </script>
