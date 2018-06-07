@@ -145,7 +145,7 @@
                                         </template>
                                     </span>
                                 </div>
-                                <!-- <div class="targeting_item" v-if="targeting.targeting.customized_audience">
+                                <div class="targeting_item" v-if="targeting.targeting.customized_audience">
                                     <span>定向用户群：</span>
                                     <span class="grey">
                                         <template v-for="item in audiences">
@@ -164,7 +164,7 @@
                                             </template>
                                         </template>
                                     </span>
-                                </div> -->
+                                </div>
                                 <div class="targeting_item" v-if="targeting.targeting.education">
                                     <span>婚恋状态：</span>
                                     <span class="grey">
