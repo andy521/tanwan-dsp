@@ -25,8 +25,8 @@
 </style>
 
 <template>
-	<div>
-		<Poptip ref="poptip" trigger="click" placement="bottom-start" width="500" class="Poptiptap">
+	<span>
+		<Poptip ref="poptip" trigger="hover" placement="bottom-start" width="500" class="Poptiptap">
 			<Button type="ghost" icon="ios-navigate-outline" @click="handleShow">自定义指标</Button>
 			<div class="api" slot="content">
 				<div class="bottom_line">
@@ -68,7 +68,7 @@
                 </div>
 			</div>            
 		</Poptip>
-	</div>
+	</span>
 </template>
 
 <script>

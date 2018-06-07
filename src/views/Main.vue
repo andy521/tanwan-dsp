@@ -120,14 +120,6 @@ export default {
         this.init();
         //获取消息
         this.$store.dispatch("getMessages");
-        //请求定向标签(地域)
-        this.$store.dispatch("get_targeting_tags");
-        //获取所有状态
-        this.$store.dispatch("get_ads_config");
-        //获取商业兴趣
-        this.$store.dispatch("get_business_interest");
-        //获取App行为
-        this.$store.dispatch("get_appCategory");
     },
     computed: {
         //缓存页面
@@ -149,7 +141,7 @@ export default {
         init() {
             //更新菜单
             this.$store.commit("updateMenulist");
-            this.userName = util.getItem("user");
+            this.userName = util.getItem("uName");
             this.$store.commit("addOpenSubmenu", this.$route.name);
 
             //查找展开菜单

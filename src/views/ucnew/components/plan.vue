@@ -38,13 +38,13 @@
         </FormItem>
         <FormItem label="推广资源">
           <RadioGroup v-model="adCustomPlan.adResourceId">
-            <Radio :label="adResourceId[0]">
+            <Radio :disabled="isEdit" :label="adResourceId[0]">
               <span>UC头条</span>
               <Tooltip placement="top" content="广告展示在UC头条信息流内容中">
                 <Icon type="help-circled"></Icon>
               </Tooltip>
             </Radio>
-            <Radio :label="adResourceId[1]">
+            <Radio :disabled="isEdit" :label="adResourceId[1]">
               <span>UC精准</span>
               <Tooltip placement="top">
                 <Icon type="help-circled"></Icon>

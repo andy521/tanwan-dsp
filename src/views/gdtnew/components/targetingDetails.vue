@@ -182,7 +182,7 @@
             <div class="title">
                 <span>定向</span>
                 <!-- 复制定向 -->
-                <copy-targeting @on-change="changeTargeting"></copy-targeting>
+                <copy-targeting @on-change="changeTargeting" :province="province" :appcategory="app_category" :business="business_interest" :audiences="custom_audiences"></copy-targeting>
             </div>
 
             <Row class="margin-top-20">
@@ -211,7 +211,7 @@
                                     </div>
                                 </div>
                                 <!--城市选择-->
-                                <city-tree v-model="targeting.geo_location.regions"></city-tree>
+                                <city-tree v-model="targeting.geo_location.regions" :province="province"></city-tree>
                                 <CheckboxGroup class="margin-top-20" v-model="targeting.geo_location.location_types" v-if="campaign_type=='CAMPAIGN _TYPE_WECHAT_OFFICIAL_ ACCOUNTS'||campaign_type=='CAMPAIGN_TYPE_ WECHAT_MOMENTS'">
                                     <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.location_types" :key="this" v-if="item.val_type=='LIVE_IN'">{{item.name}}</Checkbox>
                                 </CheckboxGroup>
@@ -537,7 +537,6 @@
                             <span>关键词 ：</span>
                             <em v-for="item in targeting.keyword.words">{{item}},</em>
                         </p>
-
                         <p v-if="paying_user_type_modeal">
                             <span>付费用户：</span>
                             <em v-for="item in gdtConfig.paying_user_type">
@@ -603,7 +602,7 @@
                                         </div>
                                     </div>
                                     <!--城市选择-->
-                                    <city-tree v-model="targeting.geo_location.regions"></city-tree>
+                                    <city-tree v-model="targeting.geo_location.regions" :province="province"></city-tree>
 
                                     <CheckboxGroup class="margin-top-20" v-model="targeting.geo_location.location_types">
                                         <Checkbox :label="item.val_type" size="large" v-for="item in gdtConfig.location_types" :key="this">{{item.name}}</Checkbox>
@@ -1031,26 +1030,62 @@ export default {
             Audiencesname_ex: "", //自定义人群搜索关键词排除
             appCategory_modeal: false, //app行为switch
             approximate_count: "", //大致覆盖人数
-            impression: "" //预估日曝光量
+            impression: "", //预估日曝光量
+            province: [],
+            app_category: [],
+            business_interest: [],
+            custom_audiences: ""
         };
     },
     mounted() {
         if (this.targeting_id) {
             this.getTargeting();
         }
-
         //请求定向标签(地域)
-        this.$store.dispatch("get_targeting_tags");
+        this.get_targeting_tags();
         //获取商业兴趣
-        this.$store.dispatch("get_business_interest");
+        this.get_business_interest();
         //app行为按分类
-        this.$store.dispatch("get_appCategory");
-
+        this.get_appCategory();
         //获取自定义人群
-        this.getAudiences();
-        this.getAudiences_ex();
+        this.get_custom_audiences();
     },
     methods: {
+        //获取商业兴趣
+        get_business_interest() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags',
+                type: 'Business_interest'
+            }).then(res => {
+                this.business_interest = res.data;
+            }).catch(err => {
+                console.log('获取商业兴趣' + err)
+            })
+        },
+        //app行为按分类
+        get_appCategory() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags',
+                type: 'app_category'
+            }).then(res => {
+                this.app_category = res.data;
+            }).catch(err => {
+                console.log('app行为按分类' + err)
+            })
+        },
+        //请求定向标签(地域)
+        get_targeting_tags() {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'targeting_tags'
+            }).then(res => {
+                this.province = res.data;
+            }).catch(err => {
+                console.log('获取定向标签(地域)' + err)
+            })
+        },
         //获取预估覆盖人数、出价
         get_estimation() {
             Axios.post("api.php", {
@@ -1067,25 +1102,19 @@ export default {
                 console.log("获取预估覆盖人数、出价" + err);
             });
         },
-
-        getAudiences() {
+        get_custom_audiences() {
             //获取自定义人群
-            let data = {
+            Axios.post('api.php', {
+                action: 'gdtAdPut',
+                opt: 'custom_audiences_get',
                 account_id: this.account_id,
                 name: this.Audiencesname
-            };
-            this.$store.dispatch("get_CustomAudiences", data);
+            }).then(res => {
+                this.custom_audiences = res.data;
+            }).catch(err => {
+                console.log('获取自定义人群' + err)
+            })
         },
-        getAudiences_ex() {
-            //获取自定义人群排除
-            let data = {
-                account_id: this.account_id,
-                name: this.Audiencesname_ex
-            };
-            this.$store.dispatch("get_CustomAudiences_ex", data);
-        },
-
-
         //获取定向详情
         getTargeting() {
             Axios.post('api.php', {
@@ -1511,6 +1540,8 @@ export default {
                     return;
                 }
             }
+console.log(targeting)
+
             Axios.post("api.php", {
                 action: "gdtAdPut",
                 opt: "targetings_add",
@@ -1530,8 +1561,8 @@ export default {
     computed: {
         //获取自定义人群
         customized_audience() {
-            let list = this.$store.state.newad.CustomAudiences.list;
-            if(!list)return;
+            let list = this.custom_audiences.list;
+            if (!list) return;
             let ids = this.targeting.customized_audience;
             list.forEach(item => {
                 let checked = false;
@@ -1546,8 +1577,8 @@ export default {
         },
         //获取自定义人群排除
         excluded_custom_audience() {
-            let list = this.$store.state.newad.CustomAudiences_ex.list;
-            if(!list)return;
+            let list = this.custom_audiences.list;
+            if (!list) return;
             let ids = this.targeting.excluded_custom_audience;
             list.forEach(item => {
                 ids.forEach(v => {
@@ -1558,15 +1589,11 @@ export default {
             });
             return list;
         },
-        //获取所有状态
-        // ads_config() {
-        //     return this.$store.state.newad.ads_config;
-        // },
         //商业兴趣转码
         businessname() {
             var name = [];
             let ids = this.targeting.business_interest;
-    
+
             ids.forEach(id => {
                 for (var i in this.business) {
                     var e = this.business[i];
@@ -1591,8 +1618,7 @@ export default {
         },
         //获取商业兴趣
         business() {
-            let list = this.$store.state.newad.business_interest;
-            if(!list)return;
+            let list = this.business_interest;
             let ids = this.targeting.business_interest;
             let n = 0;
             let newlist = [];
@@ -1680,8 +1706,7 @@ export default {
         },
         //获取定向标签(地域)
         targeting_tags() {
-            let list = this.$store.state.newad.targeting_tags;
-            if(!list)return;
+            let list = this.province;
             let ids = this.targeting.geo_location.regions;
             let n = 0;
             let newlist = [];
@@ -1722,7 +1747,7 @@ export default {
         appCategoryname() {
             var name = [];
             let ids = this.targeting.app_behavior.object_id_list;
-     
+
             ids.forEach(id => {
                 for (var i in this.appCategory) {
                     var e = this.appCategory[i].children;
@@ -1744,8 +1769,7 @@ export default {
         },
         //app行为按分类
         appCategory() {
-            let list = this.$store.state.newad.appCategory;
-            if(!list)return;
+            let list = this.app_category;
             let ids = this.targeting.app_behavior.object_id_list;
             let newlist = [];
             list.forEach((item, i) => {

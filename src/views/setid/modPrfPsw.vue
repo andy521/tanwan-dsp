@@ -3,7 +3,7 @@
     .legend{border-top: 1px solid #eee; padding:15px}
 </style>
 <template>
-	<Card :bordered="false">
+	<Card dis-hover>
 	    <Tabs type="card">
 	        <Tab-pane label="修改个人资料">
 	        	<Form ref="modProfile" :model="modProfile" :rules="modProfileRule" label-position="right" :label-width="110" style="width:500px">

@@ -127,9 +127,9 @@
           </FormItem>
           <FormItem v-if="isGeneralizePage" label="操作系统">
             <CheckboxGroup @on-change="handlePagePlatform" v-model="pagePlatform">
-              <Checkbox label="001">IOS</Checkbox>
-              <Checkbox label="010">Android</Checkbox>
-              <Checkbox label="100">其他系统</Checkbox>
+              <Checkbox :disabled="isEdit" label="001">IOS</Checkbox>
+              <Checkbox :disabled="isEdit" label="010">Android</Checkbox>
+              <Checkbox :disabled="isEdit" label="100">其他系统</Checkbox>
             </CheckboxGroup>
           </FormItem>
         </Form>
@@ -898,7 +898,7 @@ export default {
     handlerInterestWord(e) {
       let word = e.target.value
       if (!word && this.targetingSetting.word.length >= 200) {
-        this.interestWord = ths.targetingSetting.word.join()
+        this.interestWord = this.targetingSetting.word.join()
         return
       }
 
@@ -920,7 +920,7 @@ export default {
     handlerInterestURL(e) {
       let url = e.target.value
       if (!url && this.targetingSetting.url.length >= 200) {
-        this.isInterestURL = ths.targetingSetting.url.join()
+        this.isInterestURL = this.targetingSetting.url.join()
         return
       }
 
