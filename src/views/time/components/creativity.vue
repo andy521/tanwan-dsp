@@ -491,8 +491,10 @@ export default {
         //获取自定义人群
         this.get_custom_audiences();
     },
-    beforeMount() {
-
+    watch:{
+        row(){
+           this.get_adgroup_detail();
+        }
     },
     methods: {
         //获取详情
@@ -504,7 +506,7 @@ export default {
                 adgroup_id: this.row.adgroup_id
             }).then(res => {
                 if (res.ret == 1) {
-                    console.log(res)
+                    // console.log(res)
                     this.adgroup_detail = res.data;
                 }
             }).catch(err => {
