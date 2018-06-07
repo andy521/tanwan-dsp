@@ -556,7 +556,7 @@ export default {
                 {
                     title: "操作",
                     key: "",
-                    width: 130,
+                    width: 95,
                     render: (h, params) => {
                         if (params.row._disabled) return;
                         return h("span",

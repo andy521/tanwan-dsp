@@ -69,7 +69,7 @@ const app = {
                                 }
                             });
                             child.children = childCur;
-                            if(childCur != 0){
+                            if(childCur.length != 0){
                                 return child
                             }                            
                         }                        

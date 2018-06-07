@@ -95,6 +95,7 @@
 
 </template>
 <script>
+import Axios from "@/api/index"
 //左侧导航
 import shrinkableMenu from "@/components/shrinkable-menu/shrinkable-menu.vue";
 import fullScreen from "@/components/fullScreen/fullScreen.vue";
@@ -139,11 +140,10 @@ export default {
     },
     methods: {
         init() {
+            this.userName = util.getItem("uName");
             //更新菜单
             this.$store.commit("updateMenulist");
-            this.userName = util.getItem("uName");
             this.$store.commit("addOpenSubmenu", this.$route.name);
-
             //查找展开菜单
             this.$route.matched.forEach((v, i) => {
                 if (i < (this.$route.matched.length - 1)) {
@@ -158,11 +158,23 @@ export default {
         toggleClick() {
             this.shrink = !this.shrink;
         },
+        //退出登录
         quitLogin() {
-            //console.log('退出登录');
-            this.$store.dispatch("LoginOut", this);
-            this.$store.commit("clearOpenedSubmenu");
-            this.$router.push({ name: "login" });
+            Axios.get('api.php', {
+                action: 'sys',
+                opt: 'logout',
+                sessionid: util.getItem('sessionid')
+            }).then(res =>  {
+                //清除信息
+                //localStorage.clear();
+                util.removeItem('sessionid');
+                util.removeItem('access');
+                this.$router.push({ name: "login" });
+                this.$store.commit("clearOpenedSubmenu");
+                console.log('退出登录');
+            }).catch(err =>  {
+                console.log('退出登录错误--' + err);
+            });
         },
         fullscreenChange(isFullScreen) {
             //全屏
