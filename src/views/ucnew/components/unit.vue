@@ -1726,7 +1726,7 @@ export default {
         opt: 'getAdConvert',
         account_id: this.$route.query.account,
         convertMonitorType: objType,
-        platform: this.unitSetting.platform
+        // platform: this.unitSetting.platform
       })
         .then(res => {
           if (ERR_OK === res.ret) {

@@ -153,6 +153,7 @@ export default {
             this.userGrantAcListCopy = this.userGrantAcList.slice()
 
             this._normalizeGrantAcSelected(this.allGrantAcList, this.userGrantAcList)
+            this.allGrantAcSelectedList = []
         },
         // 获取添加的userGrantAcList
         getAllGrantSelect(selectedList) {
@@ -171,7 +172,7 @@ export default {
         },
         // 加载移除userGrantAcList后的数据
         handleRemoveUser() {
-            this.userGrantAcList = this.deleteAccountId.length === 0 ? this.userGrantAcList : this.userGrantAcSelectedList
+            this.userGrantAcList = this.userGrantAcSelectedList.length === 0 ? this.userGrantAcList : this.userGrantAcSelectedList
             this.userGrantAcListCopy = this.userGrantAcList.slice()
 
             const deleteAccountId = this.deleteAccountId
@@ -182,19 +183,26 @@ export default {
                     }
                 })
             })
+            this.userGrantSearchVal = ''
+            this.userGrantAcSelectedList = []
+            this.deleteAccountId = []
         },
         // 获取移除后的userGrantAcList
         removeUserGrantSelect(selectedList) {
-            const ret = this.userGrantAcList.slice()
-            selectedList.forEach(selected => {
-                ret.forEach((user, i) => {
-                    if (selected.sysUserId === user.sysUserId && selected.mediaType === user.mediaType && selected.accountId === user.accountId) {
-                        ret.splice(i, 1)
-                    }
+            const userGrantAcList = this.userGrantAcListCopy
+            if (userGrantAcList.length !== 0) {
+                userGrantAcList.forEach((user, i) => {
+                    selectedList.forEach(selected => {
+                        if (user.sysUserId == selected.sysUserId && user.accountId == selected.accountId && user.mediaType == selected.mediaType) {
+                            userGrantAcList.splice(i, 1)
+                            
+                        }
+                    })
                 })
-            })
-            this.userGrantAcSelectedList = ret
-            this.deleteAccountId = selectedList         
+            }
+
+            this.userGrantAcSelectedList = userGrantAcList
+            this.deleteAccountId = selectedList
         },
         //表格高亮calss
         rowClassName(row, index) {
@@ -213,6 +221,11 @@ export default {
                 return
             }
             this.userAcGrantInfo()
+        },
+        // 加载时情况搜索
+        clearSearchVal() {
+            this.allGrantSearchVal = ''
+            this.userGrantSearchVal = ''
         },
         submitUserAcGrant() {
             const userGrantAcList = this._normalizeAccountGrant(this.userGrantAcListCopy)
@@ -241,10 +254,14 @@ export default {
                     
                     this.loading = false
                     // this.allGrantAcListOrigin = this.getGrantAcLenInfo(res.data.allGrantAcList)
+                    this.clearSearchVal()
                 }
             }).catch(
                 err => {
                     this.loading = false
+                    this.userGrantAcList = this.userGrantAcListCopy = []
+                    this.allGrantAcList = this.userGrantAcListCopy = []
+                     this.clearSearchVal()
                     console.log('获取系统账户的媒体账户权限信息' + err)
                 }
             )        
@@ -279,6 +296,7 @@ export default {
                 err => {
                     console.log('编辑系统账户的媒体账户权限' + err)
                     this.isSubmiting = false
+                    this.clearSearchVal()
                 }
             )            
         },

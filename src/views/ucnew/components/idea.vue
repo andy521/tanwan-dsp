@@ -319,7 +319,7 @@ button.ivu-btn {
               <FormItem v-if="field.alias !== '图片'" v-for="(field, ic) in template.creativeTemplateFields" :key="ic" :label="field.alias">
                 <Input @on-blur="fieldSetting[field.key]" v-model="fieldSetting[field.key]" :placeholder="field.alias" class="item-width"></Input>
                 <Button @click="isWordPackages=true" v-if="field.alias === '标题'" :disabled="packageWord.isDisable" type="ghost">插入词包</Button>
-                <p :class="{'color-red': isErr[field.key], 'color-grey': !isErr[field.key]} " class="font-size-12">{{field.tips}}</p>
+                <p :class="{'color-red': isErr[field.key]} " class="font-size-12 color-grey">{{field.tips}}</p>
                 <div v-if="field.alias === '标题' && isWordPackages" class="margin-top-10">
                   <word-packages @on-select="handlePackageChange"></word-packages>
                 </div>
