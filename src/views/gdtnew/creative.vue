@@ -102,12 +102,12 @@
 
                         <Row>
                             <Col span="16">
-                            <Input v-model="item.adcreative_name" class="margin-top-10 w500">
+                            <Input v-model="item.adcreative_name" class="margin-top-10 w500" :maxlength="30">
                             <span slot="prepend">创意名称</span>
                             <span slot="append">{{item.adcreative_name.length}}/30</span>
                             </Input>
 
-                            <Input v-model="item.adcreative_elements.title" class="margin-top-10 w500">
+                            <Input v-model="item.adcreative_elements.title" class="margin-top-10 w500" :maxlength="element.title.amount[1]">
                             <span slot="prepend">广告文案</span>
                             <span slot="append">{{item.adcreative_elements.title.length}}/{{element.title.amount[1]}}</span>
                             </Input>
@@ -300,13 +300,14 @@ export default {
                 destination_url: this.destination_url,
                 adcreative: JSON.stringify(this.adcreative)
             };
+            
             for (let i = 0; i < this.adcreative.length; i++) {
                 if (this.adcreative[i].adcreative_name == "") {
                     this.$Message.info("创意名不能为空");
                     return
                 }
                 if (this.adcreative[i].adcreative_elements.title == "") {
-                    this.$Message.info("广告方案不能为空");
+                    this.$Message.info("广告文案不能为空");
                     return
                 }
                 if (this.adcreative[i].adcreative_elements.image == "") {

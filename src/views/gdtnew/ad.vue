@@ -193,7 +193,8 @@ export default {
 
             adcreative_template_id: 65,
             site_set: ["SITE_SET_MOBILE_INNER"],//投放站点集合
-            adgroup_detail: ""
+            adgroup_detail: "",
+            n: 0,//是否两个请求都完成
         };
     },
     mounted() {
@@ -258,7 +259,9 @@ export default {
 
             this.product_refs_id = adgroup_detail.product_refs_id;//标的物
             this.sub_product_refs_id = adgroup_detail.sub_product_refs_id;
-            this.get_destination_url(this.product_refs_id);
+
+            this.n++;
+            if (this.n == 2) this.get_destination_url();
             // this.destination_url = adgroup_detail.destination_url;
         },
         //返回定向id
@@ -275,6 +278,8 @@ export default {
             }).then(res => {
                 if (res.ret == 1) {
                     this.product_refs_ids = res.data;
+                    this.n++;
+                    if (this.n == 2) this.get_destination_url();
                 }
             }).catch(err => {
                 console.log("获取标的物id" + err);
@@ -442,9 +447,9 @@ export default {
             }).catch(err => console.log("广告组" + err));
         },
         //落地页 url
-        get_destination_url(val) {
+        get_destination_url() {
             this.product_refs_ids.forEach(e => {
-                if (val == e.product_refs_id) {
+                if (this.product_refs_id == e.product_refs_id) {
                     if (e.product_info.product_type_app_android_open_platform) {
                         this.destination_url = e.product_info.product_type_app_android_open_platform.app_property_pkg_url;
                     }
@@ -459,7 +464,6 @@ export default {
                     }
                 }
             });
-            if (this.adgroup_id) return;
 
             // 检测标的物有效性
             Axios.post("api.php", {
