@@ -47,42 +47,45 @@ const app = {
         //更新菜单
         updateMenulist ( state ) {
             let menuList = [],
-                accessList = Util.getItem('access') || [];  
+                accessList = Util.getItem('access') || [];
+            // console.log(accessList)    
             appRouter.forEach((item, index) => { 
-
                 if (item.children.length === 1) {
                     menuList.push(item);
                 }else{
                     let len = menuList.push(item);
                     let childrenArr = [];
                     childrenArr = item.children.filter(child =>{
-                        let childItem = child.children;
-                        if(!childItem){
-                            if(accessList.indexOf(child.name) != -1){
+                        if(accessList.indexOf(child.name) != -1){
+                            if(child.hasOwnProperty('children')){
+                                let childItem = child.children;
+                                let childCur = [];
+                                childCur = childItem.filter( childs => {
+                                    if(accessList.indexOf(childs.name) != -1){
+                                        return childs;
+                                    }
+                                });
+                                if(childCur.length > 0){
+                                    child.children = childCur;                    
+                                    return child  
+                                };
+                            }else{
                                 return child;
                             }
-                        }else{
-                            let childCur = [];
-                            childCur = childItem.filter( childs => {
-                                if(accessList.indexOf(childs.name) != -1){
-                                    return childs;
-                                }
-                            });
-                            child.children = childCur;
-                            return child
-                        }                        
+                        }  
                     });
                     if (childrenArr === undefined || childrenArr.length === 0) {
                         menuList.splice(len - 1, 1);
                     }else{
                         let handledItem = JSON.parse(JSON.stringify(menuList[len - 1]));
+                        // console.log(handledItem)
                         handledItem.children = childrenArr;
                         menuList.splice(len - 1, 1, handledItem);
                     }
                 }
 
             });
-            //console.log(menuList)
+            // console.log(menuList)
             state.menuList = menuList;
         },
         setOpenedList (state) {

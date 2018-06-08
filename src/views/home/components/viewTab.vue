@@ -114,7 +114,7 @@
                         </Select>
                     </FormItem>
                     <FormItem label="当前帐户余额">
-                       {{transfer.balance}}元
+                        {{transfer.balance}}元
                     </FormItem>
                     <FormItem label="加款账号id">
                         <Select v-model="transfer.in_account_id" placeholder="请选择加款账号id">
@@ -388,10 +388,9 @@ export default {
                 },
                 {
                     title: "推广余额",
-                    width: 110,
                     key: "balance",
                     sortable: "custom",
-                    render: (h, params) => {                       
+                    render: (h, params) => {
                         if (params.row._disabled) {
                             return h("span", params.row.balance + "元");
                         } else {
@@ -408,7 +407,6 @@ export default {
                 },
                 {
                     title: "消耗",
-                    width: 110,
                     key: "cost",
                     sortable: "custom",
                     render: (h, params) => {
@@ -445,12 +443,10 @@ export default {
                 {
                     title: "注册设备数",
                     key: "activation",
-                    width: 120,
                     sortable: "custom"
                 },
                 {
                     title: "注册成本",
-                    width: 110,
                     key: "reg_cost",
                     sortable: "custom"
                 },
@@ -470,7 +466,6 @@ export default {
                 },
                 {
                     title: "消耗预估天数",
-                    width: 125,
                     key: "over_day",
                     sortable: "custom",
                     render: (h, params) => {
@@ -493,7 +488,6 @@ export default {
                 {
                     title: "充值/转帐",
                     key: "platform",
-                    width: 95,
                     render: (h, params) => {
                         if (params.row._disabled) return;
                         let money = "", mark = "";
