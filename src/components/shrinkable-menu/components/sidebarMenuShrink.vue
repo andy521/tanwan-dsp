@@ -1,6 +1,6 @@
 <template>
     <div>
-        <template v-for="(item, index) in menuList">
+        <template v-for="(item, index) in listDate">
             <div style="text-align: center;" :key="index">
                 <Dropdown transfer v-if="item.children.length !== 1" placement="right-start" :key="index" @on-click="changeMenu">
                     <Button style="width:40px;margin-left: -5px;padding:10px 0;" type="text">
@@ -41,6 +41,11 @@ export default {
             default: 'darck'
         }
     },
+    data() {
+        return {
+            listDate:[]
+        };
+    },
     methods: {
         changeMenu (active) {
             this.$emit('on-change', active);
@@ -52,6 +57,25 @@ export default {
                 return item.title;
             }
         }
+    },
+    created(){
+        let sideMenu = [];
+        this.menuList.forEach( child => {
+            //console.log(child)
+            let childrentArr = [];
+            child.children.forEach( childs => {
+                if(childs.hasOwnProperty('children')){
+                    childs.children.forEach( c => {
+                        childrentArr.push(c);
+                    })
+                }else{
+                    childrentArr.push(childs);
+                }
+            })
+            child.children = childrentArr;
+            sideMenu.push(child);
+        });
+        this.listDate = sideMenu;
     }
 };
 </script>
