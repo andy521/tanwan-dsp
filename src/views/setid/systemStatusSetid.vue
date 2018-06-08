@@ -153,6 +153,7 @@ export default {
             this.userGrantAcListCopy = this.userGrantAcList.slice()
 
             this._normalizeGrantAcSelected(this.allGrantAcList, this.userGrantAcList)
+            this.allGrantAcSelectedList = []
         },
         // 获取添加的userGrantAcList
         getAllGrantSelect(selectedList) {
@@ -183,6 +184,8 @@ export default {
                 })
             })
             this.userGrantSearchVal = ''
+            this.userGrantAcSelectedList = []
+            this.deleteAccountId = []
         },
         // 获取移除后的userGrantAcList
         removeUserGrantSelect(selectedList) {
