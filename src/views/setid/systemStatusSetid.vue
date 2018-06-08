@@ -245,6 +245,8 @@ export default {
             }).catch(
                 err => {
                     this.loading = false
+                    this.userGrantAcList = this.userGrantAcListCopy = []
+                    this.allGrantAcList = this.allGrantAcListCopy = []
                     console.log('获取系统账户的媒体账户权限信息' + err)
                 }
             )        
