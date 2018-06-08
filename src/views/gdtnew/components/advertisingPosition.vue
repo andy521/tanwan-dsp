@@ -174,6 +174,8 @@ export default {
                 if (e.id == this.id) {
                     e._highlight = true;
                     edition.push(e);
+                }else{
+                     e._highlight = false;
                 }
             });
             if (this.adgroup_id) {

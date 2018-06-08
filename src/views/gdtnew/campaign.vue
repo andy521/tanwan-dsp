@@ -30,7 +30,7 @@
                                     </Select>
                                 </FormItem>
                                 <FormItem label="日消耗限额" prop="daily_budget" v-if="formCustom.campaign_type!='CAMPAIGN_TYPE_WECHAT_MOMENTS'">
-                                    <Input v-model="formCustom.daily_budget" placeholder="请输入消耗限额" size="large"></Input>
+                                    <Input v-model="formCustom.daily_budget" placeholder="请输入消耗限额(分)" size="large"></Input>
                                 </FormItem>
                                 <FormItem label="标的物类型" prop="product_type">
                                     <Select v-model="formCustom.product_type" placeholder="请选择标的物类型" size="large">
@@ -167,7 +167,7 @@ export default {
                         account_id: this.account_id,
                         campaign_type: this.formCustom.campaign_type,
                         campaign_name: this.formCustom.campaign_name,
-                        daily_budget: this.formCustom.daily_budget * 100,
+                        daily_budget: this.formCustom.campaign_type == 'CAMPAIGN_TYPE_WECHAT_MOMENTS' ? "" : this.formCustom.daily_budget * 100,
                         product_type: this.formCustom.product_type,
                         configured_status: this.formCustom.configured_status,
                         speed_mode: this.formCustom.speed_mode
@@ -180,7 +180,7 @@ export default {
                                     account_id: this.account_id,
                                     campaign_id: res.data.campaign_id,
                                     product_type: this.formCustom.product_type,
-                                    campaign_type:this.formCustom.campaign_type,
+                                    campaign_type: this.formCustom.campaign_type,
                                     configured_status: this.formCustom.configured_status
                                 }
                             })

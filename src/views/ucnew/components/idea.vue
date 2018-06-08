@@ -1,5 +1,5 @@
 <style scoped lang="less">
-@import url("../index.less");
+@import "../index.less";
 .vertical-center-modal {
   display: flex;
   align-items: center;
@@ -317,9 +317,9 @@ button.ivu-btn {
             <h3 class="sub-title color-green padding-tb-20">创意文本及URL</h3>
             <Form v-if="template.creativeTemplateId === creativeSetting.creativeTemplate_id" v-for="(template, ip) in creativeTemplates" :key="ip" :model="creativeSetting" :label-width="126" label-position="left">
               <FormItem v-if="field.alias !== '图片'" v-for="(field, ic) in template.creativeTemplateFields" :key="ic" :label="field.alias">
-                <Input @on-blur="handleField" v-model="fieldSetting[field.key]" :placeholder="field.alias" class="item-width"></Input>
+                <Input @on-blur="fieldSetting[field.key]" v-model="fieldSetting[field.key]" :placeholder="field.alias" class="item-width"></Input>
                 <Button @click="isWordPackages=true" v-if="field.alias === '标题'" :disabled="packageWord.isDisable" type="ghost">插入词包</Button>
-                <p class="font-size-12 color-red">{{field.tips}}</p>
+                <p :class="{'color-red': isErr[field.key]} " class="font-size-12 color-grey">{{field.tips}}</p>
                 <div v-if="field.alias === '标题' && isWordPackages" class="margin-top-10">
                   <word-packages @on-select="handlePackageChange"></word-packages>
                 </div>
@@ -474,6 +474,12 @@ export default {
       pic31_img: '',
       pic32_img: '',
       pic33_img: '',
+      isErr: {
+        title: false,
+        source: false,
+        target_url: false,
+        scheme_url: false
+      },
       isTitleErr: false,
       isSourceErr: false,
       isUrlErr: false,
@@ -502,6 +508,9 @@ export default {
     }
   },
   methods: {
+    statusColor(con) {
+      console.log(con,'ssdfsefsdfsfsf')
+    },
     // 获取词包
     handlePackageChange(word) {
       [this.packageWord] = [word]
@@ -679,33 +688,41 @@ export default {
       if (len[0] < currLen) {
         this.$Message.warning('点击URL字符长度不能大于1024个字符')
         this.isUrlErr = true
+        this.isErr.target_url = true
       } else {
         this.isUrlErr = false
+        this.isErr.target_url = false
       }
       if (reg.test(currStr)) {
         this.isUrlErr = false
+        this.isErr.target_url = false
       } else {
-        this.$Message.warning('URL必须以http或https开头');
+        this.$Message.warning('URL必须以http或https开头')
         this.isUrlErr = true
+        this.isErr.target_url = true
       }
       this.creativeSetting.clickMonitorUrl = currStr
     },
     handleSchemeUrl(currStr) {
       console.log('handleSchemeUrl', currStr)
-      const len = [1024];
+      const len = [1024]
       const reg = /^(http:\/\/|https:\/\/)/
       let currLen = this.getByteLen(currStr)
       if (len[0] < currLen) {
         this.$Message.warning('点击URL字符长度不能大于1024个字符')
         this.isUrlErr = true
+        this.isErr.scheme_url = true
       } else {
         this.isUrlErr = false
+        this.isErr.scheme_url = false
       }
       if (reg.test(currStr)) {
         this.isUrlErr = false
+        this.isErr.scheme_url = false
       } else {
-        this.$Message.warning('URL必须以http或https开头');
+        this.$Message.warning('URL必须以http或https开头')
         this.isUrlErr = true
+        this.isErr.scheme_url = true
       }
       this.fieldSetting.scheme_url = currStr
     },
@@ -716,11 +733,14 @@ export default {
       if (len[0] > currLen) {
         this.$Message.warning('推广来源字符长度不能低于1个字符')
         this.isSourceErr = true
+        this.isErr.source = true
       } else if (len[1] < this.getByteLen(currStr)) {
         this.$Message.warning('推广来源字符长度不能大于16个字符')
         this.isSourceErr = true
+        this.isErr.source = true
       } else {
         this.isSourceErr = false
+        this.isErr.source = false
       }
       this.fieldSetting.source = currStr
     },
@@ -730,9 +750,12 @@ export default {
       if (len[0] > currLen) {
         this.$Message.warning('标题字符长度不能低于10个字符')
         this.isTitleErr = true
+        this.isErr.title = true
       } else if (len[1] < this.getByteLen(currStr)) {
         this.isTitleErr = true
+        this.isErr.title = true
       } else {
+        this.isErr.title = false
         this.isTitleErr = false
       }
       
