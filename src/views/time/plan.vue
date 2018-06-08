@@ -629,7 +629,7 @@ export default {
             this.MediaListModel = this.account_id;
         }
         //返回时获取保存数据
-        let planparam = this.$store.state.setid.planparam;
+        let planparam = this.$store.state.user.cache_gdt_plan;      
         if (this.$route.meta.keepAlive && planparam != "") {
             this.DateDomain = planparam.DateDomain;
             this.page = planparam.page;
@@ -642,8 +642,8 @@ export default {
             this.check_value = planparam.check_value;
             this.orderField = planparam.orderField;
             this.orderDirection = planparam.orderDirection;
-            this.author_model = planparam.author;
-            this.getCampaignsList();
+            this.author_model = planparam.author;            
+            this.getCampaignsList(planparam.page);
         } else {
             this.getCampaignsList();
         }
@@ -866,7 +866,7 @@ export default {
                 orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
                 author: this.author_model //负责人
             };
-            this.$store.commit("saveplan", param);
+            this.$store.commit("CACHE_GDT_PLAN", param);
         }
         from.meta.keepAlive = false;
         next();

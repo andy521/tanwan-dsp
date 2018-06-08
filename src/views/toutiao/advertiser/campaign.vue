@@ -150,6 +150,25 @@ export default {
         };
     },
     mounted() {
+        //返回时获取保存数据
+        // let planparam = this.$store.state.user.cache_toutiao_campaign;
+        // if (this.$route.meta.keepAlive && planparam != "") {
+        //     this.DateDomain = planparam.DateDomain;
+        //     this.page = planparam.page;
+        //     this.page_size = planparam.page_size;
+        //     this.GameListIds = planparam.game_id;
+        //     this.MediaListModel = planparam.account_id;
+        //     this.configured_status = planparam.configured_status;
+        //     this.campaign_id = planparam.campaign_id;
+        //     this.campaign_name = planparam.campaign_name;
+        //     this.check_value = planparam.check_value;
+        //     this.orderField = planparam.orderField;
+        //     this.orderDirection = planparam.orderDirection;
+        //     this.author_model = planparam.author;
+        //     this.getCampaignsList(planparam.page);
+        // } else {
+        //     this.getCampaignsList();
+        // }
         this.getCampaignsList();
     },
     methods: {
@@ -223,7 +242,6 @@ export default {
         },
         //获取实时投放计划
         getCampaignsList(page) {
-            console.log(this.account_id)
             if (page === undefined) {
                 this.$refs["pages"].currentPage = 1;
                 this.page = 1;
@@ -342,16 +360,14 @@ export default {
                                                         modify_time: params.row.modify_time,
                                                         campaign_id: params.row.campaign_id,
                                                         campaign_name: value
-                                                    })
-                                                        .then(res => {
-                                                            if (res.ret == 1) {
-                                                                this.$Message.info(res.msg);
-                                                                this.getCampaignsList(this.page);
-                                                            }
-                                                        })
-                                                        .catch(err => {
-                                                            console.log("修改广告组名失败" + err);
-                                                        });
+                                                    }).then(res => {
+                                                        if (res.ret == 1) {
+                                                            this.$Message.info(res.msg);
+                                                            this.getCampaignsList(this.page);
+                                                        }
+                                                    }).catch(err => {
+                                                        console.log("修改广告组名失败" + err);
+                                                    });
                                                 }
                                             });
                                         }
@@ -586,7 +602,7 @@ export default {
                 {
                     title: "操作",
                     key: "",
-                    width: 130,
+                    width: 95,
                     render: (h, params) => {
                         if (params.row._disabled) return;
                         return [
@@ -663,6 +679,34 @@ export default {
             });
             return tableColumnList;
         }
-    }
+    },
+    //跳转时保存数据
+    // beforeRouteLeave(to, from, next) {
+    //     if (to.name == "time_ad") {
+    //         let param = {
+    //             DateDomain: this.DateDomain, //时间
+    //             page: this.page, //页码
+    //             page_size: this.page_size, //每页数量
+    //             game_id: this.GameListIds, //游戏id
+    //             account_id: this.MediaListModel, //媒体账号
+    //             configured_status: this.configured_status, //过滤无数据的广告
+    //             campaign_id: this.CampaignsListModel, //广告
+    //             campaign_name: this.campaign_name, //关键字
+    //             check_value: this.check_value, //状态
+    //             orderField: this.orderField, //排序的orderField参数名
+    //             orderDirection: this.orderDirection, //排序的方向值SORT_ASC顺序 SORT_DESC倒序
+    //             author: this.author_model //负责人
+    //         };
+    //         this.$store.commit("CACHE_TOUTIAO_CAMPAING", param);
+    //     }
+    //     from.meta.keepAlive = false;
+    //     next();
+    // },
+    // beforeRouteEnter(to, from, next) {
+    //     if (from.name == "time_ad") {
+    //         to.meta.keepAlive = true;
+    //     }
+    //     next();
+    // }
 };
 </script>
